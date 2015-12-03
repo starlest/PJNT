@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="PUJASM.ERP.Views.Accounting.GeneralLedgerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PUJASM.ERP.Views.Accounting"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Border BorderBrush="Blue" BorderThickness="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="From:" FontSize="28" />
+                <DatePicker Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                                SelectedDateFormat="Long" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Center" Text="To:" FontSize="28" />
+                <DatePicker Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                                SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Account:" />
+                <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0" 
+                      ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier, UpdateSourceTrigger=Explicit}" 
+                      DisplayMemberPath="Name" IsEditable="True" />
+                <TextBlock Grid.Row="1" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Class:" />
+                <TextBox Grid.Row="1" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                     Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="1" Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Balance:" />
+                <TextBox Grid.Row="1" Grid.Column="8" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                     Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </Border>
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseTransaction.PurchaseID}" />
+                <DataGridTextColumn Header="Documentation" Width="1*" IsReadOnly="True" Binding="{Binding Item.ID}" />
+                <DataGridTextColumn Header="Description" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Debit" Width="1*" Binding="{Binding Quantity}" />
+                <DataGridTextColumn Header="Credit" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
+                <DataGridTextColumn Header="Balance" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,129 @@
+﻿<UserControl x:Class="PutraJayaNT.Views.Master.SuppliersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PutraJayaNT.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.20*" />
+        </Grid.RowDefinitions>
+        <Border BorderBrush="Blue" BorderThickness="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" 
+                           FontSize="28" Foreground="Blue" Text="Name:" />
+                <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding NewEntryName}" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                           FontSize="28" Foreground="Blue" Text="Address:" />
+                <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding NewEntryAddress}" />
+                <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 10, 0, 0" 
+                       FontSize="28" Foreground="Blue" Text="GST ID:" />
+                <TextBox Grid.Row="1"  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding NewEntryGSTID}" />
+                <Button Content="Add" Grid.Column="5" Command="{Binding NewEntryCommand}" />
+                <Button Content="Cancel" Grid.Row="1" Grid.Column="5" Command="{Binding CancelEntryCommand}" />
+            </Grid>
+        </Border>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Supplier:" />
+            <ComboBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                      ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                      IsEditable="True" DisplayMemberPath="Name" />
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Category:" />
+            <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                      ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                      IsEditable="True" />
+            <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Product:" FontSize="28" />
+            <ComboBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0" 
+                      ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=Explicit}" 
+                      DisplayMemberPath="Name" IsEditable="True" />
+        </Grid>
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSuppliers}" SelectedItem="{Binding SelectedLine}" 
+                  CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False"
+                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
+                  IsEnabled="{Binding IsEditWindowNotOpen}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding ID}" />
+                <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Address" Width="1*" IsReadOnly="True" Binding="{Binding Address}" />
+                <DataGridTextColumn Header="GSTID" Width="1*" IsReadOnly="True" Binding="{Binding GSTID}" />
+                <DataGridTextColumn Header="Active" Width="1*" IsReadOnly="True" Binding="{Binding Active}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button Content="Edit" Command="{Binding EditCommand}" />
+            <Button Grid.Column="1" Content="Activate/Deactivate" Command="{Binding ActivateCommand}" />
+        </Grid>
+        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="100" Visibility="{Binding EditWindowVisibility}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Rectangle Stroke="Blue" Fill="White" IsHitTestVisible="False" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="4" Grid.RowSpan="4" />
+            <TextBlock Grid.Row="3" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 10, 0, 0" 
+                       FontSize="28" Foreground="Black" Text="Name:" />
+            <TextBox Grid.Row="3" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding EditName, Mode=TwoWay}" />
+            <TextBlock Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 10, 0, 0" 
+                       FontSize="28" Foreground="Black" Text="Address:" />
+            <TextBox Grid.Row="4" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding EditAddress, Mode=TwoWay}" />
+            <TextBlock Grid.Row="5" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 10, 0, 0" 
+                       FontSize="28" Foreground="Black" Text="GST ID:" />
+            <TextBox Grid.Row="5" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding EditGSTID, Mode=TwoWay}" />
+            <Button Grid.Row="6" Grid.Column="3"  Content="Cancel" Command="{Binding CancelEditCommand}" Margin="10" />
+            <Button Grid.Row="6" Grid.Column="4" Content="Confirm" Command="{Binding ConfirmEditCommand}" Margin="10" />
+        </Grid>
+    </Grid>
+</UserControl>

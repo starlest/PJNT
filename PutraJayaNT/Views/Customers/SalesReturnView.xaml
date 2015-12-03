@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="PutraJayaNT.Views.Customers.SalesReturnView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PutraJayaNT.Views.Customers"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.25*" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" BorderBrush="Blue" BorderThickness="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Sales ID:" />
+                <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SelectedSalesTransactionID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Date:" />
+                <DatePicker Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                            SelectedDateFormat="Long" SelectedDate="{Binding SalesReturnEntryDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </Border>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding SalesTransactionLines}" SelectedItem="{Binding SelectedSalesTransactionLine, UpdateSourceTrigger=PropertyChanged}" 
+                  CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False"
+                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Quantity" Width="1*" IsReadOnly="True" Binding="{Binding Quantity}" />
+                <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Product:" />
+                <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SalesReturnEntryProduct}" IsReadOnly="True" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Quantity:" />
+                <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SalesReturnEntryQuantity}" />
+                <Button Grid.Column="5" Content="Add" Command="{Binding SalesReturnEntryAddCommand}" Margin="30, 10, 30, 10" />
+            </Grid>
+        </Border>
+        <DataGrid Grid.Row="3" ItemsSource="{Binding SalesReturnTransactionLines}"
+                  CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False"
+                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Quantity" Width="1*" IsReadOnly="True" Binding="{Binding Quantity}" />
+                <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice}" />
+                <DataGridTextColumn Header="COGS" Width="1*" IsReadOnly="True" Binding="{Binding CostOfGoodsSold}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button Content="New" Command="{Binding NewCommand}" />
+            <Button Grid.Column="5" Content="Confirm" Command="{Binding ConfirmCommand}" />
+        </Grid>
+    </Grid>
+</UserControl>

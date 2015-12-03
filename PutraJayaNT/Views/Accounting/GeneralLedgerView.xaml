@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="PutraJayaNT.Views.Accounting.GeneralLedgerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PutraJayaNT.Views.Accounting"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.125*" />
+        </Grid.RowDefinitions>
+        <Border BorderBrush="Blue" BorderThickness="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Year:" FontSize="28" />
+                <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
+                         Text="{Binding SelectedYear, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Month:" FontSize="28" />
+                <ComboBox Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
+                          ItemsSource="{Binding Months}" SelectedItem="{Binding SelectedMonth, UpdateSourceTrigger=PropertyChanged}" 
+                          IsEditable="True" />
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Account:" />
+                <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
+                          ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount, UpdateSourceTrigger=Explicit}" 
+                          IsEditable="True" />
+                <TextBlock Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Class:" />
+                <TextBox Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
+                         IsReadOnly="True" Text="{Binding SelectedClass, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Beginning Balance:" />
+                <TextBox Grid.Row="1" Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         IsReadOnly="True" Text="{Binding SelectedBeginningBalance, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </Border>
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Account" Width="1*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
+                <DataGridTextColumn Header="Documentation" Width="1*" IsReadOnly="True" Binding="{Binding Documentation}" />
+                <DataGridTextColumn Header="Description" Width="2*" IsReadOnly="True" Binding="{Binding Description}" />
+                <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount}" />
+                <DataGridTextColumn Header="Seq" Width="1*" IsReadOnly="True" Binding="{Binding Seq}" />
+                <DataGridTextColumn Header="Balance" Width="1*" IsReadOnly="True" Binding="{Binding Balance}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total Debit:" FontSize="28" />
+            <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding TotalDebit, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total Credit:" FontSize="28" />
+            <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding TotalCredit, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+    </Grid>
+</UserControl>

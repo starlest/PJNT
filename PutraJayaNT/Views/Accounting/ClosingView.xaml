@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="PutraJayaNT.Views.Accounting.ClosingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PutraJayaNT.Views.Accounting"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="Period Year: "/>
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Text="{Binding PeriodYear}"/>
+            <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="Period: "/>
+            <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Text="{Binding Period}"/>
+        </Grid>
+        <ProgressBar Grid.Row="2" Name="pbStatus" Minimum="0" Maximum="100" IsIndeterminate="False" BorderBrush="Blue" BorderThickness="2" Height="50" Width="800" />
+        <TextBlock Grid.Row="2" Text="{Binding ElementName=pbStatus, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Button Grid.Row="3" Content="Close" Margin="480, 0, 480, 100" Click="OnClick"/>
+    </Grid>
+</UserControl>

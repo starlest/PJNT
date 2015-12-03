@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E59C0673-7A62-4081-A85B-5C7EB6B20967}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PUJASM.ERP</RootNamespace>
+    <AssemblyName>PUJASM.ERP</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FirstFloor.ModernUI, Version=1.0.6.0, Culture=neutral, PublicKeyToken=2d21ec3cd074c59a, processorArchitecture=MSIL">
+      <HintPath>..\packages\ModernUI.WPF.1.0.6\lib\net45\FirstFloor.ModernUI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="mysql.data.entity.EF6, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.Entities.6.8.3.0\lib\net45\mysql.data.entity.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySqlBackup, Version=2.0.9.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySqlBackup.NET.2.0.9.2\lib\net45\MySqlBackup.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Migrations\201512030230368_InitialMigration.cs" />
+    <Compile Include="Migrations\201512030230368_InitialMigration.Designer.cs">
+      <DependentUpon>201512030230368_InitialMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Accounting\LedgerAccount.cs" />
+    <Compile Include="Models\Accounting\LedgerAccountBalance.cs" />
+    <Compile Include="Models\Accounting\LedgerGeneral.cs" />
+    <Compile Include="Models\Accounting\LedgerTransaction.cs" />
+    <Compile Include="Models\Accounting\LedgerTransactionLine.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\PurchaseReturnTransaction.cs" />
+    <Compile Include="Models\PurchaseReturnTransactionLine.cs" />
+    <Compile Include="Models\PurchaseTransaction.cs" />
+    <Compile Include="Models\PurchaseTransactionLine.cs" />
+    <Compile Include="Models\SalesReturnTransaction.cs" />
+    <Compile Include="Models\SalesReturnTransactionLine.cs" />
+    <Compile Include="Models\Supplier.cs" />
+    <Compile Include="Utilities\ERPContext.cs" />
+    <Compile Include="Models\Item.cs" />
+    <Compile Include="Models\SalesTransaction.cs" />
+    <Compile Include="Models\SalesTransactionLine.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\IRepository.cs" />
+    <Compile Include="Utilities\LedgerDBHelper.cs" />
+    <Compile Include="Utilities\Repository.cs" />
+    <Compile Include="Utilities\UnitOfWork.cs" />
+    <Compile Include="ViewModels\BalanceSheetVM.cs" />
+    <Compile Include="ViewModels\BankTransactionVM.cs" />
+    <Compile Include="ViewModels\ClosingVM.cs" />
+    <Compile Include="ViewModels\IncomeStatementVM.cs" />
+    <Compile Include="ViewModels\InventoryVM.cs" />
+    <Compile Include="ViewModels\ItemVM.cs" />
+    <Compile Include="ViewModels\LedgerAccountVM.cs" />
+    <Compile Include="ViewModels\LedgerTransactionLineVM.cs" />
+    <Compile Include="ViewModels\MasterInventoryVM.cs" />
+    <Compile Include="ViewModels\MasterLedgerVM.cs" />
+    <Compile Include="ViewModels\OperatingExpenseVM.cs" />
+    <Compile Include="ViewModels\PurchasePaymentVM.cs" />
+    <Compile Include="ViewModels\PurchaseReturnTransactionVM.cs" />
+    <Compile Include="ViewModels\PurchasesReportVM.cs" />
+    <Compile Include="ViewModels\PurchaseTransactionLineVM.cs" />
+    <Compile Include="ViewModels\PurchaseTransactionVM.cs" />
+    <Compile Include="ViewModels\GeneralLedgerVM.cs" />
+    <Compile Include="ViewModels\SalesReportVM.cs" />
+    <Compile Include="ViewModels\MasterSuppliersVM.cs" />
+    <Compile Include="ViewModels\SalesReturnsReportVM.cs" />
+    <Compile Include="ViewModels\SalesReturnTransactionLineVM.cs" />
+    <Compile Include="ViewModels\SalesReturnTransactionVM.cs" />
+    <Compile Include="ViewModels\SupplierVM.cs" />
+    <Compile Include="Views\Accounting\BalanceSheetView.xaml.cs">
+      <DependentUpon>BalanceSheetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\BankTransactionView.xaml.cs">
+      <DependentUpon>BankTransactionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\ClosingView.xaml.cs">
+      <DependentUpon>ClosingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\GeneralLedgerView.xaml.cs">
+      <DependentUpon>GeneralLedgerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\IncomeStatementView.xaml.cs">
+      <DependentUpon>IncomeStatementView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\OperatingExpenseView.xaml.cs">
+      <DependentUpon>OperatingExpenseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\SalesReturnView.xaml.cs">
+      <DependentUpon>SalesReturnView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Menu\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\MasterInventoryView.xaml.cs">
+      <DependentUpon>MasterInventoryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Menu\BackupRestoreView.xaml.cs">
+      <DependentUpon>BackupRestoreView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\InventoryReportView.xaml.cs">
+      <DependentUpon>InventoryReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\LedgerView.xaml.cs">
+      <DependentUpon>LedgerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\SuppliersView.xaml.cs">
+      <DependentUpon>SuppliersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\PurchasesReportView.xaml.cs">
+      <DependentUpon>PurchasesReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\SalesReportView.xaml.cs">
+      <DependentUpon>SalesReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\SalesReturnsReportView.xaml.cs">
+      <DependentUpon>SalesReturnsReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\PaymentView.xaml.cs">
+      <DependentUpon>PaymentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\PurchaseReturnView.xaml.cs">
+      <DependentUpon>PurchaseReturnView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\PurchaseTransactionView.xaml.cs">
+      <DependentUpon>PurchaseTransactionView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Views\Accounting\BalanceSheetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\BankTransactionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\ClosingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\GeneralLedgerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\IncomeStatementView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\OperatingExpenseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Customers\SalesReturnView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Menu\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\MasterInventoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Menu\BackupRestoreView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\InventoryReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\LedgerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\SuppliersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\PurchasesReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\SalesReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\SalesReturnsReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Suppliers\PaymentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Suppliers\PurchaseReturnView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Suppliers\PurchaseTransactionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
+    <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\MVVMFramework\MVVMFramework.csproj">
+      <Project>{13282864-5854-4b8c-bd10-5a4e9f24eedb}</Project>
+      <Name>MVVMFramework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201512030230368_InitialMigration.resx">
+      <DependentUpon>201512030230368_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,192 @@
+﻿<UserControl x:Class="PutraJayaNT.Views.Accounting.BalanceSheetView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PutraJayaNT.Views.Accounting"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.10*" />
+            <RowDefinition Height="0.20*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Year:" />
+            <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding PeriodYear, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Month:" />
+            <ComboBox Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
+                          ItemsSource="{Binding Months}" SelectedItem="{Binding PeriodMonth, UpdateSourceTrigger=Explicit}" 
+                          IsEditable="True" />
+        </Grid>
+     
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="Balance Sheet for PUJA Supermarket" />
+            <TextBlock Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="{Binding AsOfDate}" />
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.5*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Assets" />
+            <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontStyle="Italic" Text="Current Assets:" />
+            <TextBlock Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Cash and Cash Equivalents" />
+            <TextBlock Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Receivables" />
+            <TextBlock Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Inventories" />
+            <TextBlock Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Prepaid Expenses and Other" />
+            <TextBlock Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Total Current Assets" />
+            <TextBlock Grid.Row="8" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontStyle="Italic" Text="Property and Equipment, at Cost:" />
+            <TextBlock Grid.Row="9" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Land" />
+            <TextBlock Grid.Row="10" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Buildings and Improvements" />
+            <TextBlock Grid.Row="11" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Fixtures and Equipment" />
+            <TextBlock Grid.Row="12" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Transportation Equipment" />
+            <TextBlock Grid.Row="13" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Total Property and Equipment, at Cost" />
+            <TextBlock Grid.Row="15" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Less Accumulated Depreciation" />
+            <TextBlock Grid.Row="16" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Property and Equipment, net" />
+            <TextBlock Grid.Row="18" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Property Under Capital Lease:" />
+            <TextBlock Grid.Row="19" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Less Accumulated Amortizaion" />
+            <TextBlock Grid.Row="20" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Property Under Capital Lease, net" />
+            <TextBlock Grid.Row="22" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Other Assets and Deferred Charges" />
+            <TextBlock Grid.Row="25" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Total Assets" />
+
+            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding CashAndCashEquivalents}" />
+            <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding Inventories}" />
+            <TextBlock Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding TotalCurrentAssets}" />
+
+            <TextBlock Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="10" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="11" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="12" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="13" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="0.00" />
+            <TextBlock Grid.Row="15" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="16" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="0.00" />
+
+            <TextBlock Grid.Row="18" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="19" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="20" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            
+            <TextBlock Grid.Row="22" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+
+            <TextBlock Grid.Row="25" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Foreground="Red" Text="{Binding TotalAssets}" />
+        </Grid>
+        <Grid Grid.Row="2" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.5*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Liabilities and Shareholders' Equity" />
+            <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontStyle="Italic" Text="Current Liabilities:" />
+            <TextBlock Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Accounts Payable" />
+            <TextBlock Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Accrued Liabilities" />
+            <TextBlock Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Accrued Income Taxes" />
+            <TextBlock Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Long-term Debt, due within one year" />
+            <TextBlock Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Obligations Under Capital Leases, due within one year" />
+            <TextBlock Grid.Row="7" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Total Current Liabilities" />
+            <TextBlock Grid.Row="9" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Long-term Obligations Under Capital Leases" />
+            <TextBlock Grid.Row="10" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Deferred Income Taxes and Other" />
+            <TextBlock Grid.Row="12" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Shareholders' Equity:" />
+            <TextBlock Grid.Row="13" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Capital" />
+            <TextBlock Grid.Row="14" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Accumulated Other Comprehensive Income" />
+            <TextBlock Grid.Row="15" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Retained Earnings" />
+            <TextBlock Grid.Row="16" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Total Shareholders' Equity" />
+            <TextBlock Grid.Row="25" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Total Liabilities and Shareholders' Equity" />
+
+            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding AccountsPayable}" />
+            <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding TotalCurrentLiabilities}" />
+
+            <TextBlock Grid.Row="13" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding Capital}" />
+            <TextBlock Grid.Row="14" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
+            <TextBlock Grid.Row="15" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding RetainedEarnings}" />
+            <TextBlock Grid.Row="16" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding TotalEquity}" />
+
+            <TextBlock Grid.Row="25" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Foreground="Red" Text="{Binding TotalLiabilitiesAndEquity}" />
+        </Grid>
+    </Grid>
+</UserControl>
