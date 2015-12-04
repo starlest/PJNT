@@ -26,7 +26,10 @@ namespace PutraJayaNT.ViewModels
         DateTime _newEntryDate;
         DateTime _newEntryDueDate;
         Item _newEntryItem;
-        int? _newEntryQuantity;
+        string _newEntryUnitName;
+        int _newEntryQuantity;
+        int? _newEntryUnits;
+        int? _newEntryPieces;
         decimal? _newEntryPrice;
         decimal? _newEntryTotal;
 
@@ -152,16 +155,33 @@ namespace PutraJayaNT.ViewModels
         public Item NewEntryItem
         {
             get { return _newEntryItem; }
-            set { SetProperty(ref _newEntryItem, value, "NewEntryItem"); }
-        }
-
-        public int? NewEntryQuantity
-        {
-            get { return _newEntryQuantity; }
             set
             {
-                SetProperty(ref _newEntryQuantity, value, "NewEntryQuantity");
+                SetProperty(ref _newEntryItem, value, "NewEntryItem");
+
+                if (_newEntryItem == null) return;
+
+                NewEntryUnitName = _newEntryItem.UnitName;
+                NewEntryPrice = _newEntryItem.PurchasePrice * _newEntryItem.PiecesPerUnit;
             }
+        }
+
+        public string NewEntryUnitName
+        {
+            get { return _newEntryUnitName; }
+            set { SetProperty(ref _newEntryUnitName, value, "NewEntryUnitName"); }
+        }
+
+        public int? NewEntryUnits
+        {
+            get { return _newEntryUnits; }
+            set { SetProperty(ref _newEntryUnits, value, "NewEntryUnits"); }
+        }
+
+        public int? NewEntryPieces
+        {
+            get { return _newEntryPieces; }
+            set { SetProperty(ref _newEntryPieces, value, "NewEntryPieces"); }
         }
 
         public decimal? NewEntryPrice
@@ -196,11 +216,15 @@ namespace PutraJayaNT.ViewModels
                 return _newEntryCommand ?? (_newEntryCommand = new RelayCommand(() =>
                 {
                     if (_newEntrySupplier == null || _newEntryItem == null 
-                    || _newEntryQuantity == null || _newEntryPrice == null) 
+                    || (_newEntryUnits == null && _newEntryPieces == null) || _newEntryPrice == null) 
                     {
                         MessageBox.Show("Please enter all required fields", "Missing field(s)", MessageBoxButton.OK);
                         return;
                     }
+
+                    _newEntryQuantity = ((_newEntryUnits != null ?  (int) _newEntryUnits : 0)  * _newEntryItem.PiecesPerUnit)
+                    + (_newEntryPieces != null ? (int)_newEntryPieces : 0);
+                    _newEntryPrice /= _newEntryItem.PiecesPerUnit;
 
                     // Check if the item exists in one of the lines 
                     foreach (var l in _lines)
@@ -209,8 +233,11 @@ namespace PutraJayaNT.ViewModels
                         {
                             l.Quantity += (int) _newEntryQuantity;
                             NewEntryItem = null;
-                            NewEntryQuantity = null;
+                            _newEntryQuantity = 0;
+                            NewEntryPieces = null;
+                            NewEntryUnits = null;
                             NewEntryPrice = null;
+                            NewEntryUnitName = null;
                             return;
                         }
                     }
@@ -232,8 +259,11 @@ namespace PutraJayaNT.ViewModels
 
                     // Reset fields
                     NewEntryItem = null;
-                    NewEntryQuantity = null;
+                    _newEntryQuantity = 0;
+                    NewEntryPieces = null;
+                    NewEntryUnits = null;
                     NewEntryPrice = null;
+                    NewEntryUnitName = null;
 
                     NewEntrySubmitted = true;
                     NewEntrySubmitted = false;
@@ -260,11 +290,11 @@ namespace PutraJayaNT.ViewModels
                         {
                             var context = new ERPContext();
 
-                            // Increase the respective item's stock
+                            // Increase the respective item's Pieces
                             foreach (var line in this.Model.PurchaseTransactionLines)
                             {
                                 Model.Total += line.Total;
-                                line.Item.Stock += line.Quantity;
+                                line.Item.Pieces += line.Quantity;
                                 context.Inventory.Attach(line.Item);
                                 ((IObjectContextAdapter)context)
                                 .ObjectContext.ObjectStateManager.ChangeObjectState(line.Item, EntityState.Modified);
@@ -333,8 +363,11 @@ namespace PutraJayaNT.ViewModels
         {
             NewEntryItem = null;
             NewEntrySupplier = null;
-            NewEntryQuantity = null;
+            _newEntryQuantity = 0;
+            NewEntryPieces = null;
+            NewEntryUnits = null;
             NewEntryPrice = null;
+            NewEntryUnitName = null;
 
             Model.Date = _newEntryDate;
             Model.DueDate = _newEntryDueDate;

@@ -176,7 +176,7 @@ namespace PutraJayaNT.ViewModels
                 return _purchaseReturnEntryAddCommand ?? (_purchaseReturnEntryAddCommand = new RelayCommand(() =>
                 {
                     var availableReturnQuantity = _selectedPurchaseTransactionLine.Quantity;
-                    var availableStock = _selectedPurchaseTransactionLine.Item.Stock;
+                    var availablePieces = _selectedPurchaseTransactionLine.Item.Pieces;
                     using (var context = new ERPContext())
                     {
                         var returnedItems = context.PurchaseReturnTransactionLines
@@ -200,7 +200,7 @@ namespace PutraJayaNT.ViewModels
 
                     if (_purchaseReturnEntryQuantity > _selectedPurchaseTransactionLine.Quantity
                     || _purchaseReturnEntryQuantity > availableReturnQuantity
-                    || _purchaseReturnEntryQuantity > availableStock
+                    || _purchaseReturnEntryQuantity > availablePieces
                     || _purchaseReturnEntryQuantity <= 0)
                     {
                         MessageBox.Show("Please enter the right amount of quantity.", "Invalid Quantity Input", MessageBoxButton.OK);
@@ -214,7 +214,7 @@ namespace PutraJayaNT.ViewModels
                         {
                             if ((line.Quantity + _purchaseReturnEntryQuantity) > _selectedPurchaseTransactionLine.Quantity ||
                             (line.Quantity + _purchaseReturnEntryQuantity) > availableReturnQuantity ||
-                            (line.Quantity + _purchaseReturnEntryQuantity) > availableStock ||
+                            (line.Quantity + _purchaseReturnEntryQuantity) > availablePieces ||
                             (line.Quantity + _purchaseReturnEntryQuantity) <= 0)
                             {
                                 MessageBox.Show("Please enter the right amount of quantity.", "Invalid Quantity Input", MessageBoxButton.OK);
@@ -280,7 +280,7 @@ namespace PutraJayaNT.ViewModels
                                 context.Inventory.Attach(line.Item);
                                 context.PurchaseReturnTransactionLines.Add(line);
 
-                                line.Item.Stock -= line.Quantity;
+                                line.Item.Pieces -= line.Quantity;
                                 ((IObjectContextAdapter)context).ObjectContext.
                                 ObjectStateManager.ChangeObjectState(line.Item, EntityState.Modified);
                             }

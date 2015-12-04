@@ -88,9 +88,21 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Migrations\201512030230368_InitialMigration.cs" />
-    <Compile Include="Migrations\201512030230368_InitialMigration.Designer.cs">
-      <DependentUpon>201512030230368_InitialMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201512030900529_Update10.cs" />
+    <Compile Include="Migrations\201512030900529_Update10.Designer.cs">
+      <DependentUpon>201512030900529_Update10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512030901409_Update11.cs" />
+    <Compile Include="Migrations\201512030901409_Update11.Designer.cs">
+      <DependentUpon>201512030901409_Update11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512030902157_Update12.cs" />
+    <Compile Include="Migrations\201512030902157_Update12.Designer.cs">
+      <DependentUpon>201512030902157_Update12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512040227124_Update13.cs" />
+    <Compile Include="Migrations\201512040227124_Update13.Designer.cs">
+      <DependentUpon>201512040227124_Update13.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccount.cs" />
@@ -288,17 +300,26 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\MVVMFramework\MVVMFramework.csproj">
+    <Folder Include="Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MVVMFramework\MVVMFramework.csproj">
       <Project>{13282864-5854-4b8c-bd10-5a4e9f24eedb}</Project>
       <Name>MVVMFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Images\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201512030230368_InitialMigration.resx">
-      <DependentUpon>201512030230368_InitialMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201512030900529_Update10.resx">
+      <DependentUpon>201512030900529_Update10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512030901409_Update11.resx">
+      <DependentUpon>201512030901409_Update11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512030902157_Update12.resx">
+      <DependentUpon>201512030902157_Update12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512040227124_Update13.resx">
+      <DependentUpon>201512040227124_Update13.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

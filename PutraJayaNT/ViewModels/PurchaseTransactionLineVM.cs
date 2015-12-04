@@ -21,21 +21,38 @@ namespace PutraJayaNT.ViewModels
             set
             {
                 Model.Quantity = value;
-                OnPropertyChanged("Quantity");
+                OnPropertyChanged("Units");
+                OnPropertyChanged("Pieces");
                 OnPropertyChanged("Total");
             }
         }
 
+        public int Units
+        {
+            get { return Model.Quantity / Model.Item.PiecesPerUnit; }
+        }
+
+        public int Pieces
+        {
+            get { return Model.Quantity % Model.Item.PiecesPerUnit; }
+        }
+
         public decimal PurchasePrice
         {
-            get { return Model.PurchasePrice; }
+            get { return Model.PurchasePrice * Model.Item.PiecesPerUnit; }
             set
             {
-                Model.PurchasePrice = value;
-                OnPropertyChanged("PurchasePrice");
+                Model.PurchasePrice = value / Model.Item.PiecesPerUnit;
+                OnPropertyChanged("PurchasePricePerUnit");
                 OnPropertyChanged("Total");
             }
         }
+
+        public decimal PurchasePricePerUnit
+        {
+            get { return Model.PurchasePrice * Model.Item.PiecesPerUnit; }
+        }
+
 
         public decimal Total
         {
@@ -45,6 +62,11 @@ namespace PutraJayaNT.ViewModels
                 return Model.Total;
             }
             private set { Model.Total = value; }
+        }
+
+        public string PurchaseID
+        {
+            get { return Model.PurchaseID; }
         }
     }
 }

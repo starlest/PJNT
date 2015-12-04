@@ -38,7 +38,7 @@
                       DisplayMemberPath="Name" IsEditable="True" />
                 <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Product:" />
                 <ComboBox Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 50, 0" 
-                      ItemsSource="{Binding SupplierItems}" SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=Explicit}" 
+                      ItemsSource="{Binding SupplierItems}" SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}" 
                       DisplayMemberPath="Name" IsEditable="True" />
             </Grid>
         </Border>
@@ -46,15 +46,13 @@
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Purchase ID" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseTransaction.PurchaseID}" />
+                <DataGridTextColumn Header="Purchase ID" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseID}" />
                 <DataGridTextColumn Header="Item ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Quantity" Width="1*" Binding="{Binding Quantity}" />
-                <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
+                <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
+                <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
-                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseTransaction.Date, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseTransaction.DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTextColumn Header="Paid" Width="1*" IsReadOnly="True" Binding="{Binding Paid}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

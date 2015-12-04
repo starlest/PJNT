@@ -8,7 +8,7 @@
              d:DesignHeight="768" d:DesignWidth="1024">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="0.40*" />
             <RowDefinition Height="0.125*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.125*" />
@@ -16,6 +16,7 @@
         <Border BorderBrush="Blue" BorderThickness="2">
             <Grid IsEnabled="{Binding IsEditWindowNotOpen}">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
@@ -47,9 +48,21 @@
                       ItemsSource="{Binding Suppliers}" SelectedItem="{Binding NewEntrySupplier, Mode=TwoWay}"
                       IsEditable="True" />
                 <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" 
-                       FontSize="28" Foreground="Blue" Text="Price:" />
-                <TextBox Grid.Row="1"  Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
-                         Text="{Binding NewEntryPrice, Mode=TwoWay}" />
+                       FontSize="28" Foreground="Blue" Text="Sales Price:" />
+                <TextBox Grid.Row="1"  Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntrySalesPrice, Mode=TwoWay}" />
+                <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                       FontSize="28" Foreground="Blue" Text="Purchase Price:" />
+                <TextBox Grid.Row="1"  Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntryPurchasePrice, Mode=TwoWay}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                       FontSize="28" Foreground="Blue" Text="Unit Name:" />
+                <TextBox Grid.Row="2"  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntryUnitName, Mode=TwoWay}" />
+                <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                       FontSize="28" Foreground="Blue" Text="Pieces/Unit:" />
+                <TextBox Grid.Row="2"  Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntryPiecesPerUnit, Mode=TwoWay}" />
                 <Button Content="Add" Grid.Column="6" Command="{Binding NewEntryCommand}" />
                 <Button Content="Cancel" Grid.Row="1" Grid.Column="6" Command="{Binding CancelEntryCommand}" />
             </Grid>
@@ -82,14 +95,17 @@
         <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedItems}" 
                   CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   SelectedItem="{Binding SelectedLine}" IsEnabled="{Binding IsEditWindowNotOpen}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding ID}" />
-                <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Category" Width="1*" IsReadOnly="True" Binding="{Binding Category.Name}" />
-                <DataGridTextColumn Header="Stock" Width="1*" IsReadOnly="True" Binding="{Binding Stock}" />
-                <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding Price}" />
+                <DataGridTextColumn Header="Unit Name" Width="1*" IsReadOnly="True" Binding="{Binding UnitName}" />
+                <DataGridTextColumn Header="Pieces/Unit" Width="1*" IsReadOnly="True" Binding="{Binding PiecesPerUnit}" />
+                <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
+                <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice}" />
                 <DataGridTemplateColumn Header="Suppliers" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -124,6 +140,8 @@
                 <RowDefinition Height ="1*" />
                 <RowDefinition Height ="1*" />
                 <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
+                <RowDefinition Height ="1*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
@@ -135,7 +153,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Rectangle Stroke="Blue" Fill="White" IsHitTestVisible="False" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="4" Grid.RowSpan="4" />
+            <Rectangle Stroke="Blue" Fill="White" IsHitTestVisible="False" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" Grid.RowSpan="7" />
             <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="ID:" />
             <TextBox Grid.Row="3" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                      IsReadOnly="True" Text="{Binding EditID, Mode=TwoWay}" />
@@ -146,17 +164,26 @@
             <ComboBox Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                       ItemsSource="{Binding CategoriesWithoutAll}" SelectedItem="{Binding EditCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       DisplayMemberPath="Name" IsEditable="True" />
-            <TextBlock Grid.Row="4" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Price:" />
+            <TextBlock Grid.Row="4" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Purchase Price:" />
             <TextBox Grid.Row="4" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding EditPrice, Mode=TwoWay}" />
-            <TextBlock Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Suppliers:" />
-            <ComboBox Grid.Row="5" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding EditPurchasePrice, Mode=TwoWay}" />
+            <TextBlock Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Sales Price:" />
+            <TextBox Grid.Row="5" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding EditSalesPrice, Mode=TwoWay}" />
+            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Suppliers:" />
+            <ComboBox Grid.Row="6" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                       ItemsSource="{Binding EditSuppliers}" SelectedItem="{Binding EditSelectedSupplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       DisplayMemberPath="Name" IsEditable="True" />
-            <Button Grid.Row="5" Grid.Column="4"  Content="Add" Command="{Binding EditAddSupplierCommand}" Margin="10, 20, 10, 10" Foreground="Red" IsEnabled="{Binding SelectedLine.Active}" />
-            <Button Grid.Row="5" Grid.Column="5"  Content="Delete" Command="{Binding EditDeleteSupplierCommand}" Margin="10, 20, 10, 10" Foreground="Red" IsEnabled="{Binding SelectedLine.Active}" />
-            <Button Grid.Row="6" Grid.Column="3" Content="Confirm" Command="{Binding ConfirmEditCommand}" Margin="10" />
-            <Button Grid.Row="6" Grid.Column="4"  Content="Cancel" Command="{Binding CancelEditCommand}" Margin="10" />
+            <Button Grid.Row="7" Grid.Column="4"  Content="Add" Command="{Binding EditAddSupplierCommand}" Margin="10, 20, 10, 10" Foreground="Red" IsEnabled="{Binding SelectedLine.Active}" />
+            <Button Grid.Row="7" Grid.Column="5"  Content="Delete" Command="{Binding EditDeleteSupplierCommand}" Margin="10, 20, 10, 10" Foreground="Red" IsEnabled="{Binding SelectedLine.Active}" />
+            <TextBlock Grid.Row="6" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Unit Name:" />
+            <TextBox Grid.Row="6" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                     Text="{Binding EditUnitName, Mode=TwoWay}" />
+            <TextBlock Grid.Row="5" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Pieces/Unit:" />
+            <TextBox Grid.Row="5" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding EditPiecesPerUnit, Mode=TwoWay}" />
+            <Button Grid.Row="8" Grid.Column="3" Content="Confirm" Command="{Binding ConfirmEditCommand}" Margin="10" />
+            <Button Grid.Row="8" Grid.Column="4"  Content="Cancel" Command="{Binding CancelEditCommand}" Margin="10" />
         </Grid>
         <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="100" Visibility="{Binding EditAddSupplierWindowVisibility}">
             <Grid.RowDefinitions>

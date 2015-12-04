@@ -246,28 +246,28 @@ namespace PutraJayaNT.ViewModels
                     .ToList();
 
                 var lineQuantityTracker = sr.Quantity;
-                var stockTracker = sr.Item.Stock;
+                var PiecesTracker = sr.Item.Pieces;
                 bool found = false;
                 for (var i = 0; i < latestPurchases.Count; i++)
                 {
-                    if (stockTracker > latestPurchases[i].Quantity)
+                    if (PiecesTracker > latestPurchases[i].Quantity)
                     {
-                        stockTracker -= latestPurchases[i].Quantity;
+                        PiecesTracker -= latestPurchases[i].Quantity;
                         continue;
                     }
 
                     if (!found)
                     {
                         found = true;
-                        if ((lineQuantityTracker + stockTracker) <= latestPurchases[i].Quantity)
+                        if ((lineQuantityTracker + PiecesTracker) <= latestPurchases[i].Quantity)
                         {
                             amount += lineQuantityTracker * latestPurchases[i].PurchasePrice;
                             break;
                         }
                         else
                         {
-                            amount += (latestPurchases[i].Quantity - stockTracker) * latestPurchases[i].PurchasePrice;
-                            lineQuantityTracker -= (latestPurchases[i].Quantity - stockTracker);
+                            amount += (latestPurchases[i].Quantity - PiecesTracker) * latestPurchases[i].PurchasePrice;
+                            lineQuantityTracker -= (latestPurchases[i].Quantity - PiecesTracker);
                         }
                         continue;
                     }
@@ -328,7 +328,7 @@ namespace PutraJayaNT.ViewModels
                                 context.Inventory.Attach(line.Item);
                                 context.SalesReturnTransactionLines.Add(line);
 
-                                line.Item.Stock += line.Quantity;
+                                line.Item.Pieces += line.Quantity;
                                 ((IObjectContextAdapter)context).ObjectContext.
                                 ObjectStateManager.ChangeObjectState(line.Item, EntityState.Modified);
                             }

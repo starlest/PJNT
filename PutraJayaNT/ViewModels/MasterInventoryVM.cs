@@ -29,7 +29,10 @@ namespace PutraJayaNT.ViewModels
         string _newEntryName;
         Category _newEntryCategory;
         Supplier _newEntrySupplier;
-        decimal? _newEntryPrice;
+        int _newEntryPiecesPerUnit;
+        string _newEntryUnitName;
+        decimal? _newEntryPurchasePrice;
+        decimal? _newEntrySalesPrice;
         ICommand _newEntryCommand;
         ICommand _cancelEntryCommand;
 
@@ -54,8 +57,11 @@ namespace PutraJayaNT.ViewModels
         string _editID;
         string _editName;
         Category _editCategory;
-        decimal _editPrice;
+        decimal _editPurchasePrice;
+        decimal _editSalesPrice;
         Supplier _editSelectedSupplier;
+        string _editUnitName;
+        int _editPiecesPerUnit;
 
         bool _isEditWindowNotOpen;
         Visibility _editWindowVisibility;
@@ -78,6 +84,8 @@ namespace PutraJayaNT.ViewModels
             _editAddSuppliers = new ObservableCollection<Supplier>();
             _editAddSupplierWindowVisibility = Visibility.Collapsed;
             _isEditAddSupplierWindowNotOpen = true;
+
+            _newEntryPiecesPerUnit = 1;
         }
 
         public ObservableCollection<ItemVM> Items
@@ -253,10 +261,28 @@ namespace PutraJayaNT.ViewModels
             set { SetProperty(ref _newEntrySupplier, value, "NewEntrySupplier"); }
         }
 
-        public decimal? NewEntryPrice
+        public int NewEntryPiecesPerUnit
         {
-            get { return _newEntryPrice; }
-            set { SetProperty(ref _newEntryPrice, value, "NewEntryPrice"); }
+            get { return _newEntryPiecesPerUnit; }
+            set { SetProperty(ref _newEntryPiecesPerUnit, value, "NewEntryPiecesPerUnit"); }
+        }
+
+        public string NewEntryUnitName
+        {
+            get { return _newEntryUnitName; }
+            set { SetProperty(ref _newEntryUnitName, value, "NewEntryUnitName"); }
+        }
+
+        public decimal? NewEntrySalesPrice
+        {
+            get { return _newEntrySalesPrice; }
+            set { SetProperty(ref _newEntrySalesPrice, value, "NewEntrySalesPrice"); }
+        }
+
+        public decimal? NewEntryPurchasePrice
+        {
+            get { return _newEntryPurchasePrice; }
+            set { SetProperty(ref _newEntryPurchasePrice, value, "NewEntryPurchasePrice"); }
         }
 
         public ICommand CancelEntryCommand
@@ -281,7 +307,8 @@ namespace PutraJayaNT.ViewModels
                 {
                     if (_newEntryID == null || _newEntryName == null ||
                     _newEntryCategory == null || _newEntrySupplier == null ||
-                    _newEntryPrice == null)
+                    _newEntrySalesPrice == null || _newEntryPurchasePrice == null ||
+                    _newEntryPiecesPerUnit <= 0 || _newEntryUnitName == null)
                     {
                         MessageBox.Show("Please enter all fields", "Missing Fields", MessageBoxButton.OK);
                         return;
@@ -294,17 +321,24 @@ namespace PutraJayaNT.ViewModels
                             ItemID = _newEntryID,
                             Name = _newEntryName,
                             Category = _newEntryCategory,
-                            Price = (decimal) _newEntryPrice
+                            UnitName = _newEntryUnitName,
+                            PiecesPerUnit = _newEntryPiecesPerUnit,
+                            PurchasePrice = (decimal)_newEntryPurchasePrice,
+                            SalesPrice = (decimal)_newEntrySalesPrice
                         };
                         newItem.Suppliers.Add(_newEntrySupplier);
 
                         var context = new ERPContext();
                         try
                         {
-                            context.Inventory.Add(newItem);
                             context.Suppliers.Attach(_newEntrySupplier);
                             context.Category.Attach(_newEntryCategory);
+                            context.Inventory.Add(newItem);
                             context.SaveChanges();
+                            ((IObjectContextAdapter)context).ObjectContext.
+                            ObjectStateManager.ChangeObjectState(_newEntrySupplier, EntityState.Detached);
+                            ((IObjectContextAdapter)context).ObjectContext
+                            .ObjectStateManager.ChangeObjectState(_newEntryCategory, EntityState.Detached);
                         }
                     
                         catch (Exception e)
@@ -374,7 +408,10 @@ namespace PutraJayaNT.ViewModels
                     EditID = _selectedLine.ID;
                     EditName = _selectedLine.Name;
                     EditCategory = _categories.Where(e => e.ID == _selectedLine.Category.ID).FirstOrDefault();
-                    EditPrice = _selectedLine.Price;
+                    EditSalesPrice = _selectedLine.SalesPrice;
+                    EditPurchasePrice = _selectedLine.PurchasePrice;
+                    EditUnitName = _selectedLine.UnitName;
+                    EditPiecesPerUnit = _selectedLine.PiecesPerUnit;
                     _editSuppliers.Clear();
                     foreach (var supplier in _selectedLine.Suppliers)
                         _editSuppliers.Add(supplier);
@@ -403,10 +440,28 @@ namespace PutraJayaNT.ViewModels
             set { SetProperty(ref _editCategory, value, () => EditCategory); }
         }
 
-        public decimal EditPrice
+        public decimal EditSalesPrice
         {
-            get { return _editPrice; }
-            set { SetProperty(ref _editPrice, value, () => EditPrice); }
+            get { return _editSalesPrice; }
+            set { SetProperty(ref _editSalesPrice, value, () => EditSalesPrice); }
+        }
+
+        public decimal EditPurchasePrice
+        {
+            get { return _editPurchasePrice; }
+            set { SetProperty(ref _editPurchasePrice, value, () => EditPurchasePrice); }
+        }
+
+        public string EditUnitName
+        {
+            get { return _editUnitName; }
+            set { SetProperty(ref _editUnitName, value, () => EditUnitName); }
+        }
+
+        public int EditPiecesPerUnit
+        {
+            get { return _editPiecesPerUnit; }
+            set { SetProperty(ref _editPiecesPerUnit, value, () => EditPiecesPerUnit); }
         }
 
         public ObservableCollection<Supplier> EditSuppliers
@@ -524,7 +579,10 @@ namespace PutraJayaNT.ViewModels
                             item.Category = context.Category
                             .Where(e => e.ID == _editCategory.ID)
                             .FirstOrDefault();
-                            item.Price = _editPrice;
+                            item.PurchasePrice = _editPurchasePrice;
+                            item.SalesPrice = _editSalesPrice;
+                            item.UnitName = _editUnitName;
+                            item.PiecesPerUnit = _editPiecesPerUnit;
 
                             // Adjust the item's suppliers to the edited list of suppliers
                             item.Suppliers.ToList().ForEach(e => item.Suppliers.Remove(e));
@@ -543,7 +601,10 @@ namespace PutraJayaNT.ViewModels
                             _selectedLine.ID = _editID;
                             _selectedLine.Name = _editName;
                             _selectedLine.Category = _editCategory;
-                            _selectedLine.Price = _editPrice;
+                            _selectedLine.PurchasePrice = _editPurchasePrice;
+                            _selectedLine.SalesPrice = _editSalesPrice;
+                            _selectedLine.UnitName = _editUnitName;
+                            _selectedLine.PiecesPerUnit = _editPiecesPerUnit;
                         }
 
                         EditWindowVisibility = Visibility.Collapsed;
@@ -610,12 +671,14 @@ namespace PutraJayaNT.ViewModels
                     .Include("Suppliers")
                     .Include("Category")
                     .OrderBy(e => e.Category.Name)
-                    .ThenBy(e => e.ItemID);
+                    .ThenBy(e => e.Name);
 
                 foreach (var item in items)
                 {
                     _items.Add(new ItemVM { Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault() });
                 }
+
+                UpdateSuppliers();
             }
         }
 
@@ -641,7 +704,10 @@ namespace PutraJayaNT.ViewModels
             NewEntryName = null;
             NewEntryCategory = null;
             NewEntrySupplier = null;
-            NewEntryPrice = null;
+            NewEntryPiecesPerUnit = 1;
+            NewEntryUnitName = null;
+            NewEntrySalesPrice = null;
+            NewEntryPurchasePrice = null;
         }
     }
 }

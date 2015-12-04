@@ -13,8 +13,9 @@ namespace PutraJayaNT.Models
         {
             TransactionLines = new HashSet<SalesTransactionLine>();
             Suppliers = new ObservableCollection<Supplier>();
+            PiecesPerUnit = 1;
             Active = true;
-            Stock = 0;
+            Pieces = 0;
         }
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 0)]
@@ -23,10 +24,16 @@ namespace PutraJayaNT.Models
         public virtual Category Category { get; set; }
 
         public string Name { get; set; }
-        
-        public decimal Price { get; set; }
 
-        public int Stock { get; set; }
+        public decimal PurchasePrice { get; set; }
+
+        public decimal SalesPrice { get; set; }
+
+        public string UnitName { get; set; }
+
+        public int PiecesPerUnit { get; set; }
+
+        public int Pieces { get; set; }
 
         public virtual ObservableCollection<Supplier> Suppliers { get; set; }
 

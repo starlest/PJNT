@@ -13,7 +13,7 @@ namespace PutraJayaNT.ViewModels
     {
         ObservableCollection<Supplier> _suppliers;
         ObservableCollection<Item> _supplierItems;
-        ObservableCollection<PurchaseTransactionLine> _displayLines;
+        ObservableCollection<PurchaseTransactionLineVM> _displayLines;
 
         DateTime _fromDate;
         DateTime _toDate;
@@ -25,7 +25,7 @@ namespace PutraJayaNT.ViewModels
         {
             _suppliers = new ObservableCollection<Supplier>();
             _supplierItems = new ObservableCollection<Item>();
-            _displayLines = new ObservableCollection<PurchaseTransactionLine>();
+            _displayLines = new ObservableCollection<PurchaseTransactionLineVM>();
             _fromDate = DateTime.Now.Date;
             _toDate = DateTime.Now.Date.AddDays(1);
         }
@@ -44,7 +44,7 @@ namespace PutraJayaNT.ViewModels
             get { return _supplierItems; }
         }
 
-        public ObservableCollection<PurchaseTransactionLine> DisplayLines
+        public ObservableCollection<PurchaseTransactionLineVM> DisplayLines
         {
             get { return _displayLines; }
         }
@@ -98,7 +98,7 @@ namespace PutraJayaNT.ViewModels
 
                 RefreshSuppliers();
             
-                _supplierItems.Add(new Item { Name = "All" });
+                _supplierItems.Add(new Item { ItemID = "-1", Name = "All" });
                 using (var context = new ERPContext())
                 {
                     var items = context.Inventory
@@ -119,6 +119,9 @@ namespace PutraJayaNT.ViewModels
             set
             {
                 SetProperty(ref _selectedItem, value, "SelectedItem");
+
+                if (_selectedItem == null) return;
+
                 RefreshDisplaylines();
              }
         }
@@ -139,10 +142,8 @@ namespace PutraJayaNT.ViewModels
         public void RefreshDisplaylines()
         {
             _displayLines.Clear();
-      
-            if (_selectedItem == null) return;
 
-            else if (_selectedItem.Name == "All")
+            if (_selectedItem.Name.Equals("All"))
             {
                 using (var context = new ERPContext())
                 {
@@ -153,7 +154,7 @@ namespace PutraJayaNT.ViewModels
                     foreach (var purchase in purchases)
                     {
                         foreach (var line in purchase.PurchaseTransactionLines)
-                            _displayLines.Add(line);
+                            _displayLines.Add(new PurchaseTransactionLineVM { Model = line });
 
                     }
                 }
@@ -165,6 +166,7 @@ namespace PutraJayaNT.ViewModels
                 {
                     var purchases = context.PurchaseTransactions
                         .Where(e => e.Supplier.ID == _selectedSupplier.ID && e.Date >= _fromDate && e.Date <= _toDate)
+                        .Include("PurchaseTransactionLines")
                         .Include("PurchaseTransactionLines.Item");
 
                     foreach (var purchase in purchases)
@@ -172,7 +174,7 @@ namespace PutraJayaNT.ViewModels
                         foreach (var line in purchase.PurchaseTransactionLines)
                         {
                             if (line.ItemID.Equals(_selectedItem.ItemID))
-                                _displayLines.Add(line);
+                                _displayLines.Add(new PurchaseTransactionLineVM { Model = line });
                         }
                     }
                 }

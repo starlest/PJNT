@@ -48,9 +48,13 @@
                           AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding ID}" />
-                <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Stock" Width="1*" IsReadOnly="True" Binding="{Binding Stock}" />
-                <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding Price}" />
+                <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Unit Name" Width="1*" IsReadOnly="True" Binding="{Binding UnitName}" />
+                <DataGridTextColumn Header="Pieces/Unit" Width="1*" IsReadOnly="True" Binding="{Binding PiecesPerUnit}" />
+                <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
+                <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
+                <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice}" />
                 <DataGridTemplateColumn Header="Suppliers">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

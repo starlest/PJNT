@@ -38,19 +38,56 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public decimal Price
+
+        public decimal PurchasePrice
         {
-            get { return Model.Price; }
+            get { return Model.PurchasePrice * Model.PiecesPerUnit; }
             set
             {
-                Model.Price = value;
-                OnPropertyChanged("Price");
+                Model.PurchasePrice = value / Model.PiecesPerUnit;
+                OnPropertyChanged("PurchasePrice");
             }
         }
 
-        public int Stock
+
+        public decimal SalesPrice
         {
-            get { return Model.Stock; }
+            get { return Model.SalesPrice * Model.PiecesPerUnit; }
+            set
+            {
+                Model.SalesPrice = value / Model.PiecesPerUnit;
+                OnPropertyChanged("SalesPrice");
+            }
+        }
+
+        public string UnitName
+        {
+            get { return Model.UnitName; }
+            set
+            {
+                Model.UnitName = value;
+                OnPropertyChanged("UnitName");
+            }
+        }
+
+        public int PiecesPerUnit
+        {
+            get { return Model.PiecesPerUnit; }
+            set
+            {
+                Model.PiecesPerUnit = value;
+                OnPropertyChanged("PiecesPerUnit");
+            }
+        }
+
+        public int Units
+        {
+            get { return Model.Pieces / Model.PiecesPerUnit; }
+        }
+
+        public int Pieces
+        {
+            get { return Model.Pieces; }
         }
 
         public ObservableCollection<Supplier> Suppliers
