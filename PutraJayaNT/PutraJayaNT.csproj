@@ -8,8 +8,8 @@
     <ProjectGuid>{E59C0673-7A62-4081-A85B-5C7EB6B20967}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PUJASM.ERP</RootNamespace>
-    <AssemblyName>PUJASM.ERP</AssemblyName>
+    <RootNamespace>PutraJayaNT</RootNamespace>
+    <AssemblyName>PutraJayaNT</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -88,21 +88,17 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Migrations\201512030900529_Update10.cs" />
-    <Compile Include="Migrations\201512030900529_Update10.Designer.cs">
-      <DependentUpon>201512030900529_Update10.cs</DependentUpon>
+    <Compile Include="Migrations\201512080209169_Update1.cs" />
+    <Compile Include="Migrations\201512080209169_Update1.Designer.cs">
+      <DependentUpon>201512080209169_Update1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201512030901409_Update11.cs" />
-    <Compile Include="Migrations\201512030901409_Update11.Designer.cs">
-      <DependentUpon>201512030901409_Update11.cs</DependentUpon>
+    <Compile Include="Migrations\201512080217226_Update2.cs" />
+    <Compile Include="Migrations\201512080217226_Update2.Designer.cs">
+      <DependentUpon>201512080217226_Update2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201512030902157_Update12.cs" />
-    <Compile Include="Migrations\201512030902157_Update12.Designer.cs">
-      <DependentUpon>201512030902157_Update12.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512040227124_Update13.cs" />
-    <Compile Include="Migrations\201512040227124_Update13.Designer.cs">
-      <DependentUpon>201512040227124_Update13.cs</DependentUpon>
+    <Compile Include="Migrations\201512080927588_Update10.cs" />
+    <Compile Include="Migrations\201512080927588_Update10.Designer.cs">
+      <DependentUpon>201512080927588_Update10.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccount.cs" />
@@ -111,6 +107,8 @@
     <Compile Include="Models\Accounting\LedgerTransaction.cs" />
     <Compile Include="Models\Accounting\LedgerTransactionLine.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Customer.cs" />
+    <Compile Include="Models\CustomerGroup.cs" />
     <Compile Include="Models\PurchaseReturnTransaction.cs" />
     <Compile Include="Models\PurchaseReturnTransactionLine.cs" />
     <Compile Include="Models\PurchaseTransaction.cs" />
@@ -130,11 +128,13 @@
     <Compile Include="ViewModels\BalanceSheetVM.cs" />
     <Compile Include="ViewModels\BankTransactionVM.cs" />
     <Compile Include="ViewModels\ClosingVM.cs" />
+    <Compile Include="ViewModels\CustomerVM.cs" />
     <Compile Include="ViewModels\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\InventoryVM.cs" />
     <Compile Include="ViewModels\ItemVM.cs" />
     <Compile Include="ViewModels\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\LedgerTransactionLineVM.cs" />
+    <Compile Include="ViewModels\MasterCustomersVM.cs" />
     <Compile Include="ViewModels\MasterInventoryVM.cs" />
     <Compile Include="ViewModels\MasterLedgerVM.cs" />
     <Compile Include="ViewModels\OperatingExpenseVM.cs" />
@@ -149,6 +149,8 @@
     <Compile Include="ViewModels\SalesReturnsReportVM.cs" />
     <Compile Include="ViewModels\SalesReturnTransactionLineVM.cs" />
     <Compile Include="ViewModels\SalesReturnTransactionVM.cs" />
+    <Compile Include="ViewModels\SalesTransactionLineVM.cs" />
+    <Compile Include="ViewModels\SalesTransactionVM.cs" />
     <Compile Include="ViewModels\SupplierVM.cs" />
     <Compile Include="Views\Accounting\BalanceSheetView.xaml.cs">
       <DependentUpon>BalanceSheetView.xaml</DependentUpon>
@@ -170,6 +172,12 @@
     </Compile>
     <Compile Include="Views\Customers\SalesReturnView.xaml.cs">
       <DependentUpon>SalesReturnView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\SalesTransactionView.xaml.cs">
+      <DependentUpon>SalesTransactionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\MasterCustomersView.xaml.cs">
+      <DependentUpon>MasterCustomersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Menu\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
@@ -244,6 +252,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Customers\SalesTransactionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\MasterCustomersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Menu\HomeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -309,17 +325,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201512030900529_Update10.resx">
-      <DependentUpon>201512030900529_Update10.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201512080209169_Update1.resx">
+      <DependentUpon>201512080209169_Update1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512030901409_Update11.resx">
-      <DependentUpon>201512030901409_Update11.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201512080217226_Update2.resx">
+      <DependentUpon>201512080217226_Update2.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512030902157_Update12.resx">
-      <DependentUpon>201512030902157_Update12.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512040227124_Update13.resx">
-      <DependentUpon>201512040227124_Update13.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201512080927588_Update10.resx">
+      <DependentUpon>201512080927588_Update10.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

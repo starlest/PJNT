@@ -26,19 +26,13 @@ namespace PutraJayaNT.Utilities
         public virtual DbSet<PurchaseTransaction> PurchaseTransactions { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Supplier> Suppliers { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<CustomerGroup> CustomerGroups { get; set; }
 
         public virtual DbSet<LedgerAccount> Ledger_Accounts { get; set; }
         public virtual DbSet<LedgerTransaction> Ledger_Transactions { get; set; }
         public virtual DbSet<LedgerTransactionLine> Ledger_Transaction_Lines { get; set; }
         public virtual DbSet<LedgerGeneral> Ledger_General { get; set; }
         public virtual DbSet<LedgerAccountBalance> Ledger_Account_Balances { get; set; }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>()
-                .HasMany(e => e.Transactions)
-                .WithOptional(e => e.User)
-                .HasForeignKey(e => e.CashierName);
-        }
     }
 }

@@ -52,6 +52,7 @@ namespace PutraJayaNT.ViewModels
                         var accounts = context.Ledger_Accounts
                             .Include("LedgerGeneral")
                             .OrderBy(e => e.Class)
+                            .ThenBy(e => e.Notes)
                             .ThenBy(e => e.Name);
                         
                         foreach (var account in accounts)
@@ -68,6 +69,7 @@ namespace PutraJayaNT.ViewModels
                             .Where(e => e.Class == value)
                             .Include("LedgerGeneral")
                             .OrderBy(e => e.Class)
+                            .ThenBy(e => e.Notes)
                             .ThenBy(e => e.Name);
 
                         foreach (var account in accounts)

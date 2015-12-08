@@ -80,6 +80,12 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        public int Quantity
+        {
+            get { return Model.Pieces; }
+            set { Model.Pieces = value; }
+        }
+
         public int Units
         {
             get { return Model.Pieces / Model.PiecesPerUnit; }
@@ -87,7 +93,7 @@ namespace PutraJayaNT.ViewModels
 
         public int Pieces
         {
-            get { return Model.Pieces; }
+            get { return Model.Pieces % Model.PiecesPerUnit; }
         }
 
         public ObservableCollection<Supplier> Suppliers

@@ -41,6 +41,10 @@ namespace PutraJayaNT.Models
 
         [Required]
         [Column(Order = 4)]
+        public decimal Discount { get; set; }
+
+        [Required]
+        [Column(Order = 5)]
         public decimal Total { get; set; }
 
         [ForeignKey("ItemID")]

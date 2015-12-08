@@ -13,9 +13,7 @@ namespace PutraJayaNT.Models
         {
             TransactionLines = new HashSet<SalesTransactionLine>();
             Suppliers = new ObservableCollection<Supplier>();
-            PiecesPerUnit = 1;
             Active = true;
-            Pieces = 0;
         }
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 0)]

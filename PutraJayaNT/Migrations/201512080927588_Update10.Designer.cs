@@ -13,7 +13,7 @@ namespace PUJASM.ERP.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201512030900529_Update10"; }
+            get { return "201512080927588_Update10"; }
         }
         
         string IMigrationMetadata.Source

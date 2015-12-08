@@ -19,10 +19,12 @@
                 <mui:Link DisplayName="Accounts" Source="/Views/Master/LedgerView.xaml" />
                 <mui:Link DisplayName="Inventory" Source="/Views/Master/MasterInventoryView.xaml"  />
                 <mui:Link DisplayName="Suppliers" Source="/Views/Master/SuppliersView.xaml" />
+                <mui:Link DisplayName="Customers" Source="/Views/Master/MasterCustomersView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Customers">
             <mui:LinkGroup.Links>
+                <mui:Link DisplayName="Sales Transaction" Source="/Views/Customers/SalesTransactionView.xaml" />
                 <mui:Link DisplayName="Sales Return" Source="/Views/Customers/SalesReturnView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
