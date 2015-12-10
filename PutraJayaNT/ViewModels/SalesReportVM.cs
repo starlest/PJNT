@@ -1,5 +1,6 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
+using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
@@ -26,7 +27,7 @@ namespace PutraJayaNT.ViewModels
         DateTime _toDate;
 
         Category _selectedCategory;
-        Item _selectedItem;
+        Stock _selectedItem;
 
         public SalesReportVM()
         {
@@ -125,7 +126,7 @@ namespace PutraJayaNT.ViewModels
 
                     using (var context = new ERPContext())
                     {
-                        var items = context.Inventory;
+                        var items = context.ItemDetails;
                         foreach (var item in items)
                             _categoryItems.Add(item);
                     }
@@ -137,7 +138,7 @@ namespace PutraJayaNT.ViewModels
 
                     using (var context = new ERPContext())
                     {
-                        var items = context.Inventory
+                        var items = context.ItemDetails
                             .Where(e => e.Category.Name == _selectedCategory.Name);
                         foreach (var item in items)
                             _categoryItems.Add(item);
@@ -146,7 +147,7 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public Item SelectedItem
+        public Stock SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -195,7 +196,7 @@ namespace PutraJayaNT.ViewModels
             using (var context = new ERPContext())
             {
                 _categories.Add(new Category { Name = "All" });
-                var categories = context.Category.Include("Items");
+                var categories = context.Categories.Include("Items");
                 foreach (var category in categories)
                     _categories.Add(category);
             }
@@ -208,7 +209,7 @@ namespace PutraJayaNT.ViewModels
 
             if (_selectedItem == null) return;
 
-            if (_selectedCategory.Name == "All" && _selectedItem.Name == "All")
+            if (_selectedCategory.Name == "All" && _selectedItem.ItemDetail.Name == "All")
             {
                 using (var context = new ERPContext())
                 {
@@ -216,7 +217,7 @@ namespace PutraJayaNT.ViewModels
                         .Include("Item")
                         .Include("SalesTransaction")
                         .Where(e => e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.Name);
+                        .OrderBy(e => e.Item.ItemDetail.Name);
 
                     
                     foreach (var line in transactionLines)
@@ -239,15 +240,15 @@ namespace PutraJayaNT.ViewModels
                 }
             }
 
-            else if (_selectedCategory.Name == "All" && _selectedItem.Name != "All")
+            else if (_selectedCategory.Name == "All" && _selectedItem.ItemDetail.Name != "All")
             {
                 using (var context = new ERPContext())
                 {
                     var transactionLines = context.SalesTransactionLines
                         .Include("Item")
                         .Include("SalesTransaction")
-                        .Where(e => e.Item.Name == _selectedItem.Name && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.Name);
+                        .Where(e => e.Item.ItemDetail.Name == _selectedItem.ItemDetail.Name && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
+                        .OrderBy(e => e.Item.ItemDetail.Name);
 
                     foreach (var line in transactionLines)
                     {
@@ -269,14 +270,14 @@ namespace PutraJayaNT.ViewModels
                 }
             }
 
-            else if (_selectedCategory.Name != "All" && _selectedItem.Name == "All")
+            else if (_selectedCategory.Name != "All" && _selectedItem.ItemDetail.Name == "All")
             {
                 using (var context = new ERPContext())
                 {
                     var transactionLines = context.SalesTransactionLines
-                        .Where(e => e.Item.Category.Name == _selectedCategory.Name
+                        .Where(e => e.Item.ItemDetail.Category.Name == _selectedCategory.Name
                         && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.Name)
+                        .OrderBy(e => e.Item.ItemDetail.Name)
                         .Include("Item")
                         .Include("SalesTransaction");
 
@@ -305,11 +306,11 @@ namespace PutraJayaNT.ViewModels
                 using (var context = new ERPContext())
                 {
                     var transactionLines = context.SalesTransactionLines
-                        .Where(e => e.Item.Category.Name == _selectedCategory.Name
-                        && e.Item.Name == _selectedItem.Name
+                        .Where(e => e.Item.ItemDetail.Category.Name == _selectedCategory.Name
+                        && e.Item.ItemDetail.Name == _selectedItem.ItemDetail.Name
                         && e.SalesTransaction.When >= _fromDate
                         && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.Name)
+                        .OrderBy(e => e.Item.ItemDetail.Name)
                         .Include("Item")
                         .Include("SalesTransaction");
 

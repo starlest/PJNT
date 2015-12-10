@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PutraJayaNT.Models.Inventory;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,7 +11,7 @@ namespace PutraJayaNT.Models
         public Supplier()
         {
             Active = true;
-            Items = new ObservableCollection<Item>();
+            ItemDetails = new ObservableCollection<Item>();
         }
 
         public int ID { get; set; }
@@ -25,7 +26,7 @@ namespace PutraJayaNT.Models
 
         public bool Active { get; set; }
 
-        public virtual ObservableCollection<Item> Items { get; set; }
+        public virtual ObservableCollection<Item> ItemDetails { get; set; }
 
         public override string ToString() { return Name; }
 

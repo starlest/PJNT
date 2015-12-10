@@ -1,4 +1,4 @@
-namespace PutraJayaNT.Models
+namespace PutraJayaNT.Models.Sales
 {
     using System;
     using System.Collections.Generic;
@@ -18,6 +18,8 @@ namespace PutraJayaNT.Models
         public string SalesTransactionID { get; set; }
 
         public virtual Customer Customer { get; set; }
+
+        public virtual Salesman Salesman { get; set; }
 
         public decimal Total { get; set; }
 

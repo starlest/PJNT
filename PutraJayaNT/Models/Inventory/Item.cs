@@ -1,17 +1,17 @@
-namespace PutraJayaNT.Models
-{
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using PutraJayaNT.Models.Sales;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace PutraJayaNT.Models.Inventory
+{
     [Table("Inventory")]
-    public partial class Item
+    public class Item
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Item()
         {
-            TransactionLines = new HashSet<SalesTransactionLine>();
             Suppliers = new ObservableCollection<Supplier>();
             Active = true;
         }
@@ -31,8 +31,6 @@ namespace PutraJayaNT.Models
 
         public int PiecesPerUnit { get; set; }
 
-        public int Pieces { get; set; }
-
         public virtual ObservableCollection<Supplier> Suppliers { get; set; }
 
         public bool Active { get; set; }
@@ -49,7 +47,10 @@ namespace PutraJayaNT.Models
             return base.GetHashCode();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SalesTransactionLine> TransactionLines { get; set; }
+        public virtual ObservableCollection<Stock> Stocks { get; set; }
+
+        public virtual ICollection<SalesTransactionLine> SalesTransactionLines { get; set; }
+
+        public virtual ICollection<SalesReturnTransactionLine> SalesReturnTransactionLines { get; set; }
     }
 }

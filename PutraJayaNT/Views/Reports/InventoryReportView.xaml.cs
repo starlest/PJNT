@@ -1,4 +1,4 @@
-﻿using PutraJayaNT.ViewModels;
+﻿using PutraJayaNT.ViewModels.Reports;
 using System.Windows.Controls;
 
 namespace PutraJayaNT.Views.Reports
@@ -11,7 +11,7 @@ namespace PutraJayaNT.Views.Reports
         public InventoryReportView()
         { 
             InitializeComponent();
-            var vm = new InventoryVM();
+            var vm = new InventoryReportVM();
             DataContext = vm;
         }
     }

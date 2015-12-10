@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Reports
 {
-    class InventoryVM : ViewModelBase
+    class InventoryReportVM : ViewModelBase
     {
         ObservableCollection<ItemVM> _items;
         List<Category> _categories;
@@ -22,7 +22,7 @@ namespace PutraJayaNT.ViewModels
         Supplier _selectedSupplier;
         Warehouse _selectedWarehouse;
 
-        public InventoryVM()
+        public InventoryReportVM()
         {
             _items = new ObservableCollection<ItemVM>();
             _categories = new List<Category>();
@@ -55,10 +55,7 @@ namespace PutraJayaNT.ViewModels
 
         public ObservableCollection<Warehouse> Warehouses
         {
-            get
-            {
-                return _warehouses;
-            }
+            get { return _warehouses; }
         }
 
         public ObservableCollection<ItemVM> DisplayedItems
@@ -199,8 +196,11 @@ namespace PutraJayaNT.ViewModels
 
                     foreach (var item in _items)
                     {
-                        if (item.Warehouse.Equals(value))
-                            _displayedItems.Add(item);
+                        foreach (var stock in item.Stocks)
+                        {
+                            if (stock.Warehouse.Equals(value))
+                                _displayedItems.Add(item);
+                        }     
                     }
                 }
             }
@@ -235,7 +235,9 @@ namespace PutraJayaNT.ViewModels
             {
                 var items = context.Inventory
                     .Include("Suppliers")
-                    .Include("Category");
+                    .Include("Category")
+                    .Include("Stocks")
+                    .Include("Stocks.Warehouse");
 
                 foreach (var item in items)
                 {

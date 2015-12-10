@@ -1,5 +1,6 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
+using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Master
 {
     class MasterInventoryVM : ViewModelBase
     {
@@ -234,8 +235,7 @@ namespace PutraJayaNT.ViewModels
             set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
         }
 
-        // -------------------- New Entry Components -------------------- //
-
+        #region New Entry Properties
         public string NewEntryID
         {
             get { return _newEntryID; }
@@ -332,7 +332,7 @@ namespace PutraJayaNT.ViewModels
                         try
                         {
                             context.Suppliers.Attach(_newEntrySupplier);
-                            context.Category.Attach(_newEntryCategory);
+                            context.Categories.Attach(_newEntryCategory);
                             context.Inventory.Add(newItem);
                             context.SaveChanges();
                             ((IObjectContextAdapter)context).ObjectContext.
@@ -354,45 +354,9 @@ namespace PutraJayaNT.ViewModels
                 }));
             }
         }
+        #endregion
 
-        // -------------------------------------------------------------- //
-
-        public ICommand ActivateCommand
-        {
-            get
-            {
-                return _activateCommand ?? (_activateCommand = new RelayCommand(() =>
-                {
-                    if (_selectedLine != null && MessageBox.Show(string.Format("Confirm activation/deactivation of {0}?", SelectedLine.Name), "Confirmation", MessageBoxButton.YesNo) 
-                    == MessageBoxResult.Yes)
-                    {
-                        using (var context = new ERPContext())
-                        {
-                            var item = context.Inventory
-                            .Where(e => e.ItemID == _selectedLine.ID)
-                            .FirstOrDefault<Item>();
-
-                            if (_selectedLine.Active == true)
-                            {
-                                _selectedLine.Active = false;
-                                _selectedLine.Suppliers.Clear();
-                                item.Active = false;
-                                foreach (var supplier in item.Suppliers.ToList())
-                                    item.Suppliers.Remove(supplier);
-                            }
-                            else
-                            {
-                                _selectedLine.Active = true;
-                                item.Active = true;
-                            }
-
-                            context.SaveChanges();
-                        }
-                    }
-                })); 
-            }
-        }
-
+        #region Edit Properties
         public ICommand EditCommand
         {
             get
@@ -475,8 +439,7 @@ namespace PutraJayaNT.ViewModels
             set { SetProperty(ref _editSelectedSupplier, value, () => EditSelectedSupplier); }
         }
 
-        // ------------- Edit Supplier Add Window Components ------------- //
-
+        #region Edit Add Suppliers Properties
         public ObservableCollection<Supplier> EditAddSuppliers
         {
             get { return _editAddSuppliers; }
@@ -543,8 +506,7 @@ namespace PutraJayaNT.ViewModels
                 }));
             }
         }
-
-        // -------------------------------------------------------------- //
+        #endregion
 
         public ICommand EditDeleteSupplierCommand
         {
@@ -569,14 +531,14 @@ namespace PutraJayaNT.ViewModels
                         using (var context = new ERPContext())
                         {
                             var item = context.Inventory
-                            .Where(e => e.ItemID == _selectedLine.ID)
+                            .Where(e => e.ItemID.Equals(_selectedLine.ID))
                             .Include("Category")
                             .Include("Suppliers")
                             .FirstOrDefault<Item>();
 
                             item.ItemID = _editID;
                             item.Name = _editName;
-                            item.Category = context.Category
+                            item.Category = context.Categories
                             .Where(e => e.ID == _editCategory.ID)
                             .FirstOrDefault();
                             item.PurchasePrice = _editPurchasePrice;
@@ -637,6 +599,43 @@ namespace PutraJayaNT.ViewModels
             get { return _isEditWindowNotOpen; }
             set { SetProperty(ref _isEditWindowNotOpen, value, "IsEditWindowNotOpen"); }
         }
+        #endregion
+
+        public ICommand ActivateCommand
+        {
+            get
+            {
+                return _activateCommand ?? (_activateCommand = new RelayCommand(() =>
+                {
+                    if (_selectedLine != null && MessageBox.Show(string.Format("Confirm activation/deactivation of {0}?", SelectedLine.Name), "Confirmation", MessageBoxButton.YesNo)
+                    == MessageBoxResult.Yes)
+                    {
+                        using (var context = new ERPContext())
+                        {
+                            var item = context.Inventory
+                            .Where(e => e.ItemID.Equals( _selectedLine.ID))
+                            .FirstOrDefault<Item>();
+
+                            if (_selectedLine.Active == true)
+                            {
+                                _selectedLine.Active = false;
+                                _selectedLine.Suppliers.Clear();
+                                item.Active = false;
+                                foreach (var supplier in item.Suppliers.ToList())
+                                    item.Suppliers.Remove(supplier);
+                            }
+                            else
+                            {
+                                _selectedLine.Active = true;
+                                item.Active = true;
+                            }
+
+                            context.SaveChanges();
+                        }
+                    }
+                }));
+            }
+        }
 
         private void UpdateCategories()
         {
@@ -668,10 +667,11 @@ namespace PutraJayaNT.ViewModels
             using (var context = new ERPContext())
             {
                 var items = context.Inventory
-                    .Include("Suppliers")
                     .Include("Category")
+                    .Include("Suppliers")
                     .OrderBy(e => e.Category.Name)
-                    .ThenBy(e => e.Name);
+                    .ThenBy(e => e.Name)
+                    .ToList();
 
                 foreach (var item in items)
                 {

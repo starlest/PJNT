@@ -19,12 +19,12 @@ namespace PutraJayaNT.Utilities
         public static void AddTransactionLine(ERPContext context, LedgerTransaction transaction, string accountName, string seq, decimal amount)
         {
             var transactionLine = new LedgerTransactionLine();
-            var account = (from Account in context.Ledger_Accounts
-                           where Account.Name == accountName
-                           select Account).First();
-            var ledgerAccount = (from Account in context.Ledger_General
-                           where Account.ID == account.ID
-                           select Account).First();
+            var account = context.Ledger_Accounts
+                .Where(e => e.Name.Equals(accountName))
+                .FirstOrDefault();
+            var ledgerAccount = context.Ledger_General
+                .Where(e => e.ID.Equals(account.ID))
+                .FirstOrDefault(); 
 
             transactionLine.LedgerTransaction = transaction;
             transactionLine.LedgerAccount = account;

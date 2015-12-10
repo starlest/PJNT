@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PutraJayaNT.Models.Sales;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

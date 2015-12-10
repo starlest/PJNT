@@ -1,14 +1,11 @@
 ﻿using MVVMFramework;
-using PUJASM.ERP.Models.Accounting;
-using PUJASM.ERP.Utilities;
-using System;
+using PutraJayaNT.Models.Accounting;
+using PutraJayaNT.Utilities;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PUJASM.ERP.ViewModels
+namespace PutraJayaNT.ViewModels.Accounting
 {
     class IncomeStatementVM : ViewModelBase
     {
@@ -18,8 +15,11 @@ namespace PUJASM.ERP.ViewModels
         int _year;
 
         decimal _revenues;
+        decimal _salesReturnsAndAllowances;
         decimal _costOfGoodsSold;
         decimal _grossMargin;
+        decimal _operatingExpenses;
+        decimal _operatingIncome;
 
         public IncomeStatementVM()
         {
@@ -31,7 +31,7 @@ namespace PUJASM.ERP.ViewModels
 
         public string ForTheDate
         {
-            get { return "Test"; }
+            get { return "For the Period Ended 31/" + _month + "/" + _year; }
         }
 
         public List<int> Months
@@ -70,6 +70,27 @@ namespace PUJASM.ERP.ViewModels
             }
         }
 
+        public decimal SalesReturnsAndAllowances
+        {
+            get
+            {
+                _salesReturnsAndAllowances = 0;
+
+                using (var context = new ERPContext())
+                {
+                    var salesReturnsAndAllowancesAccount = context.Ledger_Accounts
+                        .Where(e => e.Name.Equals("Sales Returns and Allowances"))
+                        .Include("LedgerGeneral")
+                        .Include("LedgerAccountBalance")
+                        .FirstOrDefault();
+
+                    _salesReturnsAndAllowances += FindCurrentBalance(salesReturnsAndAllowancesAccount);
+                }
+
+                return _salesReturnsAndAllowances;
+            }
+        }
+
         public decimal CostOfGoodsSold
         {
             get
@@ -95,17 +116,50 @@ namespace PUJASM.ERP.ViewModels
         {
             get
             {
-                _grossMargin = _revenues - _costOfGoodsSold;
+                _grossMargin = _revenues - _costOfGoodsSold - _salesReturnsAndAllowances;
                 return _grossMargin;
+            }
+        }
+
+        public decimal OperatingExpenses
+        {
+            get
+            {
+                _operatingExpenses = 0;
+
+                using (var context = new ERPContext())
+                {
+                    var operatingExpenseAccounts = context.Ledger_Accounts
+                        .Where(e => e.Notes.Contains("Operating Expense"))
+                        .Include("LedgerGeneral")
+                        .Include("LedgerAccountBalance");
+
+                    foreach (var account in operatingExpenseAccounts)
+                        _operatingExpenses += FindCurrentBalance(account);
+                }
+
+                return _operatingExpenses;
+            }
+        }
+
+        public decimal OperatingIncome
+        {
+            get
+            {
+                _operatingIncome = _grossMargin - _operatingExpenses;
+                return _operatingIncome;
             }
         }
 
         private void RefreshIncomeStatement()
         {
-            OnPropertyChanged("AsOfDate");
+            OnPropertyChanged("ForTheDate");
             OnPropertyChanged("Revenues");
+            OnPropertyChanged("SalesReturnsAndAllowances");
             OnPropertyChanged("CostOfGoodsSold");
             OnPropertyChanged("GrossMargin");
+            OnPropertyChanged("OperatingExpenses");
+            OnPropertyChanged("OperatingIncome");
         }
 
         private decimal FindCurrentBalance(LedgerAccount account)

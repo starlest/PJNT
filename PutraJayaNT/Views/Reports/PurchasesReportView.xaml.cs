@@ -8,13 +8,13 @@ namespace PutraJayaNT.Views.Reports
     /// </summary>
     public partial class PurchasesReportView : UserControl
     {
-        PurchasesReportVM vm;
+        //PurchasesReportVM vm;
 
         public PurchasesReportView()
         {
             InitializeComponent();
-            vm = new PurchasesReportVM();
-            DataContext = vm;
+            //vm = new PurchasesReportVM();
+           // DataContext = vm;
         }
     }
 }

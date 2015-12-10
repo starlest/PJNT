@@ -11,8 +11,8 @@ namespace PutraJayaNT.Views.Reports
         public SalesReturnsReportView()
         {
             InitializeComponent();
-            var vm = new SalesReturnsReportVM();
-            DataContext = vm;
+            //var vm = new SalesReturnsReportVM();
+           // DataContext = vm;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MVVMFramework;
+using PutraJayaNT.Models.Inventory;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,13 +7,17 @@ namespace PutraJayaNT.Models
 {
     public class PurchaseTransactionLine : ObservableObject
     {
-        [Key, ForeignKey("PurchaseTransaction")]
+        [Key]
         [Column(Order = 0)]
-        public string PurchaseID { get; set; }
+        public string PurchaseTransactionID { get; set; }
 
         [Key]
         [Column(Order = 1)]
         public string ItemID { get; set; }
+
+        [Key]
+        [Column(Order = 2)]
+        public int WarehouseID { get; set; }
 
         [Required]
         public decimal PurchasePrice { get; set; }
@@ -26,6 +31,10 @@ namespace PutraJayaNT.Models
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }
 
+        [ForeignKey("PurchaseTransactionID")]
         public virtual PurchaseTransaction PurchaseTransaction { get; set; }
+
+        [ForeignKey("WarehouseID")]
+        public virtual Warehouse Warehouse { get; set; }
     }
 }

@@ -7,13 +7,13 @@ namespace PUJASM.ERP.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Update10 : IMigrationMetadata
+    public sealed partial class Update : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Update10));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Update));
         
         string IMigrationMetadata.Id
         {
-            get { return "201512080927588_Update10"; }
+            get { return "201512100442103_Update"; }
         }
         
         string IMigrationMetadata.Source

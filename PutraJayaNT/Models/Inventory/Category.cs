@@ -1,7 +1,7 @@
 ﻿using MVVMFramework;
 using System.Collections.Generic;
 
-namespace PutraJayaNT.Models
+namespace PutraJayaNT.Models.Inventory
 {
     public class Category : ObservableObject
     {
@@ -9,7 +9,7 @@ namespace PutraJayaNT.Models
 
         public string Name { get; set; }
 
-        public virtual ICollection<Item> Items { get; set; }
+        public virtual ICollection<Item> ItemDetails { get; set; }
 
         public override bool Equals(object obj)
         {

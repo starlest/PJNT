@@ -10,7 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.125*" />
             <RowDefinition Height="0.25*" />
-            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="0.375*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
@@ -45,7 +45,7 @@
                      IsReadOnly="True" Text="{Binding NewEntryID, Mode=TwoWay}" MaxLength="10" />
                 <TextBlock Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Text="Supplier:" FontSize="28" />
                 <ComboBox Grid.Column="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
-                      ItemsSource="{Binding Suppliers}" SelectedItem="{Binding NewEntrySupplier, UpdateSourceTrigger=Explicit}" 
+                      ItemsSource="{Binding Suppliers}" SelectedItem="{Binding NewTransactionSupplier, UpdateSourceTrigger=Explicit}" 
                       DisplayMemberPath="Name" IsEditable="True" />
                 <TextBlock Grid.Column="4" VerticalAlignment="Top" HorizontalAlignment="Right" Text="Date:" FontSize="28" />
                 <DatePicker Grid.Column="5" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
@@ -69,6 +69,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.75*" />
@@ -79,25 +80,29 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Text="ID:" FontSize="28" />
-                <ComboBox Name="NewItemIDComboBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Text="Warehouse:" FontSize="28" />
+                <ComboBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
+                          ItemsSource="{Binding Warehouses, Mode=OneWay}" SelectedItem="{Binding NewEntryWarehouse}"
+                          DisplayMemberPath="Name" IsEditable="True" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="ID:" FontSize="28" />
+                <ComboBox Name="NewItemIDComboBox" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
                           ItemsSource="{Binding SupplierItems, Mode=OneWay}" SelectedItem="{Binding NewEntryItem}"
                           DisplayMemberPath="ItemID" IsEditable="True" />
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Product:" FontSize="28" />
-                <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
+                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Product:" FontSize="28" />
+                <ComboBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
                       ItemsSource="{Binding SupplierItems, Mode=OneWay}" SelectedItem="{Binding NewEntryItem}" 
                       DisplayMemberPath="Name" IsEditable="True" />
-                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Price:" />
-                <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
-                     Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Unit Name:" />
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Price:" />
                 <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
-                     Text="{Binding NewEntryUnitName}" IsReadOnly="True" />
-                <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Units:" />
+                     Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Unit Name:" />
                 <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
-                     Text="{Binding NewEntryUnits}" />
-                <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Pieces:" />
+                     Text="{Binding NewEntryUnitName}" IsReadOnly="True" />
+                <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Units:" />
                 <TextBox Grid.Row="1" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
+                     Text="{Binding NewEntryUnits}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Pieces:" />
+                <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
                      Text="{Binding NewEntryPieces}" />
                 <Button Grid.Row="0" Grid.Column="6" Grid.RowSpan="2" Margin="20" Content="Enter" Command="{Binding NewEntryCommand}" />
             </Grid>
@@ -109,10 +114,11 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
-                <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
+                <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units, Mode=TwoWay}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces, Mode=TwoWay}" />
                 <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePricePerUnit}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
+                <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="4">

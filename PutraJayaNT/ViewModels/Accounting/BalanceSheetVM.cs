@@ -5,10 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Accounting
 {
     class BalanceSheetVM : ViewModelBase
     {
@@ -18,7 +16,7 @@ namespace PutraJayaNT.ViewModels
         int _periodMonth;
 
         decimal _cashAndCashEquivalents;
-        decimal _inventories;
+        decimal _inventory;
         decimal _totalCurrentAssets;
         decimal _totalAssets;
 
@@ -78,7 +76,8 @@ namespace PutraJayaNT.ViewModels
                     var equivalents = context.Ledger_Accounts
                         .Where(e => e.Name == "Cash" || e.Name.Contains("Bank"))
                         .Include("LedgerAccountBalance")
-                        .Include("LedgerGeneral");
+                        .Include("LedgerGeneral")
+                        .ToList();
 
                     foreach (var equivalent in equivalents)
                         _cashAndCashEquivalents += FindCurrentBalance(equivalent);
@@ -88,23 +87,23 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public decimal Inventories
+        public decimal Inventory
         {
             get
             {
                 using (var context = new ERPContext())
                 {
-                    _inventories = 0;
+                    _inventory = 0;
 
-                    var inventory = context.Ledger_Accounts
+                    var Inventory = context.Ledger_Accounts
                         .Where(e => e.Name == "Inventory")
                         .Include("LedgerAccountBalance")
                         .Include("LedgerGeneral")
                         .FirstOrDefault();
 
-                    _inventories = FindCurrentBalance(inventory);
+                    _inventory = FindCurrentBalance(Inventory);
 
-                    return _inventories;
+                    return _inventory;
                 }
             }
         }
@@ -114,7 +113,7 @@ namespace PutraJayaNT.ViewModels
             get
             {
                 _totalCurrentAssets = 0;
-                _totalCurrentAssets = _cashAndCashEquivalents + _inventories;
+                _totalCurrentAssets = _cashAndCashEquivalents + _inventory;
 
                 return _totalCurrentAssets;
             }
@@ -200,7 +199,8 @@ namespace PutraJayaNT.ViewModels
                     var accountsPayable = context.Ledger_Accounts
                         .Where(e => e.Name.Contains("Accounts Payable"))
                         .Include("LedgerAccountBalance")
-                        .Include("LedgerGeneral");
+                        .Include("LedgerGeneral")
+                        .ToList();
 
                     foreach (var account in accountsPayable)
                         _accountsPayable += FindCurrentBalance(account);
@@ -227,7 +227,7 @@ namespace PutraJayaNT.ViewModels
         {
             OnPropertyChanged("AsOfDate");
             OnPropertyChanged("CashAndCashEquivalents");
-            OnPropertyChanged("Inventories");
+            OnPropertyChanged("Inventory");
             OnPropertyChanged("TotalCurrentAssets");
             OnPropertyChanged("TotalAssets");
             OnPropertyChanged("Capital");

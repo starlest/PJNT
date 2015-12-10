@@ -1,5 +1,6 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
+using PutraJayaNT.Models.Inventory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace PutraJayaNT.ViewModels
 {
     class SalesReturnTransactionLineVM : ViewModelBase<SalesReturnTransactionLine>
     { 
-        public Item Item
+        public Stock Item
         {
             get { return Model.Item; }
             set

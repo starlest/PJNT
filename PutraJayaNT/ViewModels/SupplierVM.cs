@@ -1,5 +1,6 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
+using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.Generic;
@@ -57,9 +58,9 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public ObservableCollection<Item> Items
+        public ObservableCollection<Item> ItemDetails
         {
-            get { return Model.Items; }
+            get { return Model.ItemDetails; }
         }
 
         public override bool Equals(object obj)

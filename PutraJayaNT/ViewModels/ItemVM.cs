@@ -1,11 +1,14 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
+using PutraJayaNT.Models.Inventory;
 using System.Collections.ObjectModel;
 
 namespace PutraJayaNT.ViewModels
 {
     class ItemVM : ViewModelBase<Item>
     {
+        int _quantity;
+
         Supplier _selectedSupplier;
 
         public string ID
@@ -38,7 +41,6 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-
         public decimal PurchasePrice
         {
             get { return Model.PurchasePrice * Model.PiecesPerUnit; }
@@ -48,7 +50,6 @@ namespace PutraJayaNT.ViewModels
                 OnPropertyChanged("PurchasePrice");
             }
         }
-
 
         public decimal SalesPrice
         {
@@ -72,7 +73,10 @@ namespace PutraJayaNT.ViewModels
 
         public int PiecesPerUnit
         {
-            get { return Model.PiecesPerUnit; }
+            get
+            {
+                return Model.PiecesPerUnit;
+            }
             set
             {
                 Model.PiecesPerUnit = value;
@@ -82,18 +86,23 @@ namespace PutraJayaNT.ViewModels
 
         public int Quantity
         {
-            get { return Model.Pieces; }
-            set { Model.Pieces = value; }
+            get
+            {
+                _quantity = 0;
+                foreach (var stock in Model.Stocks)
+                    _quantity += stock.Pieces;
+                return _quantity;
+            }
         }
 
         public int Units
         {
-            get { return Model.Pieces / Model.PiecesPerUnit; }
+            get { return Quantity / Model.PiecesPerUnit; }
         }
 
         public int Pieces
         {
-            get { return Model.Pieces % Model.PiecesPerUnit; }
+            get { return Quantity % Model.PiecesPerUnit; }
         }
 
         public ObservableCollection<Supplier> Suppliers
@@ -103,6 +112,16 @@ namespace PutraJayaNT.ViewModels
             {
                 Model.Suppliers = value;
                 OnPropertyChanged("Suppliers");
+            }
+        }
+
+        public ObservableCollection<Stock> Stocks
+        {
+            get { return Model.Stocks; }
+            set
+            {
+                Model.Stocks = value;
+                OnPropertyChanged("Stocks");
             }
         }
 

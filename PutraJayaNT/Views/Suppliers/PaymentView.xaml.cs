@@ -8,13 +8,13 @@ namespace PutraJayaNT.Views.Suppliers
     /// </summary>
     public partial class PaymentView : UserControl
     {
-        PurchasePaymentVM vm;
+        //PurchasePaymentVM vm;
 
         public PaymentView()
         {
             InitializeComponent();
-            vm = new PurchasePaymentVM();
-            DataContext = vm;
+            //vm = new PurchasePaymentVM();
+           // DataContext = vm;
         }
     }
 }

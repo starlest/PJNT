@@ -11,8 +11,8 @@ namespace PutraJayaNT.Views.Customers
         public SalesReturnView()
         {
             InitializeComponent();
-            var vm = new SalesReturnTransactionVM();
-            DataContext = vm;
+            //var vm = new SalesReturnTransactionVM();
+           // DataContext = vm;
         }
     }
 }

@@ -9,7 +9,7 @@ using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Accounting
 {
     class BankTransactionVM : ViewModelBase
     {
@@ -197,7 +197,7 @@ namespace PutraJayaNT.ViewModels
                 var accounts = context.Ledger_Accounts
                     .Where(e => !e.Name.Equals(_selectedBank.Name) &&
                     !e.Name.Contains("Payable") && !e.Name.Equals("Cost of Goods Sold")
-                    && !e.Name.Equals("Inventory") && !e.Name.Equals("Retained Earnings")
+                    && !e.Name.Equals("Items") && !e.Name.Equals("Retained Earnings")
                     && !e.Notes.Equals("Operating Expense") && !e.Name.Contains("Revenue"));
       
                 foreach (var account in accounts)

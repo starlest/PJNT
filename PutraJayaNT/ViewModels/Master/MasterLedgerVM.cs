@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Master
 {
     class MasterLedgerVM : ViewModelBase
     {

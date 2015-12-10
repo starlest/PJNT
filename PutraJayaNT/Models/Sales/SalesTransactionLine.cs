@@ -1,5 +1,6 @@
-namespace PutraJayaNT.Models
+namespace PutraJayaNT.Models.Sales
 {
+    using Inventory;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,17 +9,6 @@ namespace PutraJayaNT.Models
         public SalesTransactionLine()
         {
 
-        }
-
-        public SalesTransactionLine(SalesTransactionLine line)
-        {
-            SalesTransactionID = line.SalesTransactionID;
-            ItemID = line.ItemID;
-            Quantity = line.Quantity;
-            SalesPrice = line.SalesPrice;
-            Total = line.Total;
-            Item = line.Item;
-            SalesTransaction = line.SalesTransaction;
         }
 
         [Key]
@@ -31,24 +21,32 @@ namespace PutraJayaNT.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string ItemID { get; set; }
 
-        [Required]
+        [Key]
         [Column(Order = 2)]
-        public int Quantity { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int WarehouseID { get; set; }
 
         [Required]
         [Column(Order = 3)]
-        public decimal SalesPrice { get; set; }
+        public int Quantity { get; set; }
 
         [Required]
         [Column(Order = 4)]
-        public decimal Discount { get; set; }
+        public decimal SalesPrice { get; set; }
 
         [Required]
         [Column(Order = 5)]
+        public decimal Discount { get; set; }
+
+        [Required]
+        [Column(Order = 6)]
         public decimal Total { get; set; }
 
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }
+
+        [ForeignKey("WarehouseID")]
+        public virtual Warehouse Warehouse { get; set; }
 
         [ForeignKey("SalesTransactionID")]
         public virtual SalesTransaction SalesTransaction { get; set; }

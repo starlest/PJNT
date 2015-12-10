@@ -1,4 +1,5 @@
 ﻿using MVVMFramework;
+using PutraJayaNT.Models.Inventory;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

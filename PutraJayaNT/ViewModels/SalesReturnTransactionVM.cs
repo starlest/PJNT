@@ -113,7 +113,7 @@ namespace PutraJayaNT.ViewModels
 
         private void UpdateReturnEntryProperties()
         {
-            SalesReturnEntryProduct = _selectedSalesTransactionLine.Item.Name;
+            SalesReturnEntryProduct = _selectedSalesTransactionLine.Item.ItemDetail.Name;
             SalesReturnEntryQuantity = _selectedSalesTransactionLine.Quantity;
         }
 
@@ -204,7 +204,7 @@ namespace PutraJayaNT.ViewModels
                     // Look if the line exists in the SalesReturnTransactionLines already
                     foreach (var line in _salesReturnTransactionLines)
                     {
-                        if (line.Item.ItemID.Equals(_selectedSalesTransactionLine.ItemID))
+                        if (line.Item.ItemDetail.ItemDetailID.Equals(_selectedSalesTransactionLine.ItemID))
                         {
                             if ((line.Quantity + _salesReturnEntryQuantity) > _selectedSalesTransactionLine.Quantity ||
                             (line.Quantity + _salesReturnEntryQuantity) > availableReturnQuantity ||
@@ -241,7 +241,7 @@ namespace PutraJayaNT.ViewModels
             {
                 decimal amount = 0;
                 var latestPurchases = context.PurchaseTransactionLines
-                    .Where(e => e.ItemID.Equals(sr.Item.ItemID))
+                    .Where(e => e.ItemID.Equals(sr.Item.ItemDetail.ItemDetailID))
                     .OrderByDescending(e => e.PurchaseID)
                     .ToList();
 
@@ -344,7 +344,7 @@ namespace PutraJayaNT.ViewModels
 
                             LedgerDBHelper.AddTransaction(context, ledgerTransaction2, DateTime.Now, _salesReturnEntryID, "Sales Return");
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Debit", totalCOGS);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Items", "Debit", totalCOGS);
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Credit", totalCOGS);
 
                             context.SaveChanges();

@@ -1,4 +1,4 @@
-﻿using PutraJayaNT.ViewModels;
+﻿using PutraJayaNT.ViewModels.Accounting;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -51,7 +51,7 @@ namespace PutraJayaNT.Views.Accounting
             {
                 (sender as BackgroundWorker).ReportProgress(i);
                 Thread.Sleep(100);
-                if (i == 50) vm.Close();
+                //if (i == 50) vm.Close();
             }
             isRunning = false;
         }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Transactions;
 using System.Windows;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Accounting
 {
     class ClosingVM : ViewModelBase
     {

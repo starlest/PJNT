@@ -1,4 +1,4 @@
-﻿using PutraJayaNT.ViewModels;
+﻿using PutraJayaNT.ViewModels.Master;
 using System.Windows.Controls;
 
 namespace PutraJayaNT.Views.Master

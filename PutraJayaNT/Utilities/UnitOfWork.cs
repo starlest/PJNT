@@ -1,5 +1,7 @@
 ﻿using PutraJayaNT.Models;
 using PutraJayaNT.Models.Accounting;
+using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Sales;
 using System;
 
 namespace PutraJayaNT.Utilities
@@ -8,7 +10,7 @@ namespace PutraJayaNT.Utilities
     {
         private ERPContext m_Context = null;
         private Repository<User> userRepository = null;
-        private Repository<Item> itemRepository = null;
+        private Repository<Stock> itemRepository = null;
         private Repository<Category> categoryRepository = null;
         private Repository<Supplier> supplierRepository = null;
 
@@ -45,12 +47,12 @@ namespace PutraJayaNT.Utilities
             }
         }
 
-        public Repository<Item> ItemRepository
+        public Repository<Stock> ItemRepository
         {
             get
             {
                 if (itemRepository == null)
-                    itemRepository = new Repository<Item>(m_Context);
+                    itemRepository = new Repository<Stock>(m_Context);
                 return itemRepository;
             }
         }

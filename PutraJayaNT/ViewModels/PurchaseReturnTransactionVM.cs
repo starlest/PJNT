@@ -117,7 +117,7 @@ namespace PutraJayaNT.ViewModels
 
         private void UpdateReturnEntryProperties()
         {
-            PurchaseReturnEntryProduct = _selectedPurchaseTransactionLine.Item.Name;
+            PurchaseReturnEntryProduct = _selectedPurchaseTransactionLine.Item.ItemDetail.Name;
             PurchaseReturnEntryQuantity = _selectedPurchaseTransactionLine.Quantity;
         }
 
@@ -210,7 +210,7 @@ namespace PutraJayaNT.ViewModels
                     // Look if the line exists in the SalesReturnTransactionLines already
                     foreach (var line in _purchaseReturnTransactionLines)
                     {
-                        if (line.Item.ItemID.Equals(_selectedPurchaseTransactionLine.ItemID))
+                        if (line.Item.ItemDetail.ItemDetailID.Equals(_selectedPurchaseTransactionLine.ItemID))
                         {
                             if ((line.Quantity + _purchaseReturnEntryQuantity) > _selectedPurchaseTransactionLine.Quantity ||
                             (line.Quantity + _purchaseReturnEntryQuantity) > availableReturnQuantity ||
@@ -291,7 +291,7 @@ namespace PutraJayaNT.ViewModels
                             LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now, _purchaseReturnEntryID, "Purchase Return");
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Dedit", totalAmount);
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Crebit", totalAmount);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Items", "Crebit", totalAmount);
               
                             context.SaveChanges();
                             ts.Complete();

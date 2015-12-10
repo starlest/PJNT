@@ -1,5 +1,6 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
+using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
@@ -19,7 +20,7 @@ namespace PutraJayaNT.ViewModels
         DateTime _toDate;
 
         Supplier _selectedSupplier;
-        Item _selectedItem;
+        Stock _selectedItem;
 
         public PurchasesReportVM()
         {
@@ -98,7 +99,7 @@ namespace PutraJayaNT.ViewModels
 
                 RefreshSuppliers();
             
-                _supplierItems.Add(new Item { ItemID = "-1", Name = "All" });
+                _supplierItems.Add(new Item { ItemDetailID = "-1", Name = "All" });
                 using (var context = new ERPContext())
                 {
                     var items = context.Inventory
@@ -113,7 +114,7 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public Item SelectedItem
+        public Stock SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -143,7 +144,7 @@ namespace PutraJayaNT.ViewModels
         {
             _displayLines.Clear();
 
-            if (_selectedItem.Name.Equals("All"))
+            if (_selectedItem.ItemDetail.Name.Equals("All"))
             {
                 using (var context = new ERPContext())
                 {
@@ -173,7 +174,7 @@ namespace PutraJayaNT.ViewModels
                     {
                         foreach (var line in purchase.PurchaseTransactionLines)
                         {
-                            if (line.ItemID.Equals(_selectedItem.ItemID))
+                            if (line.ItemID.Equals(_selectedItem.ItemDetail.ItemDetailID))
                                 _displayLines.Add(new PurchaseTransactionLineVM { Model = line });
                         }
                     }

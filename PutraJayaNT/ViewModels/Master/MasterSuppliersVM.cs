@@ -11,7 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Linq;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Master
 {
     class MasterSuppliersVM : ViewModelBase
     {
@@ -231,6 +231,7 @@ namespace PutraJayaNT.ViewModels
             set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
         }
 
+        #region New Entry Properties
         public string NewEntryName
         {
             get { return _newEntryName; }
@@ -316,6 +317,7 @@ namespace PutraJayaNT.ViewModels
                 }));
             }
         }
+        #endregion
 
         public ICommand EditCommand
         {
@@ -433,17 +435,17 @@ namespace PutraJayaNT.ViewModels
                         using (var context = new ERPContext())
                         {
                             var supplier = context.Suppliers
-                            .Include(e => e.Items)
+                            .Include(e => e.ItemDetails)
                             .Where(e => e.ID == _selectedLine.ID)
                             .FirstOrDefault<Supplier>();
 
                             if (_selectedLine.Active == true)
                             {
                                 _selectedLine.Active = false;
-                                _selectedLine.Items.Clear();
+                                _selectedLine.ItemDetails.Clear();
                                 supplier.Active = false;
-                                foreach (var item in supplier.Items.ToList())
-                                    supplier.Items.Remove(item);
+                                foreach (var item in supplier.ItemDetails.ToList())
+                                    supplier.ItemDetails.Remove(item);
                             }
                             else
                             {
@@ -470,9 +472,9 @@ namespace PutraJayaNT.ViewModels
         {
             // Update items from database
             _items.Clear();
-            using (UnitOfWork uow = new UnitOfWork())
+            using (var context = new ERPContext())
             {
-                var items = uow.ItemRepository.GetAll();
+                var items = context.Inventory.Include("Suppliers").ToList();
                 foreach (var item in items)
                 {
                     if (item.Active == true)
@@ -487,7 +489,7 @@ namespace PutraJayaNT.ViewModels
             _suppliers.Clear();
             using (var context = new ERPContext())
             {
-                var suppliers = context.Suppliers.Include("Items");
+                var suppliers = context.Suppliers.Include("ItemDetails");
                 foreach (Supplier s in suppliers)
                 {
                     SupplierVM svm = new SupplierVM { Model = s };

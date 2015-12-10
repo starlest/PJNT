@@ -88,17 +88,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Migrations\201512080209169_Update1.cs" />
-    <Compile Include="Migrations\201512080209169_Update1.Designer.cs">
-      <DependentUpon>201512080209169_Update1.cs</DependentUpon>
+    <Compile Include="Migrations\201512100442103_Update.cs" />
+    <Compile Include="Migrations\201512100442103_Update.Designer.cs">
+      <DependentUpon>201512100442103_Update.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201512080217226_Update2.cs" />
-    <Compile Include="Migrations\201512080217226_Update2.Designer.cs">
-      <DependentUpon>201512080217226_Update2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512080927588_Update10.cs" />
-    <Compile Include="Migrations\201512080927588_Update10.Designer.cs">
-      <DependentUpon>201512080927588_Update10.cs</DependentUpon>
+    <Compile Include="Migrations\201512100445203_Update1.cs" />
+    <Compile Include="Migrations\201512100445203_Update1.Designer.cs">
+      <DependentUpon>201512100445203_Update1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccount.cs" />
@@ -106,51 +102,48 @@
     <Compile Include="Models\Accounting\LedgerGeneral.cs" />
     <Compile Include="Models\Accounting\LedgerTransaction.cs" />
     <Compile Include="Models\Accounting\LedgerTransactionLine.cs" />
-    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Inventory\Category.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\CustomerGroup.cs" />
+    <Compile Include="Models\Inventory\Item.cs" />
+    <Compile Include="Models\Inventory\Warehouse.cs" />
     <Compile Include="Models\PurchaseReturnTransaction.cs" />
     <Compile Include="Models\PurchaseReturnTransactionLine.cs" />
     <Compile Include="Models\PurchaseTransaction.cs" />
     <Compile Include="Models\PurchaseTransactionLine.cs" />
+    <Compile Include="Models\Sales\Salesman.cs" />
     <Compile Include="Models\SalesReturnTransaction.cs" />
     <Compile Include="Models\SalesReturnTransactionLine.cs" />
     <Compile Include="Models\Supplier.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
-    <Compile Include="Models\Item.cs" />
-    <Compile Include="Models\SalesTransaction.cs" />
-    <Compile Include="Models\SalesTransactionLine.cs" />
+    <Compile Include="Models\Inventory\Stock.cs" />
+    <Compile Include="Models\Sales\SalesTransaction.cs" />
+    <Compile Include="Models\Sales\SalesTransactionLine.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\IRepository.cs" />
     <Compile Include="Utilities\LedgerDBHelper.cs" />
     <Compile Include="Utilities\Repository.cs" />
     <Compile Include="Utilities\UnitOfWork.cs" />
-    <Compile Include="ViewModels\BalanceSheetVM.cs" />
-    <Compile Include="ViewModels\BankTransactionVM.cs" />
-    <Compile Include="ViewModels\ClosingVM.cs" />
+    <Compile Include="ViewModels\Accounting\BalanceSheetVM.cs" />
+    <Compile Include="ViewModels\Accounting\BankTransactionVM.cs" />
+    <Compile Include="ViewModels\Accounting\ClosingVM.cs" />
+    <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
+    <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
+    <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesTransactionVM.cs" />
     <Compile Include="ViewModels\CustomerVM.cs" />
-    <Compile Include="ViewModels\IncomeStatementVM.cs" />
-    <Compile Include="ViewModels\InventoryVM.cs" />
+    <Compile Include="ViewModels\ItemDetailVM.cs" />
     <Compile Include="ViewModels\ItemVM.cs" />
     <Compile Include="ViewModels\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\LedgerTransactionLineVM.cs" />
-    <Compile Include="ViewModels\MasterCustomersVM.cs" />
-    <Compile Include="ViewModels\MasterInventoryVM.cs" />
-    <Compile Include="ViewModels\MasterLedgerVM.cs" />
-    <Compile Include="ViewModels\OperatingExpenseVM.cs" />
-    <Compile Include="ViewModels\PurchasePaymentVM.cs" />
-    <Compile Include="ViewModels\PurchaseReturnTransactionVM.cs" />
-    <Compile Include="ViewModels\PurchasesReportVM.cs" />
-    <Compile Include="ViewModels\PurchaseTransactionLineVM.cs" />
-    <Compile Include="ViewModels\PurchaseTransactionVM.cs" />
-    <Compile Include="ViewModels\GeneralLedgerVM.cs" />
-    <Compile Include="ViewModels\SalesReportVM.cs" />
-    <Compile Include="ViewModels\MasterSuppliersVM.cs" />
-    <Compile Include="ViewModels\SalesReturnsReportVM.cs" />
-    <Compile Include="ViewModels\SalesReturnTransactionLineVM.cs" />
-    <Compile Include="ViewModels\SalesReturnTransactionVM.cs" />
-    <Compile Include="ViewModels\SalesTransactionLineVM.cs" />
-    <Compile Include="ViewModels\SalesTransactionVM.cs" />
+    <Compile Include="ViewModels\Master\MasterCustomersVM.cs" />
+    <Compile Include="ViewModels\Master\MasterInventoryVM.cs" />
+    <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
+    <Compile Include="ViewModels\Master\MasterSuppliersVM.cs" />
+    <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchaseTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchaseTransactionVM.cs" />
     <Compile Include="ViewModels\SupplierVM.cs" />
     <Compile Include="Views\Accounting\BalanceSheetView.xaml.cs">
       <DependentUpon>BalanceSheetView.xaml</DependentUpon>
@@ -325,14 +318,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201512080209169_Update1.resx">
-      <DependentUpon>201512080209169_Update1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201512100442103_Update.resx">
+      <DependentUpon>201512100442103_Update.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512080217226_Update2.resx">
-      <DependentUpon>201512080217226_Update2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512080927588_Update10.resx">
-      <DependentUpon>201512080927588_Update10.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201512100445203_Update1.resx">
+      <DependentUpon>201512100445203_Update1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

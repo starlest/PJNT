@@ -11,8 +11,8 @@ namespace PutraJayaNT.Views.Suppliers
         public PurchaseReturnView()
         {
             InitializeComponent();
-            var vm = new PurchaseReturnTransactionVM();
-            DataContext = vm;
+            //var vm = new PurchaseReturnTransactionVM();
+            //DataContext = vm;
         }
     }
 }
