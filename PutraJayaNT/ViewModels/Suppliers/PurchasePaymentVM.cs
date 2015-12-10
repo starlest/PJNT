@@ -11,7 +11,7 @@ using System.Linq;
 using System;
 using System.Transactions;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Suppliers
 {
     class PurchasePaymentVM : ViewModelBase
     {
@@ -20,7 +20,11 @@ namespace PutraJayaNT.ViewModels
         ObservableCollection<PurchaseTransactionLineVM> _selectedPurchaseLines;
         ObservableCollection<string> _paymentModes;
 
+        decimal _purchaseReturnCredits;
+        decimal _useCredits;
+
         decimal? _total;
+        decimal _grossRemaining;
         decimal? _remaining;
         decimal? _pay;
 
@@ -73,12 +77,35 @@ namespace PutraJayaNT.ViewModels
             get { return _paymentModes; }
         }
 
+        public decimal PurchaseReturnCredits
+        {
+            get { return _purchaseReturnCredits; }
+            set { SetProperty(ref _purchaseReturnCredits, value, "PurchaseReturnCredits"); }
+        }
+
         public decimal? Total
         {
             get { return _total; }
             set
             {
                 SetProperty(ref _total, value, "Total");
+            }
+        }
+
+        public decimal UseCredits
+        {
+            get { return _useCredits; }
+            set
+            {
+                if (value > _purchaseReturnCredits)
+                {
+                    MessageBox.Show("There is not enough credits.", "Insufficient Credits", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _useCredits, value, "UseCredits");
+
+                Remaining = _grossRemaining - _useCredits;
             }
         }
 
@@ -116,6 +143,7 @@ namespace PutraJayaNT.ViewModels
                 if (value == null)
                 {
                     SelectedPurchase = null;
+                    PurchaseReturnCredits = 0;
                 }
 
                 else
@@ -132,6 +160,8 @@ namespace PutraJayaNT.ViewModels
                         foreach (var purchase in unpaidPurchases)
                             _supplierUnpaidPurchases.Add(purchase);
                     }
+
+                    PurchaseReturnCredits = value.PurchaseReturnCredits;
                 }
 
                 SetProperty(ref _selectedSupplier, value, "SelectedSupplier");
@@ -156,6 +186,7 @@ namespace PutraJayaNT.ViewModels
 
                     Total = value.Total;
                     Remaining = value.Total - value.Paid;
+                    _grossRemaining = (decimal) _remaining;
                 }
 
                 SetProperty(ref _selectedPurchase, value, "SelectedPurchase");
@@ -180,13 +211,24 @@ namespace PutraJayaNT.ViewModels
                         return;
                     }
 
+                    if (_selectedPaymentMode == null)
+                    {
+                        MessageBox.Show("Please select a payment mode.", "No Selection", MessageBoxButton.OK);
+                        return;
+                    }
+
                     if (MessageBox.Show("Confirm Payment?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
                         using (var ts = new TransactionScope())
                         {
                             var context = new ERPContext();
 
-                            _selectedPurchase.Paid += (decimal) _pay;
+                            _selectedPurchase.Paid += (decimal) _pay + _useCredits;
+                            _selectedPurchase.Supplier = context.Suppliers.Where(e => e.ID.Equals(_selectedPurchase.Supplier.ID)).FirstOrDefault();
+
+                            _selectedPurchase.Supplier.PurchaseReturnCredits -= _useCredits;
+
+
                             context.PurchaseTransactions.Attach(_selectedPurchase);
                             ((IObjectContextAdapter)context)
                             .ObjectContext.ObjectStateManager.ChangeObjectState(_selectedPurchase, EntityState.Modified);
@@ -205,9 +247,12 @@ namespace PutraJayaNT.ViewModels
                         }
 
                         Total = null;
-                        Remaining = null;
                         Pay = null;
                         SelectedSupplier = null;
+                        SelectedPaymentMode = null;
+                        SelectedPurchase = null;
+                        UseCredits = 0;
+                        Remaining = null;
                         _supplierUnpaidPurchases.Clear();
                     }
 

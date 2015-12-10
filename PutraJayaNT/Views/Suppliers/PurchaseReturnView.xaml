@@ -28,11 +28,12 @@
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Purchase ID:" />
-                <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding SelectedPurchaseTransactionID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Name="PurchaseTransactionIDTextBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SelectedPurchaseTransactionID, Mode=TwoWay, UpdateSourceTrigger=Explicit}" KeyDown="TextBox_KeyDown" />
                 <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Date:" />
                 <DatePicker Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding PurchaseReturnEntryDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            SelectedDateFormat="Long" SelectedDate="{Binding SelectedPurchaseTransactionWhen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsEnabled="False" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="1" ItemsSource="{Binding PurchaseTransactionLines}" SelectedItem="{Binding SelectedPurchaseTransactionLine, UpdateSourceTrigger=PropertyChanged}" 
@@ -40,9 +41,12 @@
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Quantity" Width="1*" IsReadOnly="True" Binding="{Binding Quantity}" />
+                <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
+                <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
             </DataGrid.Columns>
         </DataGrid>
         <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2">
@@ -54,14 +58,18 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Product:" />
                 <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding PurchaseReturnEntryProduct}" IsReadOnly="True" />
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Quantity:" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Units:" />
                 <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding PurchaseReturnEntryQuantity}" />
-                <Button Grid.Column="5" Content="Add" Command="{Binding PurchaseReturnEntryAddCommand}" Margin="30, 10, 30, 10" />
+                         Text="{Binding PurchaseReturnEntryUnits}" />
+                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Pieces:" />
+                <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding PurchaseReturnEntryPieces}" />
+                <Button Grid.Column="6" Content="Add" Command="{Binding PurchaseReturnEntryAddCommand}" Margin="30, 10, 30, 10" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="3" ItemsSource="{Binding PurchaseReturnTransactionLines}"
@@ -69,9 +77,12 @@
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ID}" />
                 <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Quantity" Width="1*" IsReadOnly="True" Binding="{Binding Quantity}" />
+                <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units, Mode=TwoWay}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces, Mode=TwoWay}" />
                 <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
+                <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="4">

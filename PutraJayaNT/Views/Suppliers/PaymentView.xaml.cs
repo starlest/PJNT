@@ -1,4 +1,4 @@
-﻿using PutraJayaNT.ViewModels;
+﻿using PutraJayaNT.ViewModels.Suppliers;
 using System.Windows.Controls;
 
 namespace PutraJayaNT.Views.Suppliers
@@ -8,13 +8,11 @@ namespace PutraJayaNT.Views.Suppliers
     /// </summary>
     public partial class PaymentView : UserControl
     {
-        //PurchasePaymentVM vm;
-
         public PaymentView()
         {
             InitializeComponent();
-            //vm = new PurchasePaymentVM();
-           // DataContext = vm;
+            var vm = new PurchasePaymentVM();
+            DataContext = vm;
         }
     }
 }

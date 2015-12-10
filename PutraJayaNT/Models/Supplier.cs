@@ -24,6 +24,8 @@ namespace PutraJayaNT.Models
 
         public int GSTID { get; set; }
 
+        public decimal PurchaseReturnCredits { get; set; }
+
         public bool Active { get; set; }
 
         public virtual ObservableCollection<Item> ItemDetails { get; set; }

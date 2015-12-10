@@ -8,12 +8,16 @@
              d:DesignHeight="768" d:DesignWidth="1024">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.125*" />
+            <RowDefinition Height="0.25*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
         <Border BorderBrush="Blue" BorderThickness="2">
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
@@ -26,13 +30,16 @@
                 <ComboBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                       ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier, UpdateSourceTrigger=Explicit}" 
                       DisplayMemberPath="Name" IsEditable="True" />
+                <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Credits: " />
+                <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+                     IsReadOnly="True" Text="{Binding PurchaseReturnCredits, Mode=OneWay}" Margin="10, 10, 10, 0" />
                 <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Purchase ID:" FontSize="28" />
                 <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                       ItemsSource="{Binding SupplierUnpaidPurchases}" SelectedItem="{Binding SelectedPurchase, UpdateSourceTrigger=Explicit}" 
                       DisplayMemberPath="PurchaseID" IsEditable="True" />
                 <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Payment Mode:" FontSize="28" />
                 <ComboBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                      ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding SelectedPaymentMode, UpdateSourceTrigger=Explicit}" 
+                      ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding SelectedPaymentMode, UpdateSourceTrigger=PropertyChanged}" 
                       IsEditable="True" />
             </Grid>
         </Border>
@@ -56,6 +63,8 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.5*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -63,12 +72,15 @@
             <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Total: " />
             <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
                      IsReadOnly="True" FontWeight="ExtraBlack" Foreground="Black" Text="{Binding Total, Mode=OneWay}" Margin="10, 10, 0, 0"  />
-            <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Remaining: " />
+            <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Use Credits: " />
             <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+                     Text="{Binding UseCredits, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Margin="10, 10, 10, 0" />
+            <TextBlock Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Remaining: " />
+            <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
                      IsReadOnly="True" FontWeight="ExtraBlack" Foreground="Black" Text="{Binding Remaining, Mode=OneWay}" Margin="10, 10, 0, 0" />
-            <TextBlock Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Pay: " Foreground="Red" />
-            <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Text="{Binding Pay, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Margin="10, 10, 0, 0"/>
-            <Button Grid.Column="7" Content="Confirm" Command="{Binding ConfirmPaymentCommand}" Margin="10" />
+            <TextBlock Grid.Column="6" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Pay: " Foreground="Red" />
+            <TextBox Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Text="{Binding Pay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10, 10, 10, 0"/>
+            <Button Grid.Column="8" Content="Confirm" Command="{Binding ConfirmPaymentCommand}" Margin="10" />
         </Grid>
     </Grid>
 </UserControl>

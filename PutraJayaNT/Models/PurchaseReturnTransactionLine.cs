@@ -19,6 +19,11 @@ namespace PutraJayaNT.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string ItemID { get; set; }
 
+        [Key]
+        [Column("WarehouseID", Order = 2)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int WarehouseID { get; set; }
+
         [Required]
         public int Quantity
         {
@@ -31,6 +36,9 @@ namespace PutraJayaNT.Models
 
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }
+
+        [ForeignKey("WarehouseID")]
+        public virtual Warehouse Warehouse { get; set; }
 
         [ForeignKey("PurchaseReturnTransactionID")]
         public virtual PurchaseReturnTransaction PurchaseReturnTransaction { get; set; }
