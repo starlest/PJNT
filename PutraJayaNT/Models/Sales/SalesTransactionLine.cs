@@ -26,17 +26,19 @@ namespace PutraJayaNT.Models.Sales
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int WarehouseID { get; set; }
 
-        [Required]
+        [Key]
         [Column(Order = 3)]
-        public int Quantity { get; set; }
-
-        [Required]
-        [Column(Order = 4)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public decimal SalesPrice { get; set; }
+
+        [Key]
+        [Column(Order = 4)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public decimal Discount { get; set; }
 
         [Required]
         [Column(Order = 5)]
-        public decimal Discount { get; set; }
+        public int Quantity { get; set; }
 
         [Required]
         [Column(Order = 6)]

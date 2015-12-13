@@ -31,7 +31,24 @@ namespace PutraJayaNT.Views.Suppliers
                     binding.UpdateSource();
                 }
             }
+        }
 
+        private void DiscountPercentTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                BindingExpression exp = DiscountPercentTextBox.GetBindingExpression(TextBox.TextProperty);
+                if (exp != null) exp.UpdateSource();
+            }
+        }
+
+        private void OverallDiscountPercentTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                //BindingExpression exp = OverallDiscountPercentTextBox.GetBindingExpression(TextBox.TextProperty);
+                //if (exp != null) exp.UpdateSource();
+            }
         }
     }
 }

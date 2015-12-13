@@ -23,6 +23,9 @@ namespace PutraJayaNT.Models
         public decimal PurchasePrice { get; set; }
 
         [Required]
+        public decimal Discount { get; set; }
+
+        [Required]
         public int Quantity { get; set; }
 
         [Required]

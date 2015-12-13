@@ -34,6 +34,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         int _newEntryQuantity;
         int? _newEntryUnits;
         int? _newEntryPieces;
+        int? _newEntryPiecesPerUnit;
         decimal? _newEntryPrice;
         decimal? _newEntryTotal;
 
@@ -194,6 +195,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                 NewEntryUnitName = _newEntryItem.UnitName;
                 NewEntryPrice = _newEntryItem.PurchasePrice * _newEntryItem.PiecesPerUnit;
+                NewEntryPiecesPerUnit = _newEntryItem.PiecesPerUnit;
             }
         }
 
@@ -213,6 +215,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             get { return _newEntryPieces; }
             set { SetProperty(ref _newEntryPieces, value, "NewEntryPieces"); }
+        }
+
+        public int? NewEntryPiecesPerUnit
+        {
+            get { return _newEntryPiecesPerUnit; }
+            set { SetProperty(ref _newEntryPiecesPerUnit, value, "NewEntryPiecesPerUnit"); }
         }
 
         public decimal? NewEntryPrice
@@ -300,6 +308,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             NewEntryUnits = null;
             NewEntryPrice = null;
             NewEntryUnitName = null;
+            NewEntryPiecesPerUnit = null;
         }
         #endregion
 
@@ -409,13 +418,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         private void ResetFields()
         {
-            NewEntryItem = null;
+            ResetEntryFields();
+
             NewTransactionSupplier = null;
-            _newEntryQuantity = 0;
-            NewEntryPieces = null;
-            NewEntryUnits = null;
-            NewEntryPrice = null;
-            NewEntryUnitName = null;
 
             Model.Date = _newEntryDate;
             Model.DueDate = _newEntryDueDate;

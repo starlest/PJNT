@@ -83,9 +83,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
             set
             {
-                if (value > Model.Item.PiecesPerUnit || value < 0)
+                if (value >= Model.Item.PiecesPerUnit || value < 0)
                 {
-                    MessageBox.Show(string.Format("Please enter a value between {0} - {1}", 0, Model.Item.PiecesPerUnit), "Invalid Quantity", MessageBoxButton.OK);
+                    MessageBox.Show(string.Format("Please enter a value between {0} - {1}", 0, Model.Item.PiecesPerUnit - 1), "Invalid Quantity", MessageBoxButton.OK);
                     return;
                 }
 

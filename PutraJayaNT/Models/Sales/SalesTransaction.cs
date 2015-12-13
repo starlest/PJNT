@@ -21,6 +21,8 @@ namespace PutraJayaNT.Models.Sales
 
         public virtual Salesman Salesman { get; set; }
 
+        public decimal Discount { get; set; }
+
         public decimal Total { get; set; }
 
         public decimal Paid { get; set; }
@@ -29,6 +31,8 @@ namespace PutraJayaNT.Models.Sales
 
         [Index]
         public DateTime When { get; set; }
+
+        public string Notes { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SalesTransactionLine> TransactionLines { get; set; }

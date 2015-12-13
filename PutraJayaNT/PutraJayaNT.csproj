@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\PutraJayaNT.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +36,9 @@
     </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -47,6 +51,7 @@
       <HintPath>..\packages\ModernUI.WPF.1.0.6\lib\net45\FirstFloor.ModernUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
@@ -60,12 +65,16 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
+    <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,6 +87,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -88,6 +98,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Migrations\201512130756141_Test.cs" />
+    <Compile Include="Migrations\201512130756141_Test.Designer.cs">
+      <DependentUpon>201512130756141_Test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\SalesInvoice.cs" />
+    <Compile Include="Reports\SalesInvoiceLine.cs" />
     <Compile Include="Migrations\201512100442103_Update.cs" />
     <Compile Include="Migrations\201512100442103_Update.Designer.cs">
       <DependentUpon>201512100442103_Update.cs</DependentUpon>
@@ -103,6 +119,18 @@
     <Compile Include="Migrations\201512101351163_Update22.cs" />
     <Compile Include="Migrations\201512101351163_Update22.Designer.cs">
       <DependentUpon>201512101351163_Update22.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512110354496_Update23.cs" />
+    <Compile Include="Migrations\201512110354496_Update23.Designer.cs">
+      <DependentUpon>201512110354496_Update23.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512110401335_Update24.cs" />
+    <Compile Include="Migrations\201512110401335_Update24.Designer.cs">
+      <DependentUpon>201512110401335_Update24.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512110835478_30.cs" />
+    <Compile Include="Migrations\201512110835478_30.Designer.cs">
+      <DependentUpon>201512110835478_30.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccount.cs" />
@@ -123,6 +151,24 @@
     <Compile Include="Models\SalesReturnTransaction.cs" />
     <Compile Include="Models\SalesReturnTransactionLine.cs" />
     <Compile Include="Models\Supplier.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="putrajayantDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>putrajayantDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="putrajayantDataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>putrajayantDataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\SalesInvoiceWindow.xaml.cs">
+      <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\ERPContext.cs" />
     <Compile Include="Models\Inventory\Stock.cs" />
     <Compile Include="Models\Sales\SalesTransaction.cs" />
@@ -150,6 +196,7 @@
     <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
     <Compile Include="ViewModels\Master\MasterSuppliersVM.cs" />
     <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
+    <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
     <Compile Include="ViewModels\SalesmanVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchasePaymentVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionLineVM.cs" />
@@ -229,6 +276,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Reports\SalesInvoiceWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Accounting\BalanceSheetView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -319,10 +370,37 @@
     <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
     <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\PutraJayaNT.ViewModels.Customers.SalesTransactionLineVM.datasource" />
+    <None Include="Properties\DataSources\PutraJayaNT.ViewModels.Customers.SalesTransactionLineVM1.datasource" />
+    <None Include="Properties\DataSources\PutraJayaNT.ViewModels.Customers.SalesTransactionVM.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="putrajayantDataSet.xsc">
+      <DependentUpon>putrajayantDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="putrajayantDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>putrajayantDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="putrajayantDataSet.xss">
+      <DependentUpon>putrajayantDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="putrajayantDataSet1.xsc">
+      <DependentUpon>putrajayantDataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="putrajayantDataSet1.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>putrajayantDataSet1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="putrajayantDataSet1.xss">
+      <DependentUpon>putrajayantDataSet1.xsd</DependentUpon>
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Images\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\MVVMFramework\MVVMFramework.csproj">
       <Project>{13282864-5854-4b8c-bd10-5a4e9f24eedb}</Project>
@@ -330,6 +408,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\201512130756141_Test.resx">
+      <DependentUpon>201512130756141_Test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\SalesInvoiceReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512100442103_Update.resx">
       <DependentUpon>201512100442103_Update.cs</DependentUpon>
     </EmbeddedResource>
@@ -342,6 +426,18 @@
     <EmbeddedResource Include="Migrations\201512101351163_Update22.resx">
       <DependentUpon>201512101351163_Update22.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512110354496_Update23.resx">
+      <DependentUpon>201512110354496_Update23.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512110401335_Update24.resx">
+      <DependentUpon>201512110401335_Update24.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512110835478_30.resx">
+      <DependentUpon>201512110835478_30.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

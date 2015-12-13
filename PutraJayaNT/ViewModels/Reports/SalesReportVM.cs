@@ -1,40 +1,43 @@
 ﻿using MVVMFramework;
-using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Utilities;
+using PutraJayaNT.ViewModels.Customers;
 using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Reports
 {
     class SalesReportVM : ViewModelBase
     {
         ObservableCollection<Category> _categories;
         ObservableCollection<Item> _categoryItems;
-        ObservableCollection<SalesTransactionLine> _detailedDisplayLines;
-        ObservableCollection<SalesTransactionLine> _globalDisplayLines;
+        ObservableCollection<SalesTransactionLineVM> _detailedDisplayLines;
+        ObservableCollection<SalesTransactionLineVM> _globalDisplayLines;
 
         ObservableCollection<string> _modes;
         string _selectedMode;
         Visibility _detailedVisibility;
         Visibility _globalVisibility;
 
+        /// <summary>
+        /// Backing field for the <see cref="FromDate"/> property
+        /// </summary>
         DateTime _fromDate;
         DateTime _toDate;
 
         Category _selectedCategory;
-        Stock _selectedItem;
+        Item _selectedItem;
 
         public SalesReportVM()
         {
             _categories = new ObservableCollection<Category>();
             _categoryItems = new ObservableCollection<Item>();
-            _detailedDisplayLines = new ObservableCollection<SalesTransactionLine>();
-            _globalDisplayLines = new ObservableCollection<SalesTransactionLine>();
+            _detailedDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
+            _globalDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
 
             _modes = new ObservableCollection<string>();
             _modes.Add("Global");
@@ -42,9 +45,12 @@ namespace PutraJayaNT.ViewModels
             SelectedMode = Modes.First();
 
             _fromDate = DateTime.Now.Date;
-            _toDate = DateTime.Now.Date.AddDays(1);
+            _toDate = DateTime.Now.Date;
         }
 
+        /// <summary>
+        /// Gets the list of Categories loaded.
+        /// </summary>
         public ObservableCollection<Category> Categories
         {
             get
@@ -54,26 +60,44 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the list of selected Category Items loaded.
+        /// </summary>
         public ObservableCollection<Item> CategoryItems
         {
             get { return _categoryItems; }
         }
 
-        public ObservableCollection<SalesTransactionLine> DetailedDisplayLines
+        /// <summary>
+        /// Gets the list of detailed lines loaded.
+        /// </summary>
+        public ObservableCollection<SalesTransactionLineVM> DetailedDisplayLines
         {
             get { return _detailedDisplayLines; }
         }
 
-        public ObservableCollection<SalesTransactionLine> GlobalDisplayLines
+        /// <summary>
+        /// Gets the list of lines loaded.
+        /// </summary>
+        public ObservableCollection<SalesTransactionLineVM> GlobalDisplayLines
         {
             get { return _globalDisplayLines; }
         }
 
+        /// <summary>
+        /// Gets the list of view modes.
+        /// </summary>
+        /// <remark>
+        /// Available modes are Global and Detailed.
+        /// </remark>
         public ObservableCollection<string> Modes
         {
             get { return _modes; }
         }
 
+        /// <summary>
+        /// Gets or sets the starting date of the transactions to be loaded.
+        /// </summary>
         public DateTime FromDate
         {
             get { return _fromDate; }
@@ -90,6 +114,9 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the ending date of the transactions to be loaded.
+        /// </summary>
         public DateTime ToDate
         {
             get { return _toDate; }
@@ -106,6 +133,9 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        /// <summary>
+        /// The selected category from <see cref="Categories"/>.
+        /// </summary>
         public Category SelectedCategory
         {
             get { return _selectedCategory; }
@@ -126,7 +156,7 @@ namespace PutraJayaNT.ViewModels
 
                     using (var context = new ERPContext())
                     {
-                        var items = context.ItemDetails;
+                        var items = context.Inventory.ToList();
                         foreach (var item in items)
                             _categoryItems.Add(item);
                     }
@@ -138,8 +168,9 @@ namespace PutraJayaNT.ViewModels
 
                     using (var context = new ERPContext())
                     {
-                        var items = context.ItemDetails
-                            .Where(e => e.Category.Name == _selectedCategory.Name);
+                        var items = context.Inventory
+                            .Where(e => e.Category.Name == _selectedCategory.Name)
+                            .ToList();
                         foreach (var item in items)
                             _categoryItems.Add(item);
                     }
@@ -147,7 +178,10 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public Stock SelectedItem
+        /// <summary>
+        /// The selected item from <see cref="CategoryItems"/>.
+        /// </summary>
+        public Item SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -157,6 +191,9 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        /// <summary>
+        /// The selected mode from <see cref="Modes"/>.
+        /// </summary>
         public string SelectedMode
         {
             get { return _selectedMode; }
@@ -209,7 +246,7 @@ namespace PutraJayaNT.ViewModels
 
             if (_selectedItem == null) return;
 
-            if (_selectedCategory.Name == "All" && _selectedItem.ItemDetail.Name == "All")
+            if (_selectedCategory.Name == "All" && _selectedItem.Name == "All")
             {
                 using (var context = new ERPContext())
                 {
@@ -217,17 +254,17 @@ namespace PutraJayaNT.ViewModels
                         .Include("Item")
                         .Include("SalesTransaction")
                         .Where(e => e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.ItemDetail.Name);
+                        .OrderBy(e => e.Item.Name);
 
-                    
+
                     foreach (var line in transactionLines)
                     {
-                        _detailedDisplayLines.Add(line);
+                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
 
                         var contains = false;
                         foreach (var l in _globalDisplayLines)
                         {
-                            if (l.ItemID == line.ItemID)
+                            if (l.Item.ItemID == line.Item.ItemID)
                             {
                                 l.Quantity += line.Quantity;
                                 contains = true;
@@ -235,29 +272,29 @@ namespace PutraJayaNT.ViewModels
                             }
                         }
 
-                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLine(line));
+                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
                     }  
                 }
             }
 
-            else if (_selectedCategory.Name == "All" && _selectedItem.ItemDetail.Name != "All")
+            else if (_selectedCategory.Name == "All" && _selectedItem.Name != "All")
             {
                 using (var context = new ERPContext())
                 {
                     var transactionLines = context.SalesTransactionLines
                         .Include("Item")
                         .Include("SalesTransaction")
-                        .Where(e => e.Item.ItemDetail.Name == _selectedItem.ItemDetail.Name && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.ItemDetail.Name);
+                        .Where(e => e.Item.Name == _selectedItem.Name && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
+                        .OrderBy(e => e.Item.Name);
 
                     foreach (var line in transactionLines)
                     {
-                        _detailedDisplayLines.Add(line);
+                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
 
                         var contains = false;
                         foreach (var l in _globalDisplayLines)
                         {
-                            if (l.ItemID == line.ItemID)
+                            if (l.Item.ItemID == line.Item.ItemID)
                             {
                                 l.Quantity += line.Quantity;
                                 contains = true;
@@ -265,30 +302,30 @@ namespace PutraJayaNT.ViewModels
                             }
                         }
 
-                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLine(line));
+                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
                     }
                 }
             }
 
-            else if (_selectedCategory.Name != "All" && _selectedItem.ItemDetail.Name == "All")
+            else if (_selectedCategory.Name != "All" && _selectedItem.Name == "All")
             {
                 using (var context = new ERPContext())
                 {
                     var transactionLines = context.SalesTransactionLines
-                        .Where(e => e.Item.ItemDetail.Category.Name == _selectedCategory.Name
+                        .Where(e => e.Item.Category.Name == _selectedCategory.Name
                         && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.ItemDetail.Name)
+                        .OrderBy(e => e.Item.Name)
                         .Include("Item")
                         .Include("SalesTransaction");
 
                     foreach (var line in transactionLines)
                     {
-                        _detailedDisplayLines.Add(line);
+                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
 
                         var contains = false;
                         foreach (var l in _globalDisplayLines)
                         {
-                            if (l.ItemID == line.ItemID)
+                            if (l.Item.ItemID == line.ItemID)
                             {
                                 l.Quantity += line.Quantity;
                                 contains = true;
@@ -296,7 +333,7 @@ namespace PutraJayaNT.ViewModels
                             }
                         }
 
-                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLine(line));
+                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
                     }
                 }
             }
@@ -306,22 +343,22 @@ namespace PutraJayaNT.ViewModels
                 using (var context = new ERPContext())
                 {
                     var transactionLines = context.SalesTransactionLines
-                        .Where(e => e.Item.ItemDetail.Category.Name == _selectedCategory.Name
-                        && e.Item.ItemDetail.Name == _selectedItem.ItemDetail.Name
+                        .Where(e => e.Item.Category.Name == _selectedCategory.Name
+                        && e.Item.Name == _selectedItem.Name
                         && e.SalesTransaction.When >= _fromDate
                         && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.ItemDetail.Name)
+                        .OrderBy(e => e.Item.Name)
                         .Include("Item")
                         .Include("SalesTransaction");
 
                     foreach (var line in transactionLines)
                     {
-                        _detailedDisplayLines.Add(line);
+                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
 
                         var contains = false;
                         foreach (var l in _globalDisplayLines)
                         {
-                            if (l.ItemID == line.ItemID)
+                            if (l.Item.ItemID == line.ItemID)
                             {
                                 l.Quantity += line.Quantity;
                                 contains = true;
@@ -329,7 +366,7 @@ namespace PutraJayaNT.ViewModels
                             }
                         }
 
-                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLine(line));
+                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
                     }
                 }
             }

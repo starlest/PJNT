@@ -52,9 +52,9 @@
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTextColumn Header="Account" Width="1*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
+                <DataGridTextColumn Header="Account" Width="1.5*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
                 <DataGridTextColumn Header="Documentation" Width="1*" IsReadOnly="True" Binding="{Binding Documentation}" />
-                <DataGridTextColumn Header="Description" Width="2*" IsReadOnly="True" Binding="{Binding Description}" />
+                <DataGridTextColumn Header="Description" Width="1.5*" IsReadOnly="True" Binding="{Binding Description}" />
                 <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount}" />
                 <DataGridTextColumn Header="Seq" Width="1*" IsReadOnly="True" Binding="{Binding Seq}" />
                 <DataGridTextColumn Header="Balance" Width="1*" IsReadOnly="True" Binding="{Binding Balance}" />

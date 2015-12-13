@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace PutraJayaNT.ViewModels
 {
-    class ItemVM : ViewModelBase<Item>
+    public class ItemVM : ViewModelBase<Item>
     {
         int _quantity;
 
