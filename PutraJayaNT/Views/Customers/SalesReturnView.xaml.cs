@@ -1,5 +1,7 @@
-﻿using PutraJayaNT.ViewModels;
+﻿using PutraJayaNT.ViewModels.Customers;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 
 namespace PutraJayaNT.Views.Customers
 {
@@ -11,8 +13,17 @@ namespace PutraJayaNT.Views.Customers
         public SalesReturnView()
         {
             InitializeComponent();
-            //var vm = new SalesReturnTransactionVM();
-           // DataContext = vm;
+            var vm = new SalesReturnTransactionVM();
+            DataContext = vm;
+        }
+
+        private void SalesIDTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                BindingExpression exp = SalesIDTextBox.GetBindingExpression(TextBox.TextProperty);
+                if (exp != null) exp.UpdateSource();
+            }
         }
     }
 }

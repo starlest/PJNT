@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PutraJayaNT.Models
+namespace PutraJayaNT.Models.Sales
 {
     public class SalesReturnTransaction
     {

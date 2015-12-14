@@ -98,40 +98,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Migrations\201512130756141_Test.cs" />
-    <Compile Include="Migrations\201512130756141_Test.Designer.cs">
-      <DependentUpon>201512130756141_Test.cs</DependentUpon>
+    <Compile Include="Migrations\201512141213269_100.cs" />
+    <Compile Include="Migrations\201512141213269_100.Designer.cs">
+      <DependentUpon>201512141213269_100.cs</DependentUpon>
     </Compile>
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
-    <Compile Include="Migrations\201512100442103_Update.cs" />
-    <Compile Include="Migrations\201512100442103_Update.Designer.cs">
-      <DependentUpon>201512100442103_Update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512100445203_Update1.cs" />
-    <Compile Include="Migrations\201512100445203_Update1.Designer.cs">
-      <DependentUpon>201512100445203_Update1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512100815349_Update2.cs" />
-    <Compile Include="Migrations\201512100815349_Update2.Designer.cs">
-      <DependentUpon>201512100815349_Update2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512101351163_Update22.cs" />
-    <Compile Include="Migrations\201512101351163_Update22.Designer.cs">
-      <DependentUpon>201512101351163_Update22.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512110354496_Update23.cs" />
-    <Compile Include="Migrations\201512110354496_Update23.Designer.cs">
-      <DependentUpon>201512110354496_Update23.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512110401335_Update24.cs" />
-    <Compile Include="Migrations\201512110401335_Update24.Designer.cs">
-      <DependentUpon>201512110401335_Update24.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512110835478_30.cs" />
-    <Compile Include="Migrations\201512110835478_30.Designer.cs">
-      <DependentUpon>201512110835478_30.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccount.cs" />
     <Compile Include="Models\Accounting\LedgerAccountBalance.cs" />
@@ -148,8 +120,8 @@
     <Compile Include="Models\PurchaseTransaction.cs" />
     <Compile Include="Models\PurchaseTransactionLine.cs" />
     <Compile Include="Models\Sales\Salesman.cs" />
-    <Compile Include="Models\SalesReturnTransaction.cs" />
-    <Compile Include="Models\SalesReturnTransactionLine.cs" />
+    <Compile Include="Models\Sales\SalesReturnTransaction.cs" />
+    <Compile Include="Models\Sales\SalesReturnTransactionLine.cs" />
     <Compile Include="Models\Supplier.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -184,10 +156,11 @@
     <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesReturnTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesReturnTransactionVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionVM.cs" />
     <Compile Include="ViewModels\CustomerVM.cs" />
-    <Compile Include="ViewModels\ItemDetailVM.cs" />
     <Compile Include="ViewModels\ItemVM.cs" />
     <Compile Include="ViewModels\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\LedgerTransactionLineVM.cs" />
@@ -221,6 +194,9 @@
     </Compile>
     <Compile Include="Views\Accounting\OperatingExpenseView.xaml.cs">
       <DependentUpon>OperatingExpenseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\PaymentView.xaml.cs">
+      <DependentUpon>PaymentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Customers\SalesReturnView.xaml.cs">
       <DependentUpon>SalesReturnView.xaml</DependentUpon>
@@ -301,6 +277,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounting\OperatingExpenseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Customers\PaymentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -408,32 +388,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201512130756141_Test.resx">
-      <DependentUpon>201512130756141_Test.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201512141213269_100.resx">
+      <DependentUpon>201512141213269_100.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SalesInvoiceReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512100442103_Update.resx">
-      <DependentUpon>201512100442103_Update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512100445203_Update1.resx">
-      <DependentUpon>201512100445203_Update1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512100815349_Update2.resx">
-      <DependentUpon>201512100815349_Update2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512101351163_Update22.resx">
-      <DependentUpon>201512101351163_Update22.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512110354496_Update23.resx">
-      <DependentUpon>201512110354496_Update23.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512110401335_Update24.resx">
-      <DependentUpon>201512110401335_Update24.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512110835478_30.resx">
-      <DependentUpon>201512110835478_30.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

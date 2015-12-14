@@ -16,21 +16,22 @@
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Master">
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Accounts" Source="/Views/Master/LedgerView.xaml" />
                 <mui:Link DisplayName="Inventory" Source="/Views/Master/MasterInventoryView.xaml"  />
                 <mui:Link DisplayName="Suppliers" Source="/Views/Master/SuppliersView.xaml" />
                 <mui:Link DisplayName="Customers" Source="/Views/Master/MasterCustomersView.xaml" />
+                <mui:Link DisplayName="Accounts" Source="/Views/Master/LedgerView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Customers">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Sales Transaction" Source="/Views/Customers/SalesTransactionView.xaml" />
+                <mui:Link DisplayName="Payment" Source="/Views/Customers/PaymentView.xaml" />
                 <mui:Link DisplayName="Sales Return" Source="/Views/Customers/SalesReturnView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Suppliers">
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Purchase" Source="/Views/Suppliers/PurchaseTransactionView.xaml" />
+                <mui:Link DisplayName="Purchase Transaction" Source="/Views/Suppliers/PurchaseTransactionView.xaml" />
                 <mui:Link DisplayName="Payment" Source="/Views/Suppliers/PaymentView.xaml" />
                 <mui:Link DisplayName="Purchase Return" Source="/Views/Suppliers/PurchaseReturnView.xaml" />
             </mui:LinkGroup.Links>

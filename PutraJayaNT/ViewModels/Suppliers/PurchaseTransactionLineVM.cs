@@ -126,6 +126,16 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        public int SoldOrReturned
+        {
+            get { return Model.SoldOrReturned; }
+            set
+            {
+                Model.SoldOrReturned = value;
+                OnPropertyChanged("SoldOrReturned");
+            }
+        }
+            
         public int GetStock()
         {
             int s = 0;

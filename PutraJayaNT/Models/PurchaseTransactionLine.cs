@@ -31,6 +31,8 @@ namespace PutraJayaNT.Models
         [Required]
         public decimal Total { get; set; }
 
+        public int SoldOrReturned { get; set; }
+
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }
 

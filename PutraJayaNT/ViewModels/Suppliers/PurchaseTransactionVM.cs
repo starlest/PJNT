@@ -283,6 +283,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                         Total = (decimal)_newEntryPrice * _newEntryQuantity,
                         Item = _newEntryItem,
                         Warehouse = _newEntryWarehouse,
+                        SoldOrReturned = 0,
                         PurchaseTransaction = Model
                     };
 

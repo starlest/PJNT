@@ -512,7 +512,7 @@ namespace PutraJayaNT.ViewModels.Customers
                         && _newEntryPrice.Equals(line.SalesPrice)
                         && (_newEntryDiscount == null ? 0 : (decimal) _newEntryDiscount).Equals(line.Discount))
                         {
-                            if (availableQuantity < (line.Quantity + quantity))
+                            if (availableQuantity < quantity)
                             {
                                 MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
                                     line.Item.Name, (availableQuantity / line.Item.PiecesPerUnit), (availableQuantity % line.Item.PiecesPerUnit)),
@@ -552,6 +552,7 @@ namespace PutraJayaNT.ViewModels.Customers
         private void ResetEntryFields()
         {
             OnPropertyChanged("Total");
+            NewEntryPiecesPerUnit = null;
             NewEntryProduct = null;
             NewEntryPrice = 0;
             NewEntryUnitName = null;
@@ -787,6 +788,9 @@ namespace PutraJayaNT.ViewModels.Customers
                                     .Where(e => e.ItemID.Equals(line.Item.ItemID))
                                     .FirstOrDefault();
 
+                                    line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                                    line.Item = item;
+
                                     var stock = context
                                     .Stocks.Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID))
                                     .FirstOrDefault();
@@ -806,7 +810,7 @@ namespace PutraJayaNT.ViewModels.Customers
                                             // If there are more quantity than the original, minus the additional quantity from stock
                                             if (line.Quantity > originalQuantity)
                                             {
-                                                if (stock.Pieces - (line.Quantity - originalQuantity) < 0)
+                                                if (stock == null || stock.Pieces - (line.Quantity - originalQuantity) < 0)
                                                 {
                                                     MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
                                                         item.Name, (stock.Pieces / item.PiecesPerUnit), (stock.Pieces % item.PiecesPerUnit)),
@@ -820,7 +824,17 @@ namespace PutraJayaNT.ViewModels.Customers
                                             // If there are lesser quantity than the original, add the additional quantity to stock
                                             else if (line.Quantity < originalQuantity)
                                             {
-                                                stock.Pieces += originalQuantity - line.Quantity;
+                                                if (stock != null) stock.Pieces += originalQuantity - line.Quantity;
+                                                else
+                                                {
+                                                    var s = new Stock
+                                                    {
+                                                        Item = line.Item,
+                                                        Warehouse = line.Warehouse,
+                                                        Pieces = originalQuantity - line.Quantity
+                                                    };
+                                                    context.Stocks.Add(s);
+                                                }
                                             }
 
                                             l.Quantity = line.Quantity;
@@ -844,10 +858,11 @@ namespace PutraJayaNT.ViewModels.Customers
 
                                         stock.Pieces -= line.Quantity;
                                         line.SalesTransaction = transaction;
-                                        line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
-                                        line.Item = item;
                                         context.SalesTransactionLines.Add(line.Model);
                                     }
+
+                                    // Remove the stock entry if it is 0
+                                    if (stock != null && stock.Pieces == 0) context.Stocks.Remove(stock);
                                 }
 
                                 // Check if there are items deleted
@@ -878,7 +893,19 @@ namespace PutraJayaNT.ViewModels.Customers
                                     // If item has been deleted, delete transaction line as well as increasing the item's stock
                                     if (!found)
                                     {
-                                        stock.Pieces += line.Quantity;
+                                        if (stock != null) stock.Pieces += line.Quantity;
+                                        else
+                                        {
+                                            line.Item = item;
+                                            line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                                            var s = new Stock
+                                            {
+                                                Item = line.Item,
+                                                Warehouse = line.Warehouse,
+                                                Pieces = line.Quantity
+                                            };
+                                            context.Stocks.Add(s);
+                                        }
                                         transaction.TransactionLines.Remove(line);
                                     }
                                 }
@@ -910,24 +937,6 @@ namespace PutraJayaNT.ViewModels.Customers
                         {
                             using (var context = new ERPContext())
                             {
-                                // Check if there are enough stock
-                                foreach (var line in _salesTransactionLines)
-                                {
-                                    var stock = context.Stocks
-                                    .Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.WarehouseID == _newEntryWarehouse.ID)
-                                    .Include("Item")
-                                    .FirstOrDefault();
-
-                                    if (stock.Pieces < line.Quantity)
-                                    {
-                                        MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
-                                            stock.Item.Name, (stock.Pieces / stock.Item.PiecesPerUnit), (stock.Pieces % stock.Item.PiecesPerUnit)),
-                                            "Insufficient Stock", MessageBoxButton.OK);
-                                        return;
-                                    }
-                                }
-
-                                // add the item line's model to the sales transaction if there is enough stock
                                 Model.Total = 0;
                                 foreach (var line in _salesTransactionLines)
                                 {
@@ -936,14 +945,27 @@ namespace PutraJayaNT.ViewModels.Customers
                                     .FirstOrDefault();
 
                                     var stock = context.Stocks
-                                    .Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.WarehouseID == _newEntryWarehouse.ID)
+                                    .Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.WarehouseID == line.Warehouse.ID)
                                     .Include("Item")
                                     .Include("Item.Stocks")
                                     .FirstOrDefault();
 
+                                    // Check if there are enough stock
+                                    if (stock == null || stock.Pieces < line.Quantity)
+                                    {
+                                        MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
+                                            stock.Item.Name, (stock.Pieces / stock.Item.PiecesPerUnit), (stock.Pieces % stock.Item.PiecesPerUnit)),
+                                            "Insufficient Stock", MessageBoxButton.OK);
+                                        return;
+                                    }
+
+                                    // Add the item line's model to the sales transaction if there is enough stock
                                     stock.Pieces -= line.Quantity;
                                     line.Warehouse = context.Warehouses.Where(e => e.ID == line.Warehouse.ID).FirstOrDefault();
                                     Model.TransactionLines.Add(line.Model);
+
+                                    // Remove the stock entry if it is 0
+                                    if (stock.Pieces == 0) context.Stocks.Remove(stock);
                                 }
 
                                 Model.Customer = context.Customers
@@ -996,6 +1018,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             var context = new ERPContext();
 
                             var transaction = context.SalesTransactions
+                            .Include("Customer")
                             .Where(e => e.SalesTransactionID.Equals(Model.SalesTransactionID))
                             .FirstOrDefault();
 
@@ -1010,38 +1033,28 @@ namespace PutraJayaNT.ViewModels.Customers
                                 var itemID = line.Item.ItemID;
                                 var quantity = line.Quantity;
 
-                                var itemRecentPurchases = context.PurchaseTransactionLines
-                                .Where(e => e.ItemID == itemID)
-                                .OrderByDescending(e => e.PurchaseTransaction.PurchaseID)
+                                var purchases = context.PurchaseTransactionLines
+                                .Where(e => e.ItemID == itemID && e.SoldOrReturned < e.Quantity)
+                                .OrderBy(e => e.PurchaseTransaction.PurchaseID)
                                 .ToList();
 
-                                var firstInIndex = 0;
-                                var tracker = GetStock(line.Item, line.Warehouse); 
+                                var tracker = line.Quantity;
 
-                                for (int i = 0; i < itemRecentPurchases.Count; i++)
+                                foreach (var purchase in purchases)
                                 {
-                                    if (tracker <= itemRecentPurchases[i].Quantity)
+                                    var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
+
+                                    if (tracker <= availableQuantity)
                                     {
-                                        firstInIndex = i;
+                                        costOfGoodsSoldAmount += tracker * purchase.PurchasePrice;
+                                        purchase.SoldOrReturned += tracker;
                                         break;
                                     }
-                                    else tracker -= itemRecentPurchases[i].Quantity;
-                                }
-
-                                for (int i = firstInIndex; i >= 0; i--)
-                                {
-                                    var purchaseQuantity = itemRecentPurchases[i].Quantity;
-                                    if (i == firstInIndex) purchaseQuantity = tracker;
-
-                                    if (quantity <= purchaseQuantity)
+                                    else if (tracker > availableQuantity)
                                     {
-                                        costOfGoodsSoldAmount += (itemRecentPurchases[i].PurchasePrice - itemRecentPurchases[i].Discount) * quantity;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        costOfGoodsSoldAmount += (itemRecentPurchases[i].PurchasePrice - itemRecentPurchases[i].Discount) * purchaseQuantity;
-                                        quantity -= purchaseQuantity;
+                                        costOfGoodsSoldAmount += availableQuantity * purchase.PurchasePrice;
+                                        purchase.SoldOrReturned += availableQuantity;
+                                        tracker -= availableQuantity;
                                     }
                                 }
                             }
@@ -1051,7 +1064,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             var transaction1 = new LedgerTransaction();
                             LedgerDBHelper.AddTransaction(context, transaction1, DateTime.Now.Date, transaction.SalesTransactionID, "Sales Revenue");
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, transaction1, "Cash", "Debit", Total);
+                            LedgerDBHelper.AddTransactionLine(context, transaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", Total);
                             LedgerDBHelper.AddTransactionLine(context, transaction1, "Sales Revenue", "Credit", Total);
                             context.SaveChanges();
 
@@ -1110,6 +1123,29 @@ namespace PutraJayaNT.ViewModels.Customers
         /// <param name="item"> The item to check. </param>
         /// <param name="warehouse"> The warehouse the item is located at. </param>
         /// <returns> The value of stock. </returns>
+        private int GetStock(Item item)
+        {
+            int s = 0;
+            using (var context = new ERPContext())
+            {
+                var stocks = context
+                    .Stocks
+                    .Where(e => e.Item.ItemID.Equals(item.ItemID))
+                    .ToList();
+
+                foreach (var stock in stocks)
+                    s += stock.Pieces;
+            }
+            return s;
+        }
+
+
+        /// <summary>
+        /// Get the stock currently available.
+        /// </summary>
+        /// <param name="item"> The item to check. </param>
+        /// <param name="warehouse"> The warehouse the item is located at. </param>
+        /// <returns> The value of stock. </returns>
         private int GetStock(Item item, Warehouse warehouse)
         {
             int s = 0;
@@ -1118,7 +1154,7 @@ namespace PutraJayaNT.ViewModels.Customers
                 var stock = context
                     .Stocks.Where(e => e.Item.ItemID.Equals(item.ItemID) && e.Warehouse.ID.Equals(warehouse.ID))
                     .FirstOrDefault();
-                s = stock.Pieces;
+                s = stock != null ? stock.Pieces : 0;
             }
             return s;
         }
