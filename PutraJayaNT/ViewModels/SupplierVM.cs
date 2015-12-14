@@ -58,9 +58,9 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public ObservableCollection<Item> ItemDetails
+        public ObservableCollection<Item> Items
         {
-            get { return Model.ItemDetails; }
+            get { return Model.Items; }
         }
 
         public override bool Equals(object obj)

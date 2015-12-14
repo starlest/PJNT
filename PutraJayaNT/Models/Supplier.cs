@@ -11,7 +11,6 @@ namespace PutraJayaNT.Models
         public Supplier()
         {
             Active = true;
-            ItemDetails = new ObservableCollection<Item>();
         }
 
         public int ID { get; set; }
@@ -28,7 +27,7 @@ namespace PutraJayaNT.Models
 
         public bool Active { get; set; }
 
-        public virtual ObservableCollection<Item> ItemDetails { get; set; }
+        public virtual ObservableCollection<Item> Items { get; set; }
 
         public override string ToString() { return Name; }
 

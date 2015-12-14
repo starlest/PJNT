@@ -21,6 +21,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
         string _selectedSalesTransactionID;
         SalesTransactionLineVM _selectedSalesTransactionLine;
+        CustomerVM _selectedSalesTransactionCustomer;
         DateTime? _selectedSalesTransactionWhen;
 
         string _salesReturnEntryID;
@@ -71,12 +72,19 @@ namespace PutraJayaNT.ViewModels.Customers
                     SetProperty(ref _selectedSalesTransactionID, value, "SelectedSalesTransactionID");
                     SelectedSalesTransactionWhen = _salesTransactionLines.FirstOrDefault().SalesTransaction.When;
                     Model.SalesTransaction = _salesTransactionLines.FirstOrDefault().SalesTransaction;
+                    SelectedSalesTransactionCustomer = new CustomerVM { Model = Model.SalesTransaction.Customer };
                 }
                 else
                 {
                     MessageBox.Show("Please check if the transaction exists or if invoice has been issued.", "Invalid Sales Transaction", MessageBoxButton.OK);
                 }
             }
+        }
+
+        public CustomerVM SelectedSalesTransactionCustomer
+        {
+            get { return _selectedSalesTransactionCustomer; }
+            set { SetProperty(ref _selectedSalesTransactionCustomer, value, "SelectedSalesTransactionCustomer"); }
         }
 
         public DateTime? SelectedSalesTransactionWhen
@@ -362,6 +370,10 @@ namespace PutraJayaNT.ViewModels.Customers
                                         purchase.SoldOrReturned = 0;
                                     }
                                 }
+
+                                // Increase the Customer's Sales Return Credits
+                                var customer = context.Customers.Where(e => e.ID.Equals(Model.SalesTransaction.Customer.ID)).FirstOrDefault();
+                                customer.SalesReturnCredits += totalAmount;
 
                                 // Increase the stock
                                 var stock = context.Stocks

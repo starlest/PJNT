@@ -435,17 +435,17 @@ namespace PutraJayaNT.ViewModels.Master
                         using (var context = new ERPContext())
                         {
                             var supplier = context.Suppliers
-                            .Include(e => e.ItemDetails)
+                            .Include(e => e.Items)
                             .Where(e => e.ID == _selectedLine.ID)
                             .FirstOrDefault<Supplier>();
 
                             if (_selectedLine.Active == true)
                             {
                                 _selectedLine.Active = false;
-                                _selectedLine.ItemDetails.Clear();
+                                _selectedLine.Items.Clear();
                                 supplier.Active = false;
-                                foreach (var item in supplier.ItemDetails.ToList())
-                                    supplier.ItemDetails.Remove(item);
+                                foreach (var item in supplier.Items.ToList())
+                                    supplier.Items.Remove(item);
                             }
                             else
                             {
@@ -489,7 +489,7 @@ namespace PutraJayaNT.ViewModels.Master
             _suppliers.Clear();
             using (var context = new ERPContext())
             {
-                var suppliers = context.Suppliers.Include("ItemDetails");
+                var suppliers = context.Suppliers.Include("Items");
                 foreach (Supplier s in suppliers)
                 {
                     SupplierVM svm = new SupplierVM { Model = s };

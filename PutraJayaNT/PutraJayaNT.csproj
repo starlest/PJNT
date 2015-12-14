@@ -98,9 +98,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Migrations\201512141213269_100.cs" />
-    <Compile Include="Migrations\201512141213269_100.Designer.cs">
-      <DependentUpon>201512141213269_100.cs</DependentUpon>
+    <Compile Include="Migrations\201512141535007_102.cs" />
+    <Compile Include="Migrations\201512141535007_102.Designer.cs">
+      <DependentUpon>201512141535007_102.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512141535491_103.cs" />
+    <Compile Include="Migrations\201512141535491_103.Designer.cs">
+      <DependentUpon>201512141535491_103.cs</DependentUpon>
     </Compile>
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
@@ -388,8 +392,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201512141213269_100.resx">
-      <DependentUpon>201512141213269_100.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201512141535007_102.resx">
+      <DependentUpon>201512141535007_102.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512141535491_103.resx">
+      <DependentUpon>201512141535491_103.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SalesInvoiceReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -95,6 +95,10 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        public override string ToString()
+        {
+            return Model.Name;
+        }
 
         public override bool Equals(object obj)
         {

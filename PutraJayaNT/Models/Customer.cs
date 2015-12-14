@@ -31,6 +31,8 @@ namespace PutraJayaNT.Models
         [Required]
         public int CreditTerms { get; set; }
 
+        public decimal SalesReturnCredits { get; set; }
+
         [Required]
         public bool Active { get; set; }
 

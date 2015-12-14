@@ -30,6 +30,9 @@
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Sales ID:" />
                 <TextBox Name="SalesIDTextBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding SelectedSalesTransactionID, UpdateSourceTrigger=Explicit}" KeyDown="SalesIDTextBox_KeyDown" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Customer:" />
+                <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding Path=SelectedSalesTransactionCustomer.Name, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
                 <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Date:" />
                 <DatePicker Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                             SelectedDateFormat="Long" SelectedDate="{Binding SalesReturnEntryDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
