@@ -42,6 +42,7 @@ namespace PutraJayaNT.Reports
             DataTable dt1 = new DataTable();
             DataTable dt2 = new DataTable();
 
+            dt1.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             dt1.Columns.Add(new DataColumn("ItemID", typeof(string)));
             dt1.Columns.Add(new DataColumn("ItemName", typeof(string)));
             dt1.Columns.Add(new DataColumn("Unit", typeof(string)));
@@ -52,26 +53,41 @@ namespace PutraJayaNT.Reports
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("InvoiceTotal", typeof(decimal)));
 
+            int count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines)
             {
                 DataRow dr = dt1.NewRow();
+                dr["LineNumber"] = count++;
                 dr["ItemID"] = line.Item.ItemID;
                 dr["ItemName"] = line.Item.Name;
-                dr["Unit"] = line.Item.PiecesPerUnit + "/" + line.Item.UnitName;
+                dr["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
                 dr["Units"] = line.Units;
                 dr["Pieces"] = line.Pieces;
                 dr["SalesPrice"] = line.SalesPrice;
                 dr["Discount"] = line.Discount;
                 dr["Total"] = line.Total;
-                dr["InvoiceTotal"] = _salesTransaction.Total;
+                dr["InvoiceTotal"] = _salesTransaction.NewTransactionGrossTotal;
                 dt1.Rows.Add(dr);
             }
 
             DataRow dr2 = dt2.NewRow();
             dt2.Columns.Add(new DataColumn("InvoiceTotal", typeof(decimal)));
             dt2.Columns.Add(new DataColumn("InvoiceDiscount", typeof(decimal)));
-            dr2["InvoiceTotal"] = _salesTransaction.Total;
+            dt2.Columns.Add(new DataColumn("Customer", typeof(string)));
+            dt2.Columns.Add(new DataColumn("Address", typeof(string)));
+            dt2.Columns.Add(new DataColumn("InvoiceNumber", typeof(string)));
+            dt2.Columns.Add(new DataColumn("Date", typeof(string)));
+            dt2.Columns.Add(new DataColumn("DueDate", typeof(string)));
+            dt2.Columns.Add(new DataColumn("Notes", typeof(string)));
+            dr2["InvoiceTotal"] = _salesTransaction.NewTransactionGrossTotal;
             dr2["InvoiceDiscount"] = 0;
+            dr2["Customer"] = _salesTransaction.NewTransactionCustomer.Name;
+            dr2["Address"] = _salesTransaction.NewTransactionCustomer.City;
+            dr2["InvoiceNumber"] = _salesTransaction.NewTransactionID;
+            dr2["Date"] = _salesTransaction.Model.InvoiceIssued == null ? null : ((DateTime)_salesTransaction.Model.InvoiceIssued).ToShortDateString();
+            dr2["DueDate"] = _salesTransaction.Model.DueDate == null ? null : ((DateTime)_salesTransaction.Model.DueDate).ToShortDateString();
+            dr2["Notes"] = _salesTransaction.Model.Notes;
+
             dt2.Rows.Add(dr2);
 
             ReportDataSource reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);

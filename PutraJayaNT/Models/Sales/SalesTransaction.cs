@@ -21,13 +21,19 @@ namespace PutraJayaNT.Models.Sales
 
         public virtual Salesman Salesman { get; set; }
 
+        public decimal GrossTotal { get; set; }
+        
         public decimal Discount { get; set; }
+
+        public decimal SalesExpense { get; set; }
 
         public decimal Total { get; set; }
 
         public decimal Paid { get; set; }
 
         public DateTime? InvoiceIssued { get; set; }
+
+        public DateTime? DueDate { get; set; }
 
         [Index]
         public DateTime When { get; set; }

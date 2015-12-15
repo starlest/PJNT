@@ -188,7 +188,7 @@
                      Text="{Binding NewTransactionNotes, Mode=TwoWay}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" MaxLength="500" />
             <TextBlock Grid.Column="7" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Total: " />
             <TextBox Grid.Column="8" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                     IsReadOnly="True" Text="{Binding Total, Mode=OneWay}" />
+                     IsReadOnly="True" Text="{Binding NewTransactionGrossTotal, Mode=OneWay}" />
             <TextBlock Grid.Row="1" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Discount:" />
             <Grid Grid.Row="1"  Grid.Column="7" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
@@ -206,7 +206,7 @@
             <TextBlock Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Sales Expense: "
                        Margin="0, 5, 0, 0"/>
             <TextBox Grid.Row="2" Grid.Column="8" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                     Text="{Binding NewTransactionSalesExpense, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding NewTransactionSalesExpense, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" IsReadOnly="True" />
             <TextBlock Grid.Row="3" Grid.Column="7" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Net Total: " />
             <TextBox Grid.Row="3" Grid.Column="8" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                      IsReadOnly="True" Text="{Binding NetTotal, Mode=OneWay}" />

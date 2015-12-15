@@ -31,6 +31,8 @@ namespace PutraJayaNT.Models.Inventory
 
         public int PiecesPerUnit { get; set; }
 
+        public decimal SalesExpense { get; set; }
+
         public virtual ObservableCollection<Supplier> Suppliers { get; set; }
 
         public bool Active { get; set; }

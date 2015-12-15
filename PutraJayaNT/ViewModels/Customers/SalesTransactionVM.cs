@@ -35,7 +35,9 @@ namespace PutraJayaNT.ViewModels.Customers
         string _newTransactionNotes;
         decimal? _newTransactionDiscountPercent;
         decimal? _newTransactionDiscount;
-    
+        decimal _newTransactionSalesExpense;
+        decimal _newTransactionGrossTotal;
+
         ItemVM _newEntryProduct;
         Warehouse _newEntryWarehouse;
         decimal? _newEntryPrice;
@@ -65,7 +67,6 @@ namespace PutraJayaNT.ViewModels.Customers
         Visibility _editWindowVisibility;
         ICommand _deleteLineCommand;
 
-        decimal _total;
         decimal _netTotal;
 
         bool _editMode = false;
@@ -267,7 +268,8 @@ namespace PutraJayaNT.ViewModels.Customers
                         _salesTransactionLines.Add(vm);
                     }
 
-                    OnPropertyChanged("Total");
+                    OnPropertyChanged("NewTransactionGrossTotal");
+                    OnPropertyChanged("NewTransactionSalesExpense");
                     NewTransactionDiscount = transaction.Discount;
                     EditMode = true;
                 }
@@ -320,7 +322,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                 if (_newTransactionDiscountPercent == null) return;
 
-                NewTransactionDiscount = _newTransactionDiscountPercent / 100 * _total;
+                NewTransactionDiscount = _newTransactionDiscountPercent / 100 * _newTransactionGrossTotal;
                 NewTransactionDiscountPercent = null;
             }
         }
@@ -330,9 +332,9 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return _newTransactionDiscount; }
             set
             {
-                if (value != null && (value < 0 || value > _total))
+                if (value != null && (value < 0 || value > _newTransactionGrossTotal))
                 {
-                    MessageBox.Show(string.Format("a Please enter a value from the range of 0 - {0}.", _total), "Invalid Range", MessageBoxButton.OK);
+                    MessageBox.Show(string.Format("a Please enter a value from the range of 0 - {0}.", _newTransactionGrossTotal), "Invalid Range", MessageBoxButton.OK);
                     return;
                 }
 
@@ -342,16 +344,29 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
-        public decimal Total
+        public decimal NewTransactionSalesExpense
         {
             get
             {
-                _total = 0;
+                _newTransactionSalesExpense = 0;
                 foreach (var line in _salesTransactionLines)
-                    _total += line.Total;
+                    _newTransactionSalesExpense += line.Item.SalesExpense * line.Quantity;
 
                 OnPropertyChanged("NetTotal");
-                return _total;
+                return _newTransactionSalesExpense;
+            }
+        }
+
+        public decimal NewTransactionGrossTotal
+        {
+            get
+            {
+                _newTransactionGrossTotal = 0;
+                foreach (var line in _salesTransactionLines)
+                    _newTransactionGrossTotal += line.Total;
+
+                OnPropertyChanged("NetTotal");
+                return _newTransactionGrossTotal;
             }
         }
 
@@ -359,7 +374,7 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             get
             {
-                _netTotal = _total - (_newTransactionDiscount == null ? 0 : (decimal) _newTransactionDiscount);
+                _netTotal = _newTransactionGrossTotal - (_newTransactionDiscount == null ? 0 : (decimal) _newTransactionDiscount) - _newTransactionSalesExpense;
                 return _netTotal;
             }
         }
@@ -551,7 +566,8 @@ namespace PutraJayaNT.ViewModels.Customers
 
         private void ResetEntryFields()
         {
-            OnPropertyChanged("Total");
+            OnPropertyChanged("NewTransactionSalesExpense");
+            OnPropertyChanged("NewTransactionGrossTotal");
             NewEntryPiecesPerUnit = null;
             NewEntryProduct = null;
             NewEntryPrice = 0;
@@ -921,8 +937,10 @@ namespace PutraJayaNT.ViewModels.Customers
                                 .FirstOrDefault();
 
                                 transaction.Notes = _newTransactionNotes;
-                                transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal) _newTransactionDiscount;
-                                transaction.Total = Total;
+                                transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
+                                transaction.SalesExpense = _newTransactionSalesExpense;
+                                transaction.GrossTotal = _newTransactionGrossTotal;
+                                transaction.Total = _netTotal;
 
                                 transaction.InvoiceIssued = Model.InvoiceIssued;
 
@@ -978,8 +996,10 @@ namespace PutraJayaNT.ViewModels.Customers
 
                                 Model.Notes = _newTransactionNotes;
                                 Model.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
-                                Model.Total = _total;
-                                
+                                Model.SalesExpense = _newTransactionSalesExpense;
+                                Model.GrossTotal = _newTransactionGrossTotal;
+                                Model.Total = _netTotal;
+
                                 context.SalesTransactions.Add(Model);
                                 context.SaveChanges();
                             }
@@ -1023,6 +1043,8 @@ namespace PutraJayaNT.ViewModels.Customers
                             .FirstOrDefault();
 
                             transaction.InvoiceIssued = DateTime.Now.Date;
+                            transaction.DueDate = DateTime.Now.Date.AddDays(transaction.Customer.CreditTerms);
+                            Model = transaction;
 
                             #region Calculate Cost of Goods Sold
                             decimal costOfGoodsSoldAmount = 0;
@@ -1064,8 +1086,8 @@ namespace PutraJayaNT.ViewModels.Customers
                             var transaction1 = new LedgerTransaction();
                             LedgerDBHelper.AddTransaction(context, transaction1, DateTime.Now.Date, transaction.SalesTransactionID, "Sales Revenue");
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, transaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", Total);
-                            LedgerDBHelper.AddTransactionLine(context, transaction1, "Sales Revenue", "Credit", Total);
+                            LedgerDBHelper.AddTransactionLine(context, transaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", Model.Total);
+                            LedgerDBHelper.AddTransactionLine(context, transaction1, "Sales Revenue", "Credit", Model.Total);
                             context.SaveChanges();
 
                             var transaction2 = new LedgerTransaction();
@@ -1090,6 +1112,8 @@ namespace PutraJayaNT.ViewModels.Customers
             {
                 return _printTransactionCommand ?? (_printTransactionCommand = new RelayCommand(() =>
                 {
+                    if (_salesTransactionLines.Count == 0) return;
+
                     var salesInvoiceWindow = new SalesInvoiceWindow(this);
                     salesInvoiceWindow.Owner = App.Current.MainWindow;
                     salesInvoiceWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -1138,7 +1162,6 @@ namespace PutraJayaNT.ViewModels.Customers
             }
             return s;
         }
-
 
         /// <summary>
         /// Get the stock currently available.
@@ -1220,13 +1243,20 @@ namespace PutraJayaNT.ViewModels.Customers
             }
 
             // Refresh Total Amount
-            OnPropertyChanged("Total");
+            OnPropertyChanged("NewTransactionGrossTotal");
         }
 
         void LinePropertyChangedHandler(object o, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Total")
-                OnPropertyChanged("Total");
+            {
+                OnPropertyChanged("NewTransactionGrossTotal");
+            }
+
+            else if (e.PropertyName == "Pieces" || e.PropertyName == "Units" || e.PropertyName == "Quantity")
+            {
+                OnPropertyChanged("NewTransactionSalesExpense");
+            }
         }
         #endregion 
     }

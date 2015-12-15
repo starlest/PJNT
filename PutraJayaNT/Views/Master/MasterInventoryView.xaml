@@ -106,6 +106,7 @@
                 <DataGridTextColumn Header="Pieces/Unit" Width="1*" IsReadOnly="True" Binding="{Binding PiecesPerUnit}" />
                 <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
                 <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice}" />
+                <DataGridTextColumn Header="Expense" Width="1*" IsReadOnly="True" Binding="{Binding SalesExpense}" />
                 <DataGridTemplateColumn Header="Suppliers" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -170,8 +171,11 @@
             <TextBlock Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Sales Price:" />
             <TextBox Grid.Row="5" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding EditSalesPrice, Mode=TwoWay}" />
-            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Suppliers:" />
-            <ComboBox Grid.Row="6" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Expense:" />
+            <TextBox Grid.Row="6" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding EditSalesExpense, Mode=TwoWay}" />
+            <TextBlock Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Suppliers:" />
+            <ComboBox Grid.Row="7" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                       ItemsSource="{Binding EditSuppliers}" SelectedItem="{Binding EditSelectedSupplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       DisplayMemberPath="Name" IsEditable="True" />
             <Button Grid.Row="7" Grid.Column="4"  Content="Add" Command="{Binding EditAddSupplierCommand}" Margin="10, 20, 10, 10" Foreground="Red" IsEnabled="{Binding SelectedLine.Active}" />

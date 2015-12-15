@@ -1,15 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PutraJayaNT.Reports
+﻿namespace PutraJayaNT.Reports
 {
     class SalesInvoice
     {
+        public string Customer { get; set; }
+
+        public string Address { get; set; }
+
+        public decimal InvoiceNumber { get; set; }
+
+        public string Date { get; set; }
+
+        public string DueDate { get; set; }
+
         public decimal InvoiceTotal { get; set; }
 
-        public decimal InvoiceDiscount{ get; set; }
+        public decimal InvoiceDiscount { get; set; }
+
+        public string Notes { get; set; }
     }
 }

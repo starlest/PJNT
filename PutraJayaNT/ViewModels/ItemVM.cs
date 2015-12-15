@@ -105,6 +105,16 @@ namespace PutraJayaNT.ViewModels
             get { return Quantity % Model.PiecesPerUnit; }
         }
 
+        public decimal SalesExpense
+        {
+            get { return Model.SalesExpense; }
+            set
+            {
+                Model.SalesExpense = value;
+                OnPropertyChanged("SalesExpense");
+            }
+        }
+
         public ObservableCollection<Supplier> Suppliers
         {
             get { return Model.Suppliers; }

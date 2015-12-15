@@ -8,6 +8,8 @@ namespace PutraJayaNT.Reports
 {
     public class SalesInvoiceLine
     {
+        public int LineNumber { get; set; }
+
         public string ItemID { get; set; }
 
         public string ItemName { get; set; }
@@ -23,7 +25,5 @@ namespace PutraJayaNT.Reports
         public decimal Discount { get; set; }
 
         public decimal Total { get; set; }
-
-        public decimal InvoiceTotal { get; set; }
     }
 }

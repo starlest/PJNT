@@ -60,6 +60,7 @@ namespace PutraJayaNT.ViewModels.Master
         Category _editCategory;
         decimal _editPurchasePrice;
         decimal _editSalesPrice;
+        decimal _editSalesExpense;
         Supplier _editSelectedSupplier;
         string _editUnitName;
         int _editPiecesPerUnit;
@@ -376,6 +377,7 @@ namespace PutraJayaNT.ViewModels.Master
                     EditPurchasePrice = _selectedLine.PurchasePrice;
                     EditUnitName = _selectedLine.UnitName;
                     EditPiecesPerUnit = _selectedLine.PiecesPerUnit;
+                    EditSalesExpense = _selectedLine.SalesExpense;
                     _editSuppliers.Clear();
                     foreach (var supplier in _selectedLine.Suppliers)
                         _editSuppliers.Add(supplier);
@@ -414,6 +416,12 @@ namespace PutraJayaNT.ViewModels.Master
         {
             get { return _editPurchasePrice; }
             set { SetProperty(ref _editPurchasePrice, value, () => EditPurchasePrice); }
+        }
+
+        public decimal EditSalesExpense
+        {
+            get { return _editSalesExpense; }
+            set { SetProperty(ref _editSalesExpense, value, () => EditSalesExpense); }
         }
 
         public string EditUnitName
@@ -541,8 +549,9 @@ namespace PutraJayaNT.ViewModels.Master
                             item.Category = context.Categories
                             .Where(e => e.ID == _editCategory.ID)
                             .FirstOrDefault();
-                            item.PurchasePrice = _editPurchasePrice;
-                            item.SalesPrice = _editSalesPrice;
+                            item.PurchasePrice = _editPurchasePrice / _editPiecesPerUnit;
+                            item.SalesPrice = _editSalesPrice / _editPiecesPerUnit;
+                            item.SalesExpense = _editSalesExpense;
                             item.UnitName = _editUnitName;
                             item.PiecesPerUnit = _editPiecesPerUnit;
 
@@ -565,6 +574,7 @@ namespace PutraJayaNT.ViewModels.Master
                             _selectedLine.Category = _editCategory;
                             _selectedLine.PurchasePrice = _editPurchasePrice;
                             _selectedLine.SalesPrice = _editSalesPrice;
+                            _selectedLine.SalesExpense = _editSalesExpense;
                             _selectedLine.UnitName = _editUnitName;
                             _selectedLine.PiecesPerUnit = _editPiecesPerUnit;
                         }

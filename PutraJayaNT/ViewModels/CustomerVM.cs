@@ -85,6 +85,16 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        public decimal SalesReturnCredits
+        {
+            get { return Model.SalesReturnCredits; }
+            set
+            {
+                Model.SalesReturnCredits = value;
+                OnPropertyChanged("SalesReturnCredits");
+            }
+        }
+
         public bool Active
         {
             get { return Model.Active; }
