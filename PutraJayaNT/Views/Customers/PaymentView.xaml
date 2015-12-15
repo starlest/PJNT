@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="PutraJayaNT.Views.Customers.PaymentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PutraJayaNT.Views.Customers"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.125*" />
+        </Grid.RowDefinitions>
+        <Border BorderBrush="Blue" BorderThickness="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Customer:" />
+                <ComboBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
+                      ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer, UpdateSourceTrigger=Explicit}" 
+                      DisplayMemberPath="Name" IsEditable="True" />
+                <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Credits: " />
+                <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+                     IsReadOnly="True" Text="{Binding SalesReturnCredits, Mode=OneWay}" Margin="10, 10, 10, 0" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Sales ID:" FontSize="28" />
+                <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
+                      ItemsSource="{Binding CustomerUnpaidSalesTransactions}" SelectedItem="{Binding SelectedSalesTransaction, UpdateSourceTrigger=Explicit}" 
+                      DisplayMemberPath="SalesTransactionID" IsEditable="True" />
+                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Payment Mode:" FontSize="28" />
+                <ComboBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
+                      ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding SelectedPaymentMode, UpdateSourceTrigger=PropertyChanged}" 
+                      IsEditable="True" />
+            </Grid>
+        </Border>
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding SelectedSalesTransactionLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
+                <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Unit Name" Width="1*" Binding="{Binding Item.UnitName}" />
+                <DataGridTextColumn Header="Pieces/Unit" Width="1*" Binding="{Binding Item.PiecesPerUnit}" />
+                <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
+                <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice}" />
+                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Total: " />
+            <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+                     IsReadOnly="True" FontWeight="ExtraBlack" Foreground="Black" Text="{Binding Total, Mode=OneWay}" Margin="10, 10, 0, 0"  />
+            <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Use Credits: " />
+            <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+                     Text="{Binding UseCredits, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Margin="10, 10, 10, 0" />
+            <TextBlock Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Remaining: " />
+            <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+                     IsReadOnly="True" FontWeight="ExtraBlack" Foreground="Black" Text="{Binding Remaining, Mode=OneWay}" Margin="10, 10, 0, 0" />
+            <TextBlock Grid.Column="6" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Pay: " Foreground="Red" />
+            <TextBox Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Text="{Binding Pay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10, 10, 10, 0"/>
+            <Button Grid.Column="8" Content="Confirm" Command="{Binding ConfirmPaymentCommand}" Margin="10" />
+        </Grid>
+    </Grid>
+</UserControl>
