@@ -12,9 +12,13 @@
 
         public string DueDate { get; set; }
 
-        public decimal InvoiceTotal { get; set; }
+        public decimal InvoiceGrossTotal { get; set; }
 
         public decimal InvoiceDiscount { get; set; }
+
+        public decimal InvoiceSalesExpense { get; set; }
+
+        public decimal InvoiceNetTotal { get; set; }
 
         public string Notes { get; set; }
     }

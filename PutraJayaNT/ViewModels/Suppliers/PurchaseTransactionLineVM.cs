@@ -96,6 +96,21 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        public string Unit
+        {
+            get { return Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit; }
+        }
+        public decimal Discount
+        {
+            get { return Model.Discount * Model.Item.PiecesPerUnit; }
+            set
+            {
+                Model.Discount = value / Model.Item.PiecesPerUnit;
+                OnPropertyChanged("Discount");
+                Total = Model.Quantity * (Model.PurchasePrice - Model.Discount);
+            }
+        }
+
         public decimal PurchasePrice
         {
             get { return Model.PurchasePrice * Model.Item.PiecesPerUnit; }
@@ -103,7 +118,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 Model.PurchasePrice = value / Model.Item.PiecesPerUnit;
                 OnPropertyChanged("PurchasePricePerUnit");
-                OnPropertyChanged("Total");
+                Total = Model.Quantity * (Model.PurchasePrice - Model.Discount);
             }
         }
 
@@ -112,14 +127,13 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return Model.PurchasePrice * Model.Item.PiecesPerUnit; }
         }
 
-
         public decimal Total
         {
             get
             {
                 return Model.Total;
             }
-            private set
+            set
             {
                 Model.Total = value;
                 OnPropertyChanged("Total");

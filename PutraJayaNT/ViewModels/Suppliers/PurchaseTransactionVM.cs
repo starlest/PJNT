@@ -2,8 +2,6 @@
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Windows;
 using System.Windows.Input;
 using System.Linq;
@@ -36,7 +34,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
         int? _newEntryPieces;
         int? _newEntryPiecesPerUnit;
         decimal? _newEntryPrice;
-        decimal? _newEntryTotal;
+        decimal? _newEntryDiscountPercent;
+        decimal? _newEntryDiscount;
+        decimal? _newTransactionGrossTotal;
 
         bool _newEntrySubmitted;
 
@@ -84,6 +84,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _warehouses; }
         }
 
+        #region New Transaction Properties
         public Supplier NewTransactionSupplier
         {
             get { return _newTransactionSupplier; }
@@ -125,6 +126,20 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 }
             }
         }
+
+        public decimal? NewTransactionGrossTotal
+        {
+            get
+            {
+                _newTransactionGrossTotal = 0;
+                foreach (var line in _lines)
+                {
+                    _newTransactionGrossTotal += line.Total;
+                }
+                return _newTransactionGrossTotal;
+            }
+        }
+        #endregion
 
         private void UpdateSuppliers()
         {
@@ -223,23 +238,45 @@ namespace PutraJayaNT.ViewModels.Suppliers
             set { SetProperty(ref _newEntryPiecesPerUnit, value, "NewEntryPiecesPerUnit"); }
         }
 
+        public decimal? NewEntryDiscountPercent
+        {
+            get { return _newEntryDiscountPercent; }
+            set
+            {
+                if (value != null && (value < 0 || value > 100))
+                {
+                    MessageBox.Show("Please enter a value from the range of 0 - 100.", "Invalid Range", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _newEntryDiscountPercent, value, "NewEntryDiscountPercent");
+
+                if (_newEntryDiscountPercent == null) return;
+
+                NewEntryDiscount = _newEntryDiscountPercent / 100 * _newEntryPrice;
+                NewEntryDiscountPercent = null;
+            }
+        }
+
+        public decimal? NewEntryDiscount
+        {
+            get { return _newEntryDiscount; }
+            set
+            {
+                if (value != null && (value < 0 || value > _newEntryPrice))
+                {
+                    MessageBox.Show(string.Format("Please enter a value from the range of 0 - {0}.", _newEntryPrice), "Invalid Range", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _newEntryDiscount, value, "NewEntryDiscount");
+            }
+        }
+
         public decimal? NewEntryPrice
         {
             get { return _newEntryPrice; }
             set { SetProperty(ref _newEntryPrice, value, "NewEntryPrice"); }
-        }
-
-        public decimal? NewEntryTotal
-        {
-            get
-            {
-                _newEntryTotal = 0;
-                foreach (var line in _lines)
-                {
-                    _newEntryTotal += line.Total;
-                }
-                return _newEntryTotal;
-            }
         }
 
         public bool NewEntrySubmitted
@@ -263,12 +300,14 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                     _newEntryQuantity = ((_newEntryUnits != null ?  (int) _newEntryUnits : 0)  * _newEntryItem.PiecesPerUnit)
                     + (_newEntryPieces != null ? (int)_newEntryPieces : 0);
-                    _newEntryPrice /= _newEntryItem.PiecesPerUnit;
 
                     // Check if the item exists in one of the lines 
                     foreach (var l in _lines)
                     {
-                        if (_newEntryItem.Equals(l.Item) && _newEntryWarehouse.ID.Equals(l.Warehouse.ID) && !_newEntryPrice.Equals(l.PurchasePrice))
+                        if (_newEntryItem.Equals(l.Item) 
+                        && _newEntryWarehouse.ID.Equals(l.Warehouse.ID) 
+                        && _newEntryPrice.Equals(l.PurchasePrice)
+                        && _newEntryDiscount.Equals(l.Discount))
                         {
                             l.Quantity += _newEntryQuantity;
                             ResetEntryFields();
@@ -278,20 +317,22 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                     var line = new PurchaseTransactionLine
                     {
-                        PurchasePrice = (decimal)_newEntryPrice,
                         Quantity = _newEntryQuantity,
-                        Total = (decimal)_newEntryPrice * _newEntryQuantity,
+                        PurchasePrice = (decimal)_newEntryPrice / _newEntryItem.PiecesPerUnit,
+                        Discount = (_newEntryDiscount == null ? 0 : (decimal)_newEntryDiscount) / _newEntryItem.PiecesPerUnit,
                         Item = _newEntryItem,
                         Warehouse = _newEntryWarehouse,
                         SoldOrReturned = 0,
                         PurchaseTransaction = Model
                     };
 
+                    line.Total = line.Quantity * (line.PurchasePrice - line.Discount);
+
                     var lineVM = new PurchaseTransactionLineVM { Model = line };
                     _lines.Add(lineVM);
 
                     // Update Total Amount
-                    OnPropertyChanged("NewEntryTotal");
+                    OnPropertyChanged("NewTransactionGrossTotal");
 
                     ResetEntryFields();
 
@@ -470,13 +511,13 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
 
             // Refresh Total Amount
-            OnPropertyChanged("NewEntryTotal");
+            OnPropertyChanged("NewTransactionGrossTotal");
         }
 
         void LinePropertyChangedHandler(object o, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Total")
-                OnPropertyChanged("NewEntryTotal");
+                OnPropertyChanged("NewTransactionGrossTotal");
         }
         #endregion
     }

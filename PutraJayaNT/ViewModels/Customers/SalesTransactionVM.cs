@@ -35,7 +35,7 @@ namespace PutraJayaNT.ViewModels.Customers
         string _newTransactionNotes;
         decimal? _newTransactionDiscountPercent;
         decimal? _newTransactionDiscount;
-        decimal _newTransactionSalesExpense;
+        decimal? _newTransactionSalesExpense;
         decimal _newTransactionGrossTotal;
 
         ItemVM _newEntryProduct;
@@ -269,7 +269,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     }
 
                     OnPropertyChanged("NewTransactionGrossTotal");
-                    OnPropertyChanged("NewTransactionSalesExpense");
+                    NewTransactionSalesExpense = transaction.SalesExpense;
                     NewTransactionDiscount = transaction.Discount;
                     EditMode = true;
                 }
@@ -339,21 +339,23 @@ namespace PutraJayaNT.ViewModels.Customers
                 }
 
                 SetProperty(ref _newTransactionDiscount, value, "NewTransactionDiscount");
-                Model.Discount = _newTransactionDiscount == null ? 0 :  (decimal) _newTransactionDiscount;
                 OnPropertyChanged("NetTotal");
             }
         }
 
-        public decimal NewTransactionSalesExpense
+        public decimal? NewTransactionSalesExpense
         {
-            get
+            get { return _newTransactionSalesExpense; }
+            set
             {
-                _newTransactionSalesExpense = 0;
-                foreach (var line in _salesTransactionLines)
-                    _newTransactionSalesExpense += line.Item.SalesExpense * line.Quantity;
+                if (value != null && (value < 0))
+                {
+                    MessageBox.Show("Please enter a value greater than 0.", "Invalid Value", MessageBoxButton.OK);
+                    return;
+                }
 
+                SetProperty(ref _newTransactionSalesExpense, value, "NewTransactionSalesExpense");
                 OnPropertyChanged("NetTotal");
-                return _newTransactionSalesExpense;
             }
         }
 
@@ -374,7 +376,7 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             get
             {
-                _netTotal = _newTransactionGrossTotal - (_newTransactionDiscount == null ? 0 : (decimal) _newTransactionDiscount) - _newTransactionSalesExpense;
+                _netTotal = _newTransactionGrossTotal - (_newTransactionSalesExpense == null ? 0 : (decimal) _newTransactionSalesExpense) - (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount);
                 return _netTotal;
             }
         }
@@ -938,7 +940,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                                 transaction.Notes = _newTransactionNotes;
                                 transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
-                                transaction.SalesExpense = _newTransactionSalesExpense;
+                                transaction.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal) _newTransactionSalesExpense;
                                 transaction.GrossTotal = _newTransactionGrossTotal;
                                 transaction.Total = _netTotal;
 
@@ -996,7 +998,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                                 Model.Notes = _newTransactionNotes;
                                 Model.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
-                                Model.SalesExpense = _newTransactionSalesExpense;
+                                Model.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal)_newTransactionSalesExpense;
                                 Model.GrossTotal = _newTransactionGrossTotal;
                                 Model.Total = _netTotal;
 
@@ -1132,6 +1134,7 @@ namespace PutraJayaNT.ViewModels.Customers
             SetTransactionID();
             NewTransactionNotes = null;
             NewTransactionDiscount = null;
+            NewTransactionSalesExpense = null;
             NewTransactionCustomer = null;
             NewTransactionDate = DateTime.Now.Date;
             NewTransactionSalesman = null;

@@ -51,7 +51,6 @@ namespace PutraJayaNT.Reports
             dt1.Columns.Add(new DataColumn("SalesPrice", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Discount", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
-            dt1.Columns.Add(new DataColumn("InvoiceTotal", typeof(decimal)));
 
             int count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines)
@@ -66,21 +65,24 @@ namespace PutraJayaNT.Reports
                 dr["SalesPrice"] = line.SalesPrice;
                 dr["Discount"] = line.Discount;
                 dr["Total"] = line.Total;
-                dr["InvoiceTotal"] = _salesTransaction.NewTransactionGrossTotal;
                 dt1.Rows.Add(dr);
             }
 
             DataRow dr2 = dt2.NewRow();
-            dt2.Columns.Add(new DataColumn("InvoiceTotal", typeof(decimal)));
+            dt2.Columns.Add(new DataColumn("InvoiceGrossTotal", typeof(decimal)));
             dt2.Columns.Add(new DataColumn("InvoiceDiscount", typeof(decimal)));
+            dt2.Columns.Add(new DataColumn("InvoiceSalesExpense", typeof(decimal)));
+            dt2.Columns.Add(new DataColumn("InvoiceNetTotal", typeof(decimal)));
             dt2.Columns.Add(new DataColumn("Customer", typeof(string)));
             dt2.Columns.Add(new DataColumn("Address", typeof(string)));
             dt2.Columns.Add(new DataColumn("InvoiceNumber", typeof(string)));
             dt2.Columns.Add(new DataColumn("Date", typeof(string)));
             dt2.Columns.Add(new DataColumn("DueDate", typeof(string)));
             dt2.Columns.Add(new DataColumn("Notes", typeof(string)));
-            dr2["InvoiceTotal"] = _salesTransaction.NewTransactionGrossTotal;
-            dr2["InvoiceDiscount"] = 0;
+            dr2["InvoiceGrossTotal"] = _salesTransaction.NewTransactionGrossTotal;
+            dr2["InvoiceDiscount"] = _salesTransaction.NewTransactionDiscount == null ? 0 : (decimal)_salesTransaction.NewTransactionDiscount;
+            dr2["InvoiceSalesExpense"] = _salesTransaction.NewTransactionSalesExpense == null ? 0 : (decimal) _salesTransaction.NewTransactionSalesExpense;
+            dr2["InvoiceNetTotal"] = _salesTransaction.NetTotal;
             dr2["Customer"] = _salesTransaction.NewTransactionCustomer.Name;
             dr2["Address"] = _salesTransaction.NewTransactionCustomer.City;
             dr2["InvoiceNumber"] = _salesTransaction.NewTransactionID;
@@ -97,7 +99,7 @@ namespace PutraJayaNT.Reports
        
             reportViewer.LocalReport.DataSources.Add(reportDataSource1);
             reportViewer.LocalReport.DataSources.Add(reportDataSource2);
-
+            reportViewer.PageCountMode = PageCountMode.Actual;
             reportViewer.RefreshReport();
         }
     }
