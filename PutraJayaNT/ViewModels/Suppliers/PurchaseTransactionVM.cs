@@ -36,7 +36,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
         decimal? _newEntryPrice;
         decimal? _newEntryDiscountPercent;
         decimal? _newEntryDiscount;
+
+        decimal? _newTransactionDiscountPercent;
+        decimal? _newTransactionDiscount;
         decimal? _newTransactionGrossTotal;
+        decimal? _newTransactionNetTotal;
 
         bool _newEntrySubmitted;
 
@@ -137,6 +141,51 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     _newTransactionGrossTotal += line.Total;
                 }
                 return _newTransactionGrossTotal;
+            }
+        }
+
+        public decimal? NewTransactionDiscountPercent
+        {
+            get { return _newTransactionDiscountPercent; }
+            set
+            {
+                if (value != null && (value < 0 || value > 100))
+                {
+                    MessageBox.Show("Please enter a value from the range of 0 - 100.", "Invalid Range", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _newTransactionDiscountPercent, value, "NewTransactionDiscountPercent");
+
+                if (_newTransactionDiscountPercent == null) return;
+
+                NewTransactionDiscount = _newTransactionDiscountPercent / 100 * _newTransactionGrossTotal;
+                NewTransactionDiscountPercent = null;
+            }
+        }
+
+        public decimal? NewTransactionDiscount
+        {
+            get { return _newTransactionDiscount; }
+            set
+            {
+                if (value != null && (value < 0 || value > _newTransactionGrossTotal))
+                {
+                    MessageBox.Show(string.Format("a Please enter a value from the range of 0 - {0}.", _newTransactionGrossTotal), "Invalid Range", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _newTransactionDiscount, value, "NewTransactionDiscount");
+                OnPropertyChanged("NetTotal");
+            }
+        }
+
+        public decimal? NewTransactionNetTotal
+        {
+            get
+            {
+                _newTransactionNetTotal = (_newTransactionGrossTotal == null ? 0 : (decimal)_newTransactionGrossTotal) - (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount);
+                return _newTransactionNetTotal;
             }
         }
         #endregion
@@ -395,10 +444,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                                 line.Item = item;
                                 line.Warehouse = warehouse;
-
-                                Model.Total += line.Total;
                             }
 
+                            Model.Total = (decimal) _newTransactionNetTotal;
                             Model.Supplier = context.Suppliers.Where(e => e.ID == Model.Supplier.ID).FirstOrDefault();
                             context.PurchaseTransactions.Add(Model);
 
@@ -463,10 +511,10 @@ namespace PutraJayaNT.ViewModels.Suppliers
             ResetEntryFields();
 
             NewTransactionSupplier = null;
+            NewTransactionDiscount = null;
 
             Model.Date = _newEntryDate;
             Model.DueDate = _newEntryDueDate;
-            Model.Total = 0;
 
             _warehouses.Clear();
             _supplierItems.Clear();
@@ -476,6 +524,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
             _lines.Clear();
 
             OnPropertyChanged("Suppliers");
+            OnPropertyChanged("NewTransactionGrossTotal");
+            OnPropertyChanged("NewTransactionNetTotal");
         }
 
         #region Purchase Transaction Lines Event Handler
