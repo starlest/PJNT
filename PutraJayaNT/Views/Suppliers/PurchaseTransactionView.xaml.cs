@@ -46,8 +46,8 @@ namespace PutraJayaNT.Views.Suppliers
         {
             if (e.Key == Key.Enter)
             {
-                //BindingExpression exp = OverallDiscountPercentTextBox.GetBindingExpression(TextBox.TextProperty);
-                //if (exp != null) exp.UpdateSource();
+                BindingExpression exp = OverallDiscountPercentTextBox.GetBindingExpression(TextBox.TextProperty);
+                if (exp != null) exp.UpdateSource();
             }
         }
     }

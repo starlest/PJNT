@@ -96,6 +96,17 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
+
+        public decimal Discount
+        {
+            get { return Model.Discount * Item.PiecesPerUnit; }
+            set
+            {
+                Model.Discount = value / Item.PiecesPerUnit;
+                OnPropertyChanged("Discount");
+            }
+        }
+
         public decimal CostOfGoodsSold
         {
             get { return Model.CostOfGoodsSold; }

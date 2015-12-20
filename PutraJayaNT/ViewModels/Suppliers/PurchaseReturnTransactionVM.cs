@@ -21,6 +21,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         string _selectedPurchaseTransactionID;
         PurchaseTransactionLineVM _selectedPurchaseTransactionLine;
         DateTime? _selectedPurchaseTransactionWhen;
+        decimal _selectedPurchaseTransactionDiscountIncluded;
 
         string _purchaseReturnEntryID;
         DateTime _purchaseReturnEntryDate;
@@ -55,6 +56,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _purchaseReturnTransactionLines; }
         }
 
+        #region Selected Purchase Transaction Properties
         public string SelectedPurchaseTransactionID
         {
             get { return _selectedPurchaseTransactionID; }
@@ -80,6 +82,41 @@ namespace PutraJayaNT.ViewModels.Suppliers
             set { SetProperty(ref _selectedPurchaseTransactionWhen, value, "SelectedPurchaseTransactionWhen"); }
         }
 
+        public decimal SelectedPurchaseTransactionDiscountIncluded
+        {
+            get { return _selectedPurchaseTransactionDiscountIncluded; }
+            set
+            {
+                if (value == 0)
+                {
+                    SetProperty(ref _selectedPurchaseTransactionDiscountIncluded, value, "SelectedPurchaseTransactionDiscountIncluded");
+                    return;
+                }
+
+                if (Model.PurchaseTransaction != null)
+                {
+                    var availableDiscount = Model.PurchaseTransaction.Discount;
+                    using (var context = new ERPContext())
+                    {
+                        var purchaseReturns = context.PurchaseReturnTransactions
+                            .Where(e => e.PurchaseTransaction.PurchaseID.Equals(Model.PurchaseTransaction.PurchaseID))
+                            .ToList();
+
+                        foreach (var pr in purchaseReturns)
+                            availableDiscount -= pr.PurchaseTransactionDiscountIncluded;  
+                    }
+
+                    if (value > availableDiscount || value < 0)
+                    {
+                        MessageBox.Show(string.Format("The valid range is {0} - {1}.", 0, availableDiscount), "Invalid Value", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    SetProperty(ref _selectedPurchaseTransactionDiscountIncluded, value, "SelectedPurchaseTransactionDiscountIncluded");
+                }
+            }
+        }
+
         public PurchaseTransactionLineVM SelectedPurchaseTransactionLine
         {
             get { return _selectedPurchaseTransactionLine; }
@@ -90,6 +127,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     UpdateReturnEntryProperties();
             }
         }
+        #endregion
 
         private bool UpdatePurchaseTransactionLines()
         {
@@ -183,21 +221,22 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 return _purchaseReturnEntryAddCommand ?? (_purchaseReturnEntryAddCommand = new RelayCommand(() =>
                 {
-                    var availableReturnQuantity = _selectedPurchaseTransactionLine.Quantity;
-                    var availablePieces = GetStock(_selectedPurchaseTransactionLine.Item, _selectedPurchaseTransactionLine.Warehouse);
+                    var availableReturnQuantity = _selectedPurchaseTransactionLine.Quantity - _selectedPurchaseTransactionLine.SoldOrReturned;
 
                     using (var context = new ERPContext())
                     {
                         var returnedItems = context.PurchaseReturnTransactionLines
-                        .Where(e => e.PurchaseReturnTransaction.PurchaseTransaction.PurchaseID
-                        .Equals(Model.PurchaseTransaction.PurchaseID) && e.ItemID.Equals(_selectedPurchaseTransactionLine.Item.ItemID));
+                        .Where(e => e.PurchaseReturnTransaction.PurchaseTransaction.PurchaseID.Equals(Model.PurchaseTransaction.PurchaseID) 
+                        && e.ItemID.Equals(_selectedPurchaseTransactionLine.Item.ItemID)
+                        && e.WarehouseID.Equals(_selectedPurchaseTransactionLine.Warehouse.ID)
+                        && e.PurchasePrice.Equals(_selectedPurchaseTransactionLine.PurchasePrice) 
+                        && e.Discount.Equals(_selectedPurchaseTransactionLine.Discount / _selectedPurchaseTransactionLine.Item.PiecesPerUnit));
+
 
                         if (returnedItems.Count() != 0)
                         {
                             foreach (var item in returnedItems)
-                            {
                                 availableReturnQuantity -= item.Quantity;
-                            }
                         }
                     }
 
@@ -212,7 +251,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                     if (_purchaseReturnEntryQuantity > _selectedPurchaseTransactionLine.Quantity
                     || _purchaseReturnEntryQuantity > availableReturnQuantity
-                    || _purchaseReturnEntryQuantity > availablePieces
                     || _purchaseReturnEntryQuantity <= 0)
                     {
                         MessageBox.Show(string.Format("The valid return quantity is {0} units {1} pieces",
@@ -225,11 +263,13 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     // Look if the line exists in the PurchaseReturnTransactionLines already
                     foreach (var line in _purchaseReturnTransactionLines)
                     {
-                        if (line.Item.ItemID.Equals(_selectedPurchaseTransactionLine.Item.ItemID))
+                        if (line.Item.ItemID.Equals(_selectedPurchaseTransactionLine.Item.ItemID) &&
+                        line.Warehouse.ID.Equals(_selectedPurchaseTransactionLine.Warehouse.ID) &&
+                        line.PurchasePrice.Equals(_selectedPurchaseTransactionLine.PurchasePrice) &&
+                        line.Discount.Equals(_selectedPurchaseTransactionLine.Discount))
                         {
                             if ((line.Quantity + _purchaseReturnEntryQuantity) > _selectedPurchaseTransactionLine.Quantity ||
                             (line.Quantity + _purchaseReturnEntryQuantity) > availableReturnQuantity ||
-                            (line.Quantity + _purchaseReturnEntryQuantity) > availablePieces ||
                             (line.Quantity + _purchaseReturnEntryQuantity) <= 0)
                             {
                                 MessageBox.Show(string.Format("The valid return quantity is {0} units {1} pieces",
@@ -251,11 +291,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
                         Item = _selectedPurchaseTransactionLine.Item,
                         Warehouse = _selectedPurchaseTransactionLine.Warehouse,
                         PurchasePrice = _selectedPurchaseTransactionLine.PurchasePrice / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
+                        Discount = _selectedPurchaseTransactionLine.Discount / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
                         Quantity = (int)_purchaseReturnEntryQuantity
                     };
 
                     _purchaseReturnTransactionLines.Add(new PurchaseReturnTransactionLineVM { Model = pr, AvailableReturnQuantity = availableReturnQuantity });
-
                 }));
             }
         }
@@ -315,7 +355,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                                     return;
                                 }
 
-                                totalAmount += (line.PurchasePrice /line.Item.PiecesPerUnit) * line.Quantity;
+                                totalAmount += ((line.PurchasePrice - line.Discount) / line.Item.PiecesPerUnit) * line.Quantity;
 
                                 line.Item = context.Inventory
                                 .Where(e => e.ItemID.Equals(line.Item.ItemID))
@@ -329,8 +369,16 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                                 // Decrease the returned quantity from stock
                                 stock.Pieces -= line.Quantity;
+                                var purchaseTransactionLine = context.PurchaseTransactionLines
+                                .Where(e => e.PurchaseTransactionID.Equals(Model.PurchaseTransaction.PurchaseID) &&
+                                e.ItemID.Equals(stock.ItemID) && e.WarehouseID.Equals(stock.WarehouseID) &&
+                                e.PurchasePrice.Equals(line.PurchasePrice / line.Item.PiecesPerUnit) && e.Discount.Equals(line.Discount / line.Item.PiecesPerUnit))
+                                .FirstOrDefault();
+                                purchaseTransactionLine.SoldOrReturned += line.Quantity;
                             }
 
+                            totalAmount -= _selectedPurchaseTransactionDiscountIncluded;
+                            Model.PurchaseTransactionDiscountIncluded = _selectedPurchaseTransactionDiscountIncluded;
                             Model.PurchaseTransaction.Supplier.PurchaseReturnCredits += totalAmount;
 
                             // Record the corresponding ledger transactions in the database
@@ -347,7 +395,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                         ResetTransaction();
                         Model = new PurchaseReturnTransaction();
-                        Model.Date = _purchaseReturnEntryDate;
+                        Model.Date = DateTime.Now.Date;
                         SetPurchaseReturnTransactionID();
                     }
                 }));
@@ -356,24 +404,15 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         private void ResetTransaction()
         {
+            SelectedPurchaseTransactionDiscountIncluded = 0;
             SelectedPurchaseTransactionID = null;
-            PurchaseReturnEntryDate = DateTime.Now;
+            SelectedPurchaseTransactionWhen = null;
+            PurchaseReturnEntryDate = DateTime.Now.Date;
             PurchaseReturnEntryProduct = null;
             PurchaseReturnEntryUnits = null;
             PurchaseReturnEntryPieces = null;
             _purchaseReturnTransactionLines.Clear();
             _purchaseTransactionLines.Clear();
-        }
-
-        private int GetStock(Item item, Warehouse warehouse)
-        {
-            int s = 0;
-            using (var context = new ERPContext())
-            {
-                var stock = context.Stocks.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID)).FirstOrDefault();
-                s = stock.Pieces;
-            }
-            return s;
         }
     }
 }

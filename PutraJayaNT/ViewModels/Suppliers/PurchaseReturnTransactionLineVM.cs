@@ -12,6 +12,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
         int _pieces;
         int _units;
 
+        decimal _discount;
+
         public PurchaseReturnTransaction PurchaseReturnTransaction
         {
             get { return Model.PurchaseReturnTransaction; }
@@ -165,6 +167,19 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 Model.PurchasePrice = value / Model.Item.PiecesPerUnit;
                 OnPropertyChanged("PurchasePrice");
+            }
+        }
+
+        public decimal Discount
+        {
+            get
+            {
+                return Model.Discount * Model.Item.PiecesPerUnit;
+            }
+            set
+            {
+                Model.Discount = value / Model.Item.PiecesPerUnit;
+                OnPropertyChanged("Discount");
             }
         }
 

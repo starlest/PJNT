@@ -28,10 +28,18 @@ namespace PutraJayaNT.Models
         public DateTime DueDate { get; set; }
 
         [Required]
+        public decimal GrossTotal { get; set; }
+
+        [Required]
+        public decimal Discount { get; set; }
+
+        [Required]
         public decimal Total { get; set; }
 
         [Required]
         public decimal Paid { get; set; }
+
+        public string Note { get; set; }
 
         public virtual ObservableCollection<PurchaseTransactionLine> PurchaseTransactionLines { get; set; }
 

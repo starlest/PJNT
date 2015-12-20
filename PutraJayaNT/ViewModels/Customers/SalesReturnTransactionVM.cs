@@ -23,6 +23,7 @@ namespace PutraJayaNT.ViewModels.Customers
         SalesTransactionLineVM _selectedSalesTransactionLine;
         CustomerVM _selectedSalesTransactionCustomer;
         DateTime? _selectedSalesTransactionWhen;
+        decimal _selectedSalesTransactionDiscountIncluded;
 
         string _salesReturnEntryID;
         DateTime _salesReturnEntryDate;
@@ -56,6 +57,7 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return _salesReturnTransactionLines; }
         }
 
+        #region Selected Sales Transaction Properties
         public string SelectedSalesTransactionID
         {
             get { return _selectedSalesTransactionID; }
@@ -93,6 +95,41 @@ namespace PutraJayaNT.ViewModels.Customers
             set { SetProperty(ref _selectedSalesTransactionWhen, value, "SelectedSalesTransactionWhen"); }
         }
 
+        public decimal SelectedSalesTransactionDiscountIncluded
+        {
+            get { return _selectedSalesTransactionDiscountIncluded; }
+            set
+            {
+                if (value == 0)
+                {
+                    SetProperty(ref _selectedSalesTransactionDiscountIncluded, value, "SelectedSalesTransactionDiscountIncluded");
+                    return;
+                }
+
+                if (Model.SalesTransaction != null)
+                {
+                    var availableDiscount = Model.SalesTransaction.Discount;
+                    using (var context = new ERPContext())
+                    {
+                        var salesReturns = context.SalesReturnTransactions
+                            .Where(e => e.SalesTransaction.SalesTransactionID.Equals(Model.SalesTransaction.SalesTransactionID))
+                            .ToList();
+
+                        foreach (var sr in salesReturns)
+                            availableDiscount -= sr.SalesTransactionDiscountIncluded;
+                    }
+
+                    if (value > availableDiscount || value < 0)
+                    {
+                        MessageBox.Show(string.Format("The valid range is {0} - {1}.", 0, availableDiscount), "Invalid Value", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    SetProperty(ref _selectedSalesTransactionDiscountIncluded, value, "SelectedSalesTransactionDiscountIncluded");
+                }
+            }
+        }
+
         public SalesTransactionLineVM SelectedSalesTransactionLine
         {
             get { return _selectedSalesTransactionLine; }
@@ -103,6 +140,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     UpdateReturnEntryProperties();
             }
         }
+        #endregion
 
         private bool UpdateSalesTransactionLines(string salesTransactionID)
         {
@@ -220,7 +258,10 @@ namespace PutraJayaNT.ViewModels.Customers
                     // Look if the line exists in the SalesReturnTransactionLines already
                     foreach (var line in _salesReturnTransactionLines)
                     {
-                        if (line.Item.ItemID.Equals(_selectedSalesTransactionLine.Item.ItemID))
+                        if (line.Item.ItemID.Equals(_selectedSalesTransactionLine.Item.ItemID) &&
+                           line.Warehouse.ID.Equals(_selectedSalesTransactionLine.Warehouse.ID) &&
+                           line.SalesPrice.Equals(_selectedSalesTransactionLine.SalesPrice) &&
+                           line.Discount.Equals(_selectedSalesTransactionLine.Discount))
                         {
                             if ((line.Quantity + quantity) > _selectedSalesTransactionLine.Quantity ||
                             (line.Quantity + quantity) > availableReturnQuantity ||
@@ -243,6 +284,7 @@ namespace PutraJayaNT.ViewModels.Customers
                         Item = _selectedSalesTransactionLine.Item,
                         Warehouse = _selectedSalesTransactionLine.Warehouse,
                         SalesPrice = _selectedSalesTransactionLine.SalesPrice / _selectedSalesTransactionLine.Item.PiecesPerUnit,
+                        Discount = _selectedSalesTransactionLine.Discount / _selectedSalesTransactionLine.Item.PiecesPerUnit,
                         Quantity = quantity
                     };
                     var vm = new SalesReturnTransactionLineVM { Model = sr };
@@ -334,6 +376,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             // Calcculate the total amount of Sales Return, total amount of Cost of Goods Sold
                             // ,record the transaction and increase the item's quantity in the database
                             Model.Date = DateTime.Now.Date;
+                            Model.SalesTransactionDiscountIncluded = _selectedSalesTransactionDiscountIncluded;
                             context.SalesTransactions.Attach(Model.SalesTransaction);
                             context.SalesReturnTransactions.Add(Model);
                             foreach (var line in _salesReturnTransactionLines)
@@ -342,13 +385,12 @@ namespace PutraJayaNT.ViewModels.Customers
                                 var warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
 
                                 totalCOGS += line.CostOfGoodsSold;
-                                totalAmount += (line.SalesPrice / line.Item.PiecesPerUnit)  * line.Quantity;
+                                totalAmount += ((line.SalesPrice - line.Discount) / line.Item.PiecesPerUnit)  * line.Quantity;
                                 line.Item = item;
                                 line.Warehouse = warehouse;
                                 context.SalesReturnTransactionLines.Add(line.Model);
 
                                 // Decrease SoldOrReturned for affected purchase lines
-                                decimal amount = 0;
                                 var purchases = context.PurchaseTransactionLines
                                     .Where(e => e.ItemID.Equals(line.Item.ItemID) && e.SoldOrReturned > 0)
                                     .OrderByDescending(e => e.PurchaseTransactionID)
@@ -359,19 +401,18 @@ namespace PutraJayaNT.ViewModels.Customers
                                 {
                                     if (purchase.SoldOrReturned >= tracker)
                                     {
-                                        amount += purchase.PurchasePrice * tracker;
                                         purchase.SoldOrReturned -= tracker;
                                         break;
                                     }
                                     else if (purchase.SoldOrReturned < tracker)
                                     {
-                                        amount += purchase.PurchasePrice * purchase.SoldOrReturned;
                                         tracker -= purchase.SoldOrReturned;
                                         purchase.SoldOrReturned = 0;
                                     }
                                 }
 
                                 // Increase the Customer's Sales Return Credits
+                                totalAmount -= _selectedSalesTransactionDiscountIncluded;
                                 var customer = context.Customers.Where(e => e.ID.Equals(Model.SalesTransaction.Customer.ID)).FirstOrDefault();
                                 customer.SalesReturnCredits += totalAmount;
 
@@ -430,6 +471,7 @@ namespace PutraJayaNT.ViewModels.Customers
             Model.SalesTransaction = null;
             SelectedSalesTransactionID = null;
             SelectedSalesTransactionWhen = null;
+            SelectedSalesTransactionDiscountIncluded = 0;
             SalesReturnEntryDate = DateTime.Now;
             SalesReturnEntryProduct = null;
             SalesReturnEntryUnits = null;

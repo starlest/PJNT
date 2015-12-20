@@ -118,6 +118,26 @@
     <Compile Include="Migrations\201512150818584_206.Designer.cs">
       <DependentUpon>201512150818584_206.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512191229117_Changes01.cs" />
+    <Compile Include="Migrations\201512191229117_Changes01.Designer.cs">
+      <DependentUpon>201512191229117_Changes01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512191236269_Changes02.cs" />
+    <Compile Include="Migrations\201512191236269_Changes02.Designer.cs">
+      <DependentUpon>201512191236269_Changes02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512192049488_Update0001.cs" />
+    <Compile Include="Migrations\201512192049488_Update0001.Designer.cs">
+      <DependentUpon>201512192049488_Update0001.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512192104265_Update0002.cs" />
+    <Compile Include="Migrations\201512192104265_Update0002.Designer.cs">
+      <DependentUpon>201512192104265_Update0002.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512200847104_Update0003.cs" />
+    <Compile Include="Migrations\201512200847104_Update0003.Designer.cs">
+      <DependentUpon>201512200847104_Update0003.cs</DependentUpon>
+    </Compile>
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -419,6 +439,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512150818584_206.resx">
       <DependentUpon>201512150818584_206.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512191229117_Changes01.resx">
+      <DependentUpon>201512191229117_Changes01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512191236269_Changes02.resx">
+      <DependentUpon>201512191236269_Changes02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512192049488_Update0001.resx">
+      <DependentUpon>201512192049488_Update0001.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512192104265_Update0002.resx">
+      <DependentUpon>201512192104265_Update0002.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512200847104_Update0003.resx">
+      <DependentUpon>201512200847104_Update0003.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SalesInvoiceReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

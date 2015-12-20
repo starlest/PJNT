@@ -46,6 +46,7 @@
                 <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
+                <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount}" />
                 <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
             </DataGrid.Columns>
         </DataGrid>
@@ -82,6 +83,7 @@
                 <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units, Mode=TwoWay}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces, Mode=TwoWay}" />
                 <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
+                <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount}" />
                 <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
             </DataGrid.Columns>
         </DataGrid>
@@ -95,6 +97,9 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Button Content="New" Command="{Binding NewCommand}" />
+            <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Discount:" />
+            <TextBox Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SelectedPurchaseTransactionDiscountIncluded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Column="5" Content="Confirm" Command="{Binding ConfirmCommand}" />
         </Grid>
     </Grid>

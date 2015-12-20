@@ -19,10 +19,12 @@ namespace PutraJayaNT.Models
         [Column(Order = 2)]
         public int WarehouseID { get; set; }
 
-        [Required]
+        [Key]
+        [Column(Order = 3)]
         public decimal PurchasePrice { get; set; }
 
-        [Required]
+        [Key]
+        [Column(Order = 4)]
         public decimal Discount { get; set; }
 
         [Required]

@@ -24,15 +24,20 @@ namespace PutraJayaNT.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int WarehouseID { get; set; }
 
+        [Key]
+        [Column(Order = 3)]
+        public decimal PurchasePrice { get; set; }
+
+        [Key]
+        [Column(Order = 4)]
+        public decimal Discount { get; set; }
+
         [Required]
         public int Quantity
         {
             get { return _quantity; }
             set { SetProperty(ref _quantity, value, "Quantity"); }
         }
-
-        [Required]
-        public decimal PurchasePrice { get; set; }
 
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }

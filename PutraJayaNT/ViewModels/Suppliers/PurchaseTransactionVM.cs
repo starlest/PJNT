@@ -41,6 +41,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         decimal? _newTransactionDiscount;
         decimal? _newTransactionGrossTotal;
         decimal? _newTransactionNetTotal;
+        string _newTransactionNote;
 
         bool _newEntrySubmitted;
 
@@ -176,7 +177,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 }
 
                 SetProperty(ref _newTransactionDiscount, value, "NewTransactionDiscount");
-                OnPropertyChanged("NetTotal");
+                OnPropertyChanged("NewTransactionNetTotal");
             }
         }
 
@@ -187,6 +188,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 _newTransactionNetTotal = (_newTransactionGrossTotal == null ? 0 : (decimal)_newTransactionGrossTotal) - (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount);
                 return _newTransactionNetTotal;
             }
+        }
+
+        public string NewTransactionNote
+        {
+            get { return _newTransactionNote; }
+            set { SetProperty(ref _newTransactionNote, value, "NewTransactionNote"); }
         }
         #endregion
 
@@ -447,6 +454,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             }
 
                             Model.Total = (decimal) _newTransactionNetTotal;
+                            Model.Discount = _newTransactionDiscount == null ? 0 : (decimal) _newTransactionDiscount;
+                            Model.GrossTotal = _newTransactionGrossTotal == null ? 0 : (decimal) _newTransactionGrossTotal;
+                            Model.Note = _newTransactionNote;
                             Model.Supplier = context.Suppliers.Where(e => e.ID == Model.Supplier.ID).FirstOrDefault();
                             context.PurchaseTransactions.Add(Model);
 
@@ -512,6 +522,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
             NewTransactionSupplier = null;
             NewTransactionDiscount = null;
+            NewTransactionNote = null;
 
             Model.Date = _newEntryDate;
             Model.DueDate = _newEntryDueDate;
