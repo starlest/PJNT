@@ -43,6 +43,8 @@ namespace PutraJayaNT.ViewModels.Accounting
 
             _newEntryDate = DateTime.Now.Date;
             _accounts = new ObservableCollection<LedgerAccountVM>();
+
+            UpdateAccounts();
         }
 
         public DateTime FromDate
@@ -90,12 +92,10 @@ namespace PutraJayaNT.ViewModels.Accounting
                 _selectedBankID = _selectedBank.ID;
                 UpdateBanks();
                 UpdateDisplayLines();
-                UpdateAccounts();
             }
         }
 
-        // ------------------------ New Entry Properties ------------------------ //
-
+        #region New Entry Propeties
         public DateTime NewEntryDate
         {
             get { return _newEntryDate; }
@@ -145,6 +145,12 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 return _newEntryConfirmCommand ?? (_newEntryConfirmCommand = new RelayCommand(() =>
                 {
+                    if (_selectedBank == null)
+                    {
+                        MessageBox.Show("Please select a bank.", "Invalid Selection", MessageBoxButton.OK);
+                        return;
+                    }
+
                     if (_newEntryAccount == null || _newEntryAmount == null ||
                     _newEntryDescription == null || _newEntrySequence == null)
                     {
@@ -214,8 +220,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             NewEntrySequence = null;
             UpdateAccounts();
         }
-
-        // ---------------------------------------------------------------------- //
+        #endregion
 
         private void UpdateBanks()
         {

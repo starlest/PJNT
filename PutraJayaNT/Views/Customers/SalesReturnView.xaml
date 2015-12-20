@@ -9,12 +9,25 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*" />
+            <RowDefinition Height="0.25*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.25*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.25*" />
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" BorderBrush="Blue" BorderThickness="2">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button Content="New" Command="{Binding NewCommand}" />
+            <Button Grid.Column="3"  Content="Print" Command="{Binding PrintCommand}" />
+            <Button Grid.Column="4" Content="Confirm" Command="{Binding ConfirmCommand}" IsEnabled="{Binding NotEditing}" />
+        </Grid>
+        <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -26,23 +39,28 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Sales ID:" />
-                <TextBox Name="SalesIDTextBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding SelectedSalesTransactionID, UpdateSourceTrigger=Explicit}" KeyDown="SalesIDTextBox_KeyDown" />
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Customer:" />
-                <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Sales Return ID:" />
+                <TextBox Name="SalesReturnIDTextBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SalesReturnTransactionID, UpdateSourceTrigger=Explicit}" KeyDown="SalesReturnIDTextBox_KeyDown" />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Sales ID:" />
+                <TextBox Name="SalesIDTextBox" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SelectedSalesTransactionID, UpdateSourceTrigger=Explicit}" KeyDown="SalesIDTextBox_KeyDown" IsEnabled="{Binding NotEditing}" />
+                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Customer:" />
+                <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding Path=SelectedSalesTransactionCustomer.Name, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
-                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Date:" />
-                <DatePicker Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                <TextBlock Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Date:" />
+                <DatePicker Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                             SelectedDateFormat="Long" SelectedDate="{Binding SelectedPurchaseTransactionWhen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                             IsEnabled="False" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding SalesTransactionLines}" SelectedItem="{Binding SelectedSalesTransactionLine, UpdateSourceTrigger=PropertyChanged}" 
+        <DataGrid Grid.Row="2" ItemsSource="{Binding SalesTransactionLines}" SelectedItem="{Binding SelectedSalesTransactionLine, UpdateSourceTrigger=PropertyChanged}" 
                   CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False"
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsEnabled="{Binding NotEditing}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Item.Name}" />
@@ -53,8 +71,8 @@
                 <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2">
-            <Grid>
+        <Border Grid.Row="3" BorderBrush="Blue" BorderThickness="2">
+            <Grid IsEnabled="{Binding NotEditing}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
@@ -76,10 +94,10 @@
                 <Button Grid.Column="6" Content="Add" Command="{Binding SalesReturnEntryAddCommand}" Margin="30, 10, 30, 10" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="3" ItemsSource="{Binding SalesReturnTransactionLines}"
+        <DataGrid Grid.Row="4" ItemsSource="{Binding SalesReturnTransactionLines}"
                   CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False"
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsEnabled="{Binding NotEditing}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Item.Name}" />
@@ -88,10 +106,11 @@
                 <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice}" />
                 <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount}" />
+                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
                 <DataGridTextColumn Header="COGS" Width="1*" IsReadOnly="True" Binding="{Binding CostOfGoodsSold}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="5" IsEnabled="{Binding NotEditing}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -100,11 +119,15 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Button Content="New" Command="{Binding NewCommand}" />
-            <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Discount:" />
-            <TextBox Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Total:" />
+            <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SalesReturnTransactionGrossTotal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Discount:" />
+            <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding SelectedSalesTransactionDiscountIncluded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Column="5" Content="Confirm" Command="{Binding ConfirmCommand}" />
+            <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Net Total:" />
+            <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SalesReturnTransactionNetTotal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
         </Grid>
     </Grid>
 </UserControl>

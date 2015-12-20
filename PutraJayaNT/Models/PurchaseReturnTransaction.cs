@@ -15,7 +15,14 @@ namespace PutraJayaNT.Models
         [Required]
         public DateTime Date { get; set; }
 
+        [Required]
+        public decimal GrossTotal { get; set; }
+
+        [Required]
         public decimal PurchaseTransactionDiscountIncluded { get; set; }
+
+        [Required]
+        public decimal NetTotal { get; set; }
 
         public virtual List<PurchaseReturnTransactionLine> TransactionLines { get; set; }
     }

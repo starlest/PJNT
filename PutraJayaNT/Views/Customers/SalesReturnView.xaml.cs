@@ -25,5 +25,14 @@ namespace PutraJayaNT.Views.Customers
                 if (exp != null) exp.UpdateSource();
             }
         }
+
+        private void SalesReturnIDTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                BindingExpression exp = SalesReturnIDTextBox.GetBindingExpression(TextBox.TextProperty);
+                if (exp != null) exp.UpdateSource();
+            }
+        }
     }
 }

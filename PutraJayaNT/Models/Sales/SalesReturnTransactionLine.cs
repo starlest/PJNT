@@ -41,6 +41,8 @@ namespace PutraJayaNT.Models.Sales
             set { SetProperty(ref _quantity, value, "Quantity"); }
         }
 
+        public decimal Total { get; set; }
+
         [Required]
         public decimal CostOfGoodsSold
         {

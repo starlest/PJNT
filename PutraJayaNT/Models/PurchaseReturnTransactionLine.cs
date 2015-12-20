@@ -39,6 +39,9 @@ namespace PutraJayaNT.Models
             set { SetProperty(ref _quantity, value, "Quantity"); }
         }
 
+        [Required]
+        public decimal Total { get; set; }
+
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }
 

@@ -51,6 +51,9 @@ namespace PutraJayaNT.ViewModels.Customers
             {
                 Model.Quantity = value;
                 OnPropertyChanged("Quantity");
+                OnPropertyChanged("Units");
+                OnPropertyChanged("Pieces");
+                OnPropertyChanged("Total");
             }
         }
 
@@ -67,6 +70,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                 SetProperty(ref _pieces, value, "Pieces");
                 OnPropertyChanged("Units");
+                OnPropertyChanged("Total");
             }
         }
 
@@ -83,6 +87,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                 SetProperty(ref _units, value, "Units");
                 OnPropertyChanged("Pieces");
+                OnPropertyChanged("Total");
             }
         }
 
@@ -107,13 +112,27 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
+        public decimal Total
+        {
+            get
+            {
+                Model.Total = Quantity * ((SalesPrice - Discount) / Item.PiecesPerUnit);
+                return Model.Total;
+            }
+            set
+            {
+                Model.Total = value;
+                OnPropertyChanged("Total");
+            }
+        }
+
         public decimal CostOfGoodsSold
         {
             get { return Model.CostOfGoodsSold; }
             set
             {
                 Model.CostOfGoodsSold = value;
-                OnPropertyChanged("PurchasePrice");
+                OnPropertyChanged("CostOfGoodsSold");
             }
         }
     }

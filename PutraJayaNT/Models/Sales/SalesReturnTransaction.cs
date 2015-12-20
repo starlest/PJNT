@@ -16,7 +16,14 @@ namespace PutraJayaNT.Models.Sales
         [Required]
         public DateTime Date { get; set; }
 
+        [Required]
+        public decimal GrossTotal { get; set; }
+
+        [Required]
         public decimal SalesTransactionDiscountIncluded { get; set; }
+
+        [Required]
+        public decimal NetTotal { get; set; }
 
         public virtual List<SalesReturnTransactionLine> TransactionLines { get; set; }
     }

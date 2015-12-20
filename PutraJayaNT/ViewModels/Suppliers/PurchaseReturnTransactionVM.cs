@@ -18,6 +18,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
         ObservableCollection<PurchaseTransactionLineVM> _purchaseTransactionLines;
         ObservableCollection<PurchaseReturnTransactionLineVM> _purchaseReturnTransactionLines;
 
+        decimal _purchaseReturnTransactionGrossTotal;
+        decimal _purchaseReturnTransactionNetTotal;
+
         string _selectedPurchaseTransactionID;
         PurchaseTransactionLineVM _selectedPurchaseTransactionLine;
         DateTime? _selectedPurchaseTransactionWhen;
@@ -56,6 +59,31 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _purchaseReturnTransactionLines; }
         }
 
+        #region Purchase Return Transaction Properties
+        public decimal PurchaseReturnTransactionGrossTotal
+        {
+            get
+            {
+                _purchaseReturnTransactionGrossTotal = 0;
+                foreach (var line in _purchaseReturnTransactionLines)
+                    _purchaseReturnTransactionGrossTotal += line.Total;
+                OnPropertyChanged("PurchaseReturnTransactionNetTotal");
+                return _purchaseReturnTransactionGrossTotal;
+            }
+            set { SetProperty(ref _purchaseReturnTransactionGrossTotal, value, "PurchaseReturnTransactionGrossTotal"); }
+        }
+
+        public decimal PurchaseReturnTransactionNetTotal
+        {
+            get
+            {
+                _purchaseReturnTransactionNetTotal = _purchaseReturnTransactionGrossTotal - _selectedPurchaseTransactionDiscountIncluded;
+                return _purchaseReturnTransactionNetTotal;
+            }
+            set { SetProperty(ref _purchaseReturnTransactionNetTotal, value, "PurchaseReturnTransactionNetTotal"); }
+        }
+        #endregion
+
         #region Selected Purchase Transaction Properties
         public string SelectedPurchaseTransactionID
         {
@@ -70,6 +98,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 {
                     SelectedPurchaseTransactionWhen = _purchaseTransactionLines.FirstOrDefault().PurchaseTransaction.Date;
                     Model.PurchaseTransaction = _purchaseTransactionLines.FirstOrDefault().PurchaseTransaction;
+                    _purchaseReturnTransactionLines.Clear();
                 }
                 else
                     SelectedPurchaseTransactionWhen = null;
@@ -87,12 +116,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _selectedPurchaseTransactionDiscountIncluded; }
             set
             {
-                if (value == 0)
-                {
-                    SetProperty(ref _selectedPurchaseTransactionDiscountIncluded, value, "SelectedPurchaseTransactionDiscountIncluded");
-                    return;
-                }
-
                 if (Model.PurchaseTransaction != null)
                 {
                     var availableDiscount = Model.PurchaseTransaction.Discount;
@@ -113,6 +136,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     }
 
                     SetProperty(ref _selectedPurchaseTransactionDiscountIncluded, value, "SelectedPurchaseTransactionDiscountIncluded");
+                    OnPropertyChanged("PurchaseReturnTransactionNetTotal");
                 }
             }
         }
@@ -158,8 +182,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
         private void UpdateReturnEntryProperties()
         {
             PurchaseReturnEntryProduct = _selectedPurchaseTransactionLine.Item.Name;
-            PurchaseReturnEntryUnits = _selectedPurchaseTransactionLine.Units;
-            PurchaseReturnEntryPieces = _selectedPurchaseTransactionLine.Pieces;
+            PurchaseReturnEntryUnits = _selectedPurchaseTransactionLine.Units - (_selectedPurchaseTransactionLine.SoldOrReturned / _selectedPurchaseTransactionLine.Item.PiecesPerUnit);
+            PurchaseReturnEntryPieces = _selectedPurchaseTransactionLine.Pieces - (_selectedPurchaseTransactionLine.SoldOrReturned % _selectedPurchaseTransactionLine.Item.PiecesPerUnit);
         }
 
         private void SetPurchaseReturnTransactionID()
@@ -221,30 +245,13 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 return _purchaseReturnEntryAddCommand ?? (_purchaseReturnEntryAddCommand = new RelayCommand(() =>
                 {
-                    var availableReturnQuantity = _selectedPurchaseTransactionLine.Quantity - _selectedPurchaseTransactionLine.SoldOrReturned;
-
-                    using (var context = new ERPContext())
-                    {
-                        var returnedItems = context.PurchaseReturnTransactionLines
-                        .Where(e => e.PurchaseReturnTransaction.PurchaseTransaction.PurchaseID.Equals(Model.PurchaseTransaction.PurchaseID) 
-                        && e.ItemID.Equals(_selectedPurchaseTransactionLine.Item.ItemID)
-                        && e.WarehouseID.Equals(_selectedPurchaseTransactionLine.Warehouse.ID)
-                        && e.PurchasePrice.Equals(_selectedPurchaseTransactionLine.PurchasePrice) 
-                        && e.Discount.Equals(_selectedPurchaseTransactionLine.Discount / _selectedPurchaseTransactionLine.Item.PiecesPerUnit));
-
-
-                        if (returnedItems.Count() != 0)
-                        {
-                            foreach (var item in returnedItems)
-                                availableReturnQuantity -= item.Quantity;
-                        }
-                    }
-
-                    if (_purchaseReturnEntryProduct == null)
+                    if (_purchaseReturnEntryProduct == null || _selectedPurchaseTransactionLine == null)
                     {
                         MessageBox.Show("No product is selected", "Invalid Command", MessageBoxButton.OK);
                         return;
                     }
+
+                    var availableReturnQuantity = _selectedPurchaseTransactionLine.Quantity - _selectedPurchaseTransactionLine.SoldOrReturned;
 
                     _purchaseReturnEntryQuantity = (int) ((_purchaseReturnEntryUnits != null ? _purchaseReturnEntryUnits : 0) * _selectedPurchaseTransactionLine.Item.PiecesPerUnit) 
                     + (_purchaseReturnEntryPieces != null ? _purchaseReturnEntryPieces : 0);
@@ -280,7 +287,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             }
 
                             line.Quantity += (int)_purchaseReturnEntryQuantity;
-
+                            OnPropertyChanged("PurchaseReturnTransactionGrossTotal");
                             return;
                         }
                     }
@@ -292,10 +299,13 @@ namespace PutraJayaNT.ViewModels.Suppliers
                         Warehouse = _selectedPurchaseTransactionLine.Warehouse,
                         PurchasePrice = _selectedPurchaseTransactionLine.PurchasePrice / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
                         Discount = _selectedPurchaseTransactionLine.Discount / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
+                        Total = ( (_selectedPurchaseTransactionLine.PurchasePrice - _selectedPurchaseTransactionLine.Discount)
+                        / _selectedPurchaseTransactionLine.Item.PiecesPerUnit) * (int)_purchaseReturnEntryQuantity,
                         Quantity = (int)_purchaseReturnEntryQuantity
                     };
 
                     _purchaseReturnTransactionLines.Add(new PurchaseReturnTransactionLineVM { Model = pr, AvailableReturnQuantity = availableReturnQuantity });
+                    OnPropertyChanged("PurchaseReturnTransactionGrossTotal");
                 }));
             }
         }
@@ -333,10 +343,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             .FirstOrDefault();
 
                             Model.PurchaseTransaction = purchaseTransaction;
-
+                            Model.PurchaseTransactionDiscountIncluded = _selectedPurchaseTransactionDiscountIncluded;
+                            Model.GrossTotal = _purchaseReturnTransactionGrossTotal;
+                            Model.NetTotal = _purchaseReturnTransactionNetTotal;
                             context.PurchaseReturnTransactions.Add(Model);
 
-                            decimal totalAmount = 0;
                             // Calcculate the total amount of Purchase Return
                             // ,record the transaction and decrease the item's quantity in the database
                             foreach (var line in _purchaseReturnTransactionLines)
@@ -354,8 +365,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
                                         "Invalid Quantity", MessageBoxButton.OK);
                                     return;
                                 }
-
-                                totalAmount += ((line.PurchasePrice - line.Discount) / line.Item.PiecesPerUnit) * line.Quantity;
 
                                 line.Item = context.Inventory
                                 .Where(e => e.ItemID.Equals(line.Item.ItemID))
@@ -377,17 +386,15 @@ namespace PutraJayaNT.ViewModels.Suppliers
                                 purchaseTransactionLine.SoldOrReturned += line.Quantity;
                             }
 
-                            totalAmount -= _selectedPurchaseTransactionDiscountIncluded;
-                            Model.PurchaseTransactionDiscountIncluded = _selectedPurchaseTransactionDiscountIncluded;
-                            Model.PurchaseTransaction.Supplier.PurchaseReturnCredits += totalAmount;
+                            Model.PurchaseTransaction.Supplier.PurchaseReturnCredits += _purchaseReturnTransactionNetTotal;
 
                             // Record the corresponding ledger transactions in the database
                             var ledgerTransaction1 = new LedgerTransaction();
 
                             LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now, _purchaseReturnEntryID, "Purchase Return");
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Dedit", totalAmount);
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Crebit", totalAmount);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Dedit", _purchaseReturnTransactionNetTotal);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Crebit", _purchaseReturnTransactionNetTotal);
               
                             context.SaveChanges();
                             ts.Complete();
@@ -407,12 +414,15 @@ namespace PutraJayaNT.ViewModels.Suppliers
             SelectedPurchaseTransactionDiscountIncluded = 0;
             SelectedPurchaseTransactionID = null;
             SelectedPurchaseTransactionWhen = null;
+            SelectedPurchaseTransactionLine = null;
             PurchaseReturnEntryDate = DateTime.Now.Date;
             PurchaseReturnEntryProduct = null;
             PurchaseReturnEntryUnits = null;
             PurchaseReturnEntryPieces = null;
             _purchaseReturnTransactionLines.Clear();
             _purchaseTransactionLines.Clear();
+
+            OnPropertyChanged("PurchaseReturnTransactionGrossTotal");
         }
     }
 }

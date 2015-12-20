@@ -58,6 +58,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 OnPropertyChanged("Quantity");
                 OnPropertyChanged("Pieces");
                 OnPropertyChanged("Units");
+                OnPropertyChanged("Total");
             }
         }
 
@@ -109,6 +110,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 SetProperty(ref _pieces, value, "Pieces");
 
                 Model.Quantity = _pieces + (_units * Model.Item.PiecesPerUnit);
+                OnPropertyChanged("Total");
             }
         }
 
@@ -154,6 +156,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 SetProperty(ref _units, value, "Units");
 
                 Model.Quantity = _pieces + (_units * Model.Item.PiecesPerUnit);
+                OnPropertyChanged("Total");
             }
         }
 
@@ -180,6 +183,20 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 Model.Discount = value / Model.Item.PiecesPerUnit;
                 OnPropertyChanged("Discount");
+            }
+        }
+
+        public decimal Total
+        {
+            get
+            {
+                Model.Total = Quantity * ((PurchasePrice - Discount) / Item.PiecesPerUnit);
+                return Model.Total;
+            }
+            set
+            {
+                Model.Total = value;
+                OnPropertyChanged("Total");
             }
         }
 

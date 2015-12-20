@@ -36,7 +36,7 @@
                                 SelectedDateFormat="Long" SelectedDate="{Binding ToDate}" />
             <TextBlock Grid.Row="0" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Account:" />
             <ComboBox Grid.Column="7" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                          ItemsSource="{Binding Banks}" SelectedItem="{Binding SelectedBank, UpdateSourceTrigger=Explicit}" 
+                          ItemsSource="{Binding Banks}" SelectedItem="{Binding SelectedBank, UpdateSourceTrigger=PropertyChanged}" 
                           IsEditable="True" DisplayMemberPath="Name" />
             <Rectangle Stroke="Blue" IsHitTestVisible="False" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="2" />
             <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Date:" FontSize="28" />
