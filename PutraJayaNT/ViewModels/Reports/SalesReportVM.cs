@@ -4,6 +4,7 @@ using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Utilities;
 using PutraJayaNT.ViewModels.Customers;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -201,6 +202,8 @@ namespace PutraJayaNT.ViewModels.Reports
             {
                 SetProperty(ref _selectedMode, value, "SelectedMode");
 
+                RefreshDisplayLines();
+
                 if (_selectedMode == "Global")
                 {
                     GlobalVisibility = Visibility.Visible;
@@ -233,7 +236,7 @@ namespace PutraJayaNT.ViewModels.Reports
             using (var context = new ERPContext())
             {
                 _categories.Add(new Category { Name = "All" });
-                var categories = context.Categories.Include("Items");
+                var categories = context.Categories;
                 foreach (var category in categories)
                     _categories.Add(category);
             }
@@ -246,115 +249,63 @@ namespace PutraJayaNT.ViewModels.Reports
 
             if (_selectedItem == null) return;
 
-            if (_selectedCategory.Name == "All" && _selectedItem.Name == "All")
+            var transactionLines = new List<SalesTransactionLine>();
+
+
+            using (var context = new ERPContext())
             {
-                using (var context = new ERPContext())
+                if (_selectedCategory.Name == "All" && _selectedItem.Name == "All")
                 {
-                    var transactionLines = context.SalesTransactionLines
+                    transactionLines = context.SalesTransactionLines
                         .Include("Item")
                         .Include("SalesTransaction")
                         .Where(e => e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.Name);
-
-
-                    foreach (var line in transactionLines)
-                    {
-                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-
-                        var contains = false;
-                        foreach (var l in _globalDisplayLines)
-                        {
-                            if (l.Item.ItemID == line.Item.ItemID)
-                            {
-                                l.Quantity += line.Quantity;
-                                contains = true;
-                                break;
-                            }
-                        }
-
-                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-                    }  
+                        .OrderBy(e => e.Item.Name)
+                        .ToList();
                 }
-            }
 
-            else if (_selectedCategory.Name == "All" && _selectedItem.Name != "All")
-            {
-                using (var context = new ERPContext())
+                else if (_selectedCategory.Name == "All" && _selectedItem.Name != "All")
                 {
-                    var transactionLines = context.SalesTransactionLines
+                    transactionLines = context.SalesTransactionLines
                         .Include("Item")
                         .Include("SalesTransaction")
                         .Where(e => e.Item.Name == _selectedItem.Name && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
-                        .OrderBy(e => e.Item.Name);
-
-                    foreach (var line in transactionLines)
-                    {
-                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-
-                        var contains = false;
-                        foreach (var l in _globalDisplayLines)
-                        {
-                            if (l.Item.ItemID == line.Item.ItemID)
-                            {
-                                l.Quantity += line.Quantity;
-                                contains = true;
-                                break;
-                            }
-                        }
-
-                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-                    }
+                        .OrderBy(e => e.Item.Name)
+                        .ToList();
                 }
-            }
 
-            else if (_selectedCategory.Name != "All" && _selectedItem.Name == "All")
-            {
-                using (var context = new ERPContext())
+                else if (_selectedCategory.Name != "All" && _selectedItem.Name == "All")
                 {
-                    var transactionLines = context.SalesTransactionLines
+
+                    transactionLines = context.SalesTransactionLines
                         .Where(e => e.Item.Category.Name == _selectedCategory.Name
                         && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .Include("Item")
-                        .Include("SalesTransaction");
-
-                    foreach (var line in transactionLines)
-                    {
-                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-
-                        var contains = false;
-                        foreach (var l in _globalDisplayLines)
-                        {
-                            if (l.Item.ItemID == line.ItemID)
-                            {
-                                l.Quantity += line.Quantity;
-                                contains = true;
-                                break;
-                            }
-                        }
-
-                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-                    }
+                        .Include("SalesTransaction")
+                        .ToList();
                 }
-            }
 
-            else
-            {
-                using (var context = new ERPContext())
+                else
                 {
-                    var transactionLines = context.SalesTransactionLines
+                    transactionLines = context.SalesTransactionLines
                         .Where(e => e.Item.Category.Name == _selectedCategory.Name
                         && e.Item.Name == _selectedItem.Name
                         && e.SalesTransaction.When >= _fromDate
                         && e.SalesTransaction.When <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .Include("Item")
-                        .Include("SalesTransaction");
+                        .Include("SalesTransaction")
+                        .ToList();
+                }
 
-                    foreach (var line in transactionLines)
+
+                foreach (var line in transactionLines)
+                {
+                    _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
+
+                    if (_selectedMode == "Global")
                     {
-                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-
                         var contains = false;
                         foreach (var l in _globalDisplayLines)
                         {

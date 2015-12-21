@@ -2,20 +2,8 @@
 using Microsoft.Reporting.WinForms;
 using PutraJayaNT.ViewModels.Customers;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PutraJayaNT.Reports
 {
@@ -32,7 +20,7 @@ namespace PutraJayaNT.Reports
             _salesTransaction = vm;
         }
 
-        private void reportViewer_RenderingComplete(object sender, Microsoft.Reporting.WinForms.RenderingCompleteEventArgs e)
+        private void reportViewer_RenderingComplete(object sender, RenderingCompleteEventArgs e)
         {
 
         }

@@ -53,8 +53,11 @@
                 <DataGridTextColumn Header="Sales ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransaction.SalesTransactionID}" />
                 <DataGridTextColumn Header="Item ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Quantity" Width="1*" IsReadOnly="True" Binding="{Binding Quantity}" />
+                <DataGridTextColumn Header="Unit" Width="1*" IsReadOnly="True" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice}" />
+                <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransaction.When, StringFormat={}{0:dd/MM/yyyy}}" />
             </DataGrid.Columns>
@@ -66,7 +69,9 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Item ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Quantity}" />
+                <DataGridTextColumn Header="Unit" Width="1*" IsReadOnly="True" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
