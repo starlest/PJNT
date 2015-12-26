@@ -98,6 +98,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201512141535007_102.cs" />
     <Compile Include="Migrations\201512141535007_102.Designer.cs">
       <DependentUpon>201512141535007_102.cs</DependentUpon>
@@ -150,6 +153,10 @@
     <Compile Include="Migrations\201512201646072_Update0007.Designer.cs">
       <DependentUpon>201512201646072_Update0007.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512251818059_Update0008.cs" />
+    <Compile Include="Migrations\201512251818059_Update0008.Designer.cs">
+      <DependentUpon>201512251818059_Update0008.cs</DependentUpon>
+    </Compile>
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -196,8 +203,12 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\IRepository.cs" />
     <Compile Include="Utilities\LedgerDBHelper.cs" />
+    <Compile Include="Utilities\PasswordHelper.cs" />
     <Compile Include="Utilities\Repository.cs" />
     <Compile Include="Utilities\UnitOfWork.cs" />
+    <Compile Include="VerificationWindow.xaml.cs">
+      <DependentUpon>VerificationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\Accounting\BalanceSheetVM.cs" />
     <Compile Include="ViewModels\Accounting\BankTransactionVM.cs" />
     <Compile Include="ViewModels\Accounting\ClosingVM.cs" />
@@ -213,6 +224,7 @@
     <Compile Include="ViewModels\ItemVM.cs" />
     <Compile Include="ViewModels\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\LedgerTransactionLineVM.cs" />
+    <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\Master\MasterCustomersVM.cs" />
     <Compile Include="ViewModels\Master\MasterInventoryVM.cs" />
     <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
@@ -226,6 +238,7 @@
     <Compile Include="ViewModels\Suppliers\PurchaseTransactionLineVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseTransactionVM.cs" />
     <Compile Include="ViewModels\SupplierVM.cs" />
+    <Compile Include="ViewModels\VerificationVM.cs" />
     <Compile Include="Views\Accounting\BalanceSheetView.xaml.cs">
       <DependentUpon>BalanceSheetView.xaml</DependentUpon>
     </Compile>
@@ -292,6 +305,10 @@
     <Compile Include="Views\Suppliers\PurchaseTransactionView.xaml.cs">
       <DependentUpon>PurchaseTransactionView.xaml</DependentUpon>
     </Compile>
+    <Page Include="LoginWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -302,6 +319,10 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Page Include="Reports\SalesInvoiceWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VerificationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -475,6 +496,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512201646072_Update0007.resx">
       <DependentUpon>201512201646072_Update0007.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512251818059_Update0008.resx">
+      <DependentUpon>201512251818059_Update0008.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SalesReturnInvoiceReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

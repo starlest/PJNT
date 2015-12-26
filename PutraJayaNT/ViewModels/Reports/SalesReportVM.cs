@@ -1,4 +1,5 @@
 ﻿using MVVMFramework;
+using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Utilities;
@@ -16,6 +17,7 @@ namespace PutraJayaNT.ViewModels.Reports
     {
         ObservableCollection<Category> _categories;
         ObservableCollection<Item> _categoryItems;
+        ObservableCollection<CustomerVM> _customers;
         ObservableCollection<SalesTransactionLineVM> _detailedDisplayLines;
         ObservableCollection<SalesTransactionLineVM> _globalDisplayLines;
 
@@ -32,11 +34,13 @@ namespace PutraJayaNT.ViewModels.Reports
 
         Category _selectedCategory;
         Item _selectedItem;
+        CustomerVM _selectedCustomer;
 
         public SalesReportVM()
         {
             _categories = new ObservableCollection<Category>();
             _categoryItems = new ObservableCollection<Item>();
+            _customers = new ObservableCollection<CustomerVM>();
             _detailedDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
             _globalDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
 
@@ -47,6 +51,8 @@ namespace PutraJayaNT.ViewModels.Reports
 
             _fromDate = DateTime.Now.Date;
             _toDate = DateTime.Now.Date;
+
+            RefreshCustomers();
         }
 
         /// <summary>
@@ -67,6 +73,14 @@ namespace PutraJayaNT.ViewModels.Reports
         public ObservableCollection<Item> CategoryItems
         {
             get { return _categoryItems; }
+        }
+
+        /// <summary>
+        /// Gets the list of Customers loaded.
+        /// </summary>
+        public ObservableCollection<CustomerVM> Customers
+        {
+            get { return _customers; }
         }
 
         /// <summary>
@@ -185,9 +199,23 @@ namespace PutraJayaNT.ViewModels.Reports
         public Item SelectedItem
         {
             get { return _selectedItem; }
+            set { SetProperty(ref _selectedItem, value, "SelectedItem"); }
+        }
+
+        /// <summary>
+        /// The selected customer from <see cref="Customers"/>.
+        /// </summary>
+        public CustomerVM SelectedCustomer
+        {
+            get { return _selectedCustomer; }
             set
             {
-                SetProperty(ref _selectedItem, value, "SelectedItem");
+                if (_selectedItem == null || _selectedCategory == null)
+                {
+                    MessageBox.Show("Please select an Item first.", "Invalid Action", MessageBoxButton.OK);
+                    return;
+                }
+                SetProperty(ref _selectedCustomer, value, "SelectedCustomer");
                 RefreshDisplayLines();
             }
         }
@@ -239,6 +267,20 @@ namespace PutraJayaNT.ViewModels.Reports
                 var categories = context.Categories;
                 foreach (var category in categories)
                     _categories.Add(category);
+            }
+        }
+
+        private void RefreshCustomers()
+        {
+            _customers.Clear();
+
+            _customers.Add(new CustomerVM {  Model = new Customer { ID = -1, Name = "All" } });
+            using (var context = new ERPContext())
+            {
+                var customers = context.Customers.Include("Group").ToList();
+
+                foreach (var customer in customers)
+                    _customers.Add(new CustomerVM { Model = customer });
             }
         }
 
@@ -302,22 +344,25 @@ namespace PutraJayaNT.ViewModels.Reports
 
                 foreach (var line in transactionLines)
                 {
-                    _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-
-                    if (_selectedMode == "Global")
+                    if (_selectedCustomer.ID == -1 || _selectedCustomer.ID == line.SalesTransaction.Customer.ID)
                     {
-                        var contains = false;
-                        foreach (var l in _globalDisplayLines)
-                        {
-                            if (l.Item.ItemID == line.ItemID)
-                            {
-                                l.Quantity += line.Quantity;
-                                contains = true;
-                                break;
-                            }
-                        }
+                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
 
-                        if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
+                        if (_selectedMode == "Global")
+                        {
+                            var contains = false;
+                            foreach (var l in _globalDisplayLines)
+                            {
+                                if (l.Item.ItemID == line.ItemID)
+                                {
+                                    l.Quantity += line.Quantity;
+                                    contains = true;
+                                    break;
+                                }
+                            }
+
+                            if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
+                        }
                     }
                 }
             }

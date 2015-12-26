@@ -252,6 +252,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                     SetProperty(ref _newTransactionID, value, "NewTransactionID");
 
+                    EditMode = true;
                     Model = transaction;
                     NewTransactionDate = transaction.When;
                     NewTransactionCustomer = new CustomerVM { Model = transaction.Customer };
@@ -271,7 +272,6 @@ namespace PutraJayaNT.ViewModels.Customers
                     OnPropertyChanged("NewTransactionGrossTotal");
                     NewTransactionSalesExpense = transaction.SalesExpense;
                     NewTransactionDiscount = transaction.Discount;
-                    EditMode = true;
                 }
             }
         }
@@ -292,7 +292,36 @@ namespace PutraJayaNT.ViewModels.Customers
         public CustomerVM NewTransactionCustomer
         {
             get { return _newTransactionCustomer; }
-            set { SetProperty(ref _newTransactionCustomer, value, "NewTransactionCustomer"); }
+            set
+            {
+                if (_editMode == false && value != null)
+                {
+                    using (var context = new ERPContext())
+                    {
+                        var customerTransactions = context.SalesTransactions.Where(e => e.Customer.ID.Equals(value.ID) && e.Paid < e.Total).ToList();
+
+                        if (customerTransactions != null)
+                        {
+                            foreach (var t in customerTransactions)
+                            {
+                                if (t.DueDate.Value.AddDays(value.CreditTerms) > DateTime.Now.Date)
+                                {
+                                    MessageBox.Show("This customer has overdued invoice(s).", "Invalid Customer", MessageBoxButton.OK);
+                                    var window = new VerificationWindow();
+                                    window.ShowDialog();
+                                    var isVerified = App.Current.TryFindResource("IsVerified");
+                                    if ((isVerified != null) && (bool) isVerified) break;
+                                    _newTransactionCustomer = null;
+                                    RefreshCustomers();
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                SetProperty(ref _newTransactionCustomer, value, "NewTransactionCustomer");
+            }
         }
 
         public SalesmanVM NewTransactionSalesman
@@ -1127,7 +1156,6 @@ namespace PutraJayaNT.ViewModels.Customers
         private void ResetTransaction()
         {
             InvoiceNotIssued = true;
-            EditMode = false;
             Model = new SalesTransaction();
             _salesTransactionLines.Clear();
             ResetEntryFields();
@@ -1142,6 +1170,7 @@ namespace PutraJayaNT.ViewModels.Customers
             ResetEntryFields();
             NewEntryWarehouse = null;
             _products.Clear();
+            EditMode = false;
         }
 
         /// <summary>
