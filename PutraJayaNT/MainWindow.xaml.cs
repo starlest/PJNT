@@ -12,12 +12,12 @@ namespace PutraJayaNT
         {
             ModernUIHelper.TrySetPerMonitorDpiAware();
             InitializeComponent();
-            //this.IsEnabled = false;
-            //var window = new LoginWindow();
-            //window.ShowDialog();
-            //var user = App.Current.TryFindResource("CurrentUser");
-            //if (user != null) this.IsEnabled = true;
-            //else App.Current.MainWindow.Close();
+            this.IsEnabled = false;
+            var window = new LoginWindow();
+            window.ShowDialog();
+            var user = App.Current.TryFindResource("CurrentUser");
+            if (user != null) this.IsEnabled = true;
+            else App.Current.MainWindow.Close();
         }
     }
 }

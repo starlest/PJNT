@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Linq;
 using System;
 using System.Transactions;
+using PutraJayaNT.Models.Purchase;
 
 namespace PutraJayaNT.ViewModels.Suppliers
 {

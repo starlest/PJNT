@@ -14,6 +14,7 @@ using System.Transactions;
 using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Reports;
 using System.Data;
+using PutraJayaNT.Models;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
@@ -300,15 +301,17 @@ namespace PutraJayaNT.ViewModels.Customers
                     {
                         var customerTransactions = context.SalesTransactions.Where(e => e.Customer.ID.Equals(value.ID) && e.Paid < e.Total).ToList();
 
-                        if (customerTransactions != null)
+                        if (customerTransactions.Count != 0)
                         {
                             foreach (var t in customerTransactions)
                             {
-                                if (t.DueDate.Value.AddDays(value.CreditTerms) > DateTime.Now.Date)
+                                if (t.DueDate < DateTime.Now.Date)
                                 {
                                     MessageBox.Show("This customer has overdued invoice(s).", "Invalid Customer", MessageBoxButton.OK);
+                                    App.Current.MainWindow.IsEnabled = false;
                                     var window = new VerificationWindow();
                                     window.ShowDialog();
+                                    App.Current.MainWindow.IsEnabled = true;
                                     var isVerified = App.Current.TryFindResource("IsVerified");
                                     if ((isVerified != null) && (bool) isVerified) break;
                                     _newTransactionCustomer = null;
@@ -1075,6 +1078,8 @@ namespace PutraJayaNT.ViewModels.Customers
 
                             transaction.InvoiceIssued = DateTime.Now.Date;
                             transaction.DueDate = DateTime.Now.Date.AddDays(transaction.Customer.CreditTerms);
+                            var user = App.Current.TryFindResource("CurrentUser") as User;
+                            if (user != null) transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
                             Model = transaction;
 
                             #region Calculate Cost of Goods Sold
@@ -1087,6 +1092,7 @@ namespace PutraJayaNT.ViewModels.Customers
                                 var quantity = line.Quantity;
 
                                 var purchases = context.PurchaseTransactionLines
+                                .Include("PurchaseTransaction")
                                 .Where(e => e.ItemID == itemID && e.SoldOrReturned < e.Quantity)
                                 .OrderBy(e => e.PurchaseTransaction.PurchaseID)
                                 .ToList();
@@ -1096,16 +1102,19 @@ namespace PutraJayaNT.ViewModels.Customers
                                 foreach (var purchase in purchases)
                                 {
                                     var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
+                                    var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
 
                                     if (tracker <= availableQuantity)
                                     {
-                                        costOfGoodsSoldAmount += tracker * purchase.PurchasePrice;
+                                        var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                                        costOfGoodsSoldAmount += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount;
                                         purchase.SoldOrReturned += tracker;
                                         break;
                                     }
                                     else if (tracker > availableQuantity)
                                     {
-                                        costOfGoodsSoldAmount += availableQuantity * purchase.PurchasePrice;
+                                        var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                                        costOfGoodsSoldAmount += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount;
                                         purchase.SoldOrReturned += availableQuantity;
                                         tracker -= availableQuantity;
                                     }

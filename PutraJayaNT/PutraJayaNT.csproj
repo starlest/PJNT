@@ -157,6 +157,38 @@
     <Compile Include="Migrations\201512251818059_Update0008.Designer.cs">
       <DependentUpon>201512251818059_Update0008.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512301409525_RemoveReturnDiscount.cs" />
+    <Compile Include="Migrations\201512301409525_RemoveReturnDiscount.Designer.cs">
+      <DependentUpon>201512301409525_RemoveReturnDiscount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512301958473_AddInventoryValueToPR.cs" />
+    <Compile Include="Migrations\201512301958473_AddInventoryValueToPR.Designer.cs">
+      <DependentUpon>201512301958473_AddInventoryValueToPR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512302032176_AddInventoryValueToPRRevert.cs" />
+    <Compile Include="Migrations\201512302032176_AddInventoryValueToPRRevert.Designer.cs">
+      <DependentUpon>201512302032176_AddInventoryValueToPRRevert.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512302117330_AddNetDiscountColumnForPR.cs" />
+    <Compile Include="Migrations\201512302117330_AddNetDiscountColumnForPR.Designer.cs">
+      <DependentUpon>201512302117330_AddNetDiscountColumnForPR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512302125379_Revert.cs" />
+    <Compile Include="Migrations\201512302125379_Revert.Designer.cs">
+      <DependentUpon>201512302125379_Revert.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512302241427_DueDateNoLongerOptional.cs" />
+    <Compile Include="Migrations\201512302241427_DueDateNoLongerOptional.Designer.cs">
+      <DependentUpon>201512302241427_DueDateNoLongerOptional.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512302244524_AddedUserToSalesTransaction.cs" />
+    <Compile Include="Migrations\201512302244524_AddedUserToSalesTransaction.Designer.cs">
+      <DependentUpon>201512302244524_AddedUserToSalesTransaction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512302251558_AddedUserToTransactions.cs" />
+    <Compile Include="Migrations\201512302251558_AddedUserToTransactions.Designer.cs">
+      <DependentUpon>201512302251558_AddedUserToTransactions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -170,10 +202,10 @@
     <Compile Include="Models\CustomerGroup.cs" />
     <Compile Include="Models\Inventory\Item.cs" />
     <Compile Include="Models\Inventory\Warehouse.cs" />
-    <Compile Include="Models\PurchaseReturnTransaction.cs" />
-    <Compile Include="Models\PurchaseReturnTransactionLine.cs" />
-    <Compile Include="Models\PurchaseTransaction.cs" />
-    <Compile Include="Models\PurchaseTransactionLine.cs" />
+    <Compile Include="Models\Purchase\PurchaseReturnTransaction.cs" />
+    <Compile Include="Models\Purchase\PurchaseReturnTransactionLine.cs" />
+    <Compile Include="Models\Purchase\PurchaseTransaction.cs" />
+    <Compile Include="Models\Purchase\PurchaseTransactionLine.cs" />
     <Compile Include="Models\Sales\Salesman.cs" />
     <Compile Include="Models\Sales\SalesReturnTransaction.cs" />
     <Compile Include="Models\Sales\SalesReturnTransactionLine.cs" />
@@ -499,6 +531,30 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512251818059_Update0008.resx">
       <DependentUpon>201512251818059_Update0008.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512301409525_RemoveReturnDiscount.resx">
+      <DependentUpon>201512301409525_RemoveReturnDiscount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512301958473_AddInventoryValueToPR.resx">
+      <DependentUpon>201512301958473_AddInventoryValueToPR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512302032176_AddInventoryValueToPRRevert.resx">
+      <DependentUpon>201512302032176_AddInventoryValueToPRRevert.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512302117330_AddNetDiscountColumnForPR.resx">
+      <DependentUpon>201512302117330_AddNetDiscountColumnForPR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512302125379_Revert.resx">
+      <DependentUpon>201512302125379_Revert.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512302241427_DueDateNoLongerOptional.resx">
+      <DependentUpon>201512302241427_DueDateNoLongerOptional.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512302244524_AddedUserToSalesTransaction.resx">
+      <DependentUpon>201512302244524_AddedUserToSalesTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512302251558_AddedUserToTransactions.resx">
+      <DependentUpon>201512302251558_AddedUserToTransactions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SalesReturnInvoiceReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

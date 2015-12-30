@@ -6,6 +6,7 @@ namespace PutraJayaNT.Utilities
     using Models.Inventory;
     using System.Data.Entity;
     using Models.Sales;
+    using Models.Purchase;
 
     public partial class ERPContext : DbContext
     {

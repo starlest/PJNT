@@ -1,6 +1,7 @@
 ﻿using PutraJayaNT.Models;
 using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Purchase;
 using PutraJayaNT.Models.Sales;
 using System;
 

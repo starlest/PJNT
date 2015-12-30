@@ -21,6 +21,8 @@ namespace PutraJayaNT.Models.Sales
 
         public virtual Salesman Salesman { get; set; }
 
+        public virtual User User { get; set; }
+
         public decimal GrossTotal { get; set; }
         
         public decimal Discount { get; set; }
@@ -33,7 +35,7 @@ namespace PutraJayaNT.Models.Sales
 
         public DateTime? InvoiceIssued { get; set; }
 
-        public DateTime? DueDate { get; set; }
+        public DateTime DueDate { get; set; }
 
         [Index]
         public DateTime When { get; set; }

@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using PutraJayaNT.Models.Inventory;
 using System.Data.Entity.Infrastructure;
+using PutraJayaNT.Models;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
@@ -22,14 +23,12 @@ namespace PutraJayaNT.ViewModels.Customers
         bool _notEditing;
 
         string _salesReturnTransactionID;
-        decimal _salesReturnTransactionGrossTotal;
         decimal _salesReturnTransactionNetTotal;
 
         string _selectedSalesTransactionID;
         SalesTransactionLineVM _selectedSalesTransactionLine;
         CustomerVM _selectedSalesTransactionCustomer;
         DateTime? _selectedSalesTransactionWhen;
-        decimal _selectedSalesTransactionDiscountIncluded;
 
         DateTime _salesReturnEntryDate;
         string _salesReturnEntryProduct;
@@ -93,13 +92,11 @@ namespace PutraJayaNT.ViewModels.Customers
 
                     Model = sr;
                     SelectedSalesTransactionID = Model.SalesTransaction.SalesTransactionID;
-                    _selectedSalesTransactionDiscountIncluded = Model.SalesTransactionDiscountIncluded;
-                    
+                
                     foreach (var line in Model.TransactionLines)
                         _salesReturnTransactionLines.Add(new SalesReturnTransactionLineVM { Model = line });
 
-                    OnPropertyChanged("SelectedSalesTransactionDiscountIncluded");
-                    OnPropertyChanged("SalesReturnTransactionGrossTotal");
+                    OnPropertyChanged("SalesReturnTransactionNetTotal");
                 }
 
                 SetProperty(ref _salesReturnTransactionID, value, "SalesReturnTransactionID");
@@ -107,24 +104,13 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
-        public decimal SalesReturnTransactionGrossTotal
-        {
-            get
-            {
-                _salesReturnTransactionGrossTotal = 0;
-                foreach (var line in _salesReturnTransactionLines)
-                    _salesReturnTransactionGrossTotal += line.Total;
-                OnPropertyChanged("SalesReturnTransactionNetTotal");
-                return _salesReturnTransactionGrossTotal;
-            }
-            set { SetProperty(ref _salesReturnTransactionGrossTotal, value, "SalesReturnTransactionGrossTotal"); }
-        }
-
         public decimal SalesReturnTransactionNetTotal
         {
             get
             {
-                _salesReturnTransactionNetTotal = _salesReturnTransactionGrossTotal - _selectedSalesTransactionDiscountIncluded;
+                _salesReturnTransactionNetTotal = 0;
+                foreach (var line in _salesReturnTransactionLines)
+                    _salesReturnTransactionNetTotal += line.Total;
                 return _salesReturnTransactionNetTotal;
             }
             set { SetProperty(ref _salesReturnTransactionNetTotal, value, "SalesReturnTransactionNetTotal"); }
@@ -169,36 +155,6 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             get { return _selectedSalesTransactionWhen; }
             set { SetProperty(ref _selectedSalesTransactionWhen, value, "SelectedSalesTransactionWhen"); }
-        }
-
-        public decimal SelectedSalesTransactionDiscountIncluded
-        {
-            get { return _selectedSalesTransactionDiscountIncluded; }
-            set
-            {
-                if (Model.SalesTransaction != null)
-                {
-                    var availableDiscount = Model.SalesTransaction.Discount;
-                    using (var context = new ERPContext())
-                    {
-                        var salesReturns = context.SalesReturnTransactions
-                            .Where(e => e.SalesTransaction.SalesTransactionID.Equals(Model.SalesTransaction.SalesTransactionID))
-                            .ToList();
-
-                        foreach (var sr in salesReturns)
-                            availableDiscount -= sr.SalesTransactionDiscountIncluded;
-                    }
-
-                    if (value > availableDiscount || value < 0)
-                    {
-                        MessageBox.Show(string.Format("The valid range is {0} - {1}.", 0, availableDiscount), "Invalid Value", MessageBoxButton.OK);
-                        return;
-                    }
-
-                    SetProperty(ref _selectedSalesTransactionDiscountIncluded, value, "SelectedSalesTransactionDiscountIncluded");
-                    OnPropertyChanged("SalesReturnTransactionNetTotal");
-                }
-            }
         }
 
         public SalesTransactionLineVM SelectedSalesTransactionLine
@@ -345,7 +301,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                             line.Quantity += quantity; // Line's Total is automatically refreshed
                             line.CostOfGoodsSold = GetSalesReturnTransactionLineCOGS(line);
-                            OnPropertyChanged("SalesReturnTransactionGrossTotal");
+                            OnPropertyChanged("SalesReturnTransactionNetTotal");
                             return;
                         }
                     }
@@ -364,7 +320,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     sr.CostOfGoodsSold = GetSalesReturnTransactionLineCOGS(vm);
                     _salesReturnTransactionLines.Add(vm);
 
-                    OnPropertyChanged("SalesReturnTransactionGrossTotal");
+                    OnPropertyChanged("SalesReturnTransactionNetTotal");
                 }));
             }
         }
@@ -397,6 +353,7 @@ namespace PutraJayaNT.ViewModels.Customers
             {
                 decimal amount = 0;
                 var purchases = context.PurchaseTransactionLines
+                    .Include("PurchaseTransaction")
                     .Where(e => e.ItemID.Equals(sr.Item.ItemID) && e.SoldOrReturned > 0)
                     .OrderByDescending(e => e.PurchaseTransactionID)
                     .ToList();
@@ -404,16 +361,18 @@ namespace PutraJayaNT.ViewModels.Customers
                 var tracker = sr.Quantity;
                 foreach (var purchase in purchases)
                 {
+                    var purchaseLineTotal = purchase.PurchasePrice - purchase.Discount;
+
                     if (purchase.SoldOrReturned >= tracker)
                     {
-                        amount += purchase.PurchasePrice * tracker;
-                        // remember to change at save transaction instead purchase.SoldOrReturned -= tracker;
+                        var fractionOfTransactionDiscount = (tracker * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                        amount += (tracker * purchaseLineTotal) - fractionOfTransactionDiscount;
                         break;
                     }
                     else if (purchase.SoldOrReturned < tracker)
                     {
-                        amount += purchase.PurchasePrice * purchase.SoldOrReturned;
-                        // remember to change at save transaction instead purchase.SoldOrReturned = 0;
+                        var fractionOfTransactionDiscount = (purchase.SoldOrReturned * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                        amount += (purchase.SoldOrReturned * purchaseLineTotal) - fractionOfTransactionDiscount;
                         tracker -= purchase.SoldOrReturned;
                     }
                 }
@@ -451,9 +410,9 @@ namespace PutraJayaNT.ViewModels.Customers
                             // Calcculate the total amount of Sales Return, total amount of Cost of Goods Sold
                             // ,record the transaction and increase the item's quantity in the database
                             Model.Date = DateTime.Now.Date;
-                            Model.GrossTotal = _salesReturnTransactionGrossTotal;
-                            Model.SalesTransactionDiscountIncluded = _selectedSalesTransactionDiscountIncluded;
-                            Model.NetTotal = _salesReturnTransactionGrossTotal - _selectedSalesTransactionDiscountIncluded;
+                            Model.NetTotal = _salesReturnTransactionNetTotal;
+                            var user = App.Current.FindResource("CurrentUser") as User;
+                            Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
                             context.SalesTransactions.Attach(Model.SalesTransaction);
                             context.SalesReturnTransactions.Add(Model);
                             foreach (var line in _salesReturnTransactionLines)
@@ -489,7 +448,6 @@ namespace PutraJayaNT.ViewModels.Customers
                                 }
 
                                 // Increase the Customer's Sales Return Credits
-                                totalAmount -= _selectedSalesTransactionDiscountIncluded;
                                 var customer = context.Customers.Where(e => e.ID.Equals(Model.SalesTransaction.Customer.ID)).FirstOrDefault();
                                 customer.SalesReturnCredits += totalAmount;
 
@@ -550,9 +508,6 @@ namespace PutraJayaNT.ViewModels.Customers
 
             NotEditing = true;
             Model.SalesTransaction = null;
-
-            SalesReturnTransactionGrossTotal = 0;
-            SelectedSalesTransactionDiscountIncluded = 0;
 
             SelectedSalesTransactionID = null;
             SelectedSalesTransactionWhen = null;

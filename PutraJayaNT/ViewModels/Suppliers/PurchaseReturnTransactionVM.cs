@@ -2,6 +2,7 @@
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Purchase;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
@@ -18,13 +19,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
         ObservableCollection<PurchaseTransactionLineVM> _purchaseTransactionLines;
         ObservableCollection<PurchaseReturnTransactionLineVM> _purchaseReturnTransactionLines;
 
-        decimal _purchaseReturnTransactionGrossTotal;
         decimal _purchaseReturnTransactionNetTotal;
 
         string _selectedPurchaseTransactionID;
         PurchaseTransactionLineVM _selectedPurchaseTransactionLine;
         DateTime? _selectedPurchaseTransactionWhen;
-        decimal _selectedPurchaseTransactionDiscountIncluded;
 
         string _purchaseReturnEntryID;
         DateTime _purchaseReturnEntryDate;
@@ -60,24 +59,15 @@ namespace PutraJayaNT.ViewModels.Suppliers
         }
 
         #region Purchase Return Transaction Properties
-        public decimal PurchaseReturnTransactionGrossTotal
-        {
-            get
-            {
-                _purchaseReturnTransactionGrossTotal = 0;
-                foreach (var line in _purchaseReturnTransactionLines)
-                    _purchaseReturnTransactionGrossTotal += line.Total;
-                OnPropertyChanged("PurchaseReturnTransactionNetTotal");
-                return _purchaseReturnTransactionGrossTotal;
-            }
-            set { SetProperty(ref _purchaseReturnTransactionGrossTotal, value, "PurchaseReturnTransactionGrossTotal"); }
-        }
-
         public decimal PurchaseReturnTransactionNetTotal
         {
             get
             {
-                _purchaseReturnTransactionNetTotal = _purchaseReturnTransactionGrossTotal - _selectedPurchaseTransactionDiscountIncluded;
+                _purchaseReturnTransactionNetTotal = 0;
+                foreach (var line in _purchaseReturnTransactionLines)
+                {
+                    _purchaseReturnTransactionNetTotal += line.Total;
+                }
                 return _purchaseReturnTransactionNetTotal;
             }
             set { SetProperty(ref _purchaseReturnTransactionNetTotal, value, "PurchaseReturnTransactionNetTotal"); }
@@ -109,36 +99,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             get { return _selectedPurchaseTransactionWhen; }
             set { SetProperty(ref _selectedPurchaseTransactionWhen, value, "SelectedPurchaseTransactionWhen"); }
-        }
-
-        public decimal SelectedPurchaseTransactionDiscountIncluded
-        {
-            get { return _selectedPurchaseTransactionDiscountIncluded; }
-            set
-            {
-                if (Model.PurchaseTransaction != null)
-                {
-                    var availableDiscount = Model.PurchaseTransaction.Discount;
-                    using (var context = new ERPContext())
-                    {
-                        var purchaseReturns = context.PurchaseReturnTransactions
-                            .Where(e => e.PurchaseTransaction.PurchaseID.Equals(Model.PurchaseTransaction.PurchaseID))
-                            .ToList();
-
-                        foreach (var pr in purchaseReturns)
-                            availableDiscount -= pr.PurchaseTransactionDiscountIncluded;  
-                    }
-
-                    if (value > availableDiscount || value < 0)
-                    {
-                        MessageBox.Show(string.Format("The valid range is {0} - {1}.", 0, availableDiscount), "Invalid Value", MessageBoxButton.OK);
-                        return;
-                    }
-
-                    SetProperty(ref _selectedPurchaseTransactionDiscountIncluded, value, "SelectedPurchaseTransactionDiscountIncluded");
-                    OnPropertyChanged("PurchaseReturnTransactionNetTotal");
-                }
-            }
         }
 
         public PurchaseTransactionLineVM SelectedPurchaseTransactionLine
@@ -245,67 +205,74 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 return _purchaseReturnEntryAddCommand ?? (_purchaseReturnEntryAddCommand = new RelayCommand(() =>
                 {
-                    if (_purchaseReturnEntryProduct == null || _selectedPurchaseTransactionLine == null)
+                if (_purchaseReturnEntryProduct == null || _selectedPurchaseTransactionLine == null)
+                {
+                    MessageBox.Show("No product is selected", "Invalid Command", MessageBoxButton.OK);
+                    return;
+                }
+
+                var availableReturnQuantity = _selectedPurchaseTransactionLine.Quantity - _selectedPurchaseTransactionLine.SoldOrReturned;
+
+                _purchaseReturnEntryQuantity = (int)((_purchaseReturnEntryUnits != null ? _purchaseReturnEntryUnits : 0) * _selectedPurchaseTransactionLine.Item.PiecesPerUnit)
+                + (_purchaseReturnEntryPieces != null ? _purchaseReturnEntryPieces : 0);
+
+                if (_purchaseReturnEntryQuantity > _selectedPurchaseTransactionLine.Quantity
+                || _purchaseReturnEntryQuantity > availableReturnQuantity
+                || _purchaseReturnEntryQuantity <= 0)
+                {
+                    MessageBox.Show(string.Format("The valid return quantity is {0} units {1} pieces",
+                        availableReturnQuantity / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
+                        availableReturnQuantity % _selectedPurchaseTransactionLine.Item.PiecesPerUnit),
+                        "Invalid Quantity Input", MessageBoxButton.OK);
+                    return;
+                }
+
+                // Look if the line exists in the PurchaseReturnTransactionLines already
+                foreach (var line in _purchaseReturnTransactionLines)
+                {
+                    if (line.Item.ItemID.Equals(_selectedPurchaseTransactionLine.Item.ItemID) &&
+                    line.Warehouse.ID.Equals(_selectedPurchaseTransactionLine.Warehouse.ID) &&
+                    line.PurchasePrice.Equals(_selectedPurchaseTransactionLine.PurchasePrice) &&
+                    line.Discount.Equals(_selectedPurchaseTransactionLine.Discount))
                     {
-                        MessageBox.Show("No product is selected", "Invalid Command", MessageBoxButton.OK);
-                        return;
-                    }
-
-                    var availableReturnQuantity = _selectedPurchaseTransactionLine.Quantity - _selectedPurchaseTransactionLine.SoldOrReturned;
-
-                    _purchaseReturnEntryQuantity = (int) ((_purchaseReturnEntryUnits != null ? _purchaseReturnEntryUnits : 0) * _selectedPurchaseTransactionLine.Item.PiecesPerUnit) 
-                    + (_purchaseReturnEntryPieces != null ? _purchaseReturnEntryPieces : 0);
-
-                    if (_purchaseReturnEntryQuantity > _selectedPurchaseTransactionLine.Quantity
-                    || _purchaseReturnEntryQuantity > availableReturnQuantity
-                    || _purchaseReturnEntryQuantity <= 0)
-                    {
-                        MessageBox.Show(string.Format("The valid return quantity is {0} units {1} pieces",
-                            availableReturnQuantity / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
-                            availableReturnQuantity %  _selectedPurchaseTransactionLine.Item.PiecesPerUnit),
-                            "Invalid Quantity Input", MessageBoxButton.OK);
-                        return;
-                    }
-
-                    // Look if the line exists in the PurchaseReturnTransactionLines already
-                    foreach (var line in _purchaseReturnTransactionLines)
-                    {
-                        if (line.Item.ItemID.Equals(_selectedPurchaseTransactionLine.Item.ItemID) &&
-                        line.Warehouse.ID.Equals(_selectedPurchaseTransactionLine.Warehouse.ID) &&
-                        line.PurchasePrice.Equals(_selectedPurchaseTransactionLine.PurchasePrice) &&
-                        line.Discount.Equals(_selectedPurchaseTransactionLine.Discount))
+                        if ((line.Quantity + _purchaseReturnEntryQuantity) > _selectedPurchaseTransactionLine.Quantity ||
+                        (line.Quantity + _purchaseReturnEntryQuantity) > availableReturnQuantity ||
+                        (line.Quantity + _purchaseReturnEntryQuantity) <= 0)
                         {
-                            if ((line.Quantity + _purchaseReturnEntryQuantity) > _selectedPurchaseTransactionLine.Quantity ||
-                            (line.Quantity + _purchaseReturnEntryQuantity) > availableReturnQuantity ||
-                            (line.Quantity + _purchaseReturnEntryQuantity) <= 0)
-                            {
-                                MessageBox.Show(string.Format("The valid return quantity is {0} units {1} pieces",
-                                    availableReturnQuantity / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
-                                    availableReturnQuantity % _selectedPurchaseTransactionLine.Item.PiecesPerUnit),
-                                    "Invalid Quantity Input", MessageBoxButton.OK);
-                                return;
-                            }
-
-                            line.Quantity += (int)_purchaseReturnEntryQuantity;
-                            OnPropertyChanged("PurchaseReturnTransactionGrossTotal");
+                            MessageBox.Show(string.Format("The valid return quantity is {0} units {1} pieces",
+                                availableReturnQuantity / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
+                                availableReturnQuantity % _selectedPurchaseTransactionLine.Item.PiecesPerUnit),
+                                "Invalid Quantity Input", MessageBoxButton.OK);
                             return;
                         }
+
+                        line.Quantity += (int)_purchaseReturnEntryQuantity;
+                        OnPropertyChanged("PurchaseReturnTransactionNetTotal");
+                        return;
                     }
+                }
+
+                    var purchasePrice = _selectedPurchaseTransactionLine.PurchasePrice / _selectedPurchaseTransactionLine.Item.PiecesPerUnit;
+
+                    var fractionOfTransaction = ((int)_purchaseReturnEntryQuantity * (_selectedPurchaseTransactionLine.PurchasePrice - _selectedPurchaseTransactionLine.Discount) / _selectedPurchaseTransactionLine.Item.PiecesPerUnit) 
+                    / _selectedPurchaseTransactionLine.PurchaseTransaction.GrossTotal;
+                    var fractionOfTransactionDiscount = fractionOfTransaction * _selectedPurchaseTransactionLine.PurchaseTransaction.Discount;
+                    var discount = (_selectedPurchaseTransactionLine.Discount + fractionOfTransactionDiscount) / _selectedPurchaseTransactionLine.Item.PiecesPerUnit;
 
                     var pr = new PurchaseReturnTransactionLine
                     {
                         PurchaseReturnTransaction = Model,
                         Item = _selectedPurchaseTransactionLine.Item,
                         Warehouse = _selectedPurchaseTransactionLine.Warehouse,
-                        PurchasePrice = _selectedPurchaseTransactionLine.PurchasePrice / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
+                        PurchasePrice = purchasePrice,
                         Discount = _selectedPurchaseTransactionLine.Discount / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
-                        Total = ( (_selectedPurchaseTransactionLine.PurchasePrice - _selectedPurchaseTransactionLine.Discount)
-                        / _selectedPurchaseTransactionLine.Item.PiecesPerUnit) * (int)_purchaseReturnEntryQuantity,
+                        NetDiscount = discount,
+                        Total = (purchasePrice - discount) * (int)_purchaseReturnEntryQuantity,
                         Quantity = (int)_purchaseReturnEntryQuantity
                     };
 
                     _purchaseReturnTransactionLines.Add(new PurchaseReturnTransactionLineVM { Model = pr, AvailableReturnQuantity = availableReturnQuantity });
-                    OnPropertyChanged("PurchaseReturnTransactionGrossTotal");
+                    OnPropertyChanged("PurchaseReturnTransactionNetTotal");
                 }));
             }
         }
@@ -330,7 +297,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 {
                     if (MessageBox.Show("Confirm transaction?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        Model.Date = (DateTime)_selectedPurchaseTransactionWhen;
+                        Model.Date = _purchaseReturnEntryDate;
 
                         using (var ts = new TransactionScope())
                         {
@@ -343,9 +310,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             .FirstOrDefault();
 
                             Model.PurchaseTransaction = purchaseTransaction;
-                            Model.PurchaseTransactionDiscountIncluded = _selectedPurchaseTransactionDiscountIncluded;
-                            Model.GrossTotal = _purchaseReturnTransactionGrossTotal;
                             Model.NetTotal = _purchaseReturnTransactionNetTotal;
+                            var user = App.Current.FindResource("CurrentUser") as User;
+                            Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
                             context.PurchaseReturnTransactions.Add(Model);
 
                             // Calcculate the total amount of Purchase Return
@@ -393,8 +360,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                             LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now, _purchaseReturnEntryID, "Purchase Return");
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Dedit", _purchaseReturnTransactionNetTotal);
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Crebit", _purchaseReturnTransactionNetTotal);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Debit", _purchaseReturnTransactionNetTotal);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", _purchaseReturnTransactionNetTotal);
               
                             context.SaveChanges();
                             ts.Complete();
@@ -411,7 +378,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         private void ResetTransaction()
         {
-            SelectedPurchaseTransactionDiscountIncluded = 0;
             SelectedPurchaseTransactionID = null;
             SelectedPurchaseTransactionWhen = null;
             SelectedPurchaseTransactionLine = null;
@@ -422,7 +388,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             _purchaseReturnTransactionLines.Clear();
             _purchaseTransactionLines.Clear();
 
-            OnPropertyChanged("PurchaseReturnTransactionGrossTotal");
+            OnPropertyChanged("PurchaseReturnTransactionNetTotal");
         }
     }
 }

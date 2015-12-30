@@ -1,6 +1,7 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Purchase;
 using PutraJayaNT.Utilities;
 using System.Linq;
 using System.Windows;
@@ -186,11 +187,24 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        public decimal NetDiscount
+        {
+            get
+            {
+                return Model.NetDiscount * Model.Item.PiecesPerUnit;
+            }
+            set
+            {
+                Model.NetDiscount = value / Model.Item.PiecesPerUnit;
+                OnPropertyChanged("Discount");
+            }
+        }
+
         public decimal Total
         {
             get
             {
-                Model.Total = Quantity * ((PurchasePrice - Discount) / Item.PiecesPerUnit);
+                Model.Total = Quantity * ((PurchasePrice - NetDiscount) / Item.PiecesPerUnit);
                 return Model.Total;
             }
             set

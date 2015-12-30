@@ -1,6 +1,6 @@
 ﻿using MVVMFramework;
-using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Purchase;
 using System.Windows;
 
 namespace PutraJayaNT.ViewModels.Suppliers

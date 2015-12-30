@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Transactions;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Models;
+using PutraJayaNT.Models.Purchase;
 
 namespace PutraJayaNT.ViewModels.Suppliers
 {
@@ -458,6 +459,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             Model.GrossTotal = _newTransactionGrossTotal == null ? 0 : (decimal) _newTransactionGrossTotal;
                             Model.Note = _newTransactionNote;
                             Model.Supplier = context.Suppliers.Where(e => e.ID == Model.Supplier.ID).FirstOrDefault();
+                            var user = App.Current.FindResource("CurrentUser") as User;
+                            Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
                             context.PurchaseTransactions.Add(Model);
 
                             // Record the accounting journal entry for this purchase
