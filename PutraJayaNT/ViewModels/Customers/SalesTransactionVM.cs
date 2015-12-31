@@ -313,7 +313,7 @@ namespace PutraJayaNT.ViewModels.Customers
                                     window.ShowDialog();
                                     App.Current.MainWindow.IsEnabled = true;
                                     var isVerified = App.Current.TryFindResource("IsVerified");
-                                    if ((isVerified != null) && (bool) isVerified) break;
+                                    if (isVerified != null) break;
                                     _newTransactionCustomer = null;
                                     RefreshCustomers();
                                     return;

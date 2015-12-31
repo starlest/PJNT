@@ -14,6 +14,11 @@ namespace PutraJayaNT.ViewModels
 
         ICommand _submitCommand;
 
+        public VerificationVM()
+        {
+            if (App.Current.TryFindResource("IsVerified") != null) App.Current.Resources.Remove("IsVerified");
+        }
+
         public string Username
         {
             get { return _userName; }

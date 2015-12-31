@@ -112,6 +112,7 @@ namespace PutraJayaNT.ViewModels
 
         public override bool Equals(object obj)
         {
+            if (obj == null) return false;
             var customer = obj as CustomerVM;
             if (customer == null) return false;
             else return this.ID.Equals(customer.ID);

@@ -200,8 +200,7 @@ namespace PUJASM.ERP.ViewModels.Master
             }
         }
 
-        // ----------------------- New Entry Properties ----------------------- //
-
+        #region New Entry Properties
         public string NewEntryName
         {
             get { return _newEntryName; }
@@ -292,8 +291,8 @@ namespace PUJASM.ERP.ViewModels.Master
                             context.Ledger_General.Add(new LedgerGeneral
                             {
                                 LedgerAccount = account,
-                                PeriodYear = 2015,
-                                Period = 1,
+                                PeriodYear = DateTime.Now.Year,
+                                Period = DateTime.Now.Month,
                             });
 
                             // Add an account Balance for this customer in the database
@@ -341,6 +340,7 @@ namespace PUJASM.ERP.ViewModels.Master
             NewEntryGroup = null;
             UpdateDisplayedCustomers();
         }
+        #endregion
 
         // -------------------------------------------------------------------- //
 

@@ -285,8 +285,8 @@ namespace PutraJayaNT.ViewModels.Master
                             uow.LedgerGeneralRepository.Add(new LedgerGeneral
                             {
                                 LedgerAccount = account,
-                                PeriodYear = 2015,
-                                Period = 1,
+                                PeriodYear = DateTime.Now.Year,
+                                Period = DateTime.Now.Month,
                             });
 
                             // Add an account Balance for this supplier in the database

@@ -49,7 +49,7 @@
                      Text="{Binding NewTransactionID, UpdateSourceTrigger=Explicit}" MaxLength="12" KeyDown="TextBox_KeyDown" />
                     <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Customer:" FontSize="28" />
                     <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                      ItemsSource="{Binding Customers}" SelectedItem="{Binding NewTransactionCustomer, UpdateSourceTrigger=PropertyChanged}" 
+                      ItemsSource="{Binding Customers}" SelectedItem="{Binding NewTransactionCustomer, UpdateSourceTrigger=Explicit}" 
                       DisplayMemberPath="Name" IsEditable="True"  IsEnabled="{Binding InvoiceNotIssued}" />
                     <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Salesman:" FontSize="28" />
                     <ComboBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 

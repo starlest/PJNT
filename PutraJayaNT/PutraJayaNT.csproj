@@ -189,6 +189,10 @@
     <Compile Include="Migrations\201512302251558_AddedUserToTransactions.Designer.cs">
       <DependentUpon>201512302251558_AddedUserToTransactions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512310022119_Mega.cs" />
+    <Compile Include="Migrations\201512310022119_Mega.Designer.cs">
+      <DependentUpon>201512310022119_Mega.cs</DependentUpon>
+    </Compile>
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -555,6 +559,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512302251558_AddedUserToTransactions.resx">
       <DependentUpon>201512302251558_AddedUserToTransactions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512310022119_Mega.resx">
+      <DependentUpon>201512310022119_Mega.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SalesReturnInvoiceReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

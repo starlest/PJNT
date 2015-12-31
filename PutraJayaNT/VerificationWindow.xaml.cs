@@ -13,8 +13,6 @@ namespace PutraJayaNT
             InitializeComponent();
             var vm = new VerificationVM();
             DataContext = vm;
-            var isVerified = App.Current.TryFindResource("IsVerified");
-            if (isVerified != null) isVerified = false;
         }
     }
 }
