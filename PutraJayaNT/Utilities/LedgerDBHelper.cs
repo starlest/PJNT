@@ -1,4 +1,5 @@
-﻿using PutraJayaNT.Models.Accounting;
+﻿using PutraJayaNT.Models;
+using PutraJayaNT.Models.Accounting;
 using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -13,6 +14,8 @@ namespace PutraJayaNT.Utilities
             transaction.Documentation = documentation;
             transaction.Date = date;
             transaction.Description = description;
+            var user = App.Current.TryFindResource("CurrentUser") as User;
+            if (user != null) transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
             context.Ledger_Transactions.Add(transaction);
         }
 

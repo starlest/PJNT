@@ -25,6 +25,8 @@ namespace PutraJayaNT.Models.Accounting
 
         public string Description { get; set; }
 
+        public virtual User User { get; set; }
+
         public ObservableCollection<LedgerTransactionLine> LedgerTransactionLines { get; set; }
     }
 }

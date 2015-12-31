@@ -680,7 +680,7 @@ namespace PutraJayaNT.ViewModels.Master
                     .Include("Category")
                     .Include("Suppliers")
                     .OrderBy(e => e.Category.Name)
-                    .ThenBy(e => e.Name)
+                    .ThenBy(e => e.ItemID)
                     .ToList();
 
                 foreach (var item in items)
