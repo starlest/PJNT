@@ -426,7 +426,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!LineNumber.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -457,7 +459,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ItemID.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -488,7 +492,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ItemName.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -519,7 +525,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Unit.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -550,7 +558,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Units.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -581,7 +591,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Pieces.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -613,6 +625,7 @@
                             <TextRun>
                               <Value>=Fields!SalesPrice.Value</Value>
                               <Style>
+                                <FontSize>8pt</FontSize>
                                 <Format>#,0;(#,0)</Format>
                               </Style>
                             </TextRun>
@@ -646,6 +659,7 @@
                             <TextRun>
                               <Value>=Fields!Discount.Value</Value>
                               <Style>
+                                <FontSize>8pt</FontSize>
                                 <Format>#,0;(#,0)</Format>
                               </Style>
                             </TextRun>
@@ -679,6 +693,7 @@
                             <TextRun>
                               <Value>=Fields!Total.Value</Value>
                               <Style>
+                                <FontSize>8pt</FontSize>
                                 <Format>#,0;(#,0)</Format>
                               </Style>
                             </TextRun>
@@ -965,6 +980,7 @@
                             <TextRun>
                               <Value>=Sum(Fields!Total.Value)</Value>
                               <Style>
+                                <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                                 <Format>#,0;(#,0)</Format>
                                 <TextDecoration>None</TextDecoration>
@@ -1320,10 +1336,10 @@
         </Style>
       </Line>
     </ReportItems>
-    <Height>4.32872in</Height>
+    <Height>2.99539in</Height>
     <Style />
   </Body>
-  <Width>8.06048in</Width>
+  <Width>8.12883in</Width>
   <Page>
     <PageHeader>
       <Height>3.25438cm</Height>
@@ -1656,7 +1672,60 @@
         </Border>
       </Style>
     </PageHeader>
-    <PageHeight>14cm</PageHeight>
+    <PageFooter>
+      <Height>1.29645cm</Height>
+      <PrintOnFirstPage>true</PrintOnFirstPage>
+      <PrintOnLastPage>true</PrintOnLastPage>
+      <ReportItems>
+        <Textbox Name="Textbox3">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>="Page "&amp;Globals!PageNumber</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox3</rd:DefaultName>
+          <Top>0.35278cm</Top>
+          <Left>17.46148cm</Left>
+          <Height>0.6cm</Height>
+          <Width>2.2477cm</Width>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Line Name="Line4">
+          <Top>0.17639cm</Top>
+          <Left>0.97916cm</Left>
+          <Height>0cm</Height>
+          <Width>18.98231cm</Width>
+          <ZIndex>1</ZIndex>
+          <Style>
+            <Border>
+              <Style>Solid</Style>
+            </Border>
+          </Style>
+        </Line>
+      </ReportItems>
+      <Style>
+        <Border>
+          <Style>None</Style>
+        </Border>
+      </Style>
+    </PageFooter>
+    <PageHeight>14.8cm</PageHeight>
     <PageWidth>21cm</PageWidth>
     <LeftMargin>0cm</LeftMargin>
     <RightMargin>0cm</RightMargin>

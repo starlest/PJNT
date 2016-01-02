@@ -489,7 +489,8 @@ namespace PutraJayaNT.ViewModels.Master
             _suppliers.Clear();
             using (var context = new ERPContext())
             {
-                var suppliers = context.Suppliers.Include("Items");
+                var suppliers = context.Suppliers.Include("Items").OrderBy(e => e.ID);
+
                 foreach (Supplier s in suppliers)
                 {
                     SupplierVM svm = new SupplierVM { Model = s };

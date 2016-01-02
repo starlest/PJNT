@@ -66,7 +66,7 @@
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransaction.When, StringFormat={}{0:dd/MM/yyyy}}" />
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding GlobalDisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" Grid.ColumnSpan="2" ItemsSource="{Binding GlobalDisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   Visibility="{Binding GlobalVisibility}">

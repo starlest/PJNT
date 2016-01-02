@@ -14,5 +14,10 @@ namespace PutraJayaNT.Views.Reports
             var vm = new SalesReportVM();
             DataContext = vm;
         }
+
+        void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+        }
     }
 }
