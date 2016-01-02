@@ -13,8 +13,8 @@ namespace PutraJayaNT.Views.Reports
         public PurchasesReportView()
         {
             InitializeComponent();
-            //vm = new PurchasesReportVM();
-           // DataContext = vm;
+            var vm = new PurchasesReportVM();
+            DataContext = vm;
         }
     }
 }

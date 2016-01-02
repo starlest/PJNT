@@ -88,10 +88,19 @@ namespace PutraJayaNT.ViewModels
         {
             get
             {
-                _quantity = 0;
-                foreach (var stock in Model.Stocks)
-                    _quantity += stock.Pieces;
+                if (_quantity == 0)
+                {
+                    foreach (var stock in Model.Stocks)
+                        _quantity += stock.Pieces;
+                }
                 return _quantity;
+            }
+            set
+            {
+                _quantity = value;
+                OnPropertyChanged("Quantity");
+                OnPropertyChanged("Units");
+                OnPropertyChanged("Pieces");
             }
         }
 
@@ -148,7 +157,22 @@ namespace PutraJayaNT.ViewModels
         public Supplier SelectedSupplier
         {
             get { return _selectedSupplier; }
-            set { SetProperty(ref _selectedSupplier, value, "SelectedSupplier"); }
+            set
+            {
+
+                if (value == null) return;
+
+                foreach (var supplier in Suppliers)
+                {
+                    if (supplier.ID.Equals(value.ID))
+                    {
+                        value = supplier;
+                        break;
+                    }
+                }
+
+                SetProperty(ref _selectedSupplier, value, "SelectedSupplier");
+            }
         }
 
         public override bool Equals(object obj)

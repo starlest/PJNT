@@ -48,13 +48,13 @@
                       ItemsSource="{Binding Suppliers}" SelectedItem="{Binding NewEntrySupplier, Mode=TwoWay}"
                       IsEditable="True" />
                 <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" 
-                       FontSize="28" Foreground="Blue" Text="Sales Price:" />
-                <TextBox Grid.Row="1"  Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding NewEntrySalesPrice, Mode=TwoWay}" />
-                <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" 
                        FontSize="28" Foreground="Blue" Text="Purchase Price:" />
-                <TextBox Grid.Row="1"  Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                <TextBox Grid.Row="1"  Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding NewEntryPurchasePrice, Mode=TwoWay}" />
+                <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                       FontSize="28" Foreground="Blue" Text="Sales Price:" />
+                <TextBox Grid.Row="1"  Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntrySalesPrice, Mode=TwoWay}" />
                 <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" 
                        FontSize="28" Foreground="Blue" Text="Unit Name:" />
                 <TextBox Grid.Row="2"  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
@@ -92,7 +92,7 @@
                       ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay, UpdateSourceTrigger=Explicit}" 
                       IsEditable="True" />
         </Grid>
-        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedItems}" 
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedItems}" 
                   CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"

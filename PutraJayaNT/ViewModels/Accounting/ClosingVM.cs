@@ -59,32 +59,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                 foreach (var account in revenueAndExpenseAccounts)
                 {
                     if (account.LedgerGeneral.Debit != 0 || account.LedgerGeneral.Credit != 0)
-                    {
-                        if (account.Class.Equals("Expense"))
-                        {
-                            var amount = account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                            var transaction = new LedgerTransaction();
-
-                            LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, "Closing Entry", account.Name);
-                            context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, transaction, account.Name, "Credit", amount);
-                            LedgerDBHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Debit", amount);
-
-                            account.LedgerGeneral.Credit -= amount;
-                        }
-                        else if (account.Class.Equals("Revenue"))
-                        {
-                            var amount = account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                            var transaction = new LedgerTransaction();
-
-                            LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, "Closing Entry", account.Name);
-                            context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, transaction, account.Name, "Debit", amount);
-                            LedgerDBHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Credit", amount);
-
-                            account.LedgerGeneral.Debit -= amount;
-                        }
-                    }
+                        CloseRevenueOrExpenseAccount(account, context);
                 }
 
                 foreach (var account in accounts)
@@ -355,6 +330,42 @@ namespace PutraJayaNT.ViewModels.Accounting
 
             OnPropertyChanged("PeriodYear");
             OnPropertyChanged("Period");
+        }
+
+        void CloseRevenueOrExpenseAccount(LedgerAccount account, ERPContext context)
+        {
+            var retainedEarnings = context.Ledger_Accounts
+                .Include("LedgerGeneral")
+                .Include("LedgerAccountBalance")
+                .Include("TransactionLines")
+                .Where(e => e.Name.Equals("Retained Earnings"))
+                .FirstOrDefault();
+
+            if (account.Class.Equals("Expense"))
+            {
+                var amount = account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                var transaction = new LedgerTransaction();
+
+                LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, "Closing Entry", account.Name);
+                context.SaveChanges();
+                LedgerDBHelper.AddTransactionLine(context, transaction, account.Name, "Credit", amount);
+                LedgerDBHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Debit", amount);
+
+                account.LedgerGeneral.Credit -= amount;
+            }
+
+            else if (account.Class.Equals("Revenue"))
+            {
+                var amount = account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                var transaction = new LedgerTransaction();
+
+                LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, "Closing Entry", account.Name);
+                context.SaveChanges();
+                LedgerDBHelper.AddTransactionLine(context, transaction, account.Name, "Debit", amount);
+                LedgerDBHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Credit", amount);
+
+                account.LedgerGeneral.Debit -= amount;
+            }
         }
     }
 }

@@ -40,6 +40,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        public string PurchaseTransactionID
+        {
+            get { return Model.PurchaseTransaction.PurchaseID; }
+        }
+
+
         public int Quantity
         {
             get { return Model.Quantity; }
@@ -50,6 +56,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 OnPropertyChanged("Units");
                 OnPropertyChanged("Pieces");
             }
+        }
+
+        public string Unit
+        {
+            get { return Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit; }
         }
 
         public int Units
@@ -96,10 +107,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
-        public string Unit
-        {
-            get { return Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit; }
-        }
         public decimal Discount
         {
             get { return Model.Discount * Model.Item.PiecesPerUnit; }

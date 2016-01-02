@@ -199,7 +199,10 @@ namespace PutraJayaNT.ViewModels.Reports
                         foreach (var stock in item.Stocks)
                         {
                             if (stock.Warehouse.Equals(value))
+                            {
+                                item.Quantity = stock.Pieces;
                                 _displayedItems.Add(item);
+                            }
                         }     
                     }
                 }
@@ -237,7 +240,8 @@ namespace PutraJayaNT.ViewModels.Reports
                     .Include("Suppliers")
                     .Include("Category")
                     .Include("Stocks")
-                    .Include("Stocks.Warehouse");
+                    .Include("Stocks.Warehouse")
+                    .OrderBy(e => e.ItemID);
 
                 foreach (var item in items)
                 {

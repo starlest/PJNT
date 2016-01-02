@@ -223,16 +223,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="putrajayantDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>putrajayantDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="putrajayantDataSet1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>putrajayantDataSet1.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\SalesInvoiceWindow.xaml.cs">
       <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
     </Compile>
@@ -270,6 +260,7 @@
     <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
     <Compile Include="ViewModels\Master\MasterSuppliersVM.cs" />
     <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
+    <Compile Include="ViewModels\Reports\PurchasesReportVM.cs" />
     <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
     <Compile Include="ViewModels\SalesmanVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchasePaymentVM.cs" />
@@ -466,28 +457,6 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="putrajayantDataSet.xsc">
-      <DependentUpon>putrajayantDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="putrajayantDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>putrajayantDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="putrajayantDataSet.xss">
-      <DependentUpon>putrajayantDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="putrajayantDataSet1.xsc">
-      <DependentUpon>putrajayantDataSet1.xsd</DependentUpon>
-    </None>
-    <None Include="putrajayantDataSet1.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>putrajayantDataSet1.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="putrajayantDataSet1.xss">
-      <DependentUpon>putrajayantDataSet1.xsd</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup />

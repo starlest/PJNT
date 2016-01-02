@@ -46,9 +46,11 @@
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Purchase ID" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseID}" />
+                <DataGridTextColumn Header="Purchase ID" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseTransactionID}" />
+                <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="Item ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding Unit}" />
                 <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />

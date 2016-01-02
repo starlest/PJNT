@@ -99,9 +99,9 @@
                       ItemsSource="{Binding SupplierItems, Mode=OneWay}" SelectedItem="{Binding NewEntryItem}" 
                       DisplayMemberPath="Name" IsEditable="True" />
                     <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
-                     Text="{Binding NewEntryUnitName}" IsReadOnly="True" />
+                     Text="{Binding NewEntryUnitName}" IsReadOnly="True" IsTabStop="False" />
                     <TextBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
-                     Text="{Binding NewEntryPiecesPerUnit}" IsReadOnly="True" />
+                     Text="{Binding NewEntryPiecesPerUnit}" IsReadOnly="True" IsTabStop="False" />
                 </Grid>
                 <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="22" Text="Units/Pieces:" />
                 <Grid Grid.Row="1" Grid.Column="1">
@@ -134,11 +134,12 @@
                 <Button Grid.Row="0" Grid.Column="7" Grid.RowSpan="2" Margin="20" Content="Enter" Command="{Binding NewEntryCommand}" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="3" ItemsSource="{Binding Lines}" 
+        <DataGrid LoadingRow="DataGrid_LoadingRow" Grid.Row="3" ItemsSource="{Binding Lines}" 
                           CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                           ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                           AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
                 <DataGridTextColumn Header="Unit" Width="1*" IsReadOnly="True" Binding="{Binding Item.UnitName}" />
@@ -147,7 +148,6 @@
                 <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
                 <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
-                <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="5">

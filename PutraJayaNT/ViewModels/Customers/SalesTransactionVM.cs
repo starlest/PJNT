@@ -38,6 +38,7 @@ namespace PutraJayaNT.ViewModels.Customers
         decimal? _newTransactionDiscount;
         decimal? _newTransactionSalesExpense;
         decimal _newTransactionGrossTotal;
+        decimal _netTotal;
 
         ItemVM _newEntryProduct;
         Warehouse _newEntryWarehouse;
@@ -67,8 +68,6 @@ namespace PutraJayaNT.ViewModels.Customers
         bool _isEditWindowNotOpen;
         Visibility _editWindowVisibility;
         ICommand _deleteLineCommand;
-
-        decimal _netTotal;
 
         bool _editMode = false;
         
@@ -785,12 +784,6 @@ namespace PutraJayaNT.ViewModels.Customers
                 return _saveTransactionCommand ?? (_saveTransactionCommand = new RelayCommand(() =>
                 {
                     #region Checks
-                    if (_salesTransactionLines.Count <= 0)
-                    {
-                        MessageBox.Show("The transaction is empty.", "Empty Transaction", MessageBoxButton.OK);
-                        return;
-                    }
-
                     if (_newTransactionCustomer == null)
                     {
                         MessageBox.Show("Please select a customer.", "Missing Field(s)", MessageBoxButton.OK);
@@ -1186,7 +1179,6 @@ namespace PutraJayaNT.ViewModels.Customers
         /// Get the stock currently available.
         /// </summary>
         /// <param name="item"> The item to check. </param>
-        /// <param name="warehouse"> The warehouse the item is located at. </param>
         /// <returns> The value of stock. </returns>
         private int GetStock(Item item)
         {

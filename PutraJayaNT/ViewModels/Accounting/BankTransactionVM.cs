@@ -81,16 +81,17 @@ namespace PutraJayaNT.ViewModels.Accounting
             get { return _selectedBank; }
             set
             {
-                SetProperty(ref _selectedBank, value, "SelectedBank");
-
-                if (_selectedBank == null)
+                if (value == null)
                 {
                     _selectedBankID = -1;
                     return;
                 }
 
-                _selectedBankID = _selectedBank.ID;
-                UpdateBanks();
+
+                _selectedBankID = value.ID;
+                SetProperty(ref _selectedBank, value, "SelectedBank");
+
+                UpdateAccounts();
                 UpdateDisplayLines();
             }
         }
@@ -201,13 +202,16 @@ namespace PutraJayaNT.ViewModels.Accounting
             using (var context = new ERPContext())
             {
                 var accounts = context.Ledger_Accounts
-                    .Where(e => !e.Name.Equals(_selectedBank.Name) &&
-                    !e.Name.Contains("Payable") && !e.Name.Equals("Cost of Goods Sold")
-                    && !e.Name.Equals("Items") && !e.Name.Equals("Retained Earnings")
-                    && !e.Notes.Equals("Operating Expense") && !e.Name.Contains("Revenue"));
-      
+                    .Where(e => !e.Name.Contains("Accounts Payable") && !e.Name.Equals("Cost of Goods Sold")
+                    && !e.Name.Equals("Inventory") && !e.Name.Equals("Retained Earnings")
+                    && !e.Notes.Equals("Operating Expense") && !e.Name.Contains("Revenue"))
+                    .ToList();
+
                 foreach (var account in accounts)
+                {
+                    if (_selectedBank != null && account.Name.Equals(_selectedBank.Name)) continue;
                     _accounts.Add(new LedgerAccountVM { Model = account });
+                }
             }
         }
 

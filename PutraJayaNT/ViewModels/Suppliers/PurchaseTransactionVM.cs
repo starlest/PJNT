@@ -142,6 +142,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 {
                     _newTransactionGrossTotal += line.Total;
                 }
+                OnPropertyChanged("NewTransactionNetTotal");
                 return _newTransactionGrossTotal;
             }
         }
@@ -361,10 +362,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     // Check if the item exists in one of the lines 
                     foreach (var l in _lines)
                     {
-                        if (_newEntryItem.Equals(l.Item) 
+                        var discount = _newEntryDiscount == null ? 0 : (decimal) _newEntryDiscount;
+                        if (_newEntryItem.ItemID.Equals(l.Item.ItemID) 
                         && _newEntryWarehouse.ID.Equals(l.Warehouse.ID) 
                         && _newEntryPrice.Equals(l.PurchasePrice)
-                        && _newEntryDiscount.Equals(l.Discount))
+                        && discount.Equals(l.Discount))
                         {
                             l.Quantity += _newEntryQuantity;
                             ResetEntryFields();

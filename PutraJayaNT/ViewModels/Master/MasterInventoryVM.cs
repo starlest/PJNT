@@ -148,6 +148,15 @@ namespace PutraJayaNT.ViewModels.Master
 
                 UpdateItems();
 
+                foreach (var category in _categories)
+                {
+                    if (value.ID.Equals(category.ID))
+                    {
+                        value = category;
+                        break;
+                    }
+                }
+
                 SetProperty(ref _selectedCategory, value, () => SelectedCategory);
 
                 _displayedItems.Clear();
@@ -324,8 +333,8 @@ namespace PutraJayaNT.ViewModels.Master
                             Category = _newEntryCategory,
                             UnitName = _newEntryUnitName,
                             PiecesPerUnit = _newEntryPiecesPerUnit,
-                            PurchasePrice = (decimal)_newEntryPurchasePrice,
-                            SalesPrice = (decimal)_newEntrySalesPrice
+                            PurchasePrice = (decimal)_newEntryPurchasePrice / _newEntryPiecesPerUnit,
+                            SalesPrice = (decimal)_newEntrySalesPrice / _newEntryPiecesPerUnit
                         };
                         newItem.Suppliers.Add(_newEntrySupplier);
 
@@ -348,8 +357,7 @@ namespace PutraJayaNT.ViewModels.Master
                         }
 
                         UpdateItems();
-                        UpdateCategories();
-                        SelectedCategory = _categories.FirstOrDefault();
+                        SelectedCategory = _selectedCategory;
                         ResetEntryFields();
                     }
                 }));
@@ -577,6 +585,7 @@ namespace PutraJayaNT.ViewModels.Master
                             _selectedLine.SalesExpense = _editSalesExpense;
                             _selectedLine.UnitName = _editUnitName;
                             _selectedLine.PiecesPerUnit = _editPiecesPerUnit;
+                            _selectedLine.SelectedSupplier = Suppliers.FirstOrDefault();
                         }
 
                         EditWindowVisibility = Visibility.Collapsed;
@@ -657,7 +666,7 @@ namespace PutraJayaNT.ViewModels.Master
             {
                 _categories.Add(new Category { Name = "All" });
 
-                var categories = uow.CategoryRepository.GetAll();
+                var categories = uow.CategoryRepository.GetAll().OrderBy(e => e.Name);
                 foreach (var category in categories)
                 {
                     if (!_categories.Contains(category))

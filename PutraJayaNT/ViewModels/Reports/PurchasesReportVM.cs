@@ -2,6 +2,7 @@
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
+using PutraJayaNT.ViewModels.Suppliers;
 using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
@@ -13,19 +14,19 @@ namespace PutraJayaNT.ViewModels
     class PurchasesReportVM : ViewModelBase
     {
         ObservableCollection<Supplier> _suppliers;
-        ObservableCollection<Item> _supplierItems;
+        ObservableCollection<ItemVM> _supplierItems;
         ObservableCollection<PurchaseTransactionLineVM> _displayLines;
 
         DateTime _fromDate;
         DateTime _toDate;
 
         Supplier _selectedSupplier;
-        Stock _selectedItem;
+        ItemVM _selectedItem;
 
         public PurchasesReportVM()
         {
             _suppliers = new ObservableCollection<Supplier>();
-            _supplierItems = new ObservableCollection<Item>();
+            _supplierItems = new ObservableCollection<ItemVM>();
             _displayLines = new ObservableCollection<PurchaseTransactionLineVM>();
             _fromDate = DateTime.Now.Date;
             _toDate = DateTime.Now.Date.AddDays(1);
@@ -40,7 +41,7 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public ObservableCollection<Item> SupplierItems
+        public ObservableCollection<ItemVM> SupplierItems
         {
             get { return _supplierItems; }
         }
@@ -62,7 +63,7 @@ namespace PutraJayaNT.ViewModels
                 }
 
                 SetProperty(ref _fromDate, value, "FromDate");
-                RefreshDisplaylines();
+                if (_selectedSupplier != null && _selectedItem != null) RefreshDisplaylines();
             }
         }
 
@@ -78,7 +79,7 @@ namespace PutraJayaNT.ViewModels
                 }
 
                 SetProperty(ref _toDate, value, "ToDate");
-                RefreshDisplaylines();
+                if (_selectedSupplier != null && _selectedItem != null) RefreshDisplaylines();
             }
         }
 
@@ -99,22 +100,23 @@ namespace PutraJayaNT.ViewModels
 
                 RefreshSuppliers();
             
-                _supplierItems.Add(new Item { ItemDetailID = "-1", Name = "All" });
+                _supplierItems.Add(new ItemVM { Model = new Item { ItemID = "-1", Name = "All" } });
                 using (var context = new ERPContext())
                 {
                     var items = context.Inventory
+                        .OrderBy(e => e.Name)
                         .Include("Suppliers");
 
                     foreach (var item in items)
                     {
                         if (item.Suppliers.Contains(_selectedSupplier))
-                            _supplierItems.Add(item);
+                            _supplierItems.Add(new ItemVM { Model = item });
                     }
                 }
             }
         }
 
-        public Stock SelectedItem
+        public ItemVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -134,7 +136,7 @@ namespace PutraJayaNT.ViewModels
             _supplierItems.Clear();
             using (var context = new ERPContext())
             {
-                var suppliers = context.Suppliers;
+                var suppliers = context.Suppliers.OrderBy(e => e.Name);
                 foreach (var supplier in suppliers)
                     _suppliers.Add(supplier);
             }
@@ -144,13 +146,16 @@ namespace PutraJayaNT.ViewModels
         {
             _displayLines.Clear();
 
-            if (_selectedItem.ItemDetail.Name.Equals("All"))
+            if (_selectedItem.Name.Equals("All"))
             {
                 using (var context = new ERPContext())
                 {
                     var purchases = context.PurchaseTransactions
                         .Where(e => e.Supplier.ID == _selectedSupplier.ID && e.Date >= _fromDate && e.Date <= _toDate)
-                        .Include("PurchaseTransactionLines.Item");
+                        .Include("PurchaseTransactionLines")
+                        .Include("PurchaseTransactionLines.Item")
+                        .Include("PurchaseTransactionLines.Warehouse")
+                        .Include("PurchaseTransactionLines.PurchaseTransaction");
 
                     foreach (var purchase in purchases)
                     {
@@ -168,13 +173,16 @@ namespace PutraJayaNT.ViewModels
                     var purchases = context.PurchaseTransactions
                         .Where(e => e.Supplier.ID == _selectedSupplier.ID && e.Date >= _fromDate && e.Date <= _toDate)
                         .Include("PurchaseTransactionLines")
-                        .Include("PurchaseTransactionLines.Item");
+                        .Include("PurchaseTransactionLines.Item")
+                        .Include("PurchaseTransactionLines.Warehouse")
+                        .Include("PurchaseTransactionLines.PurchaseTransaction");
+
 
                     foreach (var purchase in purchases)
                     {
                         foreach (var line in purchase.PurchaseTransactionLines)
                         {
-                            if (line.ItemID.Equals(_selectedItem.ItemDetail.ItemDetailID))
+                            if (line.ItemID.Equals(_selectedItem.ID))
                                 _displayLines.Add(new PurchaseTransactionLineVM { Model = line });
                         }
                     }

@@ -105,9 +105,9 @@
                       ItemsSource="{Binding Products, Mode=OneWay}" SelectedItem="{Binding NewEntryProduct}" 
                       DisplayMemberPath="Name" IsEditable="True" />
                         <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
-                     Text="{Binding NewEntryUnitName}" IsReadOnly="True" />
+                     Text="{Binding NewEntryUnitName}" IsReadOnly="True" IsTabStop="False" />
                         <TextBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
-                     Text="{Binding NewEntryPiecesPerUnit}" IsReadOnly="True" />
+                     Text="{Binding NewEntryPiecesPerUnit}" IsReadOnly="True" IsTabStop="False" />
                     </Grid>
                     <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="22" Text="Units/Pieces:" />
                     <Grid Grid.Row="1" Grid.Column="1">
@@ -140,7 +140,7 @@
                     <Button Grid.Row="0" Grid.Column="7" Grid.RowSpan="2" Margin="20" Content="Enter" Command="{Binding NewEntryCommand}" />
                 </Grid>
             </Border>
-            <DataGrid Name="DataGridLines"  Grid.Row="3" ItemsSource="{Binding SalesTransactionLines}" 
+            <DataGrid Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" Grid.Row="3" ItemsSource="{Binding SalesTransactionLines}" 
                   CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
