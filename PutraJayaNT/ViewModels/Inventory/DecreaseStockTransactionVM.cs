@@ -4,6 +4,7 @@ using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Inventory
@@ -42,6 +43,11 @@ namespace PutraJayaNT.ViewModels.Inventory
         public ObservableCollection<ItemVM> Products
         {
             get { return _products; }
+        }
+
+        public ObservableCollection<DecreaseStockTransactionLineVM> Lines
+        {
+            get { return _lines; }
         }
 
         #region New Transaction Properties 
@@ -110,6 +116,37 @@ namespace PutraJayaNT.ViewModels.Inventory
             {
                 return _newEntryCommand ?? (_newEntryCommand = new RelayCommand(() =>
                 {
+                    if (_newEntryWarehouse == null || _newEntryProduct == null ||
+                    (_newEntryUnits == null && _newEntryPieces == null)) 
+                    {
+                        MessageBox.Show("Please enter all fields.", "Missing Field(s)", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    foreach (var line in _lines)
+                    {
+                        if (line.Item.ItemID.Equals(_newEntryProduct.ID) && 
+                            line.Warehouse.ID.Equals(_newEntryWarehouse.ID))
+                        {
+                            line.Units += _newEntryUnits == null ? 0 : (int)_newEntryUnits;
+                            line.Pieces += _newEntryPieces == null ? 0 : (int)_newEntryPieces;
+                            ResetEntryFields();
+                            return;
+                        }
+                    }
+
+                    var newEntry = new DecreaseStockTransactionLineVM
+                    {
+                        Model = new DecreaseStockTransactionLine
+                        {
+                            Item = _newEntryProduct.Model,
+                            Warehouse = _newEntryWarehouse.Model,
+                        },
+                        Pieces = _newEntryPieces == null ? 0 : (int)_newEntryPieces,
+                        Units = _newEntryUnits == null ? 0 : (int)_newEntryUnits
+                    };
+
+                    _lines.Add(newEntry);
                     ResetEntryFields();
                 }));
             }
@@ -169,7 +206,6 @@ namespace PutraJayaNT.ViewModels.Inventory
 
         private void ResetEntryFields()
         {
-            NewEntryWarehouse = null;
             NewEntryProduct = null;
             NewEntryUnitName = null;
             NewEntryPiecesPerUnit = null;
@@ -179,6 +215,7 @@ namespace PutraJayaNT.ViewModels.Inventory
 
         private void ResetTransaction()
         {
+            NewEntryWarehouse = null;
             ResetEntryFields();
             _lines.Clear();
             SetTransactionID();

@@ -14,5 +14,18 @@ namespace PutraJayaNT.ViewModels
         {
             get { return Model.Name; }
         }
+
+        public override bool Equals(object obj)
+        {
+            var warehouse = obj as WarehouseVM;
+
+            if (warehouse == null) return false;
+            else return this.ID.Equals(warehouse.ID);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

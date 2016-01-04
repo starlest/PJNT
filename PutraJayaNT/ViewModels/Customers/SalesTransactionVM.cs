@@ -144,6 +144,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     .Include("Item.Stocks")
                     .Include("Warehouse")
                     .Where(e => e.Pieces > 0 && e.WarehouseID.Equals(_newEntryWarehouse.ID))
+                    .OrderBy(e => e.Item.Name)
                     .ToList();
 
                 foreach (var stock in stocks)
@@ -244,7 +245,8 @@ namespace PutraJayaNT.ViewModels.Customers
 
                     if (transaction == null)
                     {
-                        MessageBox.Show("The sales transaction could not be found.", "Invalid Sales Transaction", MessageBoxButton.OK);
+                        SetProperty(ref _newTransactionID, value, "NewTransactionID");
+                        Model.SalesTransactionID = _newTransactionID;
                         return;
                     }
 
@@ -404,7 +406,7 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             get
             {
-                _netTotal = _newTransactionGrossTotal - (_newTransactionSalesExpense == null ? 0 : (decimal) _newTransactionSalesExpense) - (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount);
+                _netTotal = _newTransactionGrossTotal + (_newTransactionSalesExpense == null ? 0 : (decimal) _newTransactionSalesExpense) - (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount);
                 return _netTotal;
             }
         }
@@ -578,11 +580,11 @@ namespace PutraJayaNT.ViewModels.Customers
                         {
                             Item = _newEntryProduct.Model,
                             SalesTransaction = Model,
-                            SalesPrice = _newEntryProduct.Model.SalesPrice,
+                            SalesPrice = (decimal) _newEntryPrice / _newEntryProduct.PiecesPerUnit,
                             Quantity = quantity,
                             Warehouse = _newEntryWarehouse,
                             Discount = discount / _newEntryProduct.PiecesPerUnit,
-                            Total = (_newEntryProduct.Model.SalesPrice - discount / _newEntryProduct.PiecesPerUnit) * quantity
+                            Total = (((decimal)_newEntryPrice - discount) / _newEntryProduct.PiecesPerUnit) * quantity
                         }
                     };
                     vm.PropertyChanged += LinePropertyChangedHandler;
@@ -672,7 +674,6 @@ namespace PutraJayaNT.ViewModels.Customers
                     _selectedLine.Pieces = _editLinePieces;
                     _selectedLine.Discount = _editLineDiscount;
                     _selectedLine.SalesPrice = _editLineSalesPrice;
-
                     var availableQuantity = GetAvailableQuantity(_selectedLine.Item, _selectedLine.Warehouse);
 
                     if (availableQuantity < 0)
@@ -685,7 +686,6 @@ namespace PutraJayaNT.ViewModels.Customers
                         _selectedLine.Pieces = oldPieces;
                         _selectedLine.Discount = oldDiscount;
                         _selectedLine.SalesPrice = oldSalesPrice;
-
                         return;
                     }
 
@@ -810,10 +810,12 @@ namespace PutraJayaNT.ViewModels.Customers
                             }
                         }
 
+                        var context = new ERPContext();
+
                         #region Edit Mode
                         if (EditMode)
                         {
-                            using (var context = new ERPContext())
+                            try
                             {
                                 var transaction = context.SalesTransactions
                                     .Where(e => e.SalesTransactionID.Equals(_newTransactionID))
@@ -951,6 +953,7 @@ namespace PutraJayaNT.ViewModels.Customers
                                 }
 
                                 transaction.When = _newTransactionDate;
+                                transaction.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
 
                                 transaction.Customer = context.Customers
                                 .Where(e => e.ID.Equals(_newTransactionCustomer.Model.ID))
@@ -973,13 +976,18 @@ namespace PutraJayaNT.ViewModels.Customers
                                 // Save changes
                                 context.SaveChanges();
                             }
+                            catch (Exception e)
+                            {
+                                MessageBox.Show(e.InnerException.ToString(), "Error", MessageBoxButton.OK);
+                                return;
+                            }
                         }
                         #endregion
 
-                        #region new transaction
+                        #region New Transaction
                         else
                         {
-                            using (var context = new ERPContext())
+                            try
                             {
                                 Model.Total = 0;
                                 foreach (var line in _salesTransactionLines)
@@ -1012,6 +1020,7 @@ namespace PutraJayaNT.ViewModels.Customers
                                     if (stock.Pieces == 0) context.Stocks.Remove(stock);
                                 }
 
+                                Model.SalesTransactionID = _newTransactionID;
                                 Model.Customer = context.Customers
                                 .Where(e => e.ID.Equals(_newTransactionCustomer.Model.ID))
                                 .FirstOrDefault();
@@ -1031,10 +1040,15 @@ namespace PutraJayaNT.ViewModels.Customers
                                 context.SalesTransactions.Add(Model);
                                 context.SaveChanges();
                             }
+                            catch(Exception e)
+                            {
+                                MessageBox.Show(e.InnerException.ToString(), "Error", MessageBoxButton.OK);
+                                return;
+                            }
                         }
                         #endregion
 
-                        ResetTransaction();
+                        MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
                     }
                 }));
             }
@@ -1071,7 +1085,6 @@ namespace PutraJayaNT.ViewModels.Customers
                             .FirstOrDefault();
 
                             transaction.InvoiceIssued = DateTime.Now.Date;
-                            transaction.DueDate = DateTime.Now.Date.AddDays(transaction.Customer.CreditTerms);
                             var user = App.Current.TryFindResource("CurrentUser") as User;
                             if (user != null) transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
                             Model = transaction;

@@ -53,30 +53,19 @@ namespace PUJASM.ERP.ViewModels.Master
         public MasterCustomersVM()
         {
             _groups = new ObservableCollection<CustomerGroup>();
+            _newEntryGroups = new ObservableCollection<CustomerGroup>();
             _customers = new ObservableCollection<CustomerVM>();
             _displayedCustomers = new ObservableCollection<CustomerVM>();
 
+            UpdateGroups();
+
+            SelectedGroup = _groups.FirstOrDefault();
+            SelectedCustomer = _customers.FirstOrDefault();
+
             _newEntryCreditTerms = 7;
-            _newEntryGroups = new ObservableCollection<CustomerGroup>();
-
-            using (var context = new ERPContext())
-            {
-                var groups = context.CustomerGroups.ToList();
-
-                _groups.Add(new CustomerGroup { ID = -1, Name = "All" });
-                foreach (var group in groups)
-                {
-                    _groups.Add(group);
-                    _newEntryGroups.Add(group);
-                }
-            }
-
-            _selectedGroup = _groups.FirstOrDefault();
 
             _isEditWindowNotOpen = true;
             _editWindowVisibility = Visibility.Hidden;
-
-            UpdateDisplayedCustomers();
         }
 
         public ObservableCollection<CustomerGroup> Groups
@@ -103,13 +92,8 @@ namespace PUJASM.ERP.ViewModels.Master
 
                 if (_selectedGroup == null) return;
 
-                if (_selectedGroup.Name.Equals("All"))
-                {
-                    UpdateDisplayedCustomers();
-                    return;
-                }
-
                 UpdateListedCustomers();
+                SelectedCustomer = _customers.FirstOrDefault();
             }
         }
 
@@ -132,6 +116,23 @@ namespace PUJASM.ERP.ViewModels.Master
             set { SetProperty(ref _selectedLine, value, "SelectedLine");  }
         }
 
+        private void UpdateGroups()
+        {
+            _groups.Clear();
+
+            using (var context = new ERPContext())
+            {
+                var groups = context.CustomerGroups.ToList();
+
+                _groups.Add(new CustomerGroup { ID = -1, Name = "All" });
+                foreach (var group in groups)
+                {
+                    _groups.Add(group);
+                    _newEntryGroups.Add(group);
+                }
+            }
+        }
+
         private void UpdateListedCustomers()
         {
             _customers.Clear();
@@ -139,14 +140,26 @@ namespace PUJASM.ERP.ViewModels.Master
 
             using (var context = new ERPContext())
             {
-                var customers = context.Customers
-                    .Include("Group")
-                    .Where(e => e.Group.Name.Equals(_selectedGroup.Name));
-
-                _customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
-                foreach (var customer in customers)
+                if (_selectedGroup.Name != "All")
                 {
-                    _customers.Add(new CustomerVM { Model = customer });
+                    var customers = context.Customers
+                        .Include("Group")
+                        .Where(e => e.Group.Name.Equals(_selectedGroup.Name))
+                        .OrderBy(e => e.Name);
+
+                    _customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
+                    foreach (var customer in customers)
+                        _customers.Add(new CustomerVM { Model = customer });
+                }
+                else
+                {
+                    var customers = context.Customers
+                        .Include("Group")
+                        .OrderBy(e => e.Name);
+
+                    _customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
+                    foreach (var customer in customers)
+                        _customers.Add(new CustomerVM { Model = customer });
                 }
             }
         }
@@ -155,10 +168,8 @@ namespace PUJASM.ERP.ViewModels.Master
         {
             _displayedCustomers.Clear();
 
-            if (_selectedGroup.Name.Equals("All"))
+            if (_selectedGroup.Name.Equals("All") && _selectedCustomer.Name.Equals("All"))
             {
-                _customers.Clear();
-
                 using (var context = new ERPContext())
                 {
                     var customers = context.Customers
@@ -167,11 +178,10 @@ namespace PUJASM.ERP.ViewModels.Master
 
                     foreach (var customer in customers)
                         _displayedCustomers.Add(new CustomerVM { Model = customer });
-
                 }
             }
 
-            else if (_selectedCustomer.Name.Equals("All"))
+            else if (!_selectedGroup.Name.Equals("All") && _selectedCustomer.Name.Equals("All"))
             {
                 using (var context = new ERPContext())
                 {

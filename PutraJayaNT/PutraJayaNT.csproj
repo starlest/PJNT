@@ -100,9 +100,9 @@
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601032238012_Update.cs" />
-    <Compile Include="Migrations\201601032238012_Update.Designer.cs">
-      <DependentUpon>201601032238012_Update.cs</DependentUpon>
+    <Compile Include="Migrations\201601040121239_New.cs" />
+    <Compile Include="Migrations\201601040121239_New.Designer.cs">
+      <DependentUpon>201601040121239_New.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\StockCorrection\DecreaseStockTransactionLine.cs" />
     <Compile Include="Models\StockCorrection\DecreaseStockTransaction.cs" />
@@ -135,6 +135,9 @@
     <Compile Include="Reports\SalesDOWindow.xaml.cs">
       <DependentUpon>SalesDOWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\CollectionReportWindow.xaml.cs">
+      <DependentUpon>CollectionReportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Reports\SalesInvoiceWindow.xaml.cs">
       <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
     </Compile>
@@ -157,6 +160,7 @@
     <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
+    <Compile Include="ViewModels\Customers\CollectionVM.cs" />
     <Compile Include="ViewModels\Customers\SalesPaymentVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturnTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturnTransactionVM.cs" />
@@ -202,6 +206,9 @@
     </Compile>
     <Compile Include="Views\Accounting\OperatingExpenseView.xaml.cs">
       <DependentUpon>OperatingExpenseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\CollectionView.xaml.cs">
+      <DependentUpon>CollectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Customers\PaymentView.xaml.cs">
       <DependentUpon>PaymentView.xaml</DependentUpon>
@@ -271,6 +278,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Reports\CollectionReportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Reports\SalesInvoiceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -300,6 +311,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounting\OperatingExpenseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Customers\CollectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -395,8 +410,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601032238012_Update.resx">
-      <DependentUpon>201601032238012_Update.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601040121239_New.resx">
+      <DependentUpon>201601040121239_New.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\CollectionReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SalesDOReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

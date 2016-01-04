@@ -46,5 +46,8 @@ namespace PutraJayaNT.Models.Sales
         public virtual ICollection<SalesTransactionLine> TransactionLines { get; set; }
 
         public virtual ICollection<SalesReturnTransaction> SalesReturnTransactions { get; set; }
+
+        [NotMapped]
+        public decimal Remaining { get; set; }
     }
 }

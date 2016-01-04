@@ -69,7 +69,7 @@ namespace PutraJayaNT.Reports
             dt2.Columns.Add(new DataColumn("Notes", typeof(string)));
             dr2["InvoiceGrossTotal"] = _salesTransaction.NewTransactionGrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.NewTransactionDiscount == null ? 0 : (decimal)_salesTransaction.NewTransactionDiscount;
-            dr2["InvoiceSalesExpense"] = _salesTransaction.NewTransactionSalesExpense == null ? 0 : (decimal) _salesTransaction.NewTransactionSalesExpense;
+            dr2["InvoiceSalesExpense"] = _salesTransaction.NewTransactionSalesExpense == null ? 0 : (decimal)_salesTransaction.NewTransactionSalesExpense;
             dr2["InvoiceNetTotal"] = _salesTransaction.NetTotal;
             dr2["Customer"] = _salesTransaction.NewTransactionCustomer.Name;
             dr2["Address"] = _salesTransaction.NewTransactionCustomer.City;
@@ -84,7 +84,7 @@ namespace PutraJayaNT.Reports
             ReportDataSource reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
 
             reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\SalesInvoiceReport.rdlc"); // Path of the rdlc file
-       
+
             reportViewer.LocalReport.DataSources.Add(reportDataSource1);
             reportViewer.LocalReport.DataSources.Add(reportDataSource2);
             reportViewer.PageCountMode = PageCountMode.Actual;

@@ -45,8 +45,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             }
             set
             {
-                Model.Quantity = (_units * Model.Item.PiecesPerUnit) + _pieces;
-                OnPropertyChanged("Quantity");
+                Model.Quantity = (value * Model.Item.PiecesPerUnit) + _pieces;
                 OnPropertyChanged("Units");
                 OnPropertyChanged("Pieces");
             }
@@ -61,11 +60,15 @@ namespace PutraJayaNT.ViewModels.Inventory
             }
             set
             {
-                Model.Quantity = (_units * Model.Item.PiecesPerUnit) + _pieces;
-                OnPropertyChanged("Quantity");
+                Model.Quantity = (_units * Model.Item.PiecesPerUnit) + value;
                 OnPropertyChanged("Units");
                 OnPropertyChanged("Pieces");
             }
+        }
+
+        public string Unit
+        {
+            get { return Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit; }
         }
     }
 }
