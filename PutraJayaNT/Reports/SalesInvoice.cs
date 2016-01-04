@@ -4,6 +4,8 @@
     {
         public string Customer { get; set; }
 
+        public string Warehouse { get; set; }
+
         public string Address { get; set; }
 
         public decimal InvoiceNumber { get; set; }

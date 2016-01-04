@@ -23,7 +23,7 @@ namespace PutraJayaNT.Views.Menu
 
         private void Export()
         {
-            string constring = "server=localhost;port=3306;database=putrajayant;uid=root;password=root";
+            string constring = "server=192.168.1.110;port=3306;database=putrajayant;uid=edwin;password=root";
 
             using (MySqlConnection conn = new MySqlConnection(constring))
             {

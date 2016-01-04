@@ -22,10 +22,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
         ObservableCollection<Item> _supplierItems;
         ObservableCollection<Warehouse> _warehouses;
 
+        bool _notEditMode;
+
         Supplier _newTransactionSupplier;
 
         Warehouse _newEntryWarehouse;
-        string _newEntryID;
+        string _newTransactionID;
         DateTime _newEntryDate;
         DateTime _newEntryDueDate;
         Item _newEntryItem;
@@ -52,6 +54,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         public PurchaseTransactionVM()
         {
+            _notEditMode = true;
             Model = new PurchaseTransaction();
             _lines = new ObservableCollection<PurchaseTransactionLineVM>();
             // Add an event handler for this collection
@@ -62,8 +65,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
             UpdateSuppliers();
 
-            NewEntryDate = DateTime.Now;
-            NewEntryDueDate = DateTime.Now;
+            NewEntryDate = DateTime.Now.Date;
+            NewEntryDueDate = DateTime.Now.Date;
 
             SetTransactionID();
             Model.DueDate = _newEntryDueDate;
@@ -90,45 +93,107 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _warehouses; }
         }
 
+        public bool NotEditMode
+        {
+            get { return _notEditMode; }
+            set { SetProperty(ref _notEditMode, value, "NotEditMode"); }
+        }
+
         #region New Transaction Properties
+        public string NewTransactionID
+        {
+            get { return _newTransactionID; }
+            set
+            {
+                if (_newTransactionID == null) return;
+
+                ResetEntryFields();
+                NewEntryWarehouse = null;
+
+                // Search the database for the transaction
+                using (var context = new ERPContext())
+                {
+                    var transaction = context.PurchaseTransactions
+                        .Include("Supplier")
+                        .Include("PurchaseTransactionLines")
+                        .Include("PurchaseTransactionLines.Item")
+                        .Include("PurchaseTransactionLines.Warehouse")
+                        .Where(e => e.PurchaseID.Equals(value))
+                        .FirstOrDefault();
+
+                    if (transaction == null)
+                    {
+                        MessageBox.Show("The sales transaction could not be found.", "Invalid Sales Transaction", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    NotEditMode = false;
+                    SetTransaction(transaction);
+                    SetProperty(ref _newTransactionID, value, "NewTransactionID");
+                }
+            }
+        }
+
+        private void SetTransaction(PurchaseTransaction transaction)
+        {
+            UpdateSuppliers();
+            NewTransactionSupplier = transaction.Supplier;
+            NewEntryDate = transaction.Date;
+            NewEntryDueDate = transaction.DueDate;
+            NewTransactionNote = transaction.Note;
+
+            _lines.Clear();
+            foreach (var line in transaction.PurchaseTransactionLines)
+                _lines.Add(new PurchaseTransactionLineVM { Model = line });
+
+            NewTransactionDiscount = transaction.Discount;
+            OnPropertyChanged("NewTransactionGrossTotal");
+        }
+
         public Supplier NewTransactionSupplier
         {
             get { return _newTransactionSupplier; }
             set
             {
-                SetProperty(ref _newTransactionSupplier, value, "NewTransactionSupplier");
-
                 if (value == null)
                 {
                     _supplierItems.Clear();                    
                     return;
                 }
 
-                if (_suppliers.Contains(value))
+                foreach (var supplier in Suppliers)
                 {
-                    // No longer allows user to select another supplier
-                    _suppliers.Clear();
-                    _suppliers.Add(value);
-
-                    UpdateWarehouses();
-
-                    // Display Supplier's Items and IDs
-                    _supplierItems.Clear();
-                    using (var context = new ERPContext())
+                    if (supplier.ID.Equals(value.ID))
                     {
-                        var items = context.Inventory
-                            .Include("Suppliers")
-                            .ToList();
+                        value = supplier;
 
-                        foreach (var item in items)
+                        // No longer allows user to select another supplier
+                        _suppliers.Clear();
+                        _suppliers.Add(value);
+
+                        UpdateWarehouses();
+
+                        // Display Supplier's Items and IDs
+                        _supplierItems.Clear();
+                        using (var context = new ERPContext())
                         {
-                            if (item.Active == true && item.Suppliers.Contains(value))
-                                _supplierItems.Add(item);
-                        }
-                    }
+                            var items = context.Inventory
+                                .Include("Suppliers")
+                                .ToList();
 
-                    OnPropertyChanged("SupplierItems");
-                    Model.Supplier = value;
+                            foreach (var item in items)
+                            {
+                                if (item.Active == true && item.Suppliers.Contains(value))
+                                    _supplierItems.Add(item);
+                            }
+                        }
+
+                        SetProperty(ref _newTransactionSupplier, value, "NewTransactionSupplier");
+                        OnPropertyChanged("SupplierItems");
+                        Model.Supplier = value;
+
+                        break;
+                    }
                 }
             }
         }
@@ -228,12 +293,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             get { return _newEntryWarehouse; }
             set { SetProperty(ref _newEntryWarehouse, value, "NewEntryWarehouse"); }
-        }
-
-        public string NewEntryID
-        {
-            get { return _newEntryID; }
-            set { SetProperty(ref _newEntryID, value, "NewEntryID"); }
         }
 
         public DateTime NewEntryDate
@@ -469,7 +528,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             LedgerTransaction transaction = new LedgerTransaction();
                             string accountsPayableName = _newTransactionSupplier.Name + " Accounts Payable";
 
-                            LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, _newEntryID.ToString(), "Purchase Transaction");
+                            LedgerDBHelper.AddTransaction(context, transaction, _newEntryDate, _newTransactionID.ToString(), "Purchase Transaction");
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Debit", Model.Total);
                             LedgerDBHelper.AddTransactionLine(context, transaction, accountsPayableName, "Credit", Model.Total);
@@ -504,26 +563,30 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             var month = _newEntryDate.Month;
             var year = _newEntryDate.Year;
-            NewEntryID = "P" + ((long) ((year - 2000) * 100 + month) * 1000000).ToString();
+            _newTransactionID = "P" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
 
             string lastEntryID = null;
             using(var context = new ERPContext())
             {
                 var IDs = (from PurchaseTransaction in context.PurchaseTransactions
-                           where PurchaseTransaction.PurchaseID.CompareTo(_newEntryID.ToString()) >= 0
+                           where PurchaseTransaction.PurchaseID.CompareTo(_newTransactionID.ToString()) >= 0
                            orderby PurchaseTransaction.PurchaseID descending
                            select PurchaseTransaction.PurchaseID);
                 if (IDs.Count() != 0) lastEntryID = IDs.First();
             }
 
-            if (lastEntryID != null) NewEntryID = "P" + (Convert.ToInt64(lastEntryID.Substring(1)) + 1).ToString();
+            if (lastEntryID != null) _newTransactionID = "P" + (Convert.ToInt64(lastEntryID.Substring(1)) + 1).ToString();
 
-            Model.PurchaseID = _newEntryID;
+            Model.PurchaseID = _newTransactionID;
+
+            OnPropertyChanged("NewTransactionID");
         }
 
         private void ResetFields()
         {
             ResetEntryFields();
+
+            NotEditMode = true;
 
             NewTransactionSupplier = null;
             NewTransactionDiscount = null;
@@ -542,6 +605,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
             OnPropertyChanged("Suppliers");
             OnPropertyChanged("NewTransactionGrossTotal");
             OnPropertyChanged("NewTransactionNetTotal");
+
+            SetTransactionID();
         }
 
         #region Purchase Transaction Lines Event Handler

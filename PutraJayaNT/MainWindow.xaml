@@ -44,6 +44,11 @@
                 <mui:Link DisplayName="Purchases" Source="/Views/Reports/PurchasesReportView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
+        <mui:LinkGroup DisplayName="Inventory">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="Decrease Stock" Source="/Views/Inventory/DecreaseStockView.xaml" />
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Accounting">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="General Ledger" Source="/Views/Accounting/GeneralLedgerView.xaml" />

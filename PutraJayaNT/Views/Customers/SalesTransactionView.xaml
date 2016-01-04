@@ -23,11 +23,13 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <Button Content="New" Command="{Binding NewTransactionCommand}" />
-                <Button Grid.Column="1" Content="Print" Command="{Binding PrintTransactionCommand}" />
-                <Button Grid.Column="2" Content="Issue Invoice" Command="{Binding IssueInvoiceCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
-                <Button Grid.Column="3" Content="Save" Command="{Binding SaveTransactionCommand}"  IsEnabled="{Binding InvoiceNotIssued}" />
+                <Button Grid.Column="1" Content="Print DO" Command="{Binding PrintDOCommand}" />
+                <Button Grid.Column="2" Content="Print Invoice" Command="{Binding PrintInvoiceCommand}" />
+                <Button Grid.Column="3" Content="Issue Invoice" Command="{Binding IssueInvoiceCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
+                <Button Grid.Column="4" Content="Save" Command="{Binding SaveTransactionCommand}"  IsEnabled="{Binding InvoiceNotIssued}" />
             </Grid>
             <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
                 <Grid Grid.Row="1">

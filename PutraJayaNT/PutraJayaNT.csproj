@@ -100,102 +100,12 @@
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201512141535007_102.cs" />
-    <Compile Include="Migrations\201512141535007_102.Designer.cs">
-      <DependentUpon>201512141535007_102.cs</DependentUpon>
+    <Compile Include="Migrations\201601032238012_Update.cs" />
+    <Compile Include="Migrations\201601032238012_Update.Designer.cs">
+      <DependentUpon>201601032238012_Update.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201512141535491_103.cs" />
-    <Compile Include="Migrations\201512141535491_103.Designer.cs">
-      <DependentUpon>201512141535491_103.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512150416307_Update200.cs" />
-    <Compile Include="Migrations\201512150416307_Update200.Designer.cs">
-      <DependentUpon>201512150416307_Update200.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512150809372_205.cs" />
-    <Compile Include="Migrations\201512150809372_205.Designer.cs">
-      <DependentUpon>201512150809372_205.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512150818584_206.cs" />
-    <Compile Include="Migrations\201512150818584_206.Designer.cs">
-      <DependentUpon>201512150818584_206.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512191229117_Changes01.cs" />
-    <Compile Include="Migrations\201512191229117_Changes01.Designer.cs">
-      <DependentUpon>201512191229117_Changes01.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512191236269_Changes02.cs" />
-    <Compile Include="Migrations\201512191236269_Changes02.Designer.cs">
-      <DependentUpon>201512191236269_Changes02.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512192049488_Update0001.cs" />
-    <Compile Include="Migrations\201512192049488_Update0001.Designer.cs">
-      <DependentUpon>201512192049488_Update0001.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512192104265_Update0002.cs" />
-    <Compile Include="Migrations\201512192104265_Update0002.Designer.cs">
-      <DependentUpon>201512192104265_Update0002.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512200847104_Update0003.cs" />
-    <Compile Include="Migrations\201512200847104_Update0003.Designer.cs">
-      <DependentUpon>201512200847104_Update0003.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512201436346_Update0004.cs" />
-    <Compile Include="Migrations\201512201436346_Update0004.Designer.cs">
-      <DependentUpon>201512201436346_Update0004.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512201522222_Update0005.cs" />
-    <Compile Include="Migrations\201512201522222_Update0005.Designer.cs">
-      <DependentUpon>201512201522222_Update0005.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512201646072_Update0007.cs" />
-    <Compile Include="Migrations\201512201646072_Update0007.Designer.cs">
-      <DependentUpon>201512201646072_Update0007.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512251818059_Update0008.cs" />
-    <Compile Include="Migrations\201512251818059_Update0008.Designer.cs">
-      <DependentUpon>201512251818059_Update0008.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512301409525_RemoveReturnDiscount.cs" />
-    <Compile Include="Migrations\201512301409525_RemoveReturnDiscount.Designer.cs">
-      <DependentUpon>201512301409525_RemoveReturnDiscount.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512301958473_AddInventoryValueToPR.cs" />
-    <Compile Include="Migrations\201512301958473_AddInventoryValueToPR.Designer.cs">
-      <DependentUpon>201512301958473_AddInventoryValueToPR.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512302032176_AddInventoryValueToPRRevert.cs" />
-    <Compile Include="Migrations\201512302032176_AddInventoryValueToPRRevert.Designer.cs">
-      <DependentUpon>201512302032176_AddInventoryValueToPRRevert.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512302117330_AddNetDiscountColumnForPR.cs" />
-    <Compile Include="Migrations\201512302117330_AddNetDiscountColumnForPR.Designer.cs">
-      <DependentUpon>201512302117330_AddNetDiscountColumnForPR.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512302125379_Revert.cs" />
-    <Compile Include="Migrations\201512302125379_Revert.Designer.cs">
-      <DependentUpon>201512302125379_Revert.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512302241427_DueDateNoLongerOptional.cs" />
-    <Compile Include="Migrations\201512302241427_DueDateNoLongerOptional.Designer.cs">
-      <DependentUpon>201512302241427_DueDateNoLongerOptional.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512302244524_AddedUserToSalesTransaction.cs" />
-    <Compile Include="Migrations\201512302244524_AddedUserToSalesTransaction.Designer.cs">
-      <DependentUpon>201512302244524_AddedUserToSalesTransaction.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512302251558_AddedUserToTransactions.cs" />
-    <Compile Include="Migrations\201512302251558_AddedUserToTransactions.Designer.cs">
-      <DependentUpon>201512302251558_AddedUserToTransactions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512310022119_Mega.cs" />
-    <Compile Include="Migrations\201512310022119_Mega.Designer.cs">
-      <DependentUpon>201512310022119_Mega.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201512311053548_TransactionsUser.cs" />
-    <Compile Include="Migrations\201512311053548_TransactionsUser.Designer.cs">
-      <DependentUpon>201512311053548_TransactionsUser.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Models\StockCorrection\DecreaseStockTransactionLine.cs" />
+    <Compile Include="Models\StockCorrection\DecreaseStockTransaction.cs" />
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -221,6 +131,9 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\SalesDOWindow.xaml.cs">
+      <DependentUpon>SalesDOWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\SalesInvoiceWindow.xaml.cs">
       <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
@@ -250,6 +163,8 @@
     <Compile Include="ViewModels\Customers\SalesTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionVM.cs" />
     <Compile Include="ViewModels\CustomerVM.cs" />
+    <Compile Include="ViewModels\Inventory\DecreaseStockTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Inventory\DecreaseStockTransactionVM.cs" />
     <Compile Include="ViewModels\ItemVM.cs" />
     <Compile Include="ViewModels\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\LedgerTransactionLineVM.cs" />
@@ -269,6 +184,7 @@
     <Compile Include="ViewModels\Suppliers\PurchaseTransactionVM.cs" />
     <Compile Include="ViewModels\SupplierVM.cs" />
     <Compile Include="ViewModels\VerificationVM.cs" />
+    <Compile Include="ViewModels\WarehouseVM.cs" />
     <Compile Include="Views\Accounting\BalanceSheetView.xaml.cs">
       <DependentUpon>BalanceSheetView.xaml</DependentUpon>
     </Compile>
@@ -295,6 +211,9 @@
     </Compile>
     <Compile Include="Views\Customers\SalesTransactionView.xaml.cs">
       <DependentUpon>SalesTransactionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Inventory\DecreaseStockView.xaml.cs">
+      <DependentUpon>DecreaseStockView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Master\MasterCustomersView.xaml.cs">
       <DependentUpon>MasterCustomersView.xaml</DependentUpon>
@@ -348,6 +267,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Reports\SalesDOWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Reports\SalesInvoiceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -389,6 +312,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Customers\SalesTransactionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Inventory\DecreaseStockView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -468,77 +395,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201512141535007_102.resx">
-      <DependentUpon>201512141535007_102.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601032238012_Update.resx">
+      <DependentUpon>201601032238012_Update.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512141535491_103.resx">
-      <DependentUpon>201512141535491_103.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512150416307_Update200.resx">
-      <DependentUpon>201512150416307_Update200.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512150809372_205.resx">
-      <DependentUpon>201512150809372_205.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512150818584_206.resx">
-      <DependentUpon>201512150818584_206.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512191229117_Changes01.resx">
-      <DependentUpon>201512191229117_Changes01.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512191236269_Changes02.resx">
-      <DependentUpon>201512191236269_Changes02.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512192049488_Update0001.resx">
-      <DependentUpon>201512192049488_Update0001.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512192104265_Update0002.resx">
-      <DependentUpon>201512192104265_Update0002.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512200847104_Update0003.resx">
-      <DependentUpon>201512200847104_Update0003.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512201436346_Update0004.resx">
-      <DependentUpon>201512201436346_Update0004.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512201522222_Update0005.resx">
-      <DependentUpon>201512201522222_Update0005.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512201646072_Update0007.resx">
-      <DependentUpon>201512201646072_Update0007.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512251818059_Update0008.resx">
-      <DependentUpon>201512251818059_Update0008.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512301409525_RemoveReturnDiscount.resx">
-      <DependentUpon>201512301409525_RemoveReturnDiscount.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512301958473_AddInventoryValueToPR.resx">
-      <DependentUpon>201512301958473_AddInventoryValueToPR.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512302032176_AddInventoryValueToPRRevert.resx">
-      <DependentUpon>201512302032176_AddInventoryValueToPRRevert.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512302117330_AddNetDiscountColumnForPR.resx">
-      <DependentUpon>201512302117330_AddNetDiscountColumnForPR.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512302125379_Revert.resx">
-      <DependentUpon>201512302125379_Revert.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512302241427_DueDateNoLongerOptional.resx">
-      <DependentUpon>201512302241427_DueDateNoLongerOptional.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512302244524_AddedUserToSalesTransaction.resx">
-      <DependentUpon>201512302244524_AddedUserToSalesTransaction.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512302251558_AddedUserToTransactions.resx">
-      <DependentUpon>201512302251558_AddedUserToTransactions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512310022119_Mega.resx">
-      <DependentUpon>201512310022119_Mega.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201512311053548_TransactionsUser.resx">
-      <DependentUpon>201512311053548_TransactionsUser.cs</DependentUpon>
+    <EmbeddedResource Include="Reports\SalesDOReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\SalesReturnInvoiceReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -54,7 +54,8 @@ namespace PutraJayaNT.ViewModels.Customers
 
         ICommand _newTransactionCommand;
         ICommand _saveTransactionCommand;
-        ICommand _printTransactionCommand;
+        ICommand _printDOCommand;
+        ICommand _printInvoiceCommand;
         ICommand _issueInvoiceCommand;
 
         SalesTransactionLineVM _selectedLine;
@@ -282,10 +283,6 @@ namespace PutraJayaNT.ViewModels.Customers
             set
             {
                 SetProperty(ref _newTransactionDate, value, "NewTransactionDate");
-
-                if (_newTransactionDate == null) return;
-
-                Model.When = _newTransactionDate;
             }
         }
 
@@ -968,6 +965,8 @@ namespace PutraJayaNT.ViewModels.Customers
                                 transaction.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal) _newTransactionSalesExpense;
                                 transaction.GrossTotal = _newTransactionGrossTotal;
                                 transaction.Total = _netTotal;
+                                transaction.When = _newTransactionDate;
+                                transaction.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
 
                                 transaction.InvoiceIssued = Model.InvoiceIssued;
 
@@ -1026,6 +1025,8 @@ namespace PutraJayaNT.ViewModels.Customers
                                 Model.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal)_newTransactionSalesExpense;
                                 Model.GrossTotal = _newTransactionGrossTotal;
                                 Model.Total = _netTotal;
+                                Model.When = _newTransactionDate;
+                                Model.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
 
                                 context.SalesTransactions.Add(Model);
                                 context.SaveChanges();
@@ -1139,11 +1140,27 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
-        public ICommand PrintTransactionCommand
+        public ICommand PrintDOCommand
         {
             get
             {
-                return _printTransactionCommand ?? (_printTransactionCommand = new RelayCommand(() =>
+                return _printDOCommand ?? (_printDOCommand = new RelayCommand(() =>
+                {
+                    if (_salesTransactionLines.Count == 0) return;
+
+                    var salesDOWindow = new SalesDOWindow(this);
+                    salesDOWindow.Owner = App.Current.MainWindow;
+                    salesDOWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    salesDOWindow.Show();
+                }));
+            }
+        }
+
+        public ICommand PrintInvoiceCommand
+        {
+            get
+            {
+                return _printInvoiceCommand ?? (_printInvoiceCommand = new RelayCommand(() =>
                 {
                     if (_salesTransactionLines.Count == 0) return;
 

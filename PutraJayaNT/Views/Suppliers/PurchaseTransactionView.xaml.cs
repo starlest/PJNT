@@ -19,6 +19,15 @@ namespace PutraJayaNT.Views.Suppliers
             DataContext = vm;
         }
 
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                BindingExpression exp = PurchaseIDTextBox.GetBindingExpression(TextBox.TextProperty);
+                if (exp != null) exp.UpdateSource();
+            }
+        }
+
         private void ComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             var MyComboBox = sender as ComboBox;

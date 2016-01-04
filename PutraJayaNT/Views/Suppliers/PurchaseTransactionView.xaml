@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Button Content="New" Command="{Binding NewTransactionCommand}" />
-            <Button Grid.Column="5" Content="Confirm" Command="{Binding ConfirmTransactionCommand}" />
+            <Button Grid.Column="5" Content="Confirm" Command="{Binding ConfirmTransactionCommand}" IsEnabled="{Binding NotEditMode}" />
         </Grid>
         <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid Grid.Row="1">
@@ -41,21 +41,21 @@
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="28" Text="Purchase ID:" />
-                <TextBox Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
-                     IsReadOnly="True" Text="{Binding NewEntryID, Mode=TwoWay}" MaxLength="10" />
+                <TextBox Name="PurchaseIDTextBox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
+                         Text="{Binding NewTransactionID, Mode=TwoWay, UpdateSourceTrigger=Explicit}" MaxLength="12" KeyDown="TextBox_KeyDown" />
                 <TextBlock Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Text="Supplier:" FontSize="28" />
                 <ComboBox Grid.Column="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
                       ItemsSource="{Binding Suppliers}" SelectedItem="{Binding NewTransactionSupplier, UpdateSourceTrigger=Explicit}" 
-                      DisplayMemberPath="Name" IsEditable="True" />
+                      DisplayMemberPath="Name" IsEditable="True" IsEnabled="{Binding NotEditMode}" />
                 <TextBlock Grid.Column="4" VerticalAlignment="Top" HorizontalAlignment="Right" Text="Date:" FontSize="28" />
                 <DatePicker Grid.Column="5" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                                SelectedDateFormat="Long" SelectedDate="{Binding NewEntryDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                SelectedDateFormat="Long" SelectedDate="{Binding NewEntryDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding NotEditMode}" />
                 <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Top" HorizontalAlignment="Right" Text="Due Date:" FontSize="28" />
                 <DatePicker Grid.Row="1" Grid.Column="5" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                                SelectedDateFormat="Long" SelectedDate="{Binding NewEntryDueDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                SelectedDateFormat="Long" SelectedDate="{Binding NewEntryDueDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding NotEditMode}" />
             </Grid>
         </Border>
-        <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2">
+        <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2" IsEnabled="{Binding NotEditMode}">
             <Grid Grid.Row="2">
                 <Grid.Style>
                     <Style>
@@ -137,7 +137,7 @@
         <DataGrid LoadingRow="DataGrid_LoadingRow" Grid.Row="3" ItemsSource="{Binding Lines}" 
                           CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                           ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                          AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+                          AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsEnabled="{Binding NotEditMode}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
@@ -150,7 +150,7 @@
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="5">
+        <Grid Grid.Row="5" IsEnabled="{Binding NotEditMode}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
