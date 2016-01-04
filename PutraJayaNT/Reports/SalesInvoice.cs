@@ -2,6 +2,8 @@
 {
     class SalesInvoice
     {
+        public string ID { get; set; }
+
         public string Customer { get; set; }
 
         public string Warehouse { get; set; }
@@ -20,7 +22,11 @@
 
         public decimal InvoiceSalesExpense { get; set; }
 
-        public decimal InvoiceNetTotal { get; set; }
+        public string InvoiceNetTotal { get; set; }
+
+        public string InvoicePaid { get; set; }
+
+        public decimal InvoiceRemaining { get; set; }
 
         public string Notes { get; set; }
     }
