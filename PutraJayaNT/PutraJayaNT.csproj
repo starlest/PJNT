@@ -109,6 +109,11 @@
     <Compile Include="Migrations\201601050712399_Update1.Designer.cs">
       <DependentUpon>201601050712399_Update1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601051606433_Update2.cs" />
+    <Compile Include="Migrations\201601051606433_Update2.Designer.cs">
+      <DependentUpon>201601051606433_Update2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\StockCorrection\DecreaseStockTransactionLine.cs" />
     <Compile Include="Models\StockCorrection\DecreaseStockTransaction.cs" />
     <Compile Include="Reports\SalesInvoice.cs" />
@@ -191,6 +196,8 @@
     <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
     <Compile Include="ViewModels\Reports\PurchasesReportVM.cs" />
     <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
+    <Compile Include="ViewModels\Reports\StockBalanceLineVM.cs" />
+    <Compile Include="ViewModels\Reports\StockBalancesReportVM.cs" />
     <Compile Include="ViewModels\SalesmanVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchasePaymentVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionLineVM.cs" />
@@ -265,6 +272,9 @@
     </Compile>
     <Compile Include="Views\Reports\SalesReturnsReportView.xaml.cs">
       <DependentUpon>SalesReturnsReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\StockBalancesReportView.xaml.cs">
+      <DependentUpon>StockBalancesReportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Suppliers\PaymentView.xaml.cs">
       <DependentUpon>PaymentView.xaml</DependentUpon>
@@ -396,6 +406,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Reports\StockBalancesReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Suppliers\PaymentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -437,6 +451,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601050712399_Update1.resx">
       <DependentUpon>201601050712399_Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601051606433_Update2.resx">
+      <DependentUpon>201601051606433_Update2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\CollectionReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

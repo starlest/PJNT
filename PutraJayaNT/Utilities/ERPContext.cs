@@ -22,6 +22,7 @@ namespace PutraJayaNT.Utilities
         public virtual DbSet<Item> Inventory { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Warehouse> Warehouses { get; set; }
+        public virtual DbSet<StockBalance> StockBalances { get; set; }
 
         public virtual DbSet<DecreaseStockTransaction> DecreaseStockTransactions {get; set; }
         public virtual DbSet<DecreaseStockTransactionLine> DecreaseStockTransactionLines { get; set; }

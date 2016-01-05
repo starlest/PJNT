@@ -343,7 +343,7 @@ namespace PutraJayaNT.ViewModels.Master
                         {
                             context.Suppliers.Attach(_newEntrySupplier);
                             context.Categories.Attach(_newEntryCategory);
-                            context.Inventory.Add(newItem);
+                            context.StockBalances.Add(new StockBalance { Item = newItem });
                             context.SaveChanges();
                             ((IObjectContextAdapter)context).ObjectContext.
                             ObjectStateManager.ChangeObjectState(_newEntrySupplier, EntityState.Detached);
