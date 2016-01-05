@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Configuration;
 
 namespace PutraJayaNT.Views.Menu
 {
@@ -23,7 +24,7 @@ namespace PutraJayaNT.Views.Menu
 
         private void Export()
         {
-            string constring = "server=192.168.1.110;port=3306;database=putrajayant;uid=edwin;password=root";
+            string constring = ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString;
 
             using (MySqlConnection conn = new MySqlConnection(constring))
             {

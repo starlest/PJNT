@@ -145,14 +145,13 @@
                 <DataGridTextColumn Header="Unit" Width="1*" IsReadOnly="True" Binding="{Binding Item.UnitName}" />
                 <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
-                <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice}" />
-                <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount}" />
-                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
+                <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice, StringFormat=N2}" />
+                <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount, StringFormat=N2}" />
+                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="5" IsEnabled="{Binding NotEditMode}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
@@ -168,12 +167,12 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="1"  HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="28" Text="Note: " />
-            <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10, 0, 0, 10" 
+            <TextBlock Grid.Row="0"  HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="28" Text="Note: " />
+            <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10, 10, 0, 10" 
                      Text="{Binding NewTransactionNote, Mode=TwoWay}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" MaxLength="500" />
             <TextBlock Grid.Column="7" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Total: " />
             <TextBox Grid.Column="8" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                     IsReadOnly="True" Text="{Binding NewTransactionGrossTotal, Mode=OneWay}" />
+                     IsReadOnly="True" Text="{Binding NewTransactionGrossTotal, Mode=OneWay, StringFormat=N2}" />
             <TextBlock Grid.Row="1" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Discount:" />
             <Grid Grid.Row="1"  Grid.Column="7" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
@@ -186,15 +185,11 @@
                      Text="{Binding NewTransactionDiscountPercent, UpdateSourceTrigger=Explicit}" KeyDown="OverallDiscountPercentTextBox_KeyDown"/>
                 <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="%" />
                 <TextBox Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                     Text="{Binding NewTransactionDiscount, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding NewTransactionDiscount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
             </Grid>
-            <TextBlock Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Sales Expense: "
-                       Margin="0, 5, 0, 0"/>
-            <TextBox Grid.Row="2" Grid.Column="8" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                     Text="{Binding NewTransactionSalesExpense, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Grid.Row="3" Grid.Column="7" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Net Total: " />
-            <TextBox Grid.Row="3" Grid.Column="8" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                     IsReadOnly="True" Text="{Binding NewTransactionNetTotal, Mode=OneWay}" />
+            <TextBlock Grid.Row="2" Grid.Column="7" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Net Total: " />
+            <TextBox Grid.Row="2" Grid.Column="8" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
+                     IsReadOnly="True" Text="{Binding NewTransactionNetTotal, Mode=OneWay, StringFormat=N2}" />
         </Grid>
     </Grid>
 </UserControl>

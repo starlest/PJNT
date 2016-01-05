@@ -1,10 +1,12 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Models.Sales;
+using PutraJayaNT.Utilities;
+using System.Linq;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
-    class SalesReturnTransactionLineVM : ViewModelBase<SalesReturnTransactionLine>
+    public class SalesReturnTransactionLineVM : ViewModelBase<SalesReturnTransactionLine>
     {
         int _units;
         int _pieces;
@@ -101,7 +103,6 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
-
         public decimal Discount
         {
             get { return Model.Discount * Item.PiecesPerUnit; }
@@ -112,11 +113,24 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
+        public decimal NetDiscount
+        {
+            get
+            {
+                return Model.NetDiscount * Item.PiecesPerUnit;
+            }
+            set
+            {
+                Model.NetDiscount = value / Item.PiecesPerUnit;
+                OnPropertyChanged("NetDiscount");
+            }
+        }
+
         public decimal Total
         {
             get
             {
-                Model.Total = Quantity * ((SalesPrice - Discount) / Item.PiecesPerUnit);
+                Model.Total = Quantity * ((SalesPrice - NetDiscount) / Item.PiecesPerUnit);
                 return Model.Total;
             }
             set
@@ -134,6 +148,12 @@ namespace PutraJayaNT.ViewModels.Customers
                 Model.CostOfGoodsSold = value;
                 OnPropertyChanged("CostOfGoodsSold");
             }
+        }
+
+        public void UpdateTotal()
+        {
+            OnPropertyChanged("NetDiscount");
+            OnPropertyChanged("Total");
         }
     }
 }

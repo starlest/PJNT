@@ -2,48 +2,14 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Body>
     <ReportItems>
-      <Textbox Name="Textbox11">
+      <Textbox Name="Textbox36">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=First(Fields!InvoiceDiscount.Value, "SalesInvoiceDataSet")</Value>
-                <Style>
-                  <FontWeight>Bold</FontWeight>
-                  <Format>#,0;(#,0)</Format>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox11</rd:DefaultName>
-        <Top>3.33389cm</Top>
-        <Left>17.71378cm</Left>
-        <Height>0.6cm</Height>
-        <Width>2.2477cm</Width>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox15">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>Disc.:</Value>
+                <Value>Note:</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -54,9 +20,40 @@
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
         <Top>3.33389cm</Top>
-        <Left>16.02517cm</Left>
+        <Left>0.97919cm</Left>
         <Height>0.6cm</Height>
-        <Width>1.65333cm</Width>
+        <Width>1.88614cm</Width>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox37">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value EvaluationMode="Constant" />
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox8</rd:DefaultName>
+        <Top>3.33389cm</Top>
+        <Left>2.86532cm</Left>
+        <Height>2.15278cm</Height>
+        <Width>4.82336cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -68,6 +65,92 @@
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
+      <Line Name="Line1">
+        <Top>5.97174cm</Top>
+        <Left>0.97919cm</Left>
+        <Height>0cm</Height>
+        <Width>18.9823cm</Width>
+        <ZIndex>2</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+        </Style>
+      </Line>
+      <Textbox Name="Textbox1">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Di terima,</Value>
+                <Style>
+                  <FontWeight>Normal</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox1</rd:DefaultName>
+        <Top>6.3598cm</Top>
+        <Left>0.97918cm</Left>
+        <Height>0.6cm</Height>
+        <Width>2.5cm</Width>
+        <ZIndex>3</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox2">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Homat kami,</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox1</rd:DefaultName>
+        <Top>6.3598cm</Top>
+        <Left>17.46148cm</Left>
+        <Height>0.6cm</Height>
+        <Width>2.5cm</Width>
+        <ZIndex>4</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Line Name="Line3">
+        <Top>5.79535cm</Top>
+        <Left>0.97918cm</Left>
+        <Height>0cm</Height>
+        <Width>18.98231cm</Width>
+        <ZIndex>5</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+        </Style>
+      </Line>
       <Tablix Name="Tablix2">
         <TablixBody>
           <TablixColumns>
@@ -426,7 +509,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!LineNumber.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -457,7 +542,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ItemID.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -488,7 +575,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ItemName.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -519,7 +608,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Unit.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -550,7 +641,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Units.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -581,7 +674,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Pieces.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -613,6 +708,7 @@
                             <TextRun>
                               <Value>=Fields!SalesPrice.Value</Value>
                               <Style>
+                                <FontSize>8pt</FontSize>
                                 <Format>#,0;(#,0)</Format>
                               </Style>
                             </TextRun>
@@ -646,6 +742,7 @@
                             <TextRun>
                               <Value>=Fields!Discount.Value</Value>
                               <Style>
+                                <FontSize>8pt</FontSize>
                                 <Format>#,0;(#,0)</Format>
                               </Style>
                             </TextRun>
@@ -679,6 +776,7 @@
                             <TextRun>
                               <Value>=Fields!Total.Value</Value>
                               <Style>
+                                <FontSize>8pt</FontSize>
                                 <Format>#,0;(#,0)</Format>
                               </Style>
                             </TextRun>
@@ -965,6 +1063,7 @@
                             <TextRun>
                               <Value>=Sum(Fields!Total.Value)</Value>
                               <Style>
+                                <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
                                 <Format>#,0;(#,0)</Format>
                                 <TextDecoration>None</TextDecoration>
@@ -1022,305 +1121,20 @@
         </TablixRowHierarchy>
         <RepeatColumnHeaders>true</RepeatColumnHeaders>
         <RepeatRowHeaders>true</RepeatRowHeaders>
-        <DataSetName>SalesInvoiceLineDataSet</DataSetName>
-        <Top>0.62301cm</Top>
-        <Left>0.97916cm</Left>
+        <DataSetName>SalesReturnInvoiceLineDataSet</DataSetName>
+        <Top>0.60227cm</Top>
+        <Left>1.13795cm</Left>
         <Height>1.8cm</Height>
         <Width>18.98232cm</Width>
-        <ZIndex>2</ZIndex>
+        <ZIndex>6</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Tablix>
-      <Textbox Name="Textbox31">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>Biaya Penj.:</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Right</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>4.11028cm</Top>
-        <Left>14.94921cm</Left>
-        <Height>0.6cm</Height>
-        <Width>2.76457cm</Width>
-        <ZIndex>3</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox33">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>=First(Fields!InvoiceSalesExpense.Value, "SalesInvoiceDataSet")</Value>
-                <Style>
-                  <FontWeight>Bold</FontWeight>
-                  <Format>#,0;(#,0)</Format>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox8</rd:DefaultName>
-        <Top>4.11028cm</Top>
-        <Left>17.71378cm</Left>
-        <Height>0.6cm</Height>
-        <Width>2.28297cm</Width>
-        <ZIndex>4</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox34">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>Total:</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Right</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>4.88667cm</Top>
-        <Left>16.06045cm</Left>
-        <Height>0.6cm</Height>
-        <Width>1.65333cm</Width>
-        <ZIndex>5</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox35">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>=First(Fields!InvoiceNetTotal.Value, "SalesInvoiceDataSet")</Value>
-                <Style>
-                  <FontWeight>Bold</FontWeight>
-                  <Format>#,0;(#,0)</Format>
-                  <TextDecoration>Underline</TextDecoration>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox8</rd:DefaultName>
-        <Top>4.88667cm</Top>
-        <Left>17.71378cm</Left>
-        <Height>0.6cm</Height>
-        <Width>2.2477cm</Width>
-        <ZIndex>6</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox36">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>Note:</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Right</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>3.33389cm</Top>
-        <Left>0.97919cm</Left>
-        <Height>0.6cm</Height>
-        <Width>1.88614cm</Width>
-        <ZIndex>7</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox37">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>=First(Fields!Notes.Value, "SalesInvoiceDataSet")</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Left</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox8</rd:DefaultName>
-        <Top>3.33389cm</Top>
-        <Left>2.86532cm</Left>
-        <Height>2.15278cm</Height>
-        <Width>4.82336cm</Width>
-        <ZIndex>8</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Line Name="Line1">
-        <Top>5.97174cm</Top>
-        <Left>0.97919cm</Left>
-        <Height>0cm</Height>
-        <Width>18.9823cm</Width>
-        <ZIndex>9</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-        </Style>
-      </Line>
-      <Textbox Name="Textbox1">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>Di terima,</Value>
-                <Style>
-                  <FontWeight>Normal</FontWeight>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style />
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>6.3598cm</Top>
-        <Left>0.97918cm</Left>
-        <Height>0.6cm</Height>
-        <Width>2.5cm</Width>
-        <ZIndex>10</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox2">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>Homat kami,</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style />
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>6.3598cm</Top>
-        <Left>17.46148cm</Left>
-        <Height>0.6cm</Height>
-        <Width>2.5cm</Width>
-        <ZIndex>11</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Line Name="Line3">
-        <Top>5.79535cm</Top>
-        <Left>0.97918cm</Left>
-        <Height>0cm</Height>
-        <Width>18.98231cm</Width>
-        <ZIndex>12</ZIndex>
-        <Style>
-          <Border>
-            <Style>Solid</Style>
-          </Border>
-        </Style>
-      </Line>
     </ReportItems>
-    <Height>4.32872in</Height>
+    <Height>3.05789in</Height>
     <Style />
   </Body>
   <Width>8.06048in</Width>
@@ -1347,7 +1161,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox14</rd:DefaultName>
-          <Top>0.47625cm</Top>
+          <Top>1.7016cm</Top>
           <Left>1.13794cm</Left>
           <Height>0.6cm</Height>
           <Width>1.06942cm</Width>
@@ -1368,7 +1182,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=First(Fields!Customer.Value, "SalesInvoiceDataSet")</Value>
+                  <Value>=First(Fields!Customer.Value, "SalesReturnInvoiceDataSet")</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1378,7 +1192,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
-          <Top>0.47625cm</Top>
+          <Top>1.7016cm</Top>
           <Left>2.20736cm</Left>
           <Height>0.6cm</Height>
           <Width>4.00634cm</Width>
@@ -1410,8 +1224,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox14</rd:DefaultName>
-          <Top>1.35848cm</Top>
-          <Left>1.13793cm</Left>
+          <Top>2.47799cm</Top>
+          <Left>1.13794cm</Left>
           <Height>0.6cm</Height>
           <Width>1.06943cm</Width>
           <ZIndex>2</ZIndex>
@@ -1432,7 +1246,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=First(Fields!Address.Value, "SalesInvoiceDataSet")</Value>
+                  <Value>=First(Fields!Address.Value, "SalesReturnInvoiceDataSet")</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1442,7 +1256,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
-          <Top>1.35848cm</Top>
+          <Top>2.47799cm</Top>
           <Left>2.20736cm</Left>
           <Height>0.6cm</Height>
           <Width>4.00634cm</Width>
@@ -1474,8 +1288,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox14</rd:DefaultName>
-          <Top>0.47625cm</Top>
-          <Left>13.82588cm</Left>
+          <Top>0.92521cm</Top>
+          <Left>14.86656cm</Left>
           <Height>0.6cm</Height>
           <Width>2.23571cm</Width>
           <ZIndex>4</ZIndex>
@@ -1496,7 +1310,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=First(Fields!InvoiceNumber.Value, "SalesInvoiceDataSet")</Value>
+                  <Value>=First(Fields!SalesInvoiceNumber.Value, "SalesReturnInvoiceDataSet")</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1506,10 +1320,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
-          <Top>0.47625cm</Top>
-          <Left>16.06159cm</Left>
+          <Top>0.92521cm</Top>
+          <Left>17.10227cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.49498cm</Width>
+          <Width>2.85921cm</Width>
           <ZIndex>5</ZIndex>
           <Style>
             <Border>
@@ -1538,8 +1352,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox14</rd:DefaultName>
-          <Top>1.35848cm</Top>
-          <Left>14.21775cm</Left>
+          <Top>1.7016cm</Top>
+          <Left>15.2511cm</Left>
           <Height>0.6cm</Height>
           <Width>1.85117cm</Width>
           <ZIndex>6</ZIndex>
@@ -1560,7 +1374,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=First(Fields!Date.Value, "SalesInvoiceDataSet")</Value>
+                  <Value>=First(Fields!Date.Value, "SalesReturnInvoiceDataSet")</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1570,8 +1384,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
-          <Top>1.35848cm</Top>
-          <Left>16.06158cm</Left>
+          <Top>1.7016cm</Top>
+          <Left>17.10227cm</Left>
           <Height>0.6cm</Height>
           <Width>2.0452cm</Width>
           <ZIndex>7</ZIndex>
@@ -1592,7 +1406,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Jatuh Tempo:</Value>
+                  <Value>No. Urut:</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1602,10 +1416,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox14</rd:DefaultName>
-          <Top>2.3016cm</Top>
-          <Left>13.35845cm</Left>
+          <Top>2.47799cm</Top>
+          <Left>15.22317cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.70314cm</Width>
+          <Width>1.84384cm</Width>
           <ZIndex>8</ZIndex>
           <Style>
             <Border>
@@ -1624,7 +1438,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=First(Fields!DueDate.Value, "SalesInvoiceDataSet")</Value>
+                  <Value>=First(Fields!SalesReturnInvoiceNumber.Value, "SalesReturnInvoiceDataSet")</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1634,11 +1448,77 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
-          <Top>2.3016cm</Top>
-          <Left>16.06159cm</Left>
+          <Top>2.47799cm</Top>
+          <Left>17.10228cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.04519cm</Width>
+          <Width>2.8592cm</Width>
           <ZIndex>9</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox31">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Kepada Yth,</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox14</rd:DefaultName>
+          <Top>0.92521cm</Top>
+          <Left>1.13795cm</Left>
+          <Height>0.6cm</Height>
+          <Width>2.34123cm</Width>
+          <ZIndex>10</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox33">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Retur Penjualan</Value>
+                  <Style>
+                    <FontSize>18pt</FontSize>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox14</rd:DefaultName>
+          <Top>1.32719cm</Top>
+          <Left>7.58453cm</Left>
+          <Height>0.97441cm</Height>
+          <Width>6.05719cm</Width>
+          <ZIndex>11</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1681,20 +1561,71 @@
       </ConnectionProperties>
       <rd:DataSourceID>8510b55f-afae-4d3f-a0b4-ed5dea005dbc</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="PutraJayaNTReports1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>8cacc608-a5d7-4b92-ae3e-624f10067dff</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="PutraJayaNTReports2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>ae5f2ce3-29f0-47d7-bd57-6b8faf0c6351</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="SalesInvoiceLineDataSet">
+    <DataSet Name="SalesReturnInvoiceDataSet">
       <Query>
-        <DataSourceName>PutraJayaNTCrystal_Reports</DataSourceName>
+        <DataSourceName>PutraJayaNTReports1</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Address">
+          <DataField>Address</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Customer">
+          <DataField>Customer</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Date">
+          <DataField>Date</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ID">
+          <DataField>ID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Note">
+          <DataField>Note</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SalesInvoiceNumber">
+          <DataField>SalesInvoiceNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SalesReturnInvoiceNumber">
+          <DataField>SalesReturnInvoiceNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>PutraJayaNT.Reports</rd:DataSetName>
+        <rd:TableName>SalesReturnInvoice</rd:TableName>
+        <rd:ObjectDataSourceType>PutraJayaNT.Reports.SalesReturnInvoice, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="SalesReturnInvoiceLineDataSet">
+      <Query>
+        <DataSourceName>PutraJayaNTReports2</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
         <Field Name="Discount">
           <DataField>Discount</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="InvoiceTotal">
-          <DataField>InvoiceTotal</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="ItemID">
@@ -1732,61 +1663,8 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PutraJayaNT.Reports</rd:DataSetName>
-        <rd:TableName>SalesInvoiceLine</rd:TableName>
-        <rd:ObjectDataSourceType>PutraJayaNT.Reports.SalesInvoiceLine, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
-      </rd:DataSetInfo>
-    </DataSet>
-    <DataSet Name="SalesInvoiceDataSet">
-      <Query>
-        <DataSourceName>PutraJayaNTReports</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="Address">
-          <DataField>Address</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Customer">
-          <DataField>Customer</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Date">
-          <DataField>Date</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DueDate">
-          <DataField>DueDate</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="InvoiceDiscount">
-          <DataField>InvoiceDiscount</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="InvoiceGrossTotal">
-          <DataField>InvoiceGrossTotal</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="InvoiceNetTotal">
-          <DataField>InvoiceNetTotal</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="InvoiceNumber">
-          <DataField>InvoiceNumber</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="InvoiceSalesExpense">
-          <DataField>InvoiceSalesExpense</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="Notes">
-          <DataField>Notes</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>PutraJayaNT.Reports</rd:DataSetName>
-        <rd:TableName>SalesInvoice</rd:TableName>
-        <rd:ObjectDataSourceType>PutraJayaNT.Reports.SalesInvoice, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:TableName>SalesReturnInvoiceLine</rd:TableName>
+        <rd:ObjectDataSourceType>PutraJayaNT.Reports.SalesReturnInvoiceLine, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>

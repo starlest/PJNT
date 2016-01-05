@@ -17,11 +17,21 @@ namespace PutraJayaNT.ViewModels.Inventory
         public Item Item
         {
             get { return Model.Item; }
+            set
+            {
+                Model.Item = value;
+                OnPropertyChanged("Warehouse");
+            }
         }
 
         public Warehouse Warehouse
         {
             get { return Model.Warehouse; }
+            set
+            {
+                Model.Warehouse = value;
+                OnPropertyChanged("Warehouse");
+            }
         }
 
         public int Quantity

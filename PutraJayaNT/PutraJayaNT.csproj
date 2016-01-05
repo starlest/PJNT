@@ -67,6 +67,7 @@
     <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Printing" />
@@ -100,13 +101,18 @@
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601040121239_New.cs" />
-    <Compile Include="Migrations\201601040121239_New.Designer.cs">
-      <DependentUpon>201601040121239_New.cs</DependentUpon>
+    <Compile Include="Migrations\201601050712059_Update.cs" />
+    <Compile Include="Migrations\201601050712059_Update.Designer.cs">
+      <DependentUpon>201601050712059_Update.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601050712399_Update1.cs" />
+    <Compile Include="Migrations\201601050712399_Update1.Designer.cs">
+      <DependentUpon>201601050712399_Update1.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\StockCorrection\DecreaseStockTransactionLine.cs" />
     <Compile Include="Models\StockCorrection\DecreaseStockTransaction.cs" />
     <Compile Include="Reports\SalesInvoice.cs" />
+    <Compile Include="Reports\SalesReturnInvoiceLine.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccount.cs" />
@@ -138,9 +144,13 @@
     <Compile Include="Reports\CollectionReportWindow.xaml.cs">
       <DependentUpon>CollectionReportWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\SalesReturnInvoiceWindow.xaml.cs">
+      <DependentUpon>SalesReturnInvoiceWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Reports\SalesInvoiceWindow.xaml.cs">
       <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\SalesReturnInvoice.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
     <Compile Include="Models\Inventory\Stock.cs" />
     <Compile Include="Models\Sales\SalesTransaction.cs" />
@@ -160,6 +170,7 @@
     <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
+    <Compile Include="ViewModels\Customers\BrowseSalesTransactionsVM.cs" />
     <Compile Include="ViewModels\Customers\CollectionVM.cs" />
     <Compile Include="ViewModels\Customers\SalesPaymentVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturnTransactionLineVM.cs" />
@@ -206,6 +217,9 @@
     </Compile>
     <Compile Include="Views\Accounting\OperatingExpenseView.xaml.cs">
       <DependentUpon>OperatingExpenseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\BrowseSalesTransactionsView.xaml.cs">
+      <DependentUpon>BrowseSalesTransactionsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Customers\CollectionView.xaml.cs">
       <DependentUpon>CollectionView.xaml</DependentUpon>
@@ -282,6 +296,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Reports\SalesReturnInvoiceWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Reports\SalesInvoiceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -311,6 +329,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounting\OperatingExpenseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Customers\BrowseSalesTransactionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -410,8 +432,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601040121239_New.resx">
-      <DependentUpon>201601040121239_New.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601050712059_Update.resx">
+      <DependentUpon>201601050712059_Update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601050712399_Update1.resx">
+      <DependentUpon>201601050712399_Update1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\CollectionReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -74,7 +74,7 @@ namespace PutraJayaNT.Reports
             dr2["Customer"] = _salesTransaction.NewTransactionCustomer.Name;
             dr2["Address"] = _salesTransaction.NewTransactionCustomer.City;
             dr2["InvoiceNumber"] = _salesTransaction.NewTransactionID;
-            dr2["Date"] = _salesTransaction.Model.InvoiceIssued == null ? null : ((DateTime)_salesTransaction.Model.InvoiceIssued).ToShortDateString();
+            dr2["Date"] = _salesTransaction.Model.When.ToShortDateString();
             dr2["DueDate"] = _salesTransaction.Model.DueDate == null ? null : ((DateTime)_salesTransaction.Model.DueDate).ToShortDateString();
             dr2["Notes"] = _salesTransaction.Model.Notes;
 

@@ -1,9 +1,12 @@
 ﻿using MVVMFramework;
+using PutraJayaNT.Models;
+using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Models.StockCorrection;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -11,12 +14,19 @@ namespace PutraJayaNT.ViewModels.Inventory
 {
     class DecreaseStockTransactionVM : ViewModelBase<DecreaseStockTransaction>
     {
+        #region Collections Backing Fields
         ObservableCollection<WarehouseVM> _warehouses;
         ObservableCollection<ItemVM> _products;
         ObservableCollection<DecreaseStockTransactionLineVM> _lines;
+        #endregion
 
+        #region Transaction Backing Fields
         string _newTransactionID;
+        ICommand _newTransactionCommand;
+        ICommand _confirmTransactionCommand;
+        #endregion
 
+        #region New Entry Backing Fields
         WarehouseVM _newEntryWarehouse;
         ItemVM _newEntryProduct;
         string _newEntryUnitName;
@@ -24,12 +34,20 @@ namespace PutraJayaNT.ViewModels.Inventory
         int? _newEntryUnits;
         int? _newEntryPieces;
         ICommand _newEntryCommand;
+        #endregion
+
+        bool _isNotEditMode;
 
         public DecreaseStockTransactionVM()
         {
+            Model = new DecreaseStockTransaction();
+            Model.DecreaseStockTransactionLines = new ObservableCollection<DecreaseStockTransactionLine>();
+
             _warehouses = new ObservableCollection<WarehouseVM>();
             _products = new ObservableCollection<ItemVM>();
             _lines = new ObservableCollection<DecreaseStockTransactionLineVM>();
+
+            _isNotEditMode = true;
 
             UpdateWarehouses();
             SetTransactionID();
@@ -50,11 +68,106 @@ namespace PutraJayaNT.ViewModels.Inventory
             get { return _lines; }
         }
 
-        #region New Transaction Properties 
+        public bool IsNotEditMode
+        {
+            get { return _isNotEditMode; }
+            set { SetProperty(ref _isNotEditMode, value, "IsNotEditMode"); }
+        }
+
+        #region Transaction Properties 
         public string NewTransactionID
         {
             get { return _newTransactionID; }
-            set { SetProperty(ref _newTransactionID, value, "NewTransactionID"); }
+            set
+            {
+                SetProperty(ref _newTransactionID, value, "NewTransactionID");
+                IsNotEditMode = false;
+            }
+        }
+
+        public ICommand NewTransactionCommand
+        {
+            get
+            {
+                return _newTransactionCommand ?? (_newTransactionCommand = new RelayCommand(() =>
+                {
+                    ResetTransaction();
+                }));
+            }
+        }
+
+        public ICommand ConfirmTransactionCommand
+        {
+            get
+            {
+                return _confirmTransactionCommand ?? (_confirmTransactionCommand = new RelayCommand(() =>
+                {
+                    // Verify user can perform operation
+                    var window = new VerificationWindow();
+                    window.ShowDialog();
+                    App.Current.MainWindow.IsEnabled = true;
+                    var isVerified = App.Current.TryFindResource("IsVerified");
+                    if (isVerified == null) return;
+
+                    if (MessageBox.Show("Confirm transaction?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+
+                    if (_lines.Count == 0)
+                    {
+                        MessageBox.Show("Transaction is empty.", "Invalid Command", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    using (var ts = new TransactionScope())
+                    {
+                        var context = new ERPContext();
+
+                        decimal cogs = 0;
+
+                        // Add each line to the transaction
+                        foreach (var line in _lines)
+                        {
+                            line.Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
+                            line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                            Model.DecreaseStockTransactionLines.Add(line.Model);
+
+                            // Decrease the stock for this item in the corresponding warehouse
+                            var stock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                            stock.Pieces -= line.Quantity;
+
+                            // Increase SoldOrReturned for this item
+                            var purchaseLine = context.PurchaseTransactionLines
+                            .Include("PurchaseTransaction")
+                            .Where(e => e.ItemID.Equals(line.Item.ItemID) && e.SoldOrReturned < e.Quantity)
+                            .OrderBy(e => e.PurchaseTransactionID)
+                            .FirstOrDefault();
+                            purchaseLine.SoldOrReturned += line.Quantity;
+
+                            var purchaseLineNetTotal = (purchaseLine.PurchasePrice - purchaseLine.Discount) * line.Quantity;
+                            var fractionOfTransactionDiscount = (line.Quantity * purchaseLineNetTotal / purchaseLine.PurchaseTransaction.GrossTotal) * purchaseLine.PurchaseTransaction.Discount;
+                            cogs += purchaseLineNetTotal - fractionOfTransactionDiscount;
+                        }
+
+                        // Add the transaction to the database
+                        Model.Date = DateTime.Now.Date;
+                        var user = App.Current.TryFindResource("CurrentUser") as User;
+                        if (user != null) Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
+                        context.DecreaseStockTransactions.Add(Model);
+
+                        // Add the journal entries for this transaction
+                        var transaction = new LedgerTransaction();
+                        LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, Model.DecreaseStrockTransactionID, "Stock Adjustment (Decrement)");
+                        context.SaveChanges();
+                        LedgerDBHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
+                        LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);
+
+                        context.SaveChanges();
+                        ts.Complete();
+                    }
+
+                    MessageBox.Show("Transaction is saved.", "Success", MessageBoxButton.OK);
+                    ResetTransaction();
+                }));
+            }
         }
         #endregion
 
@@ -135,15 +248,16 @@ namespace PutraJayaNT.ViewModels.Inventory
                         }
                     }
 
+                    var quantity = (_newEntryPieces == null ? 0 : (int)_newEntryPieces) + ((_newEntryUnits == null ? 0 : (int)_newEntryUnits) * _newEntryProduct.PiecesPerUnit);
                     var newEntry = new DecreaseStockTransactionLineVM
                     {
                         Model = new DecreaseStockTransactionLine
                         {
+                            DecreaseStockTransaction = this.Model,
                             Item = _newEntryProduct.Model,
                             Warehouse = _newEntryWarehouse.Model,
+                            Quantity = quantity
                         },
-                        Pieces = _newEntryPieces == null ? 0 : (int)_newEntryPieces,
-                        Units = _newEntryUnits == null ? 0 : (int)_newEntryUnits
                     };
 
                     _lines.Add(newEntry);
@@ -199,8 +313,9 @@ namespace PutraJayaNT.ViewModels.Inventory
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
-            if (lastTransactionID != null) _newTransactionID = "DS" + (Convert.ToInt64(lastTransactionID.Substring(1)) + 1).ToString();
+            if (lastTransactionID != null) _newTransactionID = "DS" + (Convert.ToInt64(lastTransactionID.Substring(2)) + 1).ToString();
 
+            Model.DecreaseStrockTransactionID = _newTransactionID;
             OnPropertyChanged("NewTransactionID");
         }
 
@@ -215,9 +330,12 @@ namespace PutraJayaNT.ViewModels.Inventory
 
         private void ResetTransaction()
         {
+            IsNotEditMode = true;
             NewEntryWarehouse = null;
             ResetEntryFields();
             _lines.Clear();
+            Model = new DecreaseStockTransaction();
+            Model.DecreaseStockTransactionLines = new ObservableCollection<DecreaseStockTransactionLine>();
             SetTransactionID();
         }
         #endregion

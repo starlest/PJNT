@@ -45,6 +45,17 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        public Warehouse ReturnWarehouse
+        {
+            get { return Model.ReturnWarehouse; }
+            set
+            {
+                Model.ReturnWarehouse = value;
+                OnPropertyChanged("ReturnWarehouse");
+            }
+        }
+
+
         public int AvailableReturnQuantity
         {
             get; set;
@@ -204,7 +215,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             get
             {
-                Model.Total = Quantity * ((PurchasePrice - NetDiscount) / Item.PiecesPerUnit);
+                Model.Total = Model.Quantity * (Model.PurchasePrice - Model.NetDiscount);
                 return Model.Total;
             }
             set
@@ -212,6 +223,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 Model.Total = value;
                 OnPropertyChanged("Total");
             }
+        }
+
+        public void UpdateTotal()
+        {
+            Model.Total = Model.Quantity * (Model.PurchasePrice - Model.NetDiscount);
+            OnPropertyChanged("Total");
         }
 
         public int GetStock()

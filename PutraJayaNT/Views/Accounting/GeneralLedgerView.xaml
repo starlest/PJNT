@@ -44,7 +44,7 @@
                          IsReadOnly="True" Text="{Binding SelectedClass, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Beginning Balance:" />
                 <TextBox Grid.Row="1" Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         IsReadOnly="True" Text="{Binding SelectedBeginningBalance, UpdateSourceTrigger=PropertyChanged}" />
+                         IsReadOnly="True" Text="{Binding SelectedBeginningBalance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
@@ -55,9 +55,9 @@
                 <DataGridTextColumn Header="Account" Width="1.5*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
                 <DataGridTextColumn Header="Documentation" Width="1*" IsReadOnly="True" Binding="{Binding Documentation}" />
                 <DataGridTextColumn Header="Description" Width="1.5*" IsReadOnly="True" Binding="{Binding Description}" />
-                <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount}" />
+                <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount, StringFormat=N2}" />
                 <DataGridTextColumn Header="Seq" Width="1*" IsReadOnly="True" Binding="{Binding Seq}" />
-                <DataGridTextColumn Header="Balance" Width="1*" IsReadOnly="True" Binding="{Binding Balance}" />
+                <DataGridTextColumn Header="Balance" Width="1*" IsReadOnly="True" Binding="{Binding Balance, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="2">
@@ -71,10 +71,10 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total Debit:" FontSize="28" />
             <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
-                         Text="{Binding TotalDebit, UpdateSourceTrigger=PropertyChanged}" />
+                         Text="{Binding TotalDebit, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
             <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total Credit:" FontSize="28" />
             <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
-                         Text="{Binding TotalCredit, UpdateSourceTrigger=PropertyChanged}" />
+                         Text="{Binding TotalCredit, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
         </Grid>
     </Grid>
 </UserControl>

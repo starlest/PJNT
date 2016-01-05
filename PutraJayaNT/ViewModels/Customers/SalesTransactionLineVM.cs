@@ -1,9 +1,7 @@
 ﻿using MVVMFramework;
-using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Models.Sales;
 using System;
-using System.Windows;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
@@ -48,7 +46,7 @@ namespace PutraJayaNT.ViewModels.Customers
             set
             {
                 Model.Quantity = value;
-                Total = Math.Round((Model.SalesPrice - Model.Discount) * Model.Quantity, 2, MidpointRounding.AwayFromZero);
+                Total = (Model.SalesPrice - Model.Discount) * Model.Quantity;
                 OnPropertyChanged("Quantity");
                 OnPropertyChanged("Pieces");
                 OnPropertyChanged("Units");
@@ -70,7 +68,7 @@ namespace PutraJayaNT.ViewModels.Customers
             set
             {
                 Model.Quantity = value + (_units * Model.Item.PiecesPerUnit);
-                Total = Math.Round((Model.SalesPrice - Model.Discount) * Model.Quantity, 2, MidpointRounding.AwayFromZero);
+                Total = (Model.SalesPrice - Model.Discount) * Model.Quantity;
 
                 SetProperty(ref _pieces, value, "Pieces");
                 OnPropertyChanged("Units");
@@ -87,7 +85,7 @@ namespace PutraJayaNT.ViewModels.Customers
             set
             {
                 Model.Quantity = _pieces + (value * Model.Item.PiecesPerUnit);
-                Total = Math.Round((Model.SalesPrice - Model.Discount) * Model.Quantity, 2, MidpointRounding.AwayFromZero);
+                Total = (Model.SalesPrice - Model.Discount) * Model.Quantity;
 
                 SetProperty(ref _units, value, "Units");
                 OnPropertyChanged("Pieces");
@@ -99,8 +97,8 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return Model.SalesPrice * Model.Item.PiecesPerUnit; }
             set
             {
-                Model.SalesPrice = Math.Round(value / Model.Item.PiecesPerUnit, 2, MidpointRounding.AwayFromZero);
-                Total = Math.Round((Model.SalesPrice - Model.Discount) * Model.Quantity, 2, MidpointRounding.AwayFromZero);
+                Model.SalesPrice = value / Model.Item.PiecesPerUnit;
+                Total = (Model.SalesPrice - Model.Discount) * Model.Quantity;
                 OnPropertyChanged("SalesPrice");
             }
         }
@@ -110,8 +108,8 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return Model.Discount * Model.Item.PiecesPerUnit; }
             set
             {
-                Model.Discount = Math.Round((value <= 0 ? 0 : (value/ Model.Item.PiecesPerUnit) ), 2, MidpointRounding.AwayFromZero);
-                Total = Math.Round((Model.SalesPrice - Model.Discount) * Model.Quantity, 2, MidpointRounding.AwayFromZero);
+                Model.Discount = (value <= 0 ? 0 : (value/ Model.Item.PiecesPerUnit) );
+                Total = (Model.SalesPrice - Model.Discount) * Model.Quantity;
                 OnPropertyChanged("Discount");
             }
         }
@@ -121,7 +119,7 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return Model.Total; }
             set
             {
-                Model.Total = Math.Round(value, 2, MidpointRounding.AwayFromZero);
+                Model.Total = value;
                 OnPropertyChanged("Total");
             }
         }

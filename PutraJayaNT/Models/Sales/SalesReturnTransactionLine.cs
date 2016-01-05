@@ -35,6 +35,9 @@ namespace PutraJayaNT.Models.Sales
         public decimal Discount { get; set; }
 
         [Required]
+        public decimal NetDiscount { get; set; }
+
+        [Required]
         public int Quantity
         {
             get { return _quantity; }

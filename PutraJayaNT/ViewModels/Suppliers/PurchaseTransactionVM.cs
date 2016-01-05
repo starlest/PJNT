@@ -513,6 +513,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                                 line.Item = item;
                                 line.Warehouse = warehouse;
+
+                                context.SaveChanges();
                             }
 
                             Model.Total = (decimal) _newTransactionNetTotal;

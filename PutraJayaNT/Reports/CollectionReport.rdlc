@@ -460,7 +460,7 @@
         <Top>1.13453cm</Top>
         <Left>1.97005cm</Left>
         <Height>1.2cm</Height>
-        <Width>17.93511cm</Width>
+        <Width>17.93512cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -468,10 +468,10 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>20.90208cm</Height>
+    <Height>5.08cm</Height>
     <Style />
   </Body>
-  <Width>21.92891cm</Width>
+  <Width>20.76474cm</Width>
   <Page>
     <PageHeader>
       <Height>2.80458cm</Height>
@@ -520,7 +520,7 @@
       </Style>
     </PageHeader>
     <PageFooter>
-      <Height>1.56104cm</Height>
+      <Height>1.82562cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>

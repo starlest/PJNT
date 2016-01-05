@@ -25,11 +25,16 @@ namespace PutraJayaNT.Models.Purchase
         public int WarehouseID { get; set; }
 
         [Key]
-        [Column(Order = 3)]
-        public decimal PurchasePrice { get; set; }
+        [Column("ReturnWarehouseID", Order = 3)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int ReturnWarehouseID { get; set; }
 
         [Key]
         [Column(Order = 4)]
+        public decimal PurchasePrice { get; set; }
+
+        [Key]
+        [Column(Order = 5)]
         public decimal Discount { get; set; }
 
         [Required]
@@ -50,6 +55,9 @@ namespace PutraJayaNT.Models.Purchase
 
         [ForeignKey("WarehouseID")]
         public virtual Warehouse Warehouse { get; set; }
+
+        [ForeignKey("ReturnWarehouseID")]
+        public virtual Warehouse ReturnWarehouse { get; set; }
 
         [ForeignKey("PurchaseReturnTransactionID")]
         public virtual PurchaseReturnTransaction PurchaseReturnTransaction { get; set; }
