@@ -505,16 +505,17 @@ namespace PutraJayaNT.ViewModels.Suppliers
                                 var stock = context.Stocks
                                 .Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID))
                                 .FirstOrDefault();
-                                
+
                                 if (stock == null)
+                                {
                                     context.Stocks.Add(new Stock { Item = item, Warehouse = warehouse, Pieces = line.Quantity });
+                                    context.SaveChanges();
+                                }
                                 else
                                     stock.Pieces += line.Quantity;
 
                                 line.Item = item;
                                 line.Warehouse = warehouse;
-
-                                context.SaveChanges();
                             }
 
                             Model.Total = (decimal) _newTransactionNetTotal;

@@ -49,31 +49,50 @@
                       DisplayMemberPath="Name" IsEditable="True" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DetailedDisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+        <Grid Grid.Row="1" Visibility="{Binding DetailedVisibility}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="0.125*" />
+            </Grid.RowDefinitions>
+            <DataGrid LoadingRow="DataGrid_LoadingRow" Grid.ColumnSpan="2" ItemsSource="{Binding DetailedDisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
-                  Visibility="{Binding DetailedVisibility}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Sales ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransaction.SalesTransactionID}" />
-                <DataGridTextColumn Header="Item ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
-                <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Unit" Width="1*" IsReadOnly="True" Binding="{Binding Unit}" />
-                <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
-                <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
-                <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice, StringFormat=N2}" />
-                <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount, StringFormat=N2}" />
-                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
-                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransaction.When, StringFormat={}{0:dd/MM/yyyy}}" />
-            </DataGrid.Columns>
-        </DataGrid>
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransaction.When, StringFormat={}{0:dd/MM/yyyy}}" />
+                    <DataGridTextColumn Header="Sales ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransaction.SalesTransactionID}" />
+                    <DataGridTextColumn Header="Customer" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransaction.Customer.Name}" />
+                    <DataGridTextColumn Header="Product ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
+                    <DataGridTextColumn Header="Product" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
+                    <DataGridTextColumn Header="Unit" Width="0.8*" IsReadOnly="True" Binding="{Binding Unit}" />
+                    <DataGridTextColumn Header="Units" Width="0.8*" IsReadOnly="True" Binding="{Binding Units}" />
+                    <DataGridTextColumn Header="Pieces" Width="0.8*" IsReadOnly="True" Binding="{Binding Pieces}" />
+                    <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice, StringFormat=N2}" />
+                    <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding NetDiscount, StringFormat=N2}" />
+                    <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding NetTotal, StringFormat=N2}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total:" FontSize="28" />
+                <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
+            </Grid>
+        </Grid>
         <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" Grid.ColumnSpan="2" ItemsSource="{Binding GlobalDisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   Visibility="{Binding GlobalVisibility}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Item ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
-                <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Unit" Width="1*" IsReadOnly="True" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Product ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
+                <DataGridTextColumn Header="Product" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Unit" Width="0.8*" IsReadOnly="True" Binding="{Binding Unit}" />
                 <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
             </DataGrid.Columns>

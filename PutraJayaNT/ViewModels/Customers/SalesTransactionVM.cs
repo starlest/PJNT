@@ -111,6 +111,13 @@ namespace PutraJayaNT.ViewModels.Customers
             set { SetProperty(ref _editMode, value, "EditMode"); }
         }
 
+        public bool InvoiceNotIssued
+        {
+            get { return _invoiceNotIssued; }
+            set { SetProperty(ref _invoiceNotIssued, value, "InvoiceNotIssued"); }
+        }
+
+        #region Collections
         public ObservableCollection<CustomerVM> Customers
         {
             get { return _customers; }
@@ -135,12 +142,155 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             get { return _salesTransactionLines; }
         }
+        #endregion
 
-        public bool InvoiceNotIssued
+        #region Line Properties
+        public SalesTransactionLineVM SelectedLine
         {
-            get { return _invoiceNotIssued; }
-            set { SetProperty(ref _invoiceNotIssued, value, "InvoiceNotIssued"); }
+            get { return _selectedLine; }
+            set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
         }
+
+        #region Edit Properties
+        public int EditLineUnits
+        {
+            get { return _editLineUnits; }
+            set { SetProperty(ref _editLineUnits, value, "EditLineUnits"); }
+        }
+
+        public int EditLinePieces
+        {
+            get { return _editLinePieces; }
+            set { SetProperty(ref _editLinePieces, value, "EditLinePieces"); }
+        }
+
+        public decimal EditLineDiscount
+        {
+            get { return _editLineDiscount; }
+            set { SetProperty(ref _editLineDiscount, value, "EditLineDiscount"); }
+        }
+
+        public decimal EditLineSalesPrice
+        {
+            get { return _editLineSalesPrice; }
+            set { SetProperty(ref _editLineSalesPrice, value, "EditLineSalesPrice"); }
+        }
+
+        public bool IsEditWindowNotOpen
+        {
+            get { return _isEditWindowNotOpen; }
+            set { SetProperty(ref _isEditWindowNotOpen, value, "IsEditWindowNotOpen"); }
+        }
+
+        public Visibility EditWindowVisibility
+        {
+            get { return _editWindowVisibility; }
+            set { SetProperty(ref _editWindowVisibility, value, "EditWindowVisibility"); }
+        }
+
+        public ICommand EditConfirmCommand
+        {
+            get
+            {
+                return _editConfirmCommand ?? (_editConfirmCommand = new RelayCommand(() =>
+                {
+                    var oldUnits = _selectedLine.Units;
+                    var oldPieces = _selectedLine.Pieces;
+                    var oldDiscount = _selectedLine.Discount;
+                    var oldSalesPrice = _selectedLine.SalesPrice;
+
+                    _selectedLine.Units = _editLineUnits;
+                    _selectedLine.Pieces = _editLinePieces;
+                    _selectedLine.Discount = _editLineDiscount;
+                    _selectedLine.SalesPrice = _editLineSalesPrice;
+                    var availableQuantity = GetAvailableQuantity(_selectedLine.Item, _selectedLine.Warehouse);
+
+                    if (availableQuantity < 0)
+                    {
+                        MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces available.",
+                            _selectedLine.Item.Name, (availableQuantity / _selectedLine.Item.PiecesPerUnit) + _selectedLine.Units, (availableQuantity % _selectedLine.Item.PiecesPerUnit) + _selectedLine.Pieces),
+                            "Insufficient Stock", MessageBoxButton.OK);
+
+                        _selectedLine.Units = oldUnits;
+                        _selectedLine.Pieces = oldPieces;
+                        _selectedLine.Discount = oldDiscount;
+                        _selectedLine.SalesPrice = oldSalesPrice;
+                        return;
+                    }
+
+                    // Run a check to see if this line can be combined with another line of the same in transaction
+                    foreach (var line in _salesTransactionLines)
+                    {
+                        if (line != _selectedLine && line.Equals(_selectedLine))
+                        {
+                            line.Units = line.Units + _selectedLine.Units;
+                            line.Pieces = line.Pieces + _selectedLine.Pieces;
+                            line.StockDeducted += _selectedLine.StockDeducted;
+
+                            // Some operations for the removal to be correct
+                            _selectedLine.Discount = oldDiscount;
+                            _selectedLine.SalesPrice = oldSalesPrice;
+                            _salesTransactionLines.Remove(_selectedLine);
+
+                            break;
+                        }
+                    }
+
+                    IsEditWindowNotOpen = true;
+                    EditWindowVisibility = Visibility.Hidden;
+                }));
+            }
+        }
+
+        public ICommand EditCancelCommand
+        {
+            get
+            {
+                return _editCancelCommand ?? (_editCancelCommand = new RelayCommand(() =>
+                {
+                    IsEditWindowNotOpen = true;
+                    EditWindowVisibility = Visibility.Hidden;
+                }));
+            }
+        }
+
+        public ICommand EditLineCommand
+        {
+            get
+            {
+                return _editLineCommand ?? (_editLineCommand = new RelayCommand(() =>
+                {
+                    if (_selectedLine != null)
+                    {
+                        IsEditWindowNotOpen = false;
+                        EditWindowVisibility = Visibility.Visible;
+
+                        EditLineUnits = _selectedLine.Units;
+                        EditLinePieces = _selectedLine.Pieces;
+                        EditLineDiscount = _selectedLine.Discount;
+                        EditLineSalesPrice = _selectedLine.SalesPrice;
+                    }
+                }));
+            }
+        }
+        #endregion
+
+        public ICommand DeleteLineCommand
+        {
+            get
+            {
+                return _deleteLineCommand ?? (_deleteLineCommand = new RelayCommand(() =>
+                {
+                    if (_selectedLine != null && MessageBox.Show("Confirm Deletion?", "Confirmation", MessageBoxButton.YesNo)
+                     == MessageBoxResult.Yes)
+                    {
+                        _salesTransactionLines.Remove(_selectedLine);
+                    }
+
+                }));
+            }
+        }
+        #endregion
 
         #region Transaction Properties
         public string NewTransactionID
@@ -178,26 +328,16 @@ namespace PutraJayaNT.ViewModels.Customers
 
                     SetProperty(ref _newTransactionID, value, "NewTransactionID");
 
-                    EditMode = true;
                     Model = transaction;
+                    SetEditMode();
                     NewTransactionDate = transaction.When;
                     NewTransactionCustomer = new CustomerVM { Model = transaction.Customer };
                     NewTransactionSalesman = new SalesmanVM { Model = transaction.Salesman };
                     NewTransactionNotes = transaction.Notes;
 
-                    _originalSalesTransactionLines.Clear();
-                    _salesTransactionLines.Clear();
-                    foreach (var line in Model.TransactionLines)
-                    {
-                        var vm = new SalesTransactionLineVM { Model = line, StockDeducted = line.Quantity };
-                        _originalSalesTransactionLines.Add(vm);
-                        vm.PropertyChanged += LinePropertyChangedHandler;
-                        _salesTransactionLines.Add(vm);
-                    }
-
-                    OnPropertyChanged("NewTransactionGrossTotal");
                     NewTransactionSalesExpense = transaction.SalesExpense;
                     NewTransactionDiscount = transaction.Discount;
+                    OnPropertyChanged("NewTransactionGrossTotal");
                 }
             }
         }
@@ -229,12 +369,10 @@ namespace PutraJayaNT.ViewModels.Customers
                                 if (t.DueDate < DateTime.Now.Date)
                                 {
                                     MessageBox.Show("This customer has overdued invoice(s).", "Invalid Customer", MessageBoxButton.OK);
-                                    App.Current.MainWindow.IsEnabled = false;
-                                    var window = new VerificationWindow();
-                                    window.ShowDialog();
-                                    App.Current.MainWindow.IsEnabled = true;
-                                    var isVerified = App.Current.TryFindResource("IsVerified");
-                                    if (isVerified != null) break;
+                                    
+                                    // Verification
+                                    if (UtilityMethods.GetVerification()) break;
+
                                     _newTransactionCustomer = null;
                                     RefreshCustomers();
                                     return;
@@ -458,7 +596,7 @@ namespace PutraJayaNT.ViewModels.Customers
                                         }
                                     }
 
-                                    // If not found, minus the stock from the Items and add the line to the transaction
+                                    // If not found, minus stock and add the line to the transaction
                                     if (!found)
                                     {
                                         if (stock.Pieces - line.Quantity < 0)
@@ -625,18 +763,8 @@ namespace PutraJayaNT.ViewModels.Customers
                         }
                         #endregion
 
-                        EditMode = true;
-                        _originalSalesTransactionLines.Clear();
-                        _salesTransactionLines.Clear();
-                        foreach (var line in Model.TransactionLines)
-                        {
-                            var vm = new SalesTransactionLineVM { Model = line, StockDeducted = line.Quantity };
-                            _originalSalesTransactionLines.Add(vm);
-                            vm.PropertyChanged += LinePropertyChangedHandler;
-                            _salesTransactionLines.Add(vm);
-                        }
-
                         MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
+                        SetEditMode();
                     }
                 }));
             }
@@ -852,154 +980,6 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             NewEntrySubmitted = true;
             NewEntrySubmitted = false;
-        }
-        #endregion
-
-        #region Line Properties
-        public SalesTransactionLineVM SelectedLine
-        {
-            get { return _selectedLine; }
-            set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
-        }
-
-        #region Edit Properties
-        public int EditLineUnits
-        {
-            get { return _editLineUnits; }
-            set { SetProperty(ref _editLineUnits, value, "EditLineUnits"); }
-        }
-
-        public int EditLinePieces
-        {
-            get { return _editLinePieces; }
-            set { SetProperty(ref _editLinePieces, value, "EditLinePieces"); }
-        }
-
-        public decimal EditLineDiscount
-        {
-            get { return _editLineDiscount; }
-            set { SetProperty(ref _editLineDiscount, value, "EditLineDiscount"); }
-        }
-
-        public decimal EditLineSalesPrice
-        {
-            get { return _editLineSalesPrice; }
-            set { SetProperty(ref _editLineSalesPrice, value, "EditLineSalesPrice"); }
-        }
-
-        public bool IsEditWindowNotOpen
-        {
-            get { return _isEditWindowNotOpen; }
-            set { SetProperty(ref _isEditWindowNotOpen, value, "IsEditWindowNotOpen"); }
-        }
-
-        public Visibility EditWindowVisibility
-        {
-            get { return _editWindowVisibility; }
-            set { SetProperty(ref _editWindowVisibility, value, "EditWindowVisibility"); }
-        }
-
-        public ICommand EditConfirmCommand
-        {
-            get
-            {
-                return _editConfirmCommand ?? (_editConfirmCommand = new RelayCommand(() =>
-                {
-                    var oldUnits = _selectedLine.Units;
-                    var oldPieces = _selectedLine.Pieces;
-                    var oldDiscount = _selectedLine.Discount;
-                    var oldSalesPrice = _selectedLine.SalesPrice;
-
-                    _selectedLine.Units = _editLineUnits;
-                    _selectedLine.Pieces = _editLinePieces;
-                    _selectedLine.Discount = _editLineDiscount;
-                    _selectedLine.SalesPrice = _editLineSalesPrice;
-                    var availableQuantity = GetAvailableQuantity(_selectedLine.Item, _selectedLine.Warehouse);
-
-                    if (availableQuantity < 0)
-                    {
-                        MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces available.",
-                            _selectedLine.Item.Name, (availableQuantity / _selectedLine.Item.PiecesPerUnit) + _selectedLine.Units, (availableQuantity % _selectedLine.Item.PiecesPerUnit) + _selectedLine.Pieces),
-                            "Insufficient Stock", MessageBoxButton.OK);
-
-                        _selectedLine.Units = oldUnits;
-                        _selectedLine.Pieces = oldPieces;
-                        _selectedLine.Discount = oldDiscount;
-                        _selectedLine.SalesPrice = oldSalesPrice;
-                        return;
-                    }
-
-                    // Run a check to see if this line can be combined with another line of the same in transaction
-                    foreach (var line in _salesTransactionLines)
-                    {
-                        if (line != _selectedLine && line.Equals(_selectedLine))
-                        {
-                            line.Units = line.Units + _selectedLine.Units;
-                            line.Pieces = line.Pieces + _selectedLine.Pieces;
-                            line.StockDeducted += _selectedLine.StockDeducted;
-
-                            // Some operations for the removal to be correct
-                            _selectedLine.Discount = oldDiscount;
-                            _selectedLine.SalesPrice = oldSalesPrice;
-                            _salesTransactionLines.Remove(_selectedLine);
-
-                            break;
-                        }
-                    }
-
-                    IsEditWindowNotOpen = true;
-                    EditWindowVisibility = Visibility.Hidden;
-                }));
-            }
-        }
-
-        public ICommand EditCancelCommand
-        {
-            get
-            {
-                return _editCancelCommand ?? (_editCancelCommand = new RelayCommand(() =>
-                {
-                    IsEditWindowNotOpen = true;
-                    EditWindowVisibility = Visibility.Hidden;
-                }));
-            }
-        }
-
-        public ICommand EditLineCommand
-        {
-            get
-            {
-                return _editLineCommand ?? (_editLineCommand = new RelayCommand(() =>
-                {
-                    if (_selectedLine != null)
-                    {
-                        IsEditWindowNotOpen = false;
-                        EditWindowVisibility = Visibility.Visible;
-
-                        EditLineUnits = _selectedLine.Units;
-                        EditLinePieces = _selectedLine.Pieces;
-                        EditLineDiscount = _selectedLine.Discount;
-                        EditLineSalesPrice = _selectedLine.SalesPrice;
-                    }
-                }));
-            }
-        }
-        #endregion
-
-        public ICommand DeleteLineCommand
-        {
-            get
-            {
-                return _deleteLineCommand ?? (_deleteLineCommand = new RelayCommand(() =>
-                {
-                    if (_selectedLine != null && MessageBox.Show("Confirm Deletion?", "Confirmation", MessageBoxButton.YesNo)
-                     == MessageBoxResult.Yes)
-                    {
-                        _salesTransactionLines.Remove(_selectedLine);
-                     }
-
-                }));
-            }
         }
         #endregion
 
@@ -1227,8 +1207,8 @@ namespace PutraJayaNT.ViewModels.Customers
                     {
                         if (l.Item.ItemID.Equals(line.Item.ItemID) &&
                             l.Warehouse.ID.Equals(line.Warehouse.ID) &&
-                            l.Discount.Equals(line.Discount) &&
-                            l.SalesPrice.Equals(line.SalesPrice))
+                            (l.Discount * l.Item.PiecesPerUnit).Equals(line.Discount) &&
+                            (l.SalesPrice * l.Item.PiecesPerUnit).Equals(line.SalesPrice))
                         {
                             Model.TransactionLines.Remove(l);
                             break;
@@ -1375,13 +1355,27 @@ namespace PutraJayaNT.ViewModels.Customers
 
         private int GetRemainingStock(Item item, Warehouse warehouse)
         {
-            var stock = 0;
             using (var context = new ERPContext())
             {
-                stock = context.Stocks.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID)).FirstOrDefault().Pieces;
-            }
+                var stock = context.Stocks.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID)).FirstOrDefault();
 
-            return stock;
+                if (stock == null) return 0;
+                else return stock.Pieces;
+            }
+        }
+
+        private void SetEditMode()
+        {
+            EditMode = true;
+            _originalSalesTransactionLines.Clear();
+            _salesTransactionLines.Clear();
+            foreach (var line in Model.TransactionLines)
+            {
+                var vm = new SalesTransactionLineVM { Model = line, StockDeducted = line.Quantity };
+                _originalSalesTransactionLines.Add(vm);
+                vm.PropertyChanged += LinePropertyChangedHandler;
+                _salesTransactionLines.Add(vm);
+            }
         }
         #endregion
     }

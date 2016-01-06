@@ -104,6 +104,11 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        public string Unit
+        {
+            get { return Model.UnitName + "/" + Model.PiecesPerUnit; }
+        }
+
         public int Units
         {
             get { return Quantity / Model.PiecesPerUnit; }

@@ -166,6 +166,7 @@
     <Compile Include="Utilities\PasswordHelper.cs" />
     <Compile Include="Utilities\Repository.cs" />
     <Compile Include="Utilities\UnitOfWork.cs" />
+    <Compile Include="Utilities\UtilityMethods.cs" />
     <Compile Include="VerificationWindow.xaml.cs">
       <DependentUpon>VerificationWindow.xaml</DependentUpon>
     </Compile>
@@ -185,6 +186,7 @@
     <Compile Include="ViewModels\CustomerVM.cs" />
     <Compile Include="ViewModels\Inventory\DecreaseStockTransactionLineVM.cs" />
     <Compile Include="ViewModels\Inventory\DecreaseStockTransactionVM.cs" />
+    <Compile Include="ViewModels\Inventory\MoveStockVM.cs" />
     <Compile Include="ViewModels\ItemVM.cs" />
     <Compile Include="ViewModels\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\LedgerTransactionLineVM.cs" />
@@ -239,6 +241,9 @@
     </Compile>
     <Compile Include="Views\Customers\SalesTransactionView.xaml.cs">
       <DependentUpon>SalesTransactionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Inventory\MoveStockView.xaml.cs">
+      <DependentUpon>MoveStockView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Inventory\DecreaseStockView.xaml.cs">
       <DependentUpon>DecreaseStockView.xaml</DependentUpon>
@@ -361,6 +366,10 @@
     <Page Include="Views\Customers\SalesTransactionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Inventory\MoveStockView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Inventory\DecreaseStockView.xaml">
       <SubType>Designer</SubType>

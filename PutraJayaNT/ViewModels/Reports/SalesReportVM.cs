@@ -31,6 +31,7 @@ namespace PutraJayaNT.ViewModels.Reports
         /// </summary>
         DateTime _fromDate;
         DateTime _toDate;
+        decimal _total;
 
         Category _selectedCategory;
         Item _selectedItem;
@@ -49,12 +50,18 @@ namespace PutraJayaNT.ViewModels.Reports
             _modes.Add("Detailed");
             SelectedMode = Modes.First();
 
-            _fromDate = DateTime.Now.Date;
+            _fromDate = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
             _toDate = DateTime.Now.Date;
 
+            UpdateCategories();
             RefreshCustomers();
+
+            SelectedCategory = _categories.FirstOrDefault();
+            SelectedItem = _categoryItems.FirstOrDefault();
+            SelectedCustomer = _customers.FirstOrDefault();
         }
 
+        #region Collection
         /// <summary>
         /// Gets the list of Categories loaded.
         /// </summary>
@@ -62,7 +69,6 @@ namespace PutraJayaNT.ViewModels.Reports
         {
             get
             {
-                RefreshCategories();
                 return _categories;
             }
         }
@@ -108,6 +114,19 @@ namespace PutraJayaNT.ViewModels.Reports
         public ObservableCollection<string> Modes
         {
             get { return _modes; }
+        }
+        #endregion
+
+        public Visibility DetailedVisibility
+        {
+            get { return _detailedVisibility; }
+            set { SetProperty(ref _detailedVisibility, value, "DetailedVisibility"); }
+        }
+
+        public Visibility GlobalVisibility
+        {
+            get { return _globalVisibility; }
+            set { SetProperty(ref _globalVisibility, value, "GlobalVisibility"); }
         }
 
         /// <summary>
@@ -160,36 +179,8 @@ namespace PutraJayaNT.ViewModels.Reports
                 SetProperty(ref _selectedCategory, value, "SelectedCategory");
 
                 if (_selectedCategory == null) return;
-
-                _categoryItems.Clear();
                 _selectedItem = null;
-                RefreshCategories();
-
-                if (_selectedCategory.Name == "All")
-                {
-                    _categoryItems.Add(new Item { Name = "All" });
-
-                    using (var context = new ERPContext())
-                    {
-                        var items = context.Inventory.ToList();
-                        foreach (var item in items)
-                            _categoryItems.Add(item);
-                    }
-                }
-
-                else
-                {
-                    _categoryItems.Add(new Item { Name = "All" });
-
-                    using (var context = new ERPContext())
-                    {
-                        var items = context.Inventory
-                            .Where(e => e.Category.Name == _selectedCategory.Name)
-                            .ToList();
-                        foreach (var item in items)
-                            _categoryItems.Add(item);
-                    }
-                }
+                UpdateCategoryItems();
             }
         }
 
@@ -217,6 +208,7 @@ namespace PutraJayaNT.ViewModels.Reports
                 }
                 SetProperty(ref _selectedCustomer, value, "SelectedCustomer");
                 RefreshDisplayLines();
+                RefreshTotal();
             }
         }
 
@@ -245,28 +237,51 @@ namespace PutraJayaNT.ViewModels.Reports
             }
         }
 
-        public Visibility DetailedVisibility
+        public decimal Total
         {
-            get { return _detailedVisibility; }
-            set { SetProperty(ref _detailedVisibility, value, "DetailedVisibility"); }
+            get { return _total; }
+            set { SetProperty(ref _total, value, "Total"); }
         }
 
-        public Visibility GlobalVisibility
-        {
-            get { return _globalVisibility; }
-            set { SetProperty(ref _globalVisibility, value, "GlobalVisibility"); }
-        }
-
-        private void RefreshCategories()
+        #region Helper Methods
+        private void UpdateCategories()
         {
             _categories.Clear();
 
             using (var context = new ERPContext())
             {
-                _categories.Add(new Category { Name = "All" });
+                _categories.Add(new Category { ID = -1, Name = "All" });
                 var categories = context.Categories;
                 foreach (var category in categories)
                     _categories.Add(category);
+            }
+        }
+
+        private void UpdateCategoryItems()
+        {
+            _categoryItems.Clear();
+            _categoryItems.Add(new Item { ItemID = "-1", Name = "All" });
+
+            if (_selectedCategory.Name == "All")
+            {
+                using (var context = new ERPContext())
+                {
+                    var items = context.Inventory.ToList();
+                    foreach (var item in items)
+                        _categoryItems.Add(item);
+                }
+            }
+
+            else
+            {
+                using (var context = new ERPContext())
+                {
+                    var items = context.Inventory
+                        .Where(e => e.Category.Name == _selectedCategory.Name)
+                        .ToList();
+                    foreach (var item in items)
+                        _categoryItems.Add(item);
+                }
             }
         }
 
@@ -300,7 +315,9 @@ namespace PutraJayaNT.ViewModels.Reports
                 {
                     transactionLines = context.SalesTransactionLines
                         .Include("Item")
+                        .Include("Warehouse")
                         .Include("SalesTransaction")
+                        .Include("SalesTransaction.Customer")
                         .Where(e => e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .ToList();
@@ -310,7 +327,9 @@ namespace PutraJayaNT.ViewModels.Reports
                 {
                     transactionLines = context.SalesTransactionLines
                         .Include("Item")
+                        .Include("Warehouse")
                         .Include("SalesTransaction")
+                        .Include("SalesTransaction.Customer")
                         .Where(e => e.Item.Name == _selectedItem.Name && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .ToList();
@@ -324,7 +343,9 @@ namespace PutraJayaNT.ViewModels.Reports
                         && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .Include("Item")
+                        .Include("Warehouse")
                         .Include("SalesTransaction")
+                        .Include("SalesTransaction.Customer")
                         .ToList();
                 }
 
@@ -337,7 +358,9 @@ namespace PutraJayaNT.ViewModels.Reports
                         && e.SalesTransaction.When <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .Include("Item")
+                        .Include("Warehouse")
                         .Include("SalesTransaction")
+                        .Include("SalesTransaction.Customer")
                         .ToList();
                 }
 
@@ -367,5 +390,14 @@ namespace PutraJayaNT.ViewModels.Reports
                 }
             }
         }
+
+        private void RefreshTotal()
+        {
+            _total = 0;
+            foreach (var line in _detailedDisplayLines)
+                Total += line.NetTotal;
+        }
+        #endregion
     }
+
 }

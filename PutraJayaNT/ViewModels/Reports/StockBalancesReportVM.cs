@@ -17,8 +17,7 @@ namespace PutraJayaNT.ViewModels.Reports
         DateTime _fromDate;
         DateTime _toDate;
         string _beginningBalanceString;
-        string _productUnitName;
-        int? _productPiecesPerUnit;
+        string _productUnit;
 
         int _beginningBalance = 0;
 
@@ -26,7 +25,7 @@ namespace PutraJayaNT.ViewModels.Reports
         {
             _products = new ObservableCollection<ItemVM>();
             _lines = new ObservableCollection<StockBalanceLineVM>();
-            _fromDate = DateTime.Now.Date;
+            _fromDate = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
             _toDate = DateTime.Now.Date;
             UpdateProducts();
         }
@@ -48,8 +47,7 @@ namespace PutraJayaNT.ViewModels.Reports
             {
                 SetProperty(ref _selectedProduct, value, "SelectedProduct");
 
-                ProductUnitName = _selectedProduct.UnitName;
-                ProductPiecesPerUnit = _selectedProduct.PiecesPerUnit;
+                ProductUnit = _selectedProduct.UnitName + "/" + _selectedProduct.PiecesPerUnit;
                 SetBeginningBalance();
                 UpdateLines();
             }
@@ -101,16 +99,10 @@ namespace PutraJayaNT.ViewModels.Reports
             set { SetProperty(ref _beginningBalanceString, value, "BeginningBalanceString"); }
         }
 
-        public string ProductUnitName
+        public string ProductUnit
         {
-            get { return _productUnitName; }
-            set { SetProperty(ref _productUnitName, value, "ProductUnitName"); }
-        }
-
-        public int? ProductPiecesPerUnit
-        {
-            get { return _productPiecesPerUnit; }
-            set { SetProperty(ref _productPiecesPerUnit, value, "ProductPiecesPerUnit"); }
+            get { return _productUnit; }
+            set { SetProperty(ref _productUnit, value, "ProductUnit"); }
         }
 
         #region Helper Methods

@@ -1,6 +1,7 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Models.Sales;
+using PutraJayaNT.Utilities;
 using System;
 
 namespace PutraJayaNT.ViewModels.Customers
@@ -124,6 +125,22 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
+        public decimal NetDiscount
+        {
+            get
+            {
+                return GetNetDiscount();
+            }
+        }
+
+        public decimal NetTotal
+        {
+            get
+            {
+                return ((this.SalesPrice - this.NetDiscount) / this.Item.PiecesPerUnit) * this.Quantity;
+            }
+        }
+
         public int StockDeducted { get; set; }
 
         public int GetStock()
@@ -142,6 +159,17 @@ namespace PutraJayaNT.ViewModels.Customers
 
             return s;
         }
+
+        public decimal GetNetDiscount()
+        {
+            var lineDiscount = Model.Discount / Model.Item.PiecesPerUnit;
+            var lineSalesPrice = Model.SalesPrice / Model.Item.PiecesPerUnit;
+            var fractionOfTransaction = (Model.Quantity * (lineSalesPrice - lineDiscount)) / Model.SalesTransaction.GrossTotal;
+            var fractionOfTransactionDiscount = (fractionOfTransaction * Model.SalesTransaction.Discount) / Model.Quantity;
+            var discount = (lineDiscount + fractionOfTransactionDiscount) * Model.Item.PiecesPerUnit;
+            return discount;
+        }
+
 
         public override bool Equals(object obj)
         {

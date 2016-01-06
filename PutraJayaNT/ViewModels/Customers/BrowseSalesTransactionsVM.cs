@@ -64,6 +64,7 @@ namespace PutraJayaNT.ViewModels.Customers
         #region Helper methods
         private void UpdateSalesTransactions()
         {
+            _salesTransactions.Clear();
             using (var context = new ERPContext())
             {
                 var salesTransactions = context.SalesTransactions
@@ -71,6 +72,8 @@ namespace PutraJayaNT.ViewModels.Customers
                     .Include("Customer")
                     .Include("Salesman")
                     .Where(e => e.When >= _fromDate && e.When <= _toDate)
+                    .OrderBy(e => e.When)
+                    .ThenBy(e => e.SalesTransactionID)
                     .ToList();
 
                 foreach (var t in salesTransactions)

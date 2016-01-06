@@ -102,12 +102,8 @@ namespace PutraJayaNT.ViewModels.Inventory
             {
                 return _confirmTransactionCommand ?? (_confirmTransactionCommand = new RelayCommand(() =>
                 {
-                    // Verify user can perform operation
-                    var window = new VerificationWindow();
-                    window.ShowDialog();
-                    App.Current.MainWindow.IsEnabled = true;
-                    var isVerified = App.Current.TryFindResource("IsVerified");
-                    if (isVerified == null) return;
+                    // Verification
+                    if (!UtilityMethods.GetVerification()) return;
 
                     if (MessageBox.Show("Confirm transaction?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
 
@@ -133,6 +129,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                             // Decrease the stock for this item in the corresponding warehouse
                             var stock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID)).FirstOrDefault();
                             stock.Pieces -= line.Quantity;
+                            if (stock.Pieces == 0) context.Stocks.Remove(stock);
 
                             // Increase SoldOrReturned for this item
                             var purchaseLine = context.PurchaseTransactionLines

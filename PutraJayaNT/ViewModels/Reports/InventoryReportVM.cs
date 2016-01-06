@@ -35,6 +35,7 @@ namespace PutraJayaNT.ViewModels.Reports
             SelectedCategory = _categories.Find(e => e.Name == "All");
         }
 
+        #region Collections
         public ObservableCollection<ItemVM> Items
         {
             get
@@ -71,6 +72,7 @@ namespace PutraJayaNT.ViewModels.Reports
                 return _categories;
             }
         }
+        #endregion
 
         public Category SelectedCategory
         {
@@ -83,7 +85,6 @@ namespace PutraJayaNT.ViewModels.Reports
                     return;
                 }
 
-                UpdateCategories();
                 SelectedItem = null;
                 SelectedSupplier = null;
                 SelectedWarehouse = null;
@@ -154,6 +155,7 @@ namespace PutraJayaNT.ViewModels.Reports
                     SetProperty(ref _selectedSupplier, null, () => SelectedSupplier);
                     return;
                 }
+
                 SelectedCategory = null;
                 SelectedItem = null;
                 SelectedWarehouse = null;
@@ -209,6 +211,7 @@ namespace PutraJayaNT.ViewModels.Reports
             }
         }
 
+        #region Helper Methods
         private void UpdateCategories()
         {
             _categories.Clear();
@@ -281,5 +284,6 @@ namespace PutraJayaNT.ViewModels.Reports
                 }
             }
         }
+        #endregion
     }
 }

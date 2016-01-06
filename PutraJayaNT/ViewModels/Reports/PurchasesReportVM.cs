@@ -4,6 +4,7 @@ using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using PutraJayaNT.ViewModels.Suppliers;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -28,15 +29,16 @@ namespace PutraJayaNT.ViewModels
             _suppliers = new ObservableCollection<Supplier>();
             _supplierItems = new ObservableCollection<ItemVM>();
             _displayLines = new ObservableCollection<PurchaseTransactionLineVM>();
-            _fromDate = DateTime.Now.Date;
-            _toDate = DateTime.Now.Date.AddDays(1);
+            _fromDate = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
+            _toDate = DateTime.Now.Date;
+
+            UpdateSuppliers();
         }
 
         public ObservableCollection<Supplier> Suppliers
         {
             get
             {
-                RefreshSuppliers();
                 return _suppliers;
             }
         }
@@ -98,21 +100,8 @@ namespace PutraJayaNT.ViewModels
                     return;
                 }
 
-                RefreshSuppliers();
-            
-                _supplierItems.Add(new ItemVM { Model = new Item { ItemID = "-1", Name = "All" } });
-                using (var context = new ERPContext())
-                {
-                    var items = context.Inventory
-                        .OrderBy(e => e.Name)
-                        .Include("Suppliers");
-
-                    foreach (var item in items)
-                    {
-                        if (item.Suppliers.Contains(_selectedSupplier))
-                            _supplierItems.Add(new ItemVM { Model = item });
-                    }
-                }
+                UpdateSuppliers();
+                UpdateSupplierItems();
             }
         }
 
@@ -129,11 +118,13 @@ namespace PutraJayaNT.ViewModels
              }
         }
 
-        public void RefreshSuppliers()
+        private void UpdateSuppliers()
         {
             _suppliers.Clear();
             _displayLines.Clear();
             _supplierItems.Clear();
+
+            _suppliers.Add(new Supplier { ID = -1, Name = "All" });
             using (var context = new ERPContext())
             {
                 var suppliers = context.Suppliers.OrderBy(e => e.Name);
@@ -142,11 +133,55 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public void RefreshDisplaylines()
+        private void UpdateSupplierItems()
+        {
+            _supplierItems.Add(new ItemVM { Model = new Item { ItemID = "-1", Name = "All" } });
+            using (var context = new ERPContext())
+            {
+                var  items = context.Inventory.Include("Suppliers").OrderBy(e => e.Name).ToList();
+
+                if (_selectedSupplier.Name.Equals("All"))
+                {
+                    foreach (var item in items)
+                        _supplierItems.Add(new ItemVM { Model = item });
+                }
+
+                else
+                {
+                    foreach (var item in items)
+                    {
+                        if (item.Suppliers.Contains(_selectedSupplier))
+                            _supplierItems.Add(new ItemVM { Model = item });
+                    }
+                }
+            }
+        }
+
+        private void RefreshDisplaylines()
         {
             _displayLines.Clear();
 
-            if (_selectedItem.Name.Equals("All"))
+            if (_selectedSupplier.Name.Equals("All") && _selectedItem.Name.Equals("All"))
+            {
+                using (var context = new ERPContext())
+                {
+                    var purchases = context.PurchaseTransactions
+                        .Where(e => e.Date >= _fromDate && e.Date <= _toDate)
+                        .Include("PurchaseTransactionLines")
+                        .Include("PurchaseTransactionLines.Item")
+                        .Include("PurchaseTransactionLines.Warehouse")
+                        .Include("PurchaseTransactionLines.PurchaseTransaction");
+
+                    foreach (var purchase in purchases)
+                    {
+                        foreach (var line in purchase.PurchaseTransactionLines)
+                            _displayLines.Add(new PurchaseTransactionLineVM { Model = line });
+
+                    }
+                }
+            }
+
+            else if (_selectedItem.Name.Equals("All"))
             {
                 using (var context = new ERPContext())
                 {
