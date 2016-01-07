@@ -6,14 +6,14 @@ using System.Windows.Input;
 namespace PutraJayaNT.Views.Inventory
 {
     /// <summary>
-    /// Interaction logic for DecreaseStockView.xaml
+    /// Interaction logic for AdjustStockView.xaml
     /// </summary>
-    public partial class DecreaseStockView : UserControl
+    public partial class AdjustStockView : UserControl
     {
-        public DecreaseStockView()
+        public AdjustStockView()
         {
             InitializeComponent();
-            var vm = new DecreaseStockTransactionVM();
+            var vm = new AdjustStockTransactionVM();
             DataContext = vm;
         }
 
@@ -23,7 +23,7 @@ namespace PutraJayaNT.Views.Inventory
             e.Row.Header = (e.Row.GetIndex() + 1).ToString();
         }
 
-        private void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {

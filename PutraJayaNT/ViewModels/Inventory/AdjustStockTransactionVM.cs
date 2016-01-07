@@ -12,12 +12,12 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Inventory
 {
-    class DecreaseStockTransactionVM : ViewModelBase<DecreaseStockTransaction>
+    class AdjustStockTransactionVM : ViewModelBase<AdjustStockTransaction>
     {
         #region Collections Backing Fields
         ObservableCollection<WarehouseVM> _warehouses;
         ObservableCollection<ItemVM> _products;
-        ObservableCollection<DecreaseStockTransactionLineVM> _lines;
+        ObservableCollection<AdjustStockTransactionLineVM> _lines;
         #endregion
 
         #region Transaction Backing Fields
@@ -38,14 +38,14 @@ namespace PutraJayaNT.ViewModels.Inventory
 
         bool _isNotEditMode;
 
-        public DecreaseStockTransactionVM()
+        public AdjustStockTransactionVM()
         {
-            Model = new DecreaseStockTransaction();
-            Model.DecreaseStockTransactionLines = new ObservableCollection<DecreaseStockTransactionLine>();
+            Model = new AdjustStockTransaction();
+            Model.AdjustStockTransactionLines = new ObservableCollection<AdjustStockTransactionLine>();
 
             _warehouses = new ObservableCollection<WarehouseVM>();
             _products = new ObservableCollection<ItemVM>();
-            _lines = new ObservableCollection<DecreaseStockTransactionLineVM>();
+            _lines = new ObservableCollection<AdjustStockTransactionLineVM>();
 
             _isNotEditMode = true;
 
@@ -63,7 +63,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             get { return _products; }
         }
 
-        public ObservableCollection<DecreaseStockTransactionLineVM> Lines
+        public ObservableCollection<AdjustStockTransactionLineVM> Lines
         {
             get { return _lines; }
         }
@@ -124,7 +124,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                         {
                             line.Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
                             line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
-                            Model.DecreaseStockTransactionLines.Add(line.Model);
+                            Model.AdjustStockTransactionLines.Add(line.Model);
 
                             // Decrease the stock for this item in the corresponding warehouse
                             var stock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID)).FirstOrDefault();
@@ -152,7 +152,7 @@ namespace PutraJayaNT.ViewModels.Inventory
 
                         // Add the journal entries for this transaction
                         var transaction = new LedgerTransaction();
-                        LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, Model.DecreaseStrockTransactionID, "Stock Adjustment (Decrement)");
+                        LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, Model.AdjustStrockTransactionID, "Stock Adjustment");
                         context.SaveChanges();
                         LedgerDBHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
                         LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);
@@ -246,11 +246,11 @@ namespace PutraJayaNT.ViewModels.Inventory
                     }
 
                     var quantity = (_newEntryPieces == null ? 0 : (int)_newEntryPieces) + ((_newEntryUnits == null ? 0 : (int)_newEntryUnits) * _newEntryProduct.PiecesPerUnit);
-                    var newEntry = new DecreaseStockTransactionLineVM
+                    var newEntry = new AdjustStockTransactionLineVM
                     {
-                        Model = new DecreaseStockTransactionLine
+                        Model = new AdjustStockTransactionLine
                         {
-                            DecreaseStockTransaction = this.Model,
+                            AdjustStockTransaction = this.Model,
                             Item = _newEntryProduct.Model,
                             Warehouse = _newEntryWarehouse.Model,
                             Quantity = quantity
@@ -304,15 +304,15 @@ namespace PutraJayaNT.ViewModels.Inventory
             using (var context = new ERPContext())
             {
                 var IDs = (from DecreaseStockTransaction in context.DecreaseStockTransactions
-                           where DecreaseStockTransaction.DecreaseStrockTransactionID.CompareTo(_newTransactionID) >= 0
-                           orderby DecreaseStockTransaction.DecreaseStrockTransactionID descending
-                           select DecreaseStockTransaction.DecreaseStrockTransactionID);
+                           where DecreaseStockTransaction.AdjustStrockTransactionID.CompareTo(_newTransactionID) >= 0
+                           orderby DecreaseStockTransaction.AdjustStrockTransactionID descending
+                           select DecreaseStockTransaction.AdjustStrockTransactionID);
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
             if (lastTransactionID != null) _newTransactionID = "DS" + (Convert.ToInt64(lastTransactionID.Substring(2)) + 1).ToString();
 
-            Model.DecreaseStrockTransactionID = _newTransactionID;
+            Model.AdjustStrockTransactionID = _newTransactionID;
             OnPropertyChanged("NewTransactionID");
         }
 
@@ -331,8 +331,8 @@ namespace PutraJayaNT.ViewModels.Inventory
             NewEntryWarehouse = null;
             ResetEntryFields();
             _lines.Clear();
-            Model = new DecreaseStockTransaction();
-            Model.DecreaseStockTransactionLines = new ObservableCollection<DecreaseStockTransactionLine>();
+            Model = new AdjustStockTransaction();
+            Model.AdjustStockTransactionLines = new ObservableCollection<AdjustStockTransactionLine>();
             SetTransactionID();
         }
         #endregion

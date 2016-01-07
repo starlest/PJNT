@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PutraJayaNT.Models.StockCorrection
 {
-    public class DecreaseStockTransactionLine
+    public class AdjustStockTransactionLine
     {
         [Key]
         [Column(Order = 0)]
-        public string DecreaseStockTransactionID { get; set; }
+        public string AdjustStockTransactionID { get; set; }
 
         [Key]
         [Column(Order = 1)]
@@ -22,8 +22,8 @@ namespace PutraJayaNT.Models.StockCorrection
 
         public int Quantity { get; set; }
 
-        [ForeignKey("DecreaseStockTransactionID")]
-        public virtual DecreaseStockTransaction DecreaseStockTransaction { get; set; }
+        [ForeignKey("AdjustStockTransactionID")]
+        public virtual AdjustStockTransaction AdjustStockTransaction { get; set; }
 
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }

@@ -101,21 +101,13 @@
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601050712059_Update.cs" />
-    <Compile Include="Migrations\201601050712059_Update.Designer.cs">
-      <DependentUpon>201601050712059_Update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601050712399_Update1.cs" />
-    <Compile Include="Migrations\201601050712399_Update1.Designer.cs">
-      <DependentUpon>201601050712399_Update1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601051606433_Update2.cs" />
-    <Compile Include="Migrations\201601051606433_Update2.Designer.cs">
-      <DependentUpon>201601051606433_Update2.cs</DependentUpon>
+    <Compile Include="Migrations\201601070130385_Update1.cs" />
+    <Compile Include="Migrations\201601070130385_Update1.Designer.cs">
+      <DependentUpon>201601070130385_Update1.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Inventory\StockBalance.cs" />
-    <Compile Include="Models\StockCorrection\DecreaseStockTransactionLine.cs" />
-    <Compile Include="Models\StockCorrection\DecreaseStockTransaction.cs" />
+    <Compile Include="Models\StockCorrection\AdjustStockTransactionLine.cs" />
+    <Compile Include="Models\StockCorrection\AdjustStockTransaction.cs" />
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesReturnInvoiceLine.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
@@ -184,8 +176,8 @@
     <Compile Include="ViewModels\Customers\SalesTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionVM.cs" />
     <Compile Include="ViewModels\CustomerVM.cs" />
-    <Compile Include="ViewModels\Inventory\DecreaseStockTransactionLineVM.cs" />
-    <Compile Include="ViewModels\Inventory\DecreaseStockTransactionVM.cs" />
+    <Compile Include="ViewModels\Inventory\AdjustStockTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Inventory\AdjustStockTransactionVM.cs" />
     <Compile Include="ViewModels\Inventory\MoveStockVM.cs" />
     <Compile Include="ViewModels\ItemVM.cs" />
     <Compile Include="ViewModels\LedgerAccountVM.cs" />
@@ -245,8 +237,8 @@
     <Compile Include="Views\Inventory\MoveStockView.xaml.cs">
       <DependentUpon>MoveStockView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Inventory\DecreaseStockView.xaml.cs">
-      <DependentUpon>DecreaseStockView.xaml</DependentUpon>
+    <Compile Include="Views\Inventory\AdjustStockView.xaml.cs">
+      <DependentUpon>AdjustStockView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Master\MasterCustomersView.xaml.cs">
       <DependentUpon>MasterCustomersView.xaml</DependentUpon>
@@ -371,7 +363,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Inventory\DecreaseStockView.xaml">
+    <Page Include="Views\Inventory\AdjustStockView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -455,14 +447,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601050712059_Update.resx">
-      <DependentUpon>201601050712059_Update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601050712399_Update1.resx">
-      <DependentUpon>201601050712399_Update1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601051606433_Update2.resx">
-      <DependentUpon>201601051606433_Update2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601070130385_Update1.resx">
+      <DependentUpon>201601070130385_Update1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\CollectionReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

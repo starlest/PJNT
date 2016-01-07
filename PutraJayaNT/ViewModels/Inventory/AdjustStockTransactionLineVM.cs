@@ -4,14 +4,14 @@ using PutraJayaNT.Models.StockCorrection;
 
 namespace PutraJayaNT.ViewModels.Inventory
 {
-    class DecreaseStockTransactionLineVM : ViewModelBase<DecreaseStockTransactionLine>
+    class AdjustStockTransactionLineVM : ViewModelBase<AdjustStockTransactionLine>
     {
         int _units;
         int _pieces;
 
-        public DecreaseStockTransaction DecreaseStockTransaction
+        public AdjustStockTransaction DecreaseStockTransaction
         {
-            get { return Model.DecreaseStockTransaction; }
+            get { return Model.AdjustStockTransaction; }
         }
 
         public Item Item
