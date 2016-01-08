@@ -1,9 +1,8 @@
 ﻿using MVVMFramework;
-using PutraJayaNT.Models.Sales;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Salesman
 {
-    public class SalesmanVM : ViewModelBase<Salesman>
+    public class SalesmanVM : ViewModelBase<PutraJayaNT.Models.Salesman.Salesman>
     {
         public int ID
         {

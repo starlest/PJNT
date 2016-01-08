@@ -2,13 +2,12 @@ namespace PutraJayaNT.Utilities
 {
     using Models;
     using Models.Accounting;
-    using MySql.Data.Entity;
     using Models.Inventory;
     using System.Data.Entity;
     using Models.Sales;
     using Models.Purchase;
     using Models.StockCorrection;
-
+    using Models.Salesman;
     public partial class ERPContext : DbContext
     {
         public ERPContext()
@@ -24,10 +23,12 @@ namespace PutraJayaNT.Utilities
         public virtual DbSet<Warehouse> Warehouses { get; set; }
         public virtual DbSet<StockBalance> StockBalances { get; set; }
 
+        public virtual DbSet<Salesman> Salesmans { get; set; }
+        public virtual DbSet<SalesCommission> SalesCommissions { get; set; }
+
         public virtual DbSet<AdjustStockTransaction> AdjustStockTransactions {get; set; }
         public virtual DbSet<AdjustStockTransactionLine> AdjustStockTransactionLines { get; set; }
 
-        public virtual DbSet<Salesman> Salesmans { get; set; }
         public virtual DbSet<SalesTransactionLine> SalesTransactionLines { get; set; }
         public virtual DbSet<SalesTransaction> SalesTransactions { get; set; }
         public virtual DbSet<SalesReturnTransaction> SalesReturnTransactions { get; set; }

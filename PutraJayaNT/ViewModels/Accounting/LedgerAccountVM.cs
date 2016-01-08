@@ -2,7 +2,7 @@
 using PutraJayaNT.Models.Accounting;
 using System.Collections.ObjectModel;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Accounting
 {
     class LedgerAccountVM : ViewModelBase<LedgerAccount>
     {

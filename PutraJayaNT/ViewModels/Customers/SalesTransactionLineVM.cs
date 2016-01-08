@@ -1,11 +1,13 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.Utilities;
-using System;
-
+﻿
 namespace PutraJayaNT.ViewModels.Customers
 {
+    using MVVMFramework;
+    using PutraJayaNT.Models.Inventory;
+    using PutraJayaNT.Models.Sales;
+    using PutraJayaNT.Models.Salesman;
+    using PutraJayaNT.Utilities;
+    using System;
+
     public class SalesTransactionLineVM : ViewModelBase<SalesTransactionLine>
     {
         int _pieces;
@@ -38,6 +40,16 @@ namespace PutraJayaNT.ViewModels.Customers
             {
                 Model.Warehouse = value;
                 OnPropertyChanged("Warehouse");
+            }
+        }
+
+        public Salesman Salesman
+        {
+            get { return Model.Salesman; }
+            set
+            {
+                Model.Salesman = value;
+                OnPropertyChanged("Salesman");
             }
         }
 
@@ -169,7 +181,6 @@ namespace PutraJayaNT.ViewModels.Customers
             var discount = (lineDiscount + fractionOfTransactionDiscount) * Model.Item.PiecesPerUnit;
             return discount;
         }
-
 
         public override bool Equals(object obj)
         {

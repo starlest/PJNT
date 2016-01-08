@@ -4,11 +4,11 @@ using System.Windows.Controls;
 namespace PutraJayaNT.Views.Master
 {
     /// <summary>
-    /// Interaction logic for SuppliersView.xaml
+    /// Interaction logic for MasterSuppliersView.xaml
     /// </summary>
-    public partial class SuppliersView : UserControl
+    public partial class MasterSuppliersView : UserControl
     {
-        public SuppliersView()
+        public MasterSuppliersView()
         {
             InitializeComponent();
             var vm = new MasterSuppliersVM();

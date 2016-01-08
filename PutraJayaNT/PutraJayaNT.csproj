@@ -101,15 +101,40 @@
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601070130385_Update1.cs" />
-    <Compile Include="Migrations\201601070130385_Update1.Designer.cs">
-      <DependentUpon>201601070130385_Update1.cs</DependentUpon>
+    <Compile Include="Migrations\201601080322235_Update.cs" />
+    <Compile Include="Migrations\201601080322235_Update.Designer.cs">
+      <DependentUpon>201601080322235_Update.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601070807243_Update2.cs" />
-    <Compile Include="Migrations\201601070807243_Update2.Designer.cs">
-      <DependentUpon>201601070807243_Update2.cs</DependentUpon>
+    <Compile Include="Migrations\201601080324590_Update1.cs" />
+    <Compile Include="Migrations\201601080324590_Update1.Designer.cs">
+      <DependentUpon>201601080324590_Update1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601080328429_Update2.cs" />
+    <Compile Include="Migrations\201601080328429_Update2.Designer.cs">
+      <DependentUpon>201601080328429_Update2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601080330418_Update3.cs" />
+    <Compile Include="Migrations\201601080330418_Update3.Designer.cs">
+      <DependentUpon>201601080330418_Update3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601080334411_Update4.cs" />
+    <Compile Include="Migrations\201601080334411_Update4.Designer.cs">
+      <DependentUpon>201601080334411_Update4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601080340351_Update5.cs" />
+    <Compile Include="Migrations\201601080340351_Update5.Designer.cs">
+      <DependentUpon>201601080340351_Update5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601080740322_Update6.cs" />
+    <Compile Include="Migrations\201601080740322_Update6.Designer.cs">
+      <DependentUpon>201601080740322_Update6.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601080750238_Update7.cs" />
+    <Compile Include="Migrations\201601080750238_Update7.Designer.cs">
+      <DependentUpon>201601080750238_Update7.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Inventory\StockBalance.cs" />
+    <Compile Include="Models\Salesman\SalesCommission.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransactionLine.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransaction.cs" />
     <Compile Include="Reports\SalesInvoice.cs" />
@@ -130,7 +155,7 @@
     <Compile Include="Models\Purchase\PurchaseReturnTransactionLine.cs" />
     <Compile Include="Models\Purchase\PurchaseTransaction.cs" />
     <Compile Include="Models\Purchase\PurchaseTransactionLine.cs" />
-    <Compile Include="Models\Sales\Salesman.cs" />
+    <Compile Include="Models\Salesman\Salesman.cs" />
     <Compile Include="Models\Sales\SalesReturnTransaction.cs" />
     <Compile Include="Models\Sales\SalesReturnTransactionLine.cs" />
     <Compile Include="Models\Supplier.cs" />
@@ -185,19 +210,21 @@
     <Compile Include="ViewModels\Inventory\CloseStockVM.cs" />
     <Compile Include="ViewModels\Inventory\MoveStockVM.cs" />
     <Compile Include="ViewModels\ItemVM.cs" />
-    <Compile Include="ViewModels\LedgerAccountVM.cs" />
-    <Compile Include="ViewModels\LedgerTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Accounting\LedgerAccountVM.cs" />
+    <Compile Include="ViewModels\Accounting\LedgerTransactionLineVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\Master\MasterCustomersVM.cs" />
     <Compile Include="ViewModels\Master\MasterInventoryVM.cs" />
     <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
+    <Compile Include="ViewModels\Master\MasterSalesmanVM.cs" />
     <Compile Include="ViewModels\Master\MasterSuppliersVM.cs" />
     <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
     <Compile Include="ViewModels\Reports\PurchasesReportVM.cs" />
     <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
     <Compile Include="ViewModels\Reports\StockBalanceLineVM.cs" />
     <Compile Include="ViewModels\Reports\StockBalancesReportVM.cs" />
-    <Compile Include="ViewModels\SalesmanVM.cs" />
+    <Compile Include="ViewModels\Salesman\SalesCommissionVM.cs" />
+    <Compile Include="ViewModels\Salesman\SalesmanVM.cs" />
     <Compile Include="ViewModels\Suppliers\PaymentListVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchasePaymentVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionLineVM.cs" />
@@ -252,6 +279,9 @@
     <Compile Include="Views\Master\MasterCustomersView.xaml.cs">
       <DependentUpon>MasterCustomersView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Master\MasterSalesmanView.xaml.cs">
+      <DependentUpon>MasterSalesmanView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Menu\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
@@ -267,8 +297,8 @@
     <Compile Include="Views\Master\LedgerView.xaml.cs">
       <DependentUpon>LedgerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Master\SuppliersView.xaml.cs">
-      <DependentUpon>SuppliersView.xaml</DependentUpon>
+    <Compile Include="Views\Master\MasterSuppliersView.xaml.cs">
+      <DependentUpon>MasterSuppliersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reports\PurchasesReportView.xaml.cs">
       <DependentUpon>PurchasesReportView.xaml</DependentUpon>
@@ -387,6 +417,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Master\MasterSalesmanView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Menu\HomeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -407,7 +441,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Master\SuppliersView.xaml">
+    <Page Include="Views\Master\MasterSuppliersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -467,11 +501,29 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601070130385_Update1.resx">
-      <DependentUpon>201601070130385_Update1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601080322235_Update.resx">
+      <DependentUpon>201601080322235_Update.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601070807243_Update2.resx">
-      <DependentUpon>201601070807243_Update2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601080324590_Update1.resx">
+      <DependentUpon>201601080324590_Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601080328429_Update2.resx">
+      <DependentUpon>201601080328429_Update2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601080330418_Update3.resx">
+      <DependentUpon>201601080330418_Update3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601080334411_Update4.resx">
+      <DependentUpon>201601080334411_Update4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601080340351_Update5.resx">
+      <DependentUpon>201601080340351_Update5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601080740322_Update6.resx">
+      <DependentUpon>201601080740322_Update6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601080750238_Update7.resx">
+      <DependentUpon>201601080750238_Update7.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\CollectionReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

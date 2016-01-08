@@ -1,24 +1,25 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Models.Sales;
-using System.Transactions;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Reports;
-using System.Data;
-using PutraJayaNT.Models;
-using PutraJayaNT.Views.Customers;
-
-namespace PutraJayaNT.ViewModels.Customers
+﻿namespace PutraJayaNT.ViewModels.Customers
 {
+    using MVVMFramework;
+    using PutraJayaNT.Utilities;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using System.Collections.Specialized;
+    using System.ComponentModel;
+    using PutraJayaNT.Models.Inventory;
+    using PutraJayaNT.Models.Sales;
+    using System.Transactions;
+    using PutraJayaNT.Models.Accounting;
+    using PutraJayaNT.Reports;
+    using System.Data;
+    using PutraJayaNT.Models;
+    using PutraJayaNT.Views.Customers;
+    using PutraJayaNT.Models.Salesman;
+
     public class SalesTransactionVM : ViewModelBase<SalesTransaction>
     {
         ObservableCollection<CustomerVM> _customers;
@@ -26,7 +27,7 @@ namespace PutraJayaNT.ViewModels.Customers
         ObservableCollection<SalesTransactionLineVM> _salesTransactionLines;
         ObservableCollection<SalesTransactionLineVM> _originalSalesTransactionLines;
         ObservableCollection<Warehouse> _warehouses;
-        ObservableCollection<SalesmanVM> _salesmans;
+        ObservableCollection<Salesman> _salesmans;
 
         bool _invoiceNotIssued;
 
@@ -34,7 +35,6 @@ namespace PutraJayaNT.ViewModels.Customers
         string _newTransactionID;
         DateTime _newTransactionDate;
         CustomerVM _newTransactionCustomer;
-        SalesmanVM _newTransactionSalesman;
         string _newTransactionNotes;
         decimal? _newTransactionDiscountPercent;
         decimal? _newTransactionDiscount;
@@ -56,6 +56,7 @@ namespace PutraJayaNT.ViewModels.Customers
         int? _newEntryPiecesPerUnit;
         int? _newEntryUnits;
         int? _newEntryPieces;
+        Salesman _newEntrySalesman;
         bool _newEntrySubmitted;
         ICommand _newEntryCommand;
         #endregion
@@ -72,6 +73,7 @@ namespace PutraJayaNT.ViewModels.Customers
         int _editLinePieces;
         decimal _editLineDiscount;
         decimal _editLineSalesPrice;
+        PutraJayaNT.Models.Salesman.Salesman _editLineSalesman;
         ICommand _editConfirmCommand;
         ICommand _editCancelCommand;
         bool _isEditWindowNotOpen;
@@ -92,7 +94,7 @@ namespace PutraJayaNT.ViewModels.Customers
             _salesTransactionLines.CollectionChanged += OnCollectionChanged;
             _originalSalesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
             _warehouses = new ObservableCollection<Warehouse>();
-            _salesmans = new ObservableCollection<SalesmanVM>();
+            _salesmans = new ObservableCollection<PutraJayaNT.Models.Salesman.Salesman>();
 
             Model = new SalesTransaction();
             _newTransactionDate = DateTime.Now.Date;
@@ -133,7 +135,7 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return _warehouses; }
         }
 
-        public ObservableCollection<SalesmanVM> Salesmans
+        public ObservableCollection<Salesman> Salesmans
         {
             get { return _salesmans; }
         }
@@ -176,6 +178,12 @@ namespace PutraJayaNT.ViewModels.Customers
             set { SetProperty(ref _editLineSalesPrice, value, "EditLineSalesPrice"); }
         }
 
+        public Salesman EditLineSalesman
+        {
+            get { return _editLineSalesman; }
+            set { SetProperty(ref _editLineSalesman, value, "EditLineSalesman"); }
+        }
+
         public bool IsEditWindowNotOpen
         {
             get { return _isEditWindowNotOpen; }
@@ -198,11 +206,13 @@ namespace PutraJayaNT.ViewModels.Customers
                     var oldPieces = _selectedLine.Pieces;
                     var oldDiscount = _selectedLine.Discount;
                     var oldSalesPrice = _selectedLine.SalesPrice;
+                    var oldSalesman = _selectedLine.Salesman;
 
                     _selectedLine.Units = _editLineUnits;
                     _selectedLine.Pieces = _editLinePieces;
                     _selectedLine.Discount = _editLineDiscount;
                     _selectedLine.SalesPrice = _editLineSalesPrice;
+                    _selectedLine.Salesman = _editLineSalesman;
                     var availableQuantity = GetAvailableQuantity(_selectedLine.Item, _selectedLine.Warehouse);
 
                     if (availableQuantity < 0)
@@ -215,6 +225,7 @@ namespace PutraJayaNT.ViewModels.Customers
                         _selectedLine.Pieces = oldPieces;
                         _selectedLine.Discount = oldDiscount;
                         _selectedLine.SalesPrice = oldSalesPrice;
+                        _selectedLine.Salesman = oldSalesman;
                         return;
                     }
 
@@ -230,6 +241,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             // Some operations for the removal to be correct
                             _selectedLine.Discount = oldDiscount;
                             _selectedLine.SalesPrice = oldSalesPrice;
+                            _selectedLine.Salesman = oldSalesman;
                             _salesTransactionLines.Remove(_selectedLine);
 
                             break;
@@ -269,6 +281,7 @@ namespace PutraJayaNT.ViewModels.Customers
                         EditLinePieces = _selectedLine.Pieces;
                         EditLineDiscount = _selectedLine.Discount;
                         EditLineSalesPrice = _selectedLine.SalesPrice;
+                        EditLineSalesman = _selectedLine.Salesman;
                     }
                 }));
             }
@@ -309,10 +322,10 @@ namespace PutraJayaNT.ViewModels.Customers
                 {
                     var transaction = context.SalesTransactions
                         .Include("TransactionLines")
+                        .Include("TransactionLines.Salesman")
                         .Include("TransactionLines.Item")
                         .Include("TransactionLines.Warehouse")
                         .Include("TransactionLines.Item.Stocks")
-                        .Include("Salesman")
                         .Where(e => e.SalesTransactionID.Equals(value))
                         .FirstOrDefault();
 
@@ -332,7 +345,6 @@ namespace PutraJayaNT.ViewModels.Customers
                     SetEditMode();
                     NewTransactionDate = transaction.When;
                     NewTransactionCustomer = new CustomerVM { Model = transaction.Customer };
-                    NewTransactionSalesman = new SalesmanVM { Model = transaction.Salesman };
                     NewTransactionNotes = transaction.Notes;
 
                     NewTransactionSalesExpense = transaction.SalesExpense;
@@ -384,12 +396,6 @@ namespace PutraJayaNT.ViewModels.Customers
 
                 SetProperty(ref _newTransactionCustomer, value, "NewTransactionCustomer");
             }
-        }
-
-        public SalesmanVM NewTransactionSalesman
-        {
-            get { return _newTransactionSalesman; }
-            set { SetProperty(ref _newTransactionSalesman, value, "NewTransactionSalesman"); }
         }
 
         public string NewTransactionNotes
@@ -495,12 +501,6 @@ namespace PutraJayaNT.ViewModels.Customers
                         MessageBox.Show("Please select a customer.", "Missing Field(s)", MessageBoxButton.OK);
                         return;
                     }
-
-                    if (_newTransactionSalesman == null)
-                    {
-                        MessageBox.Show("Please select a salesman.", "Missing Field(s)", MessageBoxButton.OK);
-                        return;
-                    }
                     #endregion
 
                     if (MessageBox.Show("Confirm saving transaction?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -541,6 +541,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                                     line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
                                     line.Item = item;
+                                    line.Salesman = context.Salesmans.Where(e => e.ID.Equals(line.Salesman.ID)).FirstOrDefault();
 
                                     var stock = context
                                     .Stocks.Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID))
@@ -570,6 +571,7 @@ namespace PutraJayaNT.ViewModels.Customers
                                                 }
 
                                                 stock.Pieces -= line.Quantity - originalQuantity;
+                                                if (stock.Pieces == 0) context.Stocks.Remove(stock);
                                             }
 
                                             // If there are lesser quantity than the original, add the additional quantity to stock
@@ -668,10 +670,6 @@ namespace PutraJayaNT.ViewModels.Customers
                                 .Where(e => e.ID.Equals(_newTransactionCustomer.Model.ID))
                                 .FirstOrDefault();
 
-                                transaction.Salesman = context.Salesmans
-                                .Where(e => e.ID.Equals(_newTransactionSalesman.ID))
-                                .FirstOrDefault();
-
                                 var user = App.Current.TryFindResource("CurrentUser") as User;
                                 if (user != null) transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
 
@@ -704,9 +702,9 @@ namespace PutraJayaNT.ViewModels.Customers
                                 Model.Total = 0;
                                 foreach (var line in _salesTransactionLines)
                                 {
-                                    line.Item = context.Inventory
-                                    .Where(e => e.ItemID.Equals(line.Item.ItemID))
-                                    .FirstOrDefault();
+                                    line.Item = context.Inventory .Where(e => e.ItemID.Equals(line.Item.ItemID)) .FirstOrDefault();
+                                    line.Warehouse = context.Warehouses.Where(e => e.ID == line.Warehouse.ID).FirstOrDefault();
+                                    line.Salesman = context.Salesmans.Where(e => e.ID.Equals(line.Salesman.ID)).FirstOrDefault();
 
                                     var stock = context.Stocks
                                     .Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.WarehouseID == line.Warehouse.ID)
@@ -725,7 +723,6 @@ namespace PutraJayaNT.ViewModels.Customers
 
                                     // Add the item line's model to the sales transaction if there is enough stock
                                     stock.Pieces -= line.Quantity;
-                                    line.Warehouse = context.Warehouses.Where(e => e.ID == line.Warehouse.ID).FirstOrDefault();
                                     Model.TransactionLines.Add(line.Model);
 
                                     // Remove the stock entry if it is 0
@@ -735,10 +732,6 @@ namespace PutraJayaNT.ViewModels.Customers
                                 Model.SalesTransactionID = _newTransactionID;
                                 Model.Customer = context.Customers
                                 .Where(e => e.ID.Equals(_newTransactionCustomer.Model.ID))
-                                .FirstOrDefault();
-
-                                Model.Salesman = context.Salesmans
-                                .Where(e => e.ID.Equals(_newTransactionSalesman.ID))
                                 .FirstOrDefault();
 
                                 var user = App.Current.TryFindResource("CurrentUser") as User;
@@ -884,6 +877,12 @@ namespace PutraJayaNT.ViewModels.Customers
             set { SetProperty(ref _remainingStock, value, "RemainingStock"); }
         }
 
+        public Salesman NewEntrySalesman
+        {
+            get { return _newEntrySalesman; }
+            set { SetProperty(ref _newEntrySalesman, value, "NewEntrySalesman"); }
+        }
+
         public bool NewEntrySubmitted
         {
             get { return _newEntrySubmitted; }
@@ -896,7 +895,7 @@ namespace PutraJayaNT.ViewModels.Customers
             {
                 return _newEntryCommand ?? (_newEntryCommand = new RelayCommand(() =>
                 {
-                    if (_newEntryProduct == null || _newEntryPrice == null || (_newEntryUnits == null && _newEntryPieces == null))
+                    if (_newEntryProduct == null || _newEntryPrice == null || (_newEntryUnits == null && _newEntryPieces == null) || _newEntrySalesman == null)
                     {
                         MessageBox.Show("Please enter all fields", "Missing Fields", MessageBoxButton.OK);
                         return;
@@ -951,7 +950,8 @@ namespace PutraJayaNT.ViewModels.Customers
                             Quantity = quantity,
                             Warehouse = _newEntryWarehouse,
                             Discount = discount / _newEntryProduct.PiecesPerUnit,
-                            Total = (((decimal)_newEntryPrice - discount) / _newEntryProduct.PiecesPerUnit) * quantity
+                            Total = (((decimal)_newEntryPrice - discount) / _newEntryProduct.PiecesPerUnit) * quantity,
+                            Salesman = _newEntrySalesman
                         }
                     };
                     vm.PropertyChanged += LinePropertyChangedHandler;
@@ -961,25 +961,6 @@ namespace PutraJayaNT.ViewModels.Customers
                     ResetEntryFields();
                 }));
             }
-        }
-
-        private void ResetEntryFields()
-        {
-            OnPropertyChanged("NewTransactionSalesExpense");
-            OnPropertyChanged("NewTransactionGrossTotal");
-            NewEntryPiecesPerUnit = null;
-            NewEntryProduct = null;
-            NewEntryPrice = 0;
-            NewEntryUnitName = null;
-            NewEntryPieces = null;
-            NewEntryUnits = null;
-            RemainingStock = null;
-        }
-
-        private void SubmitNewEntry()
-        {
-            NewEntrySubmitted = true;
-            NewEntrySubmitted = false;
         }
         #endregion
 
@@ -1128,71 +1109,6 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
-        /// <summary>
-        /// Get the stock currently available.
-        /// </summary>
-        /// <param name="item"> The item to check. </param>
-        /// <returns> The value of stock. </returns>
-        private int GetStock(Item item)
-        {
-            int s = 0;
-            using (var context = new ERPContext())
-            {
-                var stocks = context
-                    .Stocks
-                    .Where(e => e.Item.ItemID.Equals(item.ItemID))
-                    .ToList();
-
-                foreach (var stock in stocks)
-                    s += stock.Pieces;
-            }
-            return s;
-        }
-
-        /// <summary>
-        /// Get the stock currently available.
-        /// </summary>
-        /// <param name="item"> The item to check. </param>
-        /// <param name="warehouse"> The warehouse the item is located at. </param>
-        /// <returns> The value of stock. </returns>
-        private int GetStock(Item item, Warehouse warehouse)
-        {
-            int s = 0;
-            using (var context = new ERPContext())
-            {
-                var stock = context
-                    .Stocks.Where(e => e.Item.ItemID.Equals(item.ItemID) && e.Warehouse.ID.Equals(warehouse.ID))
-                    .FirstOrDefault();
-                s = stock != null ? stock.Pieces : 0;
-            }
-            return s;
-        }
-
-        /// <summary>
-        /// Compute the available quantity of the item taking into account the stock 
-        /// and existing lines containing the item too.
-        /// </summary>
-        /// <param name="item"> The item to check. </param>
-        /// <param name="warehouse"> The warehouse the item is located at. </param>
-        /// <returns> The available quantity. </returns>
-        private int GetAvailableQuantity(Item item, Warehouse warehouse)
-        {
-            var availableQuantity = GetStock(item, warehouse);
-
-            // Decrease availableQuantity by the number of items from the same warehouse that are already in the transaction
-            foreach (var line in _salesTransactionLines)
-            {
-                if (line.Item.ItemID.Equals(item.ItemID)
-                && line.Warehouse.ID.Equals(warehouse.ID))
-                {
-                    availableQuantity += line.StockDeducted;
-                    availableQuantity -= line.Quantity;
-                }
-            }
-
-            return availableQuantity;
-        }
-
         #region Sales Transaction Lines Event Handlers
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -1305,7 +1221,7 @@ namespace PutraJayaNT.ViewModels.Customers
                 var salesmans = context.Salesmans.ToList();
 
                 foreach (var salesman in salesmans)
-                    _salesmans.Add(new SalesmanVM { Model = salesman });
+                    _salesmans.Add(salesman);
             }
         }
 
@@ -1333,6 +1249,26 @@ namespace PutraJayaNT.ViewModels.Customers
             OnPropertyChanged("NewTransactionID");
         }
 
+        private void ResetEntryFields()
+        {
+            OnPropertyChanged("NewTransactionSalesExpense");
+            OnPropertyChanged("NewTransactionGrossTotal");
+            NewEntryPiecesPerUnit = null;
+            NewEntryProduct = null;
+            NewEntryPrice = 0;
+            NewEntryUnitName = null;
+            NewEntryPieces = null;
+            NewEntryUnits = null;
+            RemainingStock = null;
+            NewEntrySalesman = null;
+        }
+
+        private void SubmitNewEntry()
+        {
+            NewEntrySubmitted = true;
+            NewEntrySubmitted = false;
+        }
+
         private void ResetTransaction()
         {
             InvoiceNotIssued = true;
@@ -1345,7 +1281,6 @@ namespace PutraJayaNT.ViewModels.Customers
             NewTransactionSalesExpense = null;
             NewTransactionCustomer = null;
             NewTransactionDate = DateTime.Now.Date;
-            NewTransactionSalesman = null;
             RefreshCustomers();
             ResetEntryFields();
             NewEntryWarehouse = null;
@@ -1376,6 +1311,71 @@ namespace PutraJayaNT.ViewModels.Customers
                 vm.PropertyChanged += LinePropertyChangedHandler;
                 _salesTransactionLines.Add(vm);
             }
+        }
+
+        /// <summary>
+        /// Get the stock currently available.
+        /// </summary>
+        /// <param name="item"> The item to check. </param>
+        /// <returns> The value of stock. </returns>
+        private int GetStock(Item item)
+        {
+            int s = 0;
+            using (var context = new ERPContext())
+            {
+                var stocks = context
+                    .Stocks
+                    .Where(e => e.Item.ItemID.Equals(item.ItemID))
+                    .ToList();
+
+                foreach (var stock in stocks)
+                    s += stock.Pieces;
+            }
+            return s;
+        }
+
+        /// <summary>
+        /// Get the stock currently available.
+        /// </summary>
+        /// <param name="item"> The item to check. </param>
+        /// <param name="warehouse"> The warehouse the item is located at. </param>
+        /// <returns> The value of stock. </returns>
+        private int GetStock(Item item, Warehouse warehouse)
+        {
+            int s = 0;
+            using (var context = new ERPContext())
+            {
+                var stock = context
+                    .Stocks.Where(e => e.Item.ItemID.Equals(item.ItemID) && e.Warehouse.ID.Equals(warehouse.ID))
+                    .FirstOrDefault();
+                s = stock != null ? stock.Pieces : 0;
+            }
+            return s;
+        }
+
+        /// <summary>
+        /// Compute the available quantity of the item taking into account the stock 
+        /// and existing lines containing the item too.
+        /// </summary>
+        /// <param name="item"> The item to check. </param>
+        /// <param name="warehouse"> The warehouse the item is located at. </param>
+        /// <returns> The available quantity. </returns>
+        private int GetAvailableQuantity(Item item, Warehouse warehouse)
+        {
+            var availableQuantity = GetStock(item, warehouse);
+
+            // Decrease availableQuantity by the number of items from the same warehouse that are already in the transaction
+            foreach (var line in _salesTransactionLines)
+            {
+                if (line.Item.ItemID.Equals(item.ItemID)
+                && line.Warehouse.ID.Equals(warehouse.ID))
+                {
+                    availableQuantity += line.StockDeducted;
+                    availableQuantity -= line.Quantity;
+                }
+            }
+
+            return availableQuantity;
         }
         #endregion
     }

@@ -21,7 +21,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
         SupplierVM _selectedSupplier;
         DateTime _fromDate;
         DateTime _toDate;
-        ICommand _printCommand;
 
         public PaymentListVM()
         {
@@ -81,22 +80,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 SetProperty(ref _selectedSupplier, value, "SelectedSupplier");
                 UpdatePurchaseTransactions();
-            }
-        }
-
-        public ICommand PrintCommand
-        {
-            get
-            {
-                return _printCommand ?? (_printCommand = new RelayCommand(() =>
-                {
-                    if (_purchaseTransactions.Count == 0) return;
-
-                    //var collectionReportWindow = new CollectionReportWindow(_salesTransactions);
-                    //collectionReportWindow.Owner = App.Current.MainWindow;
-                    //collectionReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    //collectionReportWindow.Show();
-                }));
             }
         }
 

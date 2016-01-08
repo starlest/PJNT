@@ -2,6 +2,7 @@
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -121,7 +122,7 @@ namespace PutraJayaNT.ViewModels.Reports
         private void UpdateLines()
         {
             _lines.Clear();
-            var balance = _beginningBalance;
+            var lines = new List<StockBalanceLineVM>();
             using (var context = new ERPContext())
             {
                 var purchaseLines = context.PurchaseTransactionLines
@@ -155,7 +156,6 @@ namespace PutraJayaNT.ViewModels.Reports
 
                 foreach (var line in purchaseLines)
                 {
-                    balance += line.Quantity;
                     var vm = new StockBalanceLineVM
                     {
                         Item = line.Item,
@@ -164,14 +164,12 @@ namespace PutraJayaNT.ViewModels.Reports
                         Description = "Purchase",
                         CustomerSupplier = line.PurchaseTransaction.Supplier.Name,
                         Amount = line.Quantity,
-                        Balance = balance
                     };
-                    _lines.Add(vm);
+                    lines.Add(vm);
                 }
 
                 foreach (var line in purchaseReturnLines)
                 {
-                    balance -= line.Quantity;
                     var vm = new StockBalanceLineVM
                     {
                         Item = line.Item,
@@ -180,14 +178,12 @@ namespace PutraJayaNT.ViewModels.Reports
                         Description = "Purchase Return",
                         CustomerSupplier = line.PurchaseReturnTransaction.PurchaseTransaction.Supplier.Name,
                         Amount = -line.Quantity,
-                        Balance = balance
                     };
-                    _lines.Add(vm);
+                    lines.Add(vm);
                 }
 
                 foreach (var line in salesLines)
                 {
-                    balance -= line.Quantity;
                     var vm = new StockBalanceLineVM
                     {
                         Item = line.Item,
@@ -196,14 +192,12 @@ namespace PutraJayaNT.ViewModels.Reports
                         Description = "Sales",
                         CustomerSupplier = line.SalesTransaction.Customer.Name,
                         Amount = -line.Quantity,
-                        Balance = balance
                     };
-                    _lines.Add(vm);
+                    lines.Add(vm);
                 }
 
                 foreach (var line in salesReturnLines)
                 {
-                    balance += line.Quantity;
                     var vm = new StockBalanceLineVM
                     {
                         Item = line.Item,
@@ -212,14 +206,12 @@ namespace PutraJayaNT.ViewModels.Reports
                         Description = "Sales Return",
                         CustomerSupplier = line.SalesReturnTransaction.SalesTransaction.Customer.Name,
                         Amount = +line.Quantity,
-                        Balance = balance
                     };
-                    _lines.Add(vm);
+                    lines.Add(vm);
                 }
 
                 foreach (var line in stockAdjustmentLines)
                 {
-                    balance += line.Quantity;
                     var vm = new StockBalanceLineVM
                     {
                         Item = line.Item,
@@ -228,9 +220,16 @@ namespace PutraJayaNT.ViewModels.Reports
                         Description = "Stock Adjustment",
                         CustomerSupplier = "",
                         Amount = line.Quantity,
-                        Balance = balance
                     };
-                    _lines.Add(vm);
+                    lines.Add(vm);
+                }
+
+                var balance = _beginningBalance;
+                foreach (var l in lines.OrderBy(e => e.Date))
+                {
+                    balance += l.Amount;
+                    l.Balance = balance;
+                    _lines.Add(l);
                 }
             }
         }

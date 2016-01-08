@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Accounting
 {
     class LedgerTransactionLineVM : ViewModelBase<LedgerTransactionLine>
     {

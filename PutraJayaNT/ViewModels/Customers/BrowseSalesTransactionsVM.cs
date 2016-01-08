@@ -70,7 +70,6 @@ namespace PutraJayaNT.ViewModels.Customers
                 var salesTransactions = context.SalesTransactions
                     .Include("User")
                     .Include("Customer")
-                    .Include("Salesman")
                     .Where(e => e.When >= _fromDate && e.When <= _toDate)
                     .OrderBy(e => e.When)
                     .ThenBy(e => e.SalesTransactionID)

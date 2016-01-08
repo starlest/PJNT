@@ -36,7 +36,6 @@
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransactionID}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total}" />
                 <DataGridTextColumn Header="Customer" Width="1*" IsReadOnly="True" Binding="{Binding Customer.Name}" />
-                <DataGridTextColumn Header="Salesman" Width="1*" IsReadOnly="True" Binding="{Binding Salesman.Name}" />
                 <DataGridTextColumn Header="User" Width="1*" IsReadOnly="True" Binding="{Binding User.Username}" />
             </DataGrid.Columns>
         </DataGrid>

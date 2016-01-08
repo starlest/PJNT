@@ -112,8 +112,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             set { SetProperty(ref _total, value, "Total"); }
         }
 
-        // ------------------------------- New Entry Properties ------------------------------- //
-
+        #region New Entry Properties
         public DateTime NewEntryDate
         {
             get { return _newEntryDate; }
@@ -194,19 +193,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                 }));
             }
         }
+        #endregion
 
-        private void ResetEntryFields()
-        {
-            UpdateAccounts();
-            NewEntryDate = DateTime.Now.Date;
-            NewEntryAccount = null;
-            NewEntryDescription = null;
-            NewEntryAmount = null;
-            NewEntryPaymentMode = null;
-        }
-
-        // ------------------------------------------------------------------------------------ //
-
+        #region Helper Methods
         private void UpdateAccounts()
         {
             _accounts.Clear();
@@ -220,6 +209,17 @@ namespace PutraJayaNT.ViewModels.Accounting
                 foreach (var account in operatingExpenseAccounts)
                     _accounts.Add(new LedgerAccountVM { Model = account });     
             }
+        }
+
+
+        private void ResetEntryFields()
+        {
+            UpdateAccounts();
+            NewEntryDate = DateTime.Now.Date;
+            NewEntryAccount = null;
+            NewEntryDescription = null;
+            NewEntryAmount = null;
+            NewEntryPaymentMode = null;
         }
 
         private void UpdateDisplayTransactions()
@@ -244,5 +244,6 @@ namespace PutraJayaNT.ViewModels.Accounting
                 }                  
             }
         }
+        #endregion
     }
 }

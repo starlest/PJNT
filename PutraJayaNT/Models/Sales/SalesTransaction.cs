@@ -19,8 +19,6 @@ namespace PutraJayaNT.Models.Sales
 
         public virtual Customer Customer { get; set; }
 
-        public virtual Salesman Salesman { get; set; }
-
         public virtual User User { get; set; }
 
         public decimal GrossTotal { get; set; }

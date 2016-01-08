@@ -1,0 +1,39 @@
+﻿namespace PutraJayaNT.ViewModels.Salesman
+{
+    using Models.Inventory;
+    using MVVMFramework;
+    using PutraJayaNT.Models.Salesman;
+
+    class SalesCommissionVM : ViewModelBase<SalesCommission>
+    {
+        public Salesman Salesman
+        {
+            get { return Model.Salesman; }
+            set
+            {
+                Model.Salesman = value;
+                OnPropertyChanged("Salesman");
+            }
+        }
+
+        public Category Category
+        {
+            get { return Model.Category; }
+            set
+            {
+                Model.Category = value;
+                OnPropertyChanged("Category");
+            }
+        }
+
+        public decimal Percentage
+        {
+            get { return Model.Percentage; }
+            set
+            {
+                Model.Percentage = value;
+                OnPropertyChanged("Percentage");
+            }
+        }
+    }
+}

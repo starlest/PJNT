@@ -1,6 +1,7 @@
 namespace PutraJayaNT.Models.Sales
 {
     using Inventory;
+    using PutraJayaNT.Models.Salesman;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -52,5 +53,12 @@ namespace PutraJayaNT.Models.Sales
 
         [ForeignKey("SalesTransactionID")]
         public virtual SalesTransaction SalesTransaction { get; set; }
+
+        [ForeignKey("Salesman")]
+        [Column("Salesman_ID")]
+        public int Salesman_ID { get; set; }
+
+
+        public virtual Salesman Salesman { get; set; }
     }
 }
