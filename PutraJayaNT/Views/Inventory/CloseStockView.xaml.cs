@@ -1,24 +1,24 @@
 ﻿using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Accounting;
+using PutraJayaNT.ViewModels.Inventory;
 using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PutraJayaNT.Views.Accounting
+namespace PutraJayaNT.Views.Inventory
 {
     /// <summary>
-    /// Interaction logic for ClosingView.xaml
+    /// Interaction logic for CloseStockView.xaml
     /// </summary>
-    public partial class ClosingView : UserControl
+    public partial class CloseStockView : UserControl
     {
-        ClosingVM vm;
+        CloseStockVM vm;
 
-        public ClosingView()
+        public CloseStockView()
         {
             InitializeComponent();
-            vm = new ClosingVM();
+            vm = new CloseStockVM();
             DataContext = vm;
         }
 
@@ -31,7 +31,7 @@ namespace PutraJayaNT.Views.Accounting
 
             if (DateTime.Now.AddDays(1).Day != 1 && DateTime.Now.Hour < 5)
             {
-                MessageBox.Show("Unable to close books at this time.", "Failed to Close Books", MessageBoxButton.OK);
+                MessageBox.Show("Unable to close books at this time.", "Failed to Close Stock", MessageBoxButton.OK);
                 return;
             }
 

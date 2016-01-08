@@ -17,6 +17,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         decimal _cashAndCashEquivalents;
         decimal _inventory;
+        decimal _accountsReceivable;
         decimal _totalCurrentAssets;
         decimal _totalAssets;
 
@@ -33,7 +34,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             _months = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
             _periodYear = DateTime.Now.Year;
-            _periodMonth = DateTime.Now.Month - 1;
+            _periodMonth = DateTime.Now.Month;
         }
 
         public List<int> Months
@@ -75,7 +76,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                     var equivalents = context.Ledger_Accounts
                         .Where(e => e.Name == "Cash" || e.Name.Contains("Bank"))
-                        .Include("LedgerAccountBalance")
+                        .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .ToList();
 
@@ -97,7 +98,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                     var Inventory = context.Ledger_Accounts
                         .Where(e => e.Name == "Inventory")
-                        .Include("LedgerAccountBalance")
+                        .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .FirstOrDefault();
 
@@ -108,12 +109,34 @@ namespace PutraJayaNT.ViewModels.Accounting
             }
         }
 
+        public decimal AccountsReceivable
+        {
+            get
+            {
+                using (var context = new ERPContext())
+                {
+                    _accountsReceivable = 0;
+
+                    var accountsReceivable = context.Ledger_Accounts
+                        .Where(e => e.Name.Contains("Accounts Receivable"))
+                        .Include("LedgerAccountBalances")
+                        .Include("LedgerGeneral")
+                        .ToList();
+
+                    foreach (var account in accountsReceivable)
+                        _accountsReceivable += FindCurrentBalance(account);
+
+                    return _accountsReceivable;
+                }
+            }
+        }
+
         public decimal TotalCurrentAssets
         {
             get
             {
                 _totalCurrentAssets = 0;
-                _totalCurrentAssets = _cashAndCashEquivalents + _inventory;
+                _totalCurrentAssets = _cashAndCashEquivalents + _inventory + _accountsReceivable;
 
                 return _totalCurrentAssets;
             }
@@ -138,7 +161,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                     var capital = context.Ledger_Accounts
                         .Where(e => e.Name == "Capital")
-                        .Include("LedgerAccountBalance")
+                        .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .FirstOrDefault();
 
@@ -159,7 +182,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                     var retainedEarnings = context.Ledger_Accounts
                         .Where(e => e.Name == "Retained Earnings")
-                        .Include("LedgerAccountBalance")
+                        .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .FirstOrDefault();
 
@@ -198,7 +221,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                     var accountsPayable = context.Ledger_Accounts
                         .Where(e => e.Name.Contains("Accounts Payable"))
-                        .Include("LedgerAccountBalance")
+                        .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .ToList();
 
@@ -241,31 +264,32 @@ namespace PutraJayaNT.ViewModels.Accounting
         private decimal FindCurrentBalance(LedgerAccount account)
         {
             var period = _periodMonth;
+            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(DateTime.Now.Year)).FirstOrDefault();
 
             if (period == 1)
-                return account.LedgerAccountBalance.Balance1;
+                return periodYearBalances.Balance1;
             else if (period == 2)
-                return account.LedgerAccountBalance.Balance2;
+                return periodYearBalances.Balance2;
             else if (period == 3)
-                return account.LedgerAccountBalance.Balance3;
+                return periodYearBalances.Balance3;
             else if (period == 4)
-                return account.LedgerAccountBalance.Balance4;
+                return periodYearBalances.Balance4;
             else if (period == 5)
-                return account.LedgerAccountBalance.Balance5;
+                return periodYearBalances.Balance5;
             else if (period == 6)
-                return account.LedgerAccountBalance.Balance6;
+                return periodYearBalances.Balance6;
             else if (period == 7)
-                return account.LedgerAccountBalance.Balance7;
+                return periodYearBalances.Balance7;
             else if (period == 8)
-                return account.LedgerAccountBalance.Balance8;
+                return periodYearBalances.Balance8;
             else if (period == 9)
-                return account.LedgerAccountBalance.Balance9;
+                return periodYearBalances.Balance9;
             else if (period == 10)
-                return account.LedgerAccountBalance.Balance10;
+                return periodYearBalances.Balance10;
             else if (period == 11)
-                return account.LedgerAccountBalance.Balance11;
+                return periodYearBalances.Balance11;
             else
-                return account.LedgerAccountBalance.Balance12;
+                return periodYearBalances.Balance12;
         }
     }
 }

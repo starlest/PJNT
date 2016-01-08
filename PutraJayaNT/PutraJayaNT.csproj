@@ -105,6 +105,10 @@
     <Compile Include="Migrations\201601070130385_Update1.Designer.cs">
       <DependentUpon>201601070130385_Update1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601070807243_Update2.cs" />
+    <Compile Include="Migrations\201601070807243_Update2.Designer.cs">
+      <DependentUpon>201601070807243_Update2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransactionLine.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransaction.cs" />
@@ -169,7 +173,7 @@
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
     <Compile Include="ViewModels\Customers\BrowseSalesTransactionsVM.cs" />
-    <Compile Include="ViewModels\Customers\CollectionVM.cs" />
+    <Compile Include="ViewModels\Customers\PaymentListVM.cs" />
     <Compile Include="ViewModels\Customers\SalesPaymentVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturnTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturnTransactionVM.cs" />
@@ -178,6 +182,7 @@
     <Compile Include="ViewModels\CustomerVM.cs" />
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionLineVM.cs" />
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionVM.cs" />
+    <Compile Include="ViewModels\Inventory\CloseStockVM.cs" />
     <Compile Include="ViewModels\Inventory\MoveStockVM.cs" />
     <Compile Include="ViewModels\ItemVM.cs" />
     <Compile Include="ViewModels\LedgerAccountVM.cs" />
@@ -193,6 +198,7 @@
     <Compile Include="ViewModels\Reports\StockBalanceLineVM.cs" />
     <Compile Include="ViewModels\Reports\StockBalancesReportVM.cs" />
     <Compile Include="ViewModels\SalesmanVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PaymentListVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchasePaymentVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionLineVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionVM.cs" />
@@ -222,8 +228,8 @@
     <Compile Include="Views\Customers\BrowseSalesTransactionsView.xaml.cs">
       <DependentUpon>BrowseSalesTransactionsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Customers\CollectionView.xaml.cs">
-      <DependentUpon>CollectionView.xaml</DependentUpon>
+    <Compile Include="Views\Customers\PaymentListView.xaml.cs">
+      <DependentUpon>PaymentListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Customers\PaymentView.xaml.cs">
       <DependentUpon>PaymentView.xaml</DependentUpon>
@@ -233,6 +239,9 @@
     </Compile>
     <Compile Include="Views\Customers\SalesTransactionView.xaml.cs">
       <DependentUpon>SalesTransactionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Inventory\CloseStockView.xaml.cs">
+      <DependentUpon>CloseStockView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Inventory\MoveStockView.xaml.cs">
       <DependentUpon>MoveStockView.xaml</DependentUpon>
@@ -272,6 +281,9 @@
     </Compile>
     <Compile Include="Views\Reports\StockBalancesReportView.xaml.cs">
       <DependentUpon>StockBalancesReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\PaymentListView.xaml.cs">
+      <DependentUpon>PaymentListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Suppliers\PaymentView.xaml.cs">
       <DependentUpon>PaymentView.xaml</DependentUpon>
@@ -343,7 +355,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Customers\CollectionView.xaml">
+    <Page Include="Views\Customers\PaymentListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -358,6 +370,10 @@
     <Page Include="Views\Customers\SalesTransactionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Inventory\CloseStockView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Inventory\MoveStockView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -411,6 +427,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Suppliers\PaymentListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Suppliers\PaymentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -449,6 +469,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201601070130385_Update1.resx">
       <DependentUpon>201601070130385_Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601070807243_Update2.resx">
+      <DependentUpon>201601070807243_Update2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\CollectionReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

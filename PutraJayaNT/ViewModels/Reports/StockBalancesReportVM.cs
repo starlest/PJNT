@@ -127,7 +127,7 @@ namespace PutraJayaNT.ViewModels.Reports
                 var purchaseLines = context.PurchaseTransactionLines
                     .Include("PurchaseTransaction")
                     .Include("PurchaseTransaction.Supplier")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.PurchaseTransaction.Date >= _fromDate && e.PurchaseTransaction.Date <= _toDate)
+                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.PurchaseTransaction.Date >= _fromDate && e.PurchaseTransaction.Date <= _toDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
                     .ToList();
 
                 var purchaseReturnLines = context.PurchaseReturnTransactionLines
@@ -146,6 +146,11 @@ namespace PutraJayaNT.ViewModels.Reports
                     .Include("SalesReturnTransaction")
                     .Include("SalesReturnTransaction.SalesTransaction.Customer")
                     .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.SalesReturnTransaction.Date >= _fromDate && e.SalesReturnTransaction.Date <= _toDate)
+                    .ToList();
+
+                var stockAdjustmentLines = context.AdjustStockTransactionLines
+                    .Include("AdjustStockTransaction")
+                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.AdjustStockTransaction.Date >= _fromDate && e.AdjustStockTransaction.Date <= _toDate)
                     .ToList();
 
                 foreach (var line in purchaseLines)
@@ -207,6 +212,22 @@ namespace PutraJayaNT.ViewModels.Reports
                         Description = "Sales Return",
                         CustomerSupplier = line.SalesReturnTransaction.SalesTransaction.Customer.Name,
                         Amount = +line.Quantity,
+                        Balance = balance
+                    };
+                    _lines.Add(vm);
+                }
+
+                foreach (var line in stockAdjustmentLines)
+                {
+                    balance += line.Quantity;
+                    var vm = new StockBalanceLineVM
+                    {
+                        Item = line.Item,
+                        Date = line.AdjustStockTransaction.Date,
+                        Documentation = line.AdjustStockTransaction.AdjustStrockTransactionID,
+                        Description = "Stock Adjustment",
+                        CustomerSupplier = "",
+                        Amount = line.Quantity,
                         Balance = balance
                     };
                     _lines.Add(vm);
@@ -293,7 +314,7 @@ namespace PutraJayaNT.ViewModels.Reports
                 var purchaseLines = context.PurchaseTransactionLines
                     .Include("PurchaseTransaction")
                     .Include("PurchaseTransaction.Supplier")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date < fromDate)
+                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date < fromDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
                     .ToList();
 
                 var purchaseReturnLines = context.PurchaseReturnTransactionLines
@@ -314,6 +335,11 @@ namespace PutraJayaNT.ViewModels.Reports
                     .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.SalesReturnTransaction.Date >= monthDate && e.SalesReturnTransaction.Date < fromDate)
                     .ToList();
 
+                var stockAdjustmentLines = context.AdjustStockTransactionLines
+                    .Include("AdjustStockTransaction")
+                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date <= fromDate)
+                    .ToList();
+
                 foreach (var line in purchaseLines)
                     balance += line.Quantity;
 
@@ -324,6 +350,9 @@ namespace PutraJayaNT.ViewModels.Reports
                     balance -= line.Quantity;
 
                 foreach (var line in salesReturnLines)
+                    balance += line.Quantity;
+
+                foreach (var line in stockAdjustmentLines)
                     balance += line.Quantity;
             }
 

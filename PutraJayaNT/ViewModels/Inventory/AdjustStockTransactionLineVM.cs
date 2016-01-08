@@ -9,7 +9,7 @@ namespace PutraJayaNT.ViewModels.Inventory
         int _units;
         int _pieces;
 
-        public AdjustStockTransaction DecreaseStockTransaction
+        public AdjustStockTransaction AdjustStockTransaction
         {
             get { return Model.AdjustStockTransaction; }
         }

@@ -47,7 +47,7 @@
                          IsReadOnly="True" Text="{Binding SelectedBeginningBalance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" LoadingRow="DataGrid_LoadingRow"  ItemsSource="{Binding DisplayTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>

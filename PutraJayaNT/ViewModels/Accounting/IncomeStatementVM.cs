@@ -1,6 +1,7 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -25,8 +26,8 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             _months = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            _month = 5;
-            _year = 2015;
+            _month = DateTime.Now.Month;
+            _year = DateTime.Now.Year;
         }
 
         public string ForTheDate
@@ -60,7 +61,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     var revenues = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Sales Revenue"))
                         .Include("LedgerGeneral")
-                        .Include("LedgerAccountBalance")
+                        .Include("LedgerAccountBalances")
                         .FirstOrDefault();
 
                     _revenues += FindCurrentBalance(revenues);
@@ -81,7 +82,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     var salesReturnsAndAllowancesAccount = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Sales Returns and Allowances"))
                         .Include("LedgerGeneral")
-                        .Include("LedgerAccountBalance")
+                        .Include("LedgerAccountBalances")
                         .FirstOrDefault();
 
                     _salesReturnsAndAllowances += FindCurrentBalance(salesReturnsAndAllowancesAccount);
@@ -102,7 +103,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     var cogsAccount = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Cost of Goods Sold"))
                         .Include("LedgerGeneral")
-                        .Include("LedgerAccountBalance")
+                        .Include("LedgerAccountBalances")
                         .FirstOrDefault();
 
                     _costOfGoodsSold += FindCurrentBalance(cogsAccount);
@@ -132,7 +133,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     var operatingExpenseAccounts = context.Ledger_Accounts
                         .Where(e => e.Notes.Contains("Operating Expense"))
                         .Include("LedgerGeneral")
-                        .Include("LedgerAccountBalance");
+                        .Include("LedgerAccountBalances");
 
                     foreach (var account in operatingExpenseAccounts)
                         _operatingExpenses += FindCurrentBalance(account);
@@ -165,31 +166,32 @@ namespace PutraJayaNT.ViewModels.Accounting
         private decimal FindCurrentBalance(LedgerAccount account)
         {
             var period = _month;
+            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(_year)).FirstOrDefault();
 
             if (period == 1)
-                return account.LedgerAccountBalance.Balance1;
+                return periodYearBalances.Balance1;
             else if (period == 2)
-                return account.LedgerAccountBalance.Balance2;
+                return periodYearBalances.Balance2;
             else if (period == 3)
-                return account.LedgerAccountBalance.Balance3;
+                return periodYearBalances.Balance3;
             else if (period == 4)
-                return account.LedgerAccountBalance.Balance4;
+                return periodYearBalances.Balance4;
             else if (period == 5)
-                return account.LedgerAccountBalance.Balance5;
+                return periodYearBalances.Balance5;
             else if (period == 6)
-                return account.LedgerAccountBalance.Balance6;
+                return periodYearBalances.Balance6;
             else if (period == 7)
-                return account.LedgerAccountBalance.Balance7;
+                return periodYearBalances.Balance7;
             else if (period == 8)
-                return account.LedgerAccountBalance.Balance8;
+                return periodYearBalances.Balance8;
             else if (period == 9)
-                return account.LedgerAccountBalance.Balance9;
+                return periodYearBalances.Balance9;
             else if (period == 10)
-                return account.LedgerAccountBalance.Balance10;
+                return periodYearBalances.Balance10;
             else if (period == 11)
-                return account.LedgerAccountBalance.Balance11;
+                return periodYearBalances.Balance11;
             else
-                return account.LedgerAccountBalance.Balance12;
+                return periodYearBalances.Balance12;
         }
     }
 }

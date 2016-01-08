@@ -1,6 +1,8 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Accounting;
+using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Purchase;
 using PutraJayaNT.Models.StockCorrection;
 using PutraJayaNT.Utilities;
 using System;
@@ -33,6 +35,8 @@ namespace PutraJayaNT.ViewModels.Inventory
         int? _newEntryPiecesPerUnit;
         int? _newEntryUnits;
         int? _newEntryPieces;
+        int _remainingStock;
+        string _newEntryRemainingStock;
         ICommand _newEntryCommand;
         #endregion
 
@@ -80,8 +84,15 @@ namespace PutraJayaNT.ViewModels.Inventory
             get { return _newTransactionID; }
             set
             {
+                if (!CheckIDExists(value))
+                {
+                    MessageBox.Show("Transaction does not exists.", "Invalid ID", MessageBoxButton.OK);
+                    return;
+                }
+
                 SetProperty(ref _newTransactionID, value, "NewTransactionID");
-                IsNotEditMode = false;
+
+                SetEditMode();
             }
         }
 
@@ -117,45 +128,130 @@ namespace PutraJayaNT.ViewModels.Inventory
                     {
                         var context = new ERPContext();
 
+                        var user = App.Current.TryFindResource("CurrentUser") as User;
+                        var _user = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
+
+                        var newPurchaseTransaction = new PurchaseTransaction
+                        {
+                            PurchaseID = _newTransactionID,
+                            Supplier = context.Suppliers.Where(e => e.Name.Equals("-")).FirstOrDefault(),
+                            Date = DateTime.Now.Date,
+                            DueDate = DateTime.Now.Date,
+                            Discount = 0,
+                            GrossTotal = 0,
+                            Total = 0,
+                            Paid = 0,
+                            User = _user,
+                            PurchaseTransactionLines = new ObservableCollection<PurchaseTransactionLine>()
+                        };
+
                         decimal cogs = 0;
+
+                        var decreaseAdjustment = false;
+                        var increaseAdjustment = false;
 
                         // Add each line to the transaction
                         foreach (var line in _lines)
                         {
+
                             line.Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
                             line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
                             Model.AdjustStockTransactionLines.Add(line.Model);
 
-                            // Decrease the stock for this item in the corresponding warehouse
-                            var stock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID)).FirstOrDefault();
-                            stock.Pieces -= line.Quantity;
-                            if (stock.Pieces == 0) context.Stocks.Remove(stock);
+                            if (line.Quantity < 0)
+                            {
+                                decreaseAdjustment = true;
 
-                            // Increase SoldOrReturned for this item
-                            var purchaseLine = context.PurchaseTransactionLines
-                            .Include("PurchaseTransaction")
-                            .Where(e => e.ItemID.Equals(line.Item.ItemID) && e.SoldOrReturned < e.Quantity)
-                            .OrderBy(e => e.PurchaseTransactionID)
-                            .FirstOrDefault();
-                            purchaseLine.SoldOrReturned += line.Quantity;
+                                // Decrease the stock for this item in the corresponding warehouse
+                                var stock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                                stock.Pieces += line.Quantity;
+                                if (stock.Pieces == 0) context.Stocks.Remove(stock);
 
-                            var purchaseLineNetTotal = (purchaseLine.PurchasePrice - purchaseLine.Discount) * line.Quantity;
-                            var fractionOfTransactionDiscount = (line.Quantity * purchaseLineNetTotal / purchaseLine.PurchaseTransaction.GrossTotal) * purchaseLine.PurchaseTransaction.Discount;
-                            cogs += purchaseLineNetTotal - fractionOfTransactionDiscount;
+                                // Increase SoldOrReturned for this item and COGS
+                                var purchases = context.PurchaseTransactionLines
+                                .Include("PurchaseTransaction")
+                                .Where(e => e.ItemID.Equals(line.Item.ItemID) && e.SoldOrReturned < e.Quantity)
+                                .OrderBy(e => e.PurchaseTransactionID)
+                                .ToList();
+
+                                var tracker = -line.Quantity;
+
+                                foreach (var purchase in purchases)
+                                {
+                                    var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
+                                    var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
+
+                                    if (tracker <= availableQuantity)
+                                    {
+                                        var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                                        cogs += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount;
+                                        purchase.SoldOrReturned += tracker;
+                                        break;
+                                    }
+                                    else if (tracker > availableQuantity)
+                                    {
+                                        var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                                        cogs += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount;
+                                        purchase.SoldOrReturned += availableQuantity;
+                                        tracker -= availableQuantity;
+                                    }
+                                }
+                            }
+
+                            else
+                            {
+                                increaseAdjustment = true;
+
+                                // Increase the stock for this item in the corresponding warehouse
+                                var stock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                                if (stock == null)
+                                {
+                                    var newStock = new Stock
+                                    {
+                                        Item = line.Item,
+                                        Warehouse = line.Warehouse,
+                                        Pieces = line.Quantity
+                                    };
+
+                                    context.Stocks.Add(newStock);
+                                }
+                                stock.Pieces += line.Quantity;
+
+                                // Add the line into the new purchase transaction
+                                var l = new PurchaseTransactionLine
+                                {
+                                    PurchaseTransaction = newPurchaseTransaction,
+                                    Item = line.Item,
+                                    Warehouse = line.Warehouse,
+                                    PurchasePrice = 0,
+                                    Discount = 0,
+                                    Quantity = line.Quantity,
+                                    Total = 0,
+                                    SoldOrReturned = 0
+                                };
+                                newPurchaseTransaction.PurchaseTransactionLines.Add(l);
+                            }
                         }
 
                         // Add the transaction to the database
                         Model.Date = DateTime.Now.Date;
-                        var user = App.Current.TryFindResource("CurrentUser") as User;
-                        if (user != null) Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
-                        context.DecreaseStockTransactions.Add(Model);
+                        Model.User = _user;
+                        context.AdjustStockTransactions.Add(Model);
 
                         // Add the journal entries for this transaction
-                        var transaction = new LedgerTransaction();
-                        LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, Model.AdjustStrockTransactionID, "Stock Adjustment");
-                        context.SaveChanges();
-                        LedgerDBHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
-                        LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);
+                        if (decreaseAdjustment)
+                        {
+                            var transaction = new LedgerTransaction();
+                            LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, Model.AdjustStrockTransactionID, "Stock Adjustment (Decrement)");
+                            context.SaveChanges();
+                            LedgerDBHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
+                            LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);
+                        }
+
+                        if (increaseAdjustment)
+                        {
+                            context.PurchaseTransactions.Add(newPurchaseTransaction);
+                        }
 
                         context.SaveChanges();
                         ts.Complete();
@@ -193,6 +289,8 @@ namespace PutraJayaNT.ViewModels.Inventory
 
                 NewEntryUnitName = _newEntryProduct.UnitName;
                 NewEntryPiecesPerUnit = _newEntryProduct.PiecesPerUnit;
+                _remainingStock = UtilityMethods.GetRemainingStock(_newEntryProduct.Model, _newEntryWarehouse.Model);
+                NewEntryRemainingStock = (_remainingStock / _newEntryProduct.PiecesPerUnit) + "/" + (_remainingStock % _newEntryProduct.PiecesPerUnit);
             }
         }
 
@@ -220,6 +318,12 @@ namespace PutraJayaNT.ViewModels.Inventory
             set { SetProperty(ref _newEntryPieces, value, "NewEntryPieces"); }
         }
 
+        public string NewEntryRemainingStock
+        {
+            get { return _newEntryRemainingStock; }
+            set { SetProperty(ref _newEntryRemainingStock, value, "NewEntryRemainingStock"); }
+        }
+
         public ICommand NewEntryCommand
         {
             get
@@ -230,6 +334,13 @@ namespace PutraJayaNT.ViewModels.Inventory
                     (_newEntryUnits == null && _newEntryPieces == null)) 
                     {
                         MessageBox.Show("Please enter all fields.", "Missing Field(s)", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    var quantity = (_newEntryPieces == null ? 0 : (int)_newEntryPieces) + ((_newEntryUnits == null ? 0 : (int)_newEntryUnits) * _newEntryProduct.PiecesPerUnit);
+                    if (quantity < 0 && -quantity > _remainingStock)
+                    {
+                        MessageBox.Show("There is not enough stock.", "Insufficient Stock", MessageBoxButton.OK);
                         return;
                     }
 
@@ -245,7 +356,6 @@ namespace PutraJayaNT.ViewModels.Inventory
                         }
                     }
 
-                    var quantity = (_newEntryPieces == null ? 0 : (int)_newEntryPieces) + ((_newEntryUnits == null ? 0 : (int)_newEntryUnits) * _newEntryProduct.PiecesPerUnit);
                     var newEntry = new AdjustStockTransactionLineVM
                     {
                         Model = new AdjustStockTransactionLine
@@ -294,23 +404,50 @@ namespace PutraJayaNT.ViewModels.Inventory
             }
         }
 
+        private bool CheckIDExists(string id)
+        {
+            using (var context = new ERPContext())
+            {
+                var transaction = context.AdjustStockTransactions.Where(e => e.AdjustStrockTransactionID.Equals(id)).FirstOrDefault();
+                return transaction != null;
+            }
+        }
+        private void SetEditMode()
+        {
+            IsNotEditMode = false;
+            ResetEntryFields();
+            _lines.Clear();
+
+            using (var context = new ERPContext())
+            {
+                var lines = context.AdjustStockTransactionLines
+                    .Include("Item")
+                    .Include("Warehouse")
+                    .Where(e => e.AdjustStockTransactionID.Equals(_newTransactionID))
+                    .ToList();
+
+                foreach (var line in lines)
+                    _lines.Add(new AdjustStockTransactionLineVM { Model = line });
+            }
+        }
+
         private void SetTransactionID()
         {
             var month = DateTime.Now.Month;
             var year = DateTime.Now.Year;
-            _newTransactionID = "DS" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
+            _newTransactionID = "SA" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
 
             string lastTransactionID = null;
             using (var context = new ERPContext())
             {
-                var IDs = (from DecreaseStockTransaction in context.DecreaseStockTransactions
+                var IDs = (from DecreaseStockTransaction in context.AdjustStockTransactions
                            where DecreaseStockTransaction.AdjustStrockTransactionID.CompareTo(_newTransactionID) >= 0
                            orderby DecreaseStockTransaction.AdjustStrockTransactionID descending
                            select DecreaseStockTransaction.AdjustStrockTransactionID);
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
-            if (lastTransactionID != null) _newTransactionID = "DS" + (Convert.ToInt64(lastTransactionID.Substring(2)) + 1).ToString();
+            if (lastTransactionID != null) _newTransactionID = "SA" + (Convert.ToInt64(lastTransactionID.Substring(2)) + 1).ToString();
 
             Model.AdjustStrockTransactionID = _newTransactionID;
             OnPropertyChanged("NewTransactionID");
@@ -323,6 +460,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             NewEntryPiecesPerUnit = null;
             NewEntryUnits = null;
             NewEntryPieces = null;
+            NewEntryRemainingStock = null;
         }
 
         private void ResetTransaction()

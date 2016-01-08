@@ -575,7 +575,18 @@ namespace PutraJayaNT.ViewModels.Suppliers
                            where PurchaseTransaction.PurchaseID.CompareTo(_newTransactionID.ToString()) >= 0
                            orderby PurchaseTransaction.PurchaseID descending
                            select PurchaseTransaction.PurchaseID);
-                if (IDs.Count() != 0) lastEntryID = IDs.First();
+                if (IDs.Count() != 0)
+                {
+                    foreach (var id in IDs)
+                    {
+                        if (id.Substring(0, 2) == "SA") continue;
+                        else
+                        {
+                            lastEntryID = id;
+                            break;
+                        }
+                    }
+                } 
             }
 
             if (lastEntryID != null) _newTransactionID = "P" + (Convert.ToInt64(lastEntryID.Substring(1)) + 1).ToString();

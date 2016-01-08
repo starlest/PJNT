@@ -26,7 +26,7 @@ namespace PutraJayaNT.Models.Accounting
 
         public virtual LedgerGeneral LedgerGeneral { get; set; }
 
-        public virtual LedgerAccountBalance LedgerAccountBalance { get; set; }
+        public virtual ObservableCollection<LedgerAccountBalance> LedgerAccountBalances { get; set; }
 
         public virtual ObservableCollection<LedgerTransactionLine> TransactionLines { get; set; }
     }

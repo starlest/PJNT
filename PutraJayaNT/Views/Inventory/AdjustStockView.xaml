@@ -24,7 +24,7 @@
             <Button Content="New" Command="{Binding NewTransactionCommand}" />
             <Button Grid.Column="7" Content="Confirm" Command="{Binding ConfirmTransactionCommand}" IsEnabled="{Binding IsNotEditMode}" />
         </Grid>
-        <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="1" IsEnabled="{Binding IsNotEditMode}">
+        <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="1">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -47,16 +47,16 @@
                 <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Warehouse:" FontSize="28" />
                 <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                           ItemsSource="{Binding Warehouses, Mode=OneWay}" SelectedItem="{Binding NewEntryWarehouse}"
-                          DisplayMemberPath="Name" IsEditable="True" />
+                          DisplayMemberPath="Name" IsEditable="True"  IsEnabled="{Binding IsNotEditMode}"/>
                 <TextBlock Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Product ID:" FontSize="28" />
                 <ComboBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                           ItemsSource="{Binding Products, Mode=OneWay}" SelectedItem="{Binding NewEntryProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                          DisplayMemberPath="ID" IsEditable="True" />
+                          DisplayMemberPath="ID" IsEditable="True"  IsEnabled="{Binding IsNotEditMode}" />
                 <TextBlock Grid.Column="6" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Product:" FontSize="28" />
                 <ComboBox Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                           ItemsSource="{Binding Products, Mode=OneWay}" SelectedItem="{Binding NewEntryProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                          DisplayMemberPath="Name" IsEditable="True" />
-                <Grid Grid.Column="8">
+                          DisplayMemberPath="Name" IsEditable="True"  IsEnabled="{Binding IsNotEditMode}"/>
+                <Grid Grid.Column="8" IsEnabled="{Binding IsNotEditMode}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
@@ -67,7 +67,7 @@
                      Text="{Binding NewEntryPiecesPerUnit}" IsReadOnly="True" IsTabStop="False" />
                 </Grid>
                 <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Units/Pieces:" />
-                <Grid Grid.Row="1" Grid.Column="1">
+                <Grid Grid.Row="1" Grid.Column="1" IsEnabled="{Binding IsNotEditMode}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
@@ -77,11 +77,12 @@
                     <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
                      Text="{Binding NewEntryPieces}" />
                 </Grid>
-                <Button Grid.Row="1" Grid.Column="8" Margin="10" Content="Enter" Command="{Binding NewEntryCommand}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" Text="{Binding NewEntryRemainingStock}" Foreground="Red" />
+                <Button Grid.Row="1" Grid.Column="8" Margin="10" Content="Enter" Command="{Binding NewEntryCommand}" IsEnabled="{Binding IsNotEditMode}" />
             </Grid>
         </Border>
         <DataGrid Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" Grid.Row="2" ItemsSource="{Binding Lines}" 
-                  CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False" 
+                  CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   IsEnabled="{Binding IsNotEditMode}" >

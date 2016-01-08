@@ -102,11 +102,11 @@
             <TextBlock Grid.Row="22" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Other Assets and Deferred Charges" />
             <TextBlock Grid.Row="25" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Total Assets" />
 
-            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding CashAndCashEquivalents}" />
-            <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
-            <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding Inventories}" />
+            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding CashAndCashEquivalents, StringFormat=N2}" />
+            <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding AccountsReceivable, StringFormat=N2}" />
+            <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding Inventory, StringFormat=N2}" />
             <TextBlock Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
-            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding TotalCurrentAssets}" />
+            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding TotalCurrentAssets, StringFormat=N2}" />
 
             <TextBlock Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
             <TextBlock Grid.Row="10" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
@@ -122,7 +122,7 @@
             
             <TextBlock Grid.Row="22" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
 
-            <TextBlock Grid.Row="25" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Foreground="Red" Text="{Binding TotalAssets}" />
+            <TextBlock Grid.Row="25" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Foreground="Red" Text="{Binding TotalAssets, StringFormat=N2}" />
         </Grid>
         <Grid Grid.Row="2" Grid.Column="2">
             <Grid.RowDefinitions>
@@ -174,19 +174,19 @@
             <TextBlock Grid.Row="16" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Total Shareholders' Equity" />
             <TextBlock Grid.Row="25" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Total Liabilities and Shareholders' Equity" />
 
-            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding AccountsPayable}" />
+            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding AccountsPayable, StringFormat=N2}" />
             <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
             <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
             <TextBlock Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
             <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
-            <TextBlock Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding TotalCurrentLiabilities}" />
+            <TextBlock Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding TotalCurrentLiabilities, StringFormat=N2}" />
 
-            <TextBlock Grid.Row="13" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding Capital}" />
+            <TextBlock Grid.Row="13" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding Capital, StringFormat=N2}" />
             <TextBlock Grid.Row="14" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="0.00" />
-            <TextBlock Grid.Row="15" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding RetainedEarnings}" />
-            <TextBlock Grid.Row="16" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding TotalEquity}" />
+            <TextBlock Grid.Row="15" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding RetainedEarnings, StringFormat=N2}" />
+            <TextBlock Grid.Row="16" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding TotalEquity, StringFormat=N2}" />
 
-            <TextBlock Grid.Row="25" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Foreground="Red" Text="{Binding TotalLiabilitiesAndEquity}" />
+            <TextBlock Grid.Row="25" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Foreground="Red" Text="{Binding TotalLiabilitiesAndEquity, StringFormat=N2}" />
         </Grid>
     </Grid>
 </UserControl>

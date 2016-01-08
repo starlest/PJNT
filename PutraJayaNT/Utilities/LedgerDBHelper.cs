@@ -12,7 +12,7 @@ namespace PutraJayaNT.Utilities
         public static void AddTransaction(ERPContext context, LedgerTransaction transaction, DateTime date, string documentation, string description)
         {
             transaction.Documentation = documentation;
-            transaction.Date = date;
+            transaction.Date = DateTime.Now.Date;
             transaction.Description = description;
             var user = App.Current.TryFindResource("CurrentUser") as User;
             if (user != null) transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();

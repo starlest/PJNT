@@ -25,8 +25,8 @@
         <mui:LinkGroup DisplayName="Customers">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Sales Transaction" Source="/Views/Customers/SalesTransactionView.xaml" />
-                <mui:Link DisplayName="Collection" Source="/Views/Customers/CollectionView.xaml" />
                 <mui:Link DisplayName="Payment" Source="/Views/Customers/PaymentView.xaml" />
+                <mui:Link DisplayName="Payment List" Source="/Views/Customers/PaymentListView.xaml" />
                 <mui:Link DisplayName="Sales Return" Source="/Views/Customers/SalesReturnView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
@@ -34,6 +34,7 @@
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Purchase Transaction" Source="/Views/Suppliers/PurchaseTransactionView.xaml" />
                 <mui:Link DisplayName="Payment" Source="/Views/Suppliers/PaymentView.xaml" />
+                <mui:Link DisplayName="Payment List" Source="/Views/Suppliers/PaymentListView.xaml" />
                 <mui:Link DisplayName="Purchase Return" Source="/Views/Suppliers/PurchaseReturnView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
@@ -41,6 +42,7 @@
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Move Stock" Source="/Views/Inventory/MoveStockView.xaml" />
                 <mui:Link DisplayName="Adjust Stock" Source="/Views/Inventory/AdjustStockView.xaml" />
+                <mui:Link DisplayName="Close Stock" Source="/Views/Inventory/CloseStockView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Reports">

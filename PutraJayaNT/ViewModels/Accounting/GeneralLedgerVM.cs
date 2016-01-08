@@ -137,7 +137,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var selectedAccount = context.Ledger_Accounts
                     .Where(e => e.Name == _selectedAccount)
                     .Include("LedgerGeneral")
-                    .Include("LedgerAccountBalance")
+                    .Include("LedgerAccountBalances")
                     .FirstOrDefault();
 
                 _selectedAccountVM = new LedgerAccountVM { Model = selectedAccount };
@@ -147,44 +147,46 @@ namespace PutraJayaNT.ViewModels.Accounting
                 if (_selectedClass == "Asset" || _selectedClass == "Expense") _normalSeq = "Debit";
                 else _normalSeq = "Credit";
 
+                var periodYearBalances = selectedAccount.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(_selectedYear)).FirstOrDefault();
+
                 // Determine the beginning balance of the account
                 switch (_selectedMonth)
                 {
                     case 1:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.BeginningBalance;
+                        SelectedBeginningBalance = periodYearBalances.BeginningBalance;
                         break;
                     case 2:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance1;
+                        SelectedBeginningBalance = periodYearBalances.Balance1;
                         break;
                     case 3:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance2;
+                        SelectedBeginningBalance = periodYearBalances.Balance2;
                         break;
                     case 4:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance3;
+                        SelectedBeginningBalance = periodYearBalances.Balance3;
                         break;
                     case 5:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance4;
+                        SelectedBeginningBalance = periodYearBalances.Balance4;
                         break;
                     case 6:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance5;
+                        SelectedBeginningBalance = periodYearBalances.Balance5;
                         break;
                     case 7:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance6;
+                        SelectedBeginningBalance = periodYearBalances.Balance6;
                         break;
                     case 8:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance7;
+                        SelectedBeginningBalance = periodYearBalances.Balance7;
                         break;
                     case 9:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance8;
+                        SelectedBeginningBalance = periodYearBalances.Balance8;
                         break;
                     case 10:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance9;
+                        SelectedBeginningBalance = periodYearBalances.Balance9;
                         break;
                     case 11:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance10;
+                        SelectedBeginningBalance = periodYearBalances.Balance10;
                         break;
                     case 12:
-                        SelectedBeginningBalance = selectedAccount.LedgerAccountBalance.Balance11;
+                        SelectedBeginningBalance = periodYearBalances.Balance11;
                         break;
                     default:
                         break;

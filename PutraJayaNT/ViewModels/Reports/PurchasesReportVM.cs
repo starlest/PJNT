@@ -166,7 +166,7 @@ namespace PutraJayaNT.ViewModels
                 using (var context = new ERPContext())
                 {
                     var purchases = context.PurchaseTransactions
-                        .Where(e => e.Date >= _fromDate && e.Date <= _toDate)
+                        .Where(e => e.Date >= _fromDate && e.Date <= _toDate && !e.Supplier.Name.Equals("-"))
                         .Include("PurchaseTransactionLines")
                         .Include("PurchaseTransactionLines.Item")
                         .Include("PurchaseTransactionLines.Warehouse")
@@ -186,7 +186,7 @@ namespace PutraJayaNT.ViewModels
                 using (var context = new ERPContext())
                 {
                     var purchases = context.PurchaseTransactions
-                        .Where(e => e.Supplier.ID == _selectedSupplier.ID && e.Date >= _fromDate && e.Date <= _toDate)
+                        .Where(e => e.Supplier.ID == _selectedSupplier.ID && e.Date >= _fromDate && e.Date <= _toDate && !e.Supplier.Name.Equals("-"))
                         .Include("PurchaseTransactionLines")
                         .Include("PurchaseTransactionLines.Item")
                         .Include("PurchaseTransactionLines.Warehouse")

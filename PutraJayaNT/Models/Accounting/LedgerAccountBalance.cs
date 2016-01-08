@@ -25,9 +25,13 @@ namespace PutraJayaNT.Models.Accounting
         }
 
         [Key, ForeignKey("LedgerAccount")]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ID { get; set; }
 
-        [Required]
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int PeriodYear { get; set; }
 
         [Required]

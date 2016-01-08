@@ -6,12 +6,12 @@ namespace PutraJayaNT.Views.Customers
     /// <summary>
     /// Interaction logic for CollectionView.xaml
     /// </summary>
-    public partial class CollectionView : UserControl
+    public partial class PaymentListView : UserControl
     {
-        public CollectionView()
+        public PaymentListView()
         {
             InitializeComponent();
-            var vm = new CollectionVM();
+            var vm = new PaymentListVM();
             DataContext = vm;
         }
     }

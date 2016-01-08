@@ -46,5 +46,8 @@ namespace PutraJayaNT.Models.Purchase
         public virtual ObservableCollection<PurchaseTransactionLine> PurchaseTransactionLines { get; set; }
 
         public virtual ICollection<PurchaseReturnTransaction> PurchaseReturnTransactions { get; set; }
+
+        [NotMapped]
+        public decimal Remaining { get; set; }
     }
 }

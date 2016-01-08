@@ -14,10 +14,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext())
-                {
-                    return context.Ledger_General.FirstOrDefault().PeriodYear;
-                }
+                return DateTime.Now.Year;
             }
         }
 
@@ -25,10 +22,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext())
-                {
-                    return context.Ledger_General.FirstOrDefault().Period;
-                }
+                return DateTime.Now.Month;
             }
         }
 
@@ -39,19 +33,19 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var context = new ERPContext();
                 var accounts = context.Ledger_Accounts
                     .Include("LedgerGeneral")
-                    .Include("LedgerAccountBalance")
+                    .Include("LedgerAccountBalances")
                     .ToList();
 
                 var retainedEarnings = context.Ledger_Accounts
                     .Include("LedgerGeneral")
-                    .Include("LedgerAccountBalance") 
+                    .Include("LedgerAccountBalances") 
                     .Include("TransactionLines")               
                     .Where(e => e.Name.Equals("Retained Earnings"))
                     .FirstOrDefault();
 
                 var revenueAndExpenseAccounts = context.Ledger_Accounts
                     .Include("LedgerGeneral")
-                    .Include("LedgerAccountBalance")
+                    .Include("LedgerAccountBalances")
                     .Where(e => e.Class.Equals("Expense") || e.Class.Equals("Revenue"))
                     .ToList();
 
@@ -64,6 +58,14 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                 foreach (var account in accounts)
                 {
+                    if (DateTime.Now.Month == 12)
+                    {
+                        var newBalance = new LedgerAccountBalance { LedgerAccount = account, PeriodYear = DateTime.Now.Year + 1 };
+                        context.Ledger_Account_Balances.Add(newBalance);
+                    }
+
+                    var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(DateTime.Now.Year)).FirstOrDefault();
+
                     // Close the balances
                     if (account.Class.Equals("Asset") || account.Class.Equals("Expense"))
                     {
@@ -71,9 +73,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                         {
                             case 1:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance1 += account.LedgerAccountBalance.BeginningBalance;
-                                
-                                account.LedgerAccountBalance.Balance1 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                    periodYearBalances.Balance1 += periodYearBalances.BeginningBalance;
+
+                                periodYearBalances.Balance1 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -81,9 +83,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 2:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance2 += account.LedgerAccountBalance.Balance1;
+                                    periodYearBalances.Balance2 += periodYearBalances.Balance1;
 
-                                account.LedgerAccountBalance.Balance2 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance2 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -91,9 +93,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 3:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance3 += account.LedgerAccountBalance.Balance2;
+                                    periodYearBalances.Balance3 += periodYearBalances.Balance2;
 
-                                account.LedgerAccountBalance.Balance3 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance3 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -101,9 +103,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 4:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance4 += account.LedgerAccountBalance.Balance3;
+                                    periodYearBalances.Balance4 += periodYearBalances.Balance3;
 
-                                account.LedgerAccountBalance.Balance4 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance4 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -111,9 +113,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 5:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance5 += account.LedgerAccountBalance.Balance4;
+                                    periodYearBalances.Balance5 += periodYearBalances.Balance4;
 
-                                account.LedgerAccountBalance.Balance5 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance5 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -121,9 +123,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 6:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance6 += account.LedgerAccountBalance.Balance5;
+                                    periodYearBalances.Balance6 += periodYearBalances.Balance5;
 
-                                account.LedgerAccountBalance.Balance6 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance6 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -131,9 +133,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 7:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance7 += account.LedgerAccountBalance.Balance6;
+                                    periodYearBalances.Balance7 += periodYearBalances.Balance6;
 
-                                account.LedgerAccountBalance.Balance7 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance7 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -141,9 +143,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 8:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance8 += account.LedgerAccountBalance.Balance7;
+                                    periodYearBalances.Balance8 += periodYearBalances.Balance7;
 
-                                account.LedgerAccountBalance.Balance8 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance8 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -151,9 +153,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 9:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance9 += account.LedgerAccountBalance.Balance8;
+                                    periodYearBalances.Balance9 += periodYearBalances.Balance8;
 
-                                account.LedgerAccountBalance.Balance9 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance9 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -161,9 +163,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 10:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance10 += account.LedgerAccountBalance.Balance9;
+                                    periodYearBalances.Balance10 += periodYearBalances.Balance9;
 
-                                account.LedgerAccountBalance.Balance10 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance10 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -171,9 +173,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 11:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance11 += account.LedgerAccountBalance.Balance10;
+                                    periodYearBalances.Balance11 += periodYearBalances.Balance10;
 
-                                account.LedgerAccountBalance.Balance11 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance11 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -181,9 +183,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 12:
                                 if (!account.Class.Equals("Expense"))
-                                    account.LedgerAccountBalance.Balance12 += account.LedgerAccountBalance.Balance11;
+                                    periodYearBalances.Balance12 += periodYearBalances.Balance11;
 
-                                account.LedgerAccountBalance.Balance12 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                                periodYearBalances.Balance12 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
                                 account.LedgerGeneral.PeriodYear++;
@@ -201,9 +203,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                         {
                             case 1:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance1 += account.LedgerAccountBalance.BeginningBalance;
+                                    periodYearBalances.Balance1 += periodYearBalances.BeginningBalance;
 
-                                account.LedgerAccountBalance.Balance1 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance1 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -211,9 +213,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 2:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance2 += account.LedgerAccountBalance.Balance1;
+                                    periodYearBalances.Balance2 += periodYearBalances.Balance1;
 
-                                account.LedgerAccountBalance.Balance2 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance2 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -221,9 +223,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 3:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance3 += account.LedgerAccountBalance.Balance2;
+                                    periodYearBalances.Balance3 += periodYearBalances.Balance2;
 
-                                account.LedgerAccountBalance.Balance3 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance3 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -231,9 +233,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 4:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance4 += account.LedgerAccountBalance.Balance3;
+                                    periodYearBalances.Balance4 += periodYearBalances.Balance3;
 
-                                account.LedgerAccountBalance.Balance4 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance4 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -241,9 +243,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 5:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance5 += account.LedgerAccountBalance.Balance4;
+                                    periodYearBalances.Balance5 += periodYearBalances.Balance4;
 
-                                account.LedgerAccountBalance.Balance5 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance5 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -251,9 +253,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 6:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance6 += account.LedgerAccountBalance.Balance5;
+                                    periodYearBalances.Balance6 += periodYearBalances.Balance5;
 
-                                account.LedgerAccountBalance.Balance6 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance6 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -261,9 +263,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 7:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance7 += account.LedgerAccountBalance.Balance6;
+                                    periodYearBalances.Balance7 += periodYearBalances.Balance6;
 
-                                account.LedgerAccountBalance.Balance7 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance7 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -271,9 +273,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 8:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance8 += account.LedgerAccountBalance.Balance7;
+                                    periodYearBalances.Balance8 += periodYearBalances.Balance7;
 
-                                account.LedgerAccountBalance.Balance8 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance8 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -281,7 +283,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 9:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance9 += account.LedgerAccountBalance.Balance8;
+                                    periodYearBalances.Balance9 += periodYearBalances.Balance8;
 
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
@@ -290,7 +292,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 10:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance10 += account.LedgerAccountBalance.Balance9;
+                                    periodYearBalances.Balance10 += periodYearBalances.Balance9;
 
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
@@ -299,9 +301,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 11:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance11 += account.LedgerAccountBalance.Balance10;
+                                    periodYearBalances.Balance11 += periodYearBalances.Balance10;
 
-                                account.LedgerAccountBalance.Balance11 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance11 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -309,9 +311,9 @@ namespace PutraJayaNT.ViewModels.Accounting
                                 break;
                             case 12:
                                 if (!account.Class.Equals("Revenue"))
-                                    account.LedgerAccountBalance.Balance12 += account.LedgerAccountBalance.Balance11;
+                                    periodYearBalances.Balance12 += periodYearBalances.Balance11;
 
-                                account.LedgerAccountBalance.Balance12 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                                periodYearBalances.Balance12 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                                 account.LedgerGeneral.Debit = 0;
                                 account.LedgerGeneral.Credit = 0;
 
@@ -336,7 +338,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             var retainedEarnings = context.Ledger_Accounts
                 .Include("LedgerGeneral")
-                .Include("LedgerAccountBalance")
+                .Include("LedgerAccountBalances")
                 .Include("TransactionLines")
                 .Where(e => e.Name.Equals("Retained Earnings"))
                 .FirstOrDefault();
