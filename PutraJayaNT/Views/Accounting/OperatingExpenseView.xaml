@@ -57,8 +57,8 @@
             <Button Grid.Row="2" Grid.Column="8"  Content="Cancel" Command="{Binding NewEntryCancelCommand}" Margin="10" />
         </Grid>
             <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
-                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+                      CanUserDeleteRows="True" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                      AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" PreviewKeyDown="DataGrid_PreviewKeyDown">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Account" Width="1*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
@@ -77,7 +77,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total:" FontSize="28" />
             <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding Total, UpdateSourceTrigger=PropertyChanged}" />
+                         Text="{Binding Total, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Foreground="Red" />
         </Grid>
     </Grid>
 </UserControl>

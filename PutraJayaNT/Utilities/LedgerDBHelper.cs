@@ -4,19 +4,32 @@ using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using System.Windows;
 
 namespace PutraJayaNT.Utilities
 {
     public static class LedgerDBHelper
     {
-        public static void AddTransaction(ERPContext context, LedgerTransaction transaction, DateTime date, string documentation, string description)
+        public static bool AddTransaction(ERPContext context, LedgerTransaction transaction, DateTime date, string documentation, string description)
         {
+            using (var c = new ERPContext())
+            {
+                var period = c.Ledger_General.FirstOrDefault().Period;
+                if (period != date.Month)
+                {
+                    MessageBox.Show("Wrong period.", "Invalid Transaction", MessageBoxButton.OK);
+                    return false;
+                }
+            }
+
             transaction.Documentation = documentation;
-            transaction.Date = DateTime.Now.Date;
+            transaction.Date = date;
             transaction.Description = description;
             var user = App.Current.TryFindResource("CurrentUser") as User;
             if (user != null) transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
             context.Ledger_Transactions.Add(transaction);
+
+            return true;
         }
 
         public static void AddTransactionLine(ERPContext context, LedgerTransaction transaction, string accountName, string seq, decimal amount)
@@ -38,10 +51,6 @@ namespace PutraJayaNT.Utilities
             if (seq == "Debit") ledgerAccount.Debit += amount;
             else if (seq == "Credit") ledgerAccount.Credit += amount;
 
-            context.Ledger_General.Attach(ledgerAccount);
-            context.Ledger_Accounts.Attach(account);
-            ((IObjectContextAdapter)context).ObjectContext.
-            ObjectStateManager.ChangeObjectState(ledgerAccount, EntityState.Modified);
             context.Ledger_Transaction_Lines.Add(transactionLine);
         }
     }

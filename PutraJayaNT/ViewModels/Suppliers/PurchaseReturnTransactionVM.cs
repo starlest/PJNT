@@ -318,7 +318,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             // Record the corresponding ledger transactions in the database
                             var ledgerTransaction1 = new LedgerTransaction();
 
-                            LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now, _purchaseReturnEntryID, "Purchase Return");
+                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now, _purchaseReturnEntryID, "Purchase Return")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Debit", _purchaseReturnTransactionNetTotal);
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", _purchaseReturnTransactionNetTotal);

@@ -242,7 +242,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                         if (decreaseAdjustment)
                         {
                             var transaction = new LedgerTransaction();
-                            LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, Model.AdjustStrockTransactionID, "Stock Adjustment (Decrement)");
+                            if (!LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, Model.AdjustStrockTransactionID, "Stock Adjustment (Decrement)")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
                             LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);

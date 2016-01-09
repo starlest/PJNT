@@ -368,7 +368,7 @@
             get { return _newTransactionCustomer; }
             set
             {
-                if (_editMode == false && value != null)
+                if (_editMode == false && value != null && !value.Name.Equals("Kontan"))
                 {
                     using (var context = new ERPContext())
                     {
@@ -1087,14 +1087,14 @@
 
                             // Recognise revenue recognitition at this point and record the corresponding journal entries
                             var transaction1 = new LedgerTransaction();
-                            LedgerDBHelper.AddTransaction(context, transaction1, DateTime.Now.Date, transaction.SalesTransactionID, "Sales Revenue");
+                            if (!LedgerDBHelper.AddTransaction(context, transaction1, DateTime.Now.Date, transaction.SalesTransactionID, "Sales Revenue")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, transaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", Model.Total);
                             LedgerDBHelper.AddTransactionLine(context, transaction1, "Sales Revenue", "Credit", Model.Total);
                             context.SaveChanges();
 
                             var transaction2 = new LedgerTransaction();
-                            LedgerDBHelper.AddTransaction(context, transaction2, DateTime.Now.Date, transaction.SalesTransactionID, "Cost of Goods Sold");
+                            if (!LedgerDBHelper.AddTransaction(context, transaction2, DateTime.Now.Date, transaction.SalesTransactionID, "Cost of Goods Sold")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, transaction2, "Cost of Goods Sold", "Debit", costOfGoodsSoldAmount);
                             LedgerDBHelper.AddTransactionLine(context, transaction2, "Inventory", "Credit", costOfGoodsSoldAmount);

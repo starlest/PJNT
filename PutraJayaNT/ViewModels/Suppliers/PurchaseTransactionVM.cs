@@ -531,7 +531,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             LedgerTransaction transaction = new LedgerTransaction();
                             string accountsPayableName = _newTransactionSupplier.Name + " Accounts Payable";
 
-                            LedgerDBHelper.AddTransaction(context, transaction, _newEntryDate, _newTransactionID.ToString(), "Purchase Transaction");
+                            if (!LedgerDBHelper.AddTransaction(context, transaction, _newEntryDate, _newTransactionID.ToString(), "Purchase Transaction")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Debit", Model.Total);
                             LedgerDBHelper.AddTransactionLine(context, transaction, accountsPayableName, "Credit", Model.Total);

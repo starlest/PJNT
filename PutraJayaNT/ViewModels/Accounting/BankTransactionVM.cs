@@ -87,7 +87,6 @@ namespace PutraJayaNT.ViewModels.Accounting
                     return;
                 }
 
-
                 _selectedBankID = value.ID;
                 SetProperty(ref _selectedBank, value, "SelectedBank");
 
@@ -167,7 +166,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                             var transaction = new LedgerTransaction();
 
-                            LedgerDBHelper.AddTransaction(context1, transaction, _newEntryDate, _newEntryDescription, _newEntryDescription);
+                            if (!LedgerDBHelper.AddTransaction(context1, transaction, _newEntryDate, _newEntryDescription, _newEntryDescription)) return;
                             context1.SaveChanges();
 
                             LedgerDBHelper.AddTransactionLine(context1, transaction, _newEntryAccount.Name, _newEntrySequence, (decimal)_newEntryAmount);
@@ -195,6 +194,9 @@ namespace PutraJayaNT.ViewModels.Accounting
             }
         }
 
+        #endregion
+
+        #region Helper Methods
         private void UpdateAccounts()
         {
             _accounts.Clear();
@@ -224,7 +226,6 @@ namespace PutraJayaNT.ViewModels.Accounting
             NewEntrySequence = null;
             UpdateAccounts();
         }
-        #endregion
 
         private void UpdateBanks()
         {
@@ -275,5 +276,6 @@ namespace PutraJayaNT.ViewModels.Accounting
                 }
             }
         }
+        #endregion
     }
 }

@@ -237,7 +237,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             var accountsPayableName = _selectedSupplier.Name + " Accounts Payable";
                             var transaction = new LedgerTransaction();
 
-                            LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, _selectedPurchase.PurchaseID.ToString(), "Purchase Payment");
+                            if (!LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, _selectedPurchase.PurchaseID.ToString(), "Purchase Payment")) return;
                             context.SaveChanges();
 
                             LedgerDBHelper.AddTransactionLine(context, transaction, accountsPayableName, "Debit", (decimal) _pay);
