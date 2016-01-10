@@ -133,6 +133,10 @@
     <Compile Include="Migrations\201601080750238_Update7.Designer.cs">
       <DependentUpon>201601080750238_Update7.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601090901283_Update8.cs" />
+    <Compile Include="Migrations\201601090901283_Update8.Designer.cs">
+      <DependentUpon>201601090901283_Update8.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransactionLine.cs" />
@@ -164,16 +168,16 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Reports\SalesDOWindow.xaml.cs">
+    <Compile Include="Reports\Windows\SalesDOWindow.xaml.cs">
       <DependentUpon>SalesDOWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\CollectionReportWindow.xaml.cs">
+    <Compile Include="Reports\Windows\CollectionReportWindow.xaml.cs">
       <DependentUpon>CollectionReportWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\SalesReturnInvoiceWindow.xaml.cs">
+    <Compile Include="Reports\Windows\SalesReturnInvoiceWindow.xaml.cs">
       <DependentUpon>SalesReturnInvoiceWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\SalesInvoiceWindow.xaml.cs">
+    <Compile Include="Reports\Windows\SalesInvoiceWindow.xaml.cs">
       <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\SalesReturnInvoice.cs" />
@@ -185,6 +189,7 @@
     <Compile Include="Models\IRepository.cs" />
     <Compile Include="Utilities\LedgerDBHelper.cs" />
     <Compile Include="Utilities\PasswordHelper.cs" />
+    <Compile Include="Utilities\PrintHelper.cs" />
     <Compile Include="Utilities\Repository.cs" />
     <Compile Include="Utilities\UnitOfWork.cs" />
     <Compile Include="Utilities\UtilityMethods.cs" />
@@ -218,6 +223,7 @@
     <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
     <Compile Include="ViewModels\Master\MasterSalesmanVM.cs" />
     <Compile Include="ViewModels\Master\MasterSuppliersVM.cs" />
+    <Compile Include="ViewModels\Reports\CommissionsReportVM.cs" />
     <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
     <Compile Include="ViewModels\Reports\PurchasesReportVM.cs" />
     <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
@@ -312,6 +318,9 @@
     <Compile Include="Views\Reports\StockBalancesReportView.xaml.cs">
       <DependentUpon>StockBalancesReportView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Reports\CommissionsReportView.xaml.cs">
+      <DependentUpon>CommissionsReportView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Suppliers\PaymentListView.xaml.cs">
       <DependentUpon>PaymentListView.xaml</DependentUpon>
     </Compile>
@@ -337,19 +346,19 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Page Include="Reports\SalesDOWindow.xaml">
+    <Page Include="Reports\Windows\SalesDOWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Reports\CollectionReportWindow.xaml">
+    <Page Include="Reports\Windows\CollectionReportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Reports\SalesReturnInvoiceWindow.xaml">
+    <Page Include="Reports\Windows\SalesReturnInvoiceWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Reports\SalesInvoiceWindow.xaml">
+    <Page Include="Reports\Windows\SalesInvoiceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -458,6 +467,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Reports\StockBalancesReportView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Reports\CommissionsReportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -525,16 +538,19 @@
     <EmbeddedResource Include="Migrations\201601080750238_Update7.resx">
       <DependentUpon>201601080750238_Update7.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\CollectionReport.rdlc">
+    <EmbeddedResource Include="Migrations\201601090901283_Update8.resx">
+      <DependentUpon>201601090901283_Update8.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\CollectionReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SalesDOReport.rdlc">
+    <EmbeddedResource Include="Reports\RDLC\SalesDOReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SalesReturnInvoiceReport.rdlc">
+    <EmbeddedResource Include="Reports\RDLC\SalesReturnInvoiceReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\SalesInvoiceReport.rdlc">
+    <EmbeddedResource Include="Reports\RDLC\SalesInvoiceReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

@@ -1,8 +1,10 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Reports;
+using PutraJayaNT.Reports.Windows;
 using PutraJayaNT.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -101,7 +103,7 @@ namespace PutraJayaNT.ViewModels.Customers
         private void UpdateCities()
         {
             _cities.Clear();
-
+            _cities.Add("All");
             using (var context = new ERPContext())
             {
                 var customers = context.Customers.ToList();
@@ -116,18 +118,31 @@ namespace PutraJayaNT.ViewModels.Customers
 
         private void UpdateSalesTransactions()
         {
-
             _salesTransactions.Clear();
-
+            List<SalesTransaction> salesTransactions;
             using (var context = new ERPContext())
             {
-                var salesTransactions = context.SalesTransactions
-                    .Include("Customer")
-                    .Include("Customer.Group")
-                    .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid < e.Total && (e.DueDate >= _fromDate && e.DueDate <= _toDate))
-                    .OrderBy(e => e.DueDate)
-                    .ThenBy(e => e.Customer.Name)
-                    .ToList();
+                if (_selectedCity.Equals("All"))
+                {
+                    salesTransactions = context.SalesTransactions
+                        .Include("Customer")
+                        .Include("Customer.Group")
+                        .Where(e => e.Paid < e.Total && (e.DueDate >= _fromDate && e.DueDate <= _toDate))
+                        .OrderBy(e => e.DueDate)
+                        .ThenBy(e => e.Customer.Name)
+                        .ToList();
+                }
+
+                else
+                {
+                    salesTransactions = context.SalesTransactions
+                        .Include("Customer")
+                        .Include("Customer.Group")
+                        .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid < e.Total && (e.DueDate >= _fromDate && e.DueDate <= _toDate))
+                        .OrderBy(e => e.DueDate)
+                        .ThenBy(e => e.Customer.Name)
+                        .ToList();
+                }
 
                 foreach (var t in salesTransactions)
                 {

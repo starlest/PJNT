@@ -3,6 +3,7 @@ using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Data.Entity;
 using System.Linq;
 using System.Transactions;
@@ -39,6 +40,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
             _banks = new ObservableCollection<LedgerAccountVM>();
             _displayLines = new ObservableCollection<LedgerTransactionLineVM>();
+            _displayLines.CollectionChanged += OnCollectionChanged;
             _sequences = new ObservableCollection<string> { "Debit", "Credit" };
 
             _newEntryDate = DateTime.Now.Date;
@@ -272,6 +274,49 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                             _displayLines.Add(new LedgerTransactionLineVM { Model = transactionLine });
                         }
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Collection Event Handlers
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (LedgerTransactionLineVM line in e.OldItems)
+                {
+                    using (var context = new ERPContext())
+                    {
+                        var oppostieLine = context.Ledger_Transaction_Lines
+                            .Include("LedgerAccount")
+                            .Where(l => l.LedgerTransactionID.Equals(line.LedgerTransaction.ID) &&
+                            !l.LedgerAccountID.Equals(line.LedgerAccount.ID))
+                            .FirstOrDefault();
+                        var transaction = context.Ledger_Transactions
+                            .Where(t => t.ID.Equals(line.LedgerTransaction.ID))
+                            .FirstOrDefault();
+                        var ledgerGeneral = context.Ledger_General
+                            .Where(g => g.ID.Equals(line.LedgerAccount.ID))
+                            .FirstOrDefault();
+                        var oppositeLedgerGeneral = context.Ledger_General
+                            .Where(g => g.ID.Equals(oppostieLine.LedgerAccount.ID))
+                            .FirstOrDefault();
+                        context.Ledger_Transactions.Remove(transaction);
+
+                        if (line.Seq.Equals("Debit"))
+                        {
+                            ledgerGeneral.Debit -= line.Amount;
+                            oppositeLedgerGeneral.Credit -= line.Amount;
+                        }
+                        else
+                        {
+                            ledgerGeneral.Credit -= line.Amount;
+                            oppositeLedgerGeneral.Debit -= line.Amount;
+                        }
+
+                        context.SaveChanges();
                     }
                 }
             }

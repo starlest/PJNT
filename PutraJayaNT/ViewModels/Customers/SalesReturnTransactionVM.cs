@@ -13,6 +13,7 @@ using PutraJayaNT.Models.Inventory;
 using System.Data.Entity.Infrastructure;
 using PutraJayaNT.Models;
 using PutraJayaNT.Reports;
+using PutraJayaNT.Reports.Windows;
 
 namespace PutraJayaNT.ViewModels.Customers
 {

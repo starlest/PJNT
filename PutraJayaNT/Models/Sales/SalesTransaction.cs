@@ -40,6 +40,12 @@ namespace PutraJayaNT.Models.Sales
 
         public string Notes { get; set; }
 
+        [Required]
+        public bool DOPrinted { get; set; }
+
+        [Required]
+        public bool InvoicePrinted { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SalesTransactionLine> TransactionLines { get; set; }
 

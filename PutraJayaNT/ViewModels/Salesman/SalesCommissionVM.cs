@@ -2,7 +2,7 @@
 {
     using Models.Inventory;
     using MVVMFramework;
-    using PutraJayaNT.Models.Salesman;
+    using Models.Salesman;
 
     class SalesCommissionVM : ViewModelBase<SalesCommission>
     {
@@ -35,5 +35,9 @@
                 OnPropertyChanged("Percentage");
             }
         }
+
+        public decimal Total { get; set; }
+
+        public decimal Commission { get; set; }
     }
 }

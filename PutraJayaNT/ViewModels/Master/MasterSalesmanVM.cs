@@ -75,6 +75,8 @@
             set { SetProperty(ref _editWindowVisisbility, value, "EditWindowVisibility"); }
         }
 
+        decimal oldPercentage;
+
         public ICommand EditCommand
         {
             get
@@ -88,6 +90,7 @@
                     }
                     else
                     {
+                        oldPercentage = _selectedLine.Percentage;
                         EditWindowVisibility = Visibility.Visible;
                         IsEditWindowNotOpen = false;
                     }
@@ -103,6 +106,7 @@
                 {
                     EditWindowVisibility = Visibility.Collapsed;
                     IsEditWindowNotOpen = true;
+                    _selectedLine.Percentage = oldPercentage;
                 }));
             }
         }
