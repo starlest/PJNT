@@ -45,6 +45,16 @@ namespace PutraJayaNT.ViewModels.Reports
             set { SetProperty(ref _amount, value, "Amount"); }
         }
 
+        public string InQuantity
+        {
+            get { return _amount > 0 ? Units + "/" + Pieces : "0/0"; }
+        }
+
+        public string OutQuantity
+        {
+            get { return _amount < 0 ? -Units + "/" + -Pieces : "0/0"; }
+        }
+
         public int Units
         {
             get { return _amount / Item.PiecesPerUnit; }

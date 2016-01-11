@@ -199,6 +199,7 @@
     <Compile Include="ViewModels\Accounting\BalanceSheetVM.cs" />
     <Compile Include="ViewModels\Accounting\BankTransactionVM.cs" />
     <Compile Include="ViewModels\Accounting\ClosingVM.cs" />
+    <Compile Include="ViewModels\Accounting\DailyCashFlowVM.cs" />
     <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
@@ -257,6 +258,9 @@
     </Compile>
     <Compile Include="Views\Accounting\OperatingExpenseView.xaml.cs">
       <DependentUpon>OperatingExpenseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\DailyCashFlowView.xaml.cs">
+      <DependentUpon>DailyCashFlowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Customers\BrowseSalesTransactionsView.xaml.cs">
       <DependentUpon>BrowseSalesTransactionsView.xaml</DependentUpon>
@@ -390,6 +394,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Accounting\DailyCashFlowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Customers\BrowseSalesTransactionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -508,12 +516,6 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MVVMFramework\MVVMFramework.csproj">
-      <Project>{13282864-5854-4b8c-bd10-5a4e9f24eedb}</Project>
-      <Name>MVVMFramework</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Migrations\201601080322235_Update.resx">
       <DependentUpon>201601080322235_Update.cs</DependentUpon>
     </EmbeddedResource>
@@ -556,6 +558,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MVVMFramework\MVVMFramework.csproj">
+      <Project>{13282864-5854-4b8c-bd10-5a4e9f24eedb}</Project>
+      <Name>MVVMFramework</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

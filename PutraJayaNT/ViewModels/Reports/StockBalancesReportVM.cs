@@ -17,8 +17,11 @@ namespace PutraJayaNT.ViewModels.Reports
         ItemVM _selectedProduct;
         DateTime _fromDate;
         DateTime _toDate;
-        string _beginningBalanceString;
         string _productUnit;
+        string _beginningBalanceString;
+        string _endingBalanceString;
+        string _totalInString;
+        string _totalOutString;
 
         int _beginningBalance = 0;
 
@@ -98,6 +101,24 @@ namespace PutraJayaNT.ViewModels.Reports
         {
             get { return _beginningBalanceString; }
             set { SetProperty(ref _beginningBalanceString, value, "BeginningBalanceString"); }
+        }
+
+        public string EndingBalanceString
+        {
+            get { return _endingBalanceString; }
+            set { SetProperty(ref _endingBalanceString, value, "EndingBalanceString"); }
+        }
+
+        public string TotalInString
+        {
+            get { return _totalInString; }
+            set { SetProperty(ref _totalInString, value, "TotalInString"); }
+        }
+
+        public string TotalOutString
+        {
+            get { return _totalOutString; }
+            set { SetProperty(ref _totalOutString, value, "TotalOutString"); }
         }
 
         public string ProductUnit
@@ -225,12 +246,21 @@ namespace PutraJayaNT.ViewModels.Reports
                 }
 
                 var balance = _beginningBalance;
+                var totalIn = 0;
+                var totalOut = 0;
                 foreach (var l in lines.OrderBy(e => e.Date))
                 {
                     balance += l.Amount;
                     l.Balance = balance;
                     _lines.Add(l);
+
+                    if (l.Amount < 0) totalOut += -l.Amount;
+                    else totalIn += l.Amount;
                 }
+
+                EndingBalanceString = (balance / _selectedProduct.PiecesPerUnit) + "/" + (balance % _selectedProduct.PiecesPerUnit);
+                TotalInString = (totalIn / _selectedProduct.PiecesPerUnit) + "/" + (totalIn % _selectedProduct.PiecesPerUnit);
+                TotalOutString = (totalOut / _selectedProduct.PiecesPerUnit) + "/" + (totalOut % _selectedProduct.PiecesPerUnit);
             }
         }
 

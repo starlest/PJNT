@@ -1070,6 +1070,8 @@
                 {
                     if (_salesTransactionLines.Count == 0) return;
 
+                    if (MessageBox.Show("Confirm printing?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
                     if (Model.DOPrinted == true)
                     {
                         if (!UtilityMethods.GetVerification()) return;
@@ -1132,7 +1134,9 @@
                 {
                     if (_salesTransactionLines.Count == 0) return;
 
-                    if (Model.DOPrinted == true)
+                    if (MessageBox.Show("Confirm printing?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
+                    if (Model.InvoicePrinted == true)
                     {
                         if (!UtilityMethods.GetVerification()) return;
                     }
@@ -1529,6 +1533,7 @@
             }
             return false;
         }
+
         #region Reports Creation Methods
         private LocalReport CreateInvoiceLocalReport()
         {
@@ -1538,6 +1543,7 @@
                 salesTransaction = context.SalesTransactions
                         .Include("TransactionLines")
                         .Include("TransactionLines.Item")
+                        .Include("TransactionLines.Warehouse")
                         .Include("Customer")
                         .Where(e => e.SalesTransactionID.Equals(Model.SalesTransactionID))
                         .FirstOrDefault();
@@ -1600,7 +1606,7 @@
             ReportDataSource reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
 
             LocalReport localReport = new LocalReport();
-            localReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\SalesInvoiceReport.rdlc"); // Path of the rdlc file
+            localReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\SalesInvoiceReport.rdlc"); // Path of the rdlc file
             localReport.DataSources.Add(reportDataSource1);
             localReport.DataSources.Add(reportDataSource2);
 
@@ -1659,6 +1665,7 @@
                 salesTransaction = context.SalesTransactions
                         .Include("TransactionLines")
                         .Include("TransactionLines.Item")
+                            .Include("TransactionLines.Warehouse")
                         .Include("Customer")
                         .Where(e => e.SalesTransactionID.Equals(Model.SalesTransactionID))
                         .FirstOrDefault();
@@ -1704,11 +1711,6 @@
             localReport.DataSources.Add(reportDataSource2);
 
             return localReport;
-        }
-
-        private void InitializeDataSources()
-        {
-           
         }
         #endregion
 

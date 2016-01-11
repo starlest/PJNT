@@ -36,7 +36,7 @@ namespace PutraJayaNT.Utilities
               @"<DeviceInfo>
                 <OutputFormat>EMF</OutputFormat>
                 <PageWidth>8.27in</PageWidth>
-                <PageHeight>5.23in</PageHeight>
+                <PageHeight>5.83in</PageHeight>
                 <MarginTop>0in</MarginTop>
                 <MarginLeft>0in</MarginLeft>
                 <MarginRight>0in</MarginRight>
@@ -85,6 +85,8 @@ namespace PutraJayaNT.Utilities
             
             else
             {
+                printDoc.DefaultPageSettings.PaperSize = new PaperSize("Custom", 827, 550);
+                printDoc.DefaultPageSettings.Landscape = false;
                 printDoc.PrintPage += new PrintPageEventHandler(PrintPage);
                 m_currentPageIndex = 0;
                 printDoc.Print();
