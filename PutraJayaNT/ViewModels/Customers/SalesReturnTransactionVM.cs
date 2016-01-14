@@ -36,6 +36,7 @@ namespace PutraJayaNT.ViewModels.Customers
         string _salesReturnEntryProduct;
         int? _salesReturnEntryUnits;
         int? _salesReturnEntryPieces;
+        decimal? _salesReturnEntryPrice;
         ICommand _salesReturnEntryAddCommand;
 
         ICommand _newCommand;
@@ -172,64 +173,6 @@ namespace PutraJayaNT.ViewModels.Customers
         }
         #endregion
 
-        private bool UpdateSalesTransactionLines(string salesTransactionID)
-        {
-            using (var context = new ERPContext())
-            {
-                var transaction = context.SalesTransactions
-                    .Include("TransactionLines")
-                    .Include("TransactionLines.Item")
-                    .Include("TransactionLines.Warehouse")
-                    .Include("Customer")
-                    .Where(e => e.SalesTransactionID.Equals(salesTransactionID) && e.InvoiceIssued != null)
-                    .FirstOrDefault();
-
-                if (transaction == null) return false;
-
-                else
-                {
-                    _salesTransactionLines.Clear();
-
-                    foreach (var line in transaction.TransactionLines.ToList())
-                        _salesTransactionLines.Add(new SalesTransactionLineVM { Model = line});
-
-                    return true;
-                }
-            }
-        }
-
-        private void UpdateReturnEntryProperties()
-        {
-            SalesReturnEntryProduct = _selectedSalesTransactionLine.Item.Name;
-            var availableReturnQuantity = GetAvailableReturnQuantity(_selectedSalesTransactionLine);
-            SalesReturnEntryUnits = availableReturnQuantity / _selectedSalesTransactionLine.Item.PiecesPerUnit;
-            SalesReturnEntryPieces = availableReturnQuantity % _selectedSalesTransactionLine.Item.PiecesPerUnit;
-        }
-
-        private void SetSalesReturnTransactionID()
-        {
-            var year = _salesReturnEntryDate.Year;
-            var month = _salesReturnEntryDate.Month;
-
-            var newEntryID = "SR" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
-
-            string lastEntryID = null;
-            using (var context = new ERPContext())
-            {
-                var IDs = (from SalesReturnTransaction in context.SalesReturnTransactions
-                           where SalesReturnTransaction.SalesReturnTransactionID.CompareTo(newEntryID.ToString()) >= 0
-                           orderby SalesReturnTransaction.SalesReturnTransactionID descending
-                           select SalesReturnTransaction.SalesReturnTransactionID);
-                if (IDs.Count() != 0) lastEntryID = IDs.First();
-            }
-
-            if (lastEntryID != null) newEntryID = "SR" + (Convert.ToInt64(lastEntryID.Substring(2)) + 1).ToString();
-
-            Model.SalesReturnTransactionID = newEntryID;
-            _salesReturnTransactionID = newEntryID;
-            OnPropertyChanged("SalesReturnTransactionID");
-        }
-
         #region Return Entry Properties
         public DateTime SalesReturnEntryDate
         {
@@ -259,6 +202,12 @@ namespace PutraJayaNT.ViewModels.Customers
             set { SetProperty(ref _salesReturnEntryPieces, value, "SalesReturnEntryPieces"); }
         }
 
+        public decimal? SalesReturnEntryPrice
+        {
+            get { return _salesReturnEntryPrice; }
+            set { SetProperty(ref _salesReturnEntryPrice, value, "SalesReturnEntryPrice"); }
+        }
+
         public ICommand SalesReturnEntryAddCommand
         {
             get
@@ -268,6 +217,13 @@ namespace PutraJayaNT.ViewModels.Customers
                     if (_salesReturnEntryProduct == null || _selectedSalesTransactionLine == null)
                     {
                         MessageBox.Show("No product is selected", "Invalid Command", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    if (_salesReturnEntryPrice == null || _salesReturnEntryPrice < 0)
+                    {
+                        MessageBox.Show("Please enter a valid return price.",
+                            "Invalid Command", MessageBoxButton.OK);
                         return;
                     }
 
@@ -286,13 +242,14 @@ namespace PutraJayaNT.ViewModels.Customers
                         return;
                     }
 
-                    // Look if the line exists in the SalesReturnTransactionLines already
+                    // Check if the line already exists in the SalesReturnTransactionLines
                     foreach (var line in _salesReturnTransactionLines)
                     {
                         if (line.Item.ItemID.Equals(_selectedSalesTransactionLine.Item.ItemID) &&
                            line.Warehouse.ID.Equals(_selectedSalesTransactionLine.Warehouse.ID) &&
                            line.SalesPrice.Equals(_selectedSalesTransactionLine.SalesPrice) &&
-                           line.Discount.Equals(_selectedSalesTransactionLine.Discount))
+                           line.Discount.Equals(_selectedSalesTransactionLine.Discount) &&
+                           line.ReturnPrice.Equals(_salesReturnEntryPrice))
                         {
                             if ((line.Quantity + quantity) > _selectedSalesTransactionLine.Quantity ||
                             (line.Quantity + quantity) > availableReturnQuantity ||
@@ -303,7 +260,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             }
 
                             line.Quantity += quantity;
-                            line.NetDiscount = GetNetDiscount(line);
+                            line.ReturnPrice = (decimal) _salesReturnEntryPrice;
                             line.UpdateTotal();
                             line.CostOfGoodsSold = GetSalesReturnTransactionLineCOGS(line);
                             OnPropertyChanged("SalesReturnTransactionNetTotal");
@@ -318,15 +275,16 @@ namespace PutraJayaNT.ViewModels.Customers
                         Warehouse = _selectedSalesTransactionLine.Warehouse,
                         SalesPrice = _selectedSalesTransactionLine.SalesPrice / _selectedSalesTransactionLine.Item.PiecesPerUnit,
                         Discount = _selectedSalesTransactionLine.Discount / _selectedSalesTransactionLine.Item.PiecesPerUnit,
+                        ReturnPrice = (decimal) _salesReturnEntryPrice / _selectedSalesTransactionLine.Item.PiecesPerUnit,
                         Quantity = quantity
                     };
                     var vm = new SalesReturnTransactionLineVM { Model = sr };
-                    vm.NetDiscount = GetNetDiscount(vm);
                     vm.UpdateTotal();
                     sr.CostOfGoodsSold = GetSalesReturnTransactionLineCOGS(vm);
                     _salesReturnTransactionLines.Add(vm);
 
                     OnPropertyChanged("SalesReturnTransactionNetTotal");
+                    SalesReturnEntryPrice = null;
                 }));
             }
         }
@@ -355,7 +313,6 @@ namespace PutraJayaNT.ViewModels.Customers
                         {
                             var context = new ERPContext();
 
-                            decimal totalAmount = 0;
                             decimal totalCOGS = 0;
                             // Calcculate the total amount of Sales Return, total amount of Cost of Goods Sold
                             // ,record the transaction and increase the item's quantity in the database
@@ -372,7 +329,6 @@ namespace PutraJayaNT.ViewModels.Customers
 
                                 totalCOGS += line.CostOfGoodsSold;
                                 line.UpdateTotal();
-                                totalAmount += line.Total;
                                 line.Item = item;
                                 line.Warehouse = warehouse;
                                 context.SalesReturnTransactionLines.Add(line.Model);
@@ -400,7 +356,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                                 // Increase the Customer's Sales Return Credits
                                 var customer = context.Customers.Where(e => e.ID.Equals(Model.SalesTransaction.Customer.ID)).FirstOrDefault();
-                                customer.SalesReturnCredits += totalAmount;
+                                customer.SalesReturnCredits += _salesReturnTransactionNetTotal;
 
                                 // Increase the stock
                                 var stock = context.Stocks
@@ -427,8 +383,8 @@ namespace PutraJayaNT.ViewModels.Customers
 
                             if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now.Date, _salesReturnTransactionID, "Sales Return")) return;
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Sales Returns and Allowances", "Debit", totalAmount);
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Receivable", Model.SalesTransaction.Customer.Name), "Credit", totalAmount);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Sales Returns and Allowances", "Debit", _salesReturnTransactionNetTotal);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Receivable", Model.SalesTransaction.Customer.Name), "Credit", _salesReturnTransactionNetTotal);
 
                             if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction2, DateTime.Now.Date, _salesReturnTransactionID, "Sales Return")) return;
                             context.SaveChanges();
@@ -469,23 +425,62 @@ namespace PutraJayaNT.ViewModels.Customers
         }
 
         #region Helper Methods
-        public decimal GetNetDiscount(SalesReturnTransactionLineVM line)
+        private bool UpdateSalesTransactionLines(string salesTransactionID)
         {
             using (var context = new ERPContext())
             {
-                var transaction = context.SalesTransactionLines
-                    .Include("SalesTransaction")
-                    .Where(e => e.SalesTransactionID.Equals(_selectedSalesTransactionID))
-                    .FirstOrDefault()
-                    .SalesTransaction;
+                var transaction = context.SalesTransactions
+                    .Include("TransactionLines")
+                    .Include("TransactionLines.Item")
+                    .Include("TransactionLines.Warehouse")
+                    .Include("Customer")
+                    .Where(e => e.SalesTransactionID.Equals(salesTransactionID) && e.InvoiceIssued != null)
+                    .FirstOrDefault();
 
-                var lineDiscount = line.Discount / line.Item.PiecesPerUnit;
-                var lineSalesPrice = line.SalesPrice / line.Item.PiecesPerUnit;
-                var fractionOfTransaction = (line.Quantity * (lineSalesPrice - lineDiscount)) / transaction.GrossTotal;
-                var fractionOfTransactionDiscount = (fractionOfTransaction * transaction.Discount) / line.Quantity;
-                var discount = (lineDiscount + fractionOfTransactionDiscount) * line.Item.PiecesPerUnit;
-                return discount;
+                if (transaction == null) return false;
+
+                else
+                {
+                    _salesTransactionLines.Clear();
+
+                    foreach (var line in transaction.TransactionLines.ToList())
+                        _salesTransactionLines.Add(new SalesTransactionLineVM { Model = line });
+
+                    return true;
+                }
             }
+        }
+
+        private void UpdateReturnEntryProperties()
+        {
+            SalesReturnEntryProduct = _selectedSalesTransactionLine.Item.Name;
+            var availableReturnQuantity = GetAvailableReturnQuantity(_selectedSalesTransactionLine);
+            SalesReturnEntryUnits = availableReturnQuantity / _selectedSalesTransactionLine.Item.PiecesPerUnit;
+            SalesReturnEntryPieces = availableReturnQuantity % _selectedSalesTransactionLine.Item.PiecesPerUnit;
+        }
+
+        private void SetSalesReturnTransactionID()
+        {
+            var year = _salesReturnEntryDate.Year;
+            var month = _salesReturnEntryDate.Month;
+
+            var newEntryID = "MR" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
+
+            string lastEntryID = null;
+            using (var context = new ERPContext())
+            {
+                var IDs = (from SalesReturnTransaction in context.SalesReturnTransactions
+                           where SalesReturnTransaction.SalesReturnTransactionID.CompareTo(newEntryID.ToString()) >= 0
+                           orderby SalesReturnTransaction.SalesReturnTransactionID descending
+                           select SalesReturnTransaction.SalesReturnTransactionID);
+                if (IDs.Count() != 0) lastEntryID = IDs.First();
+            }
+
+            if (lastEntryID != null) newEntryID = "MR" + (Convert.ToInt64(lastEntryID.Substring(2)) + 1).ToString();
+
+            Model.SalesReturnTransactionID = newEntryID;
+            _salesReturnTransactionID = newEntryID;
+            OnPropertyChanged("SalesReturnTransactionID");
         }
 
         private int GetAvailableReturnQuantity(SalesTransactionLineVM line)
@@ -529,13 +524,13 @@ namespace PutraJayaNT.ViewModels.Customers
                     if (purchase.SoldOrReturned >= tracker)
                     {
                         var fractionOfTransactionDiscount = (tracker * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                        amount += (tracker * purchaseLineTotal) - fractionOfTransactionDiscount;
+                        amount += ((tracker * purchaseLineTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
                         break;
                     }
                     else if (purchase.SoldOrReturned < tracker)
                     {
                         var fractionOfTransactionDiscount = (purchase.SoldOrReturned * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                        amount += (purchase.SoldOrReturned * purchaseLineTotal) - fractionOfTransactionDiscount;
+                        amount += (purchase.SoldOrReturned * purchaseLineTotal) - fractionOfTransactionDiscount * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
                         tracker -= purchase.SoldOrReturned;
                     }
                 }

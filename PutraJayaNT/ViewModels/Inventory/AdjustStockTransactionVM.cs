@@ -184,14 +184,14 @@ namespace PutraJayaNT.ViewModels.Inventory
                                     if (tracker <= availableQuantity)
                                     {
                                         var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                                        cogs += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount;
+                                        cogs += ((tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
                                         purchase.SoldOrReturned += tracker;
                                         break;
                                     }
                                     else if (tracker > availableQuantity)
                                     {
                                         var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                                        cogs += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount;
+                                        cogs += ((availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
                                         purchase.SoldOrReturned += availableQuantity;
                                         tracker -= availableQuantity;
                                     }

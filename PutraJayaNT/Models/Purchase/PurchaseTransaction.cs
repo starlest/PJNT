@@ -34,6 +34,9 @@ namespace PutraJayaNT.Models.Purchase
         public decimal Discount { get; set; }
 
         [Required]
+        public decimal Tax { get; set; }
+
+        [Required]
         public decimal Total { get; set; }
 
         [Required]

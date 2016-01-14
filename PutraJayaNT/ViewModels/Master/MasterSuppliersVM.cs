@@ -489,7 +489,7 @@ namespace PutraJayaNT.ViewModels.Master
             _suppliers.Clear();
             using (var context = new ERPContext())
             {
-                var suppliers = context.Suppliers.Include("Items").OrderBy(e => e.ID);
+                var suppliers = context.Suppliers.Include("Items").Where(e => !e.Name.Equals("-")).OrderBy(e => e.ID);
 
                 foreach (Supplier s in suppliers)
                 {

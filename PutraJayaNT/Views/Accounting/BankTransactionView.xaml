@@ -51,7 +51,7 @@
                          Text="{Binding NewEntryDescription, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Row="1" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Amount:" />
             <TextBox Grid.Row="1" Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding NewEntryAmount, UpdateSourceTrigger=PropertyChanged}" />
+                         Text="{Binding NewEntryAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
             <TextBlock Grid.Row="2" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Sequence:" />
             <ComboBox Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                           ItemsSource="{Binding Sequences}" SelectedItem="{Binding NewEntrySequence, UpdateSourceTrigger=PropertyChanged}" 
@@ -69,7 +69,7 @@
                 <DataGridTextColumn Header="Account" Width="1*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
                 <DataGridTextColumn Header="Description" Width="2*" IsReadOnly="True" Binding="{Binding LedgerTransaction.Description}" />
                 <DataGridTextColumn Header="Sequence" Width="2*" IsReadOnly="True" Binding="{Binding Seq}" />
-                <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount}" />
+                <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

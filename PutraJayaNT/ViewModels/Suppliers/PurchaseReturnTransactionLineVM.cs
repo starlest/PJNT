@@ -13,8 +13,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
         int _pieces;
         int _units;
 
-        decimal _discount;
-
         public PurchaseReturnTransaction PurchaseReturnTransaction
         {
             get { return Model.PurchaseReturnTransaction; }
@@ -54,7 +52,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 OnPropertyChanged("ReturnWarehouse");
             }
         }
-
 
         public int AvailableReturnQuantity
         {
@@ -185,6 +182,20 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        public decimal ReturnPrice
+        {
+            get
+            {
+                return Model.ReturnPrice * Model.Item.PiecesPerUnit;
+            }
+            set
+            {
+                Model.ReturnPrice = value / Model.Item.PiecesPerUnit;
+                OnPropertyChanged("ReturnPrice");
+            }
+        }
+
+
         public decimal Discount
         {
             get
@@ -198,24 +209,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
-        public decimal NetDiscount
-        {
-            get
-            {
-                return Model.NetDiscount * Model.Item.PiecesPerUnit;
-            }
-            set
-            {
-                Model.NetDiscount = value / Model.Item.PiecesPerUnit;
-                OnPropertyChanged("Discount");
-            }
-        }
-
         public decimal Total
         {
             get
             {
-                Model.Total = Model.Quantity * (Model.PurchasePrice - Model.NetDiscount);
+                Model.Total = Model.Quantity * Model.ReturnPrice;
                 return Model.Total;
             }
             set
@@ -227,7 +225,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         public void UpdateTotal()
         {
-            Model.Total = Model.Quantity * (Model.PurchasePrice - Model.NetDiscount);
+            Model.Total = Model.Quantity * Model.ReturnPrice;
             OnPropertyChanged("Total");
         }
 

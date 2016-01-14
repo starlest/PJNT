@@ -8,38 +8,29 @@
              d:DesignHeight="768" d:DesignWidth="1024">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="0.125*" />
             <RowDefinition Height="0.125*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Border BorderBrush="Blue" BorderThickness="2">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.5*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="0.5*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="0.5*" />
-                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" 
                            FontSize="28" Foreground="Blue" Text="Name:" />
-                <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding NewEntryName}" />
                 <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" 
-                           FontSize="28" Foreground="Blue" Text="Notes:" />
-                <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
-                         Text="{Binding NewEntryAddress}" />
-                <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 10, 0, 0" 
-                       FontSize="28" Foreground="Blue" Text="Class:" />
-                <TextBox Grid.Row="1"  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
-                         Text="{Binding NewEntryGSTID}" />
-                <Button Content="Add" Grid.Column="5" Command="{Binding NewEntryCommand}" />
-                <Button Content="Cancel" Grid.Row="1" Grid.Column="5" Command="{Binding CancelEntryCommand}" />
+                       FontSize="28" Foreground="Blue" Text="Group:" />
+                <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                      ItemsSource="{Binding Groups}" SelectedItem="{Binding NewEntryGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEditable="True" />
+                <Button Grid.Row="1" Grid.Column="4"  Content="Add" Command="{Binding NewEntryCommand}" />
             </Grid>
         </Border>
         <Grid Grid.Row="1">
@@ -65,10 +56,6 @@
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Notes" Width="2*" IsReadOnly="True" Binding="{Binding Notes}" />
                 <DataGridTextColumn Header="Class" Width="1*" IsReadOnly="True" Binding="{Binding Class}" />
-                <DataGridTextColumn Header="Period Year" Width="1*" IsReadOnly="True" Binding="{Binding PeriodYear}" />
-                <DataGridTextColumn Header="Period" Width="1*" IsReadOnly="True" Binding="{Binding Period}" />
-                <DataGridTextColumn Header="Debit" Width="1*" IsReadOnly="True" Binding="{Binding Debit}" />
-                <DataGridTextColumn Header="Credit" Width="1*" IsReadOnly="True" Binding="{Binding Credit}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

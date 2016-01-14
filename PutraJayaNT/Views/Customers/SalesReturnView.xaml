@@ -82,6 +82,8 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Product:" />
                 <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
@@ -92,7 +94,10 @@
                 <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Pieces:" />
                 <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding SalesReturnEntryPieces}" />
-                <Button Grid.Column="6" Content="Add" Command="{Binding SalesReturnEntryAddCommand}" Margin="30, 10, 30, 10" />
+                <TextBlock Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="Return Price:" />
+                <TextBox Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding SalesReturnEntryPrice, StringFormat=N2}" />
+                <Button Grid.Column="8" Content="Add" Command="{Binding SalesReturnEntryAddCommand}" Margin="30, 10, 30, 10" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="4" ItemsSource="{Binding SalesReturnTransactionLines}"
@@ -108,9 +113,8 @@
                 <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount, StringFormat=N2}" />
-                <DataGridTextColumn Header="Net Discount" Width="1*" IsReadOnly="True" Binding="{Binding NetDiscount, StringFormat=N2}" />
+                <DataGridTextColumn Header="Return Price" Width="1*" IsReadOnly="True" Binding="{Binding ReturnPrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
-                <DataGridTextColumn Header="COGS" Width="1*" IsReadOnly="True" Binding="{Binding CostOfGoodsSold, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="5" IsEnabled="{Binding NotEditing}">

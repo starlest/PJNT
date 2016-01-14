@@ -1,5 +1,6 @@
 namespace PutraJayaNT.Models.Sales
 {
+    using PutraJayaNT.Models.Salesman;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -20,6 +21,8 @@ namespace PutraJayaNT.Models.Sales
         public virtual Customer Customer { get; set; }
 
         public virtual User User { get; set; }
+
+        public virtual Salesman CollectionSalesman { get; set; }
 
         public decimal GrossTotal { get; set; }
         
@@ -50,8 +53,5 @@ namespace PutraJayaNT.Models.Sales
         public virtual ICollection<SalesTransactionLine> TransactionLines { get; set; }
 
         public virtual ICollection<SalesReturnTransaction> SalesReturnTransactions { get; set; }
-
-        [NotMapped]
-        public decimal Remaining { get; set; }
     }
 }

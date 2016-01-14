@@ -4,8 +4,6 @@ using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Transactions;
 using System.Windows;
@@ -21,6 +19,7 @@ namespace PutraJayaNT.ViewModels.Customers
         ObservableCollection<SalesTransactionLineVM> _selectedSalesTransactionLines;
 
         CustomerVM _selectedCustomer;
+        DateTime _date;
         SalesTransaction _selectedSalesTransaction;
         string _selectedPaymentMode;
         decimal _salesReturnCredits;
@@ -38,7 +37,7 @@ namespace PutraJayaNT.ViewModels.Customers
             _customerUnpaidSalesTransactions = new ObservableCollection<SalesTransaction>();
             _selectedSalesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
             _paymentModes = new ObservableCollection<string>();
-
+            _date = DateTime.Now.Date;
             UpdatePaymentModes();
             UpdateCustomers();
         }
@@ -61,6 +60,12 @@ namespace PutraJayaNT.ViewModels.Customers
         public ObservableCollection<SalesTransactionLineVM> SelectedSalesTransactionLines
         {
             get { return _selectedSalesTransactionLines; }
+        }
+
+        public DateTime Date
+        {
+            get { return _date; }
+            set { SetProperty(ref _date, value, "Date"); }
         }
 
         public CustomerVM SelectedCustomer
@@ -251,7 +256,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             var accountsReceivableName = _selectedCustomer.Name + " Accounts Receivable";
                             var transaction = new LedgerTransaction();
 
-                            LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, _selectedSalesTransaction.SalesTransactionID, "Sales Transaction Payment");
+                            LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedSalesTransaction.SalesTransactionID, "Sales Transaction Payment");
                             context.SaveChanges();
 
                             LedgerDBHelper.AddTransactionLine(context, transaction, _selectedPaymentMode, "Debit", (decimal)_pay);

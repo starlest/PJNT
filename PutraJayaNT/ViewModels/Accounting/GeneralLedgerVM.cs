@@ -120,6 +120,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             using (var context = new ERPContext())
             {
                 var accounts = context.Ledger_Accounts
+                    .Where(e => !e.Name.Equals("- Accounts Payable"))
                     .OrderBy(e => e.Class)
                     .ThenBy(e => e.Name);
 

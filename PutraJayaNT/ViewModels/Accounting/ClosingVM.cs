@@ -4,26 +4,33 @@ using PutraJayaNT.Utilities;
 using System;
 using System.Linq;
 using System.Transactions;
-using System.Windows;
 
 namespace PutraJayaNT.ViewModels.Accounting
 {
     class ClosingVM : ViewModelBase
     {
+        int _periodYear;
+        int _period;
+
+        public ClosingVM()
+        {
+            using (var context = new ERPContext())
+            {
+                _periodYear = context.Ledger_General.FirstOrDefault().PeriodYear;
+                _period = context.Ledger_General.FirstOrDefault().Period;
+            }
+        }
+
         public int PeriodYear
         {
-            get
-            {
-                return DateTime.Now.Year;
-            }
+            get { return _periodYear; }
+            set { SetProperty(ref _periodYear, value, "PeriodYear"); }
         }
 
         public int Period
         {
-            get
-            {
-                return DateTime.Now.Month;
-            }
+            get { return _period; }
+            set { SetProperty(ref _period, value, "Period"); }
         }
 
         public void Close()
@@ -31,6 +38,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext();
+
                 var accounts = context.Ledger_Accounts
                     .Include("LedgerGeneral")
                     .Include("LedgerAccountBalances")
@@ -53,7 +61,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                 foreach (var account in revenueAndExpenseAccounts)
                 {
                     if (account.LedgerGeneral.Debit != 0 || account.LedgerGeneral.Credit != 0)
-                        CloseRevenueOrExpenseAccount(account, context);
+                        CloseRevenueOrExpenseAccountToRetainedEarnings(account, context);
                 }
 
                 foreach (var account in accounts)
@@ -64,266 +72,21 @@ namespace PutraJayaNT.ViewModels.Accounting
                         context.Ledger_Account_Balances.Add(newBalance);
                     }
 
+                    if (Period != 12) account.LedgerGeneral.Period++;
+                    else
+                    {
+                        account.LedgerGeneral.PeriodYear++;
+                        account.LedgerGeneral.Period = 1;
+                    }
+
                     var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(DateTime.Now.Year)).FirstOrDefault();
 
                     // Close the balances
                     if (account.Class.Equals("Asset") || account.Class.Equals("Expense"))
-                    {
-                        switch (Period)
-                        {
-                            case 1:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance1 += periodYearBalances.BeginningBalance;
-
-                                periodYearBalances.Balance1 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 2:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance2 += periodYearBalances.Balance1;
-
-                                periodYearBalances.Balance2 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 3:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance3 += periodYearBalances.Balance2;
-
-                                periodYearBalances.Balance3 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 4:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance4 += periodYearBalances.Balance3;
-
-                                periodYearBalances.Balance4 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 5:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance5 += periodYearBalances.Balance4;
-
-                                periodYearBalances.Balance5 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 6:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance6 += periodYearBalances.Balance5;
-
-                                periodYearBalances.Balance6 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 7:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance7 += periodYearBalances.Balance6;
-
-                                periodYearBalances.Balance7 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 8:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance8 += periodYearBalances.Balance7;
-
-                                periodYearBalances.Balance8 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 9:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance9 += periodYearBalances.Balance8;
-
-                                periodYearBalances.Balance9 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 10:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance10 += periodYearBalances.Balance9;
-
-                                periodYearBalances.Balance10 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 11:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance11 += periodYearBalances.Balance10;
-
-                                periodYearBalances.Balance11 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 12:
-                                if (!account.Class.Equals("Expense"))
-                                    periodYearBalances.Balance12 += periodYearBalances.Balance11;
-
-                                periodYearBalances.Balance12 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-                                account.LedgerGeneral.PeriodYear++;
-
-                                account.LedgerGeneral.Period = 1;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
+                        CloseAssetOrExpenseAccount(account, context);                     
                     else
-                    {
-                        switch (Period)
-                        {
-                            case 1:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance1 += periodYearBalances.BeginningBalance;
-
-                                periodYearBalances.Balance1 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 2:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance2 += periodYearBalances.Balance1;
-
-                                periodYearBalances.Balance2 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 3:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance3 += periodYearBalances.Balance2;
-
-                                periodYearBalances.Balance3 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 4:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance4 += periodYearBalances.Balance3;
-
-                                periodYearBalances.Balance4 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 5:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance5 += periodYearBalances.Balance4;
-
-                                periodYearBalances.Balance5 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 6:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance6 += periodYearBalances.Balance5;
-
-                                periodYearBalances.Balance6 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 7:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance7 += periodYearBalances.Balance6;
-
-                                periodYearBalances.Balance7 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 8:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance8 += periodYearBalances.Balance7;
-
-                                periodYearBalances.Balance8 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 9:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance9 += periodYearBalances.Balance8;
-
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 10:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance10 += periodYearBalances.Balance9;
-
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 11:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance11 += periodYearBalances.Balance10;
-
-                                periodYearBalances.Balance11 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.Period++;
-                                break;
-                            case 12:
-                                if (!account.Class.Equals("Revenue"))
-                                    periodYearBalances.Balance12 += periodYearBalances.Balance11;
-
-                                periodYearBalances.Balance12 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
-                                account.LedgerGeneral.Debit = 0;
-                                account.LedgerGeneral.Credit = 0;
-
-                                account.LedgerGeneral.PeriodYear++;
-                                account.LedgerGeneral.Period = 1;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                        CloseLiabilityOrRevenueAccount(account, context);
+                    
                 }
 
                 context.SaveChanges();
@@ -334,7 +97,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             OnPropertyChanged("Period");
         }
 
-        void CloseRevenueOrExpenseAccount(LedgerAccount account, ERPContext context)
+        private void CloseRevenueOrExpenseAccountToRetainedEarnings(LedgerAccount account, ERPContext context)
         {
             var retainedEarnings = context.Ledger_Accounts
                 .Include("LedgerGeneral")
@@ -361,12 +124,226 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var amount = account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                 var transaction = new LedgerTransaction();
 
-                LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, "Closing Entry", account.Name);
+                if (!LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, "Closing Entry", account.Name)) return;
                 context.SaveChanges();
                 LedgerDBHelper.AddTransactionLine(context, transaction, account.Name, "Debit", amount);
                 LedgerDBHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Credit", amount);
 
                 account.LedgerGeneral.Debit -= amount;
+            }
+        }
+
+        private void CloseAssetOrExpenseAccount(LedgerAccount account, ERPContext context)
+        {
+            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(DateTime.Now.Year)).FirstOrDefault();
+
+            switch (Period)
+            {
+                case 1:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance1 += periodYearBalances.BeginningBalance;
+
+                    periodYearBalances.Balance1 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 2:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance2 += periodYearBalances.Balance1;
+
+                    periodYearBalances.Balance2 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 3:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance3 += periodYearBalances.Balance2;
+
+                    periodYearBalances.Balance3 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 4:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance4 += periodYearBalances.Balance3;
+
+                    periodYearBalances.Balance4 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 5:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance5 += periodYearBalances.Balance4;
+
+                    periodYearBalances.Balance5 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 6:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance6 += periodYearBalances.Balance5;
+
+                    periodYearBalances.Balance6 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 7:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance7 += periodYearBalances.Balance6;
+
+                    periodYearBalances.Balance7 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 8:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance8 += periodYearBalances.Balance7;
+
+                    periodYearBalances.Balance8 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 9:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance9 += periodYearBalances.Balance8;
+
+                    periodYearBalances.Balance9 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 10:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance10 += periodYearBalances.Balance9;
+
+                    periodYearBalances.Balance10 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 11:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance11 += periodYearBalances.Balance10;
+
+                    periodYearBalances.Balance11 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 12:
+                    if (!account.Class.Equals("Expense"))
+                        periodYearBalances.Balance12 += periodYearBalances.Balance11;
+
+                    periodYearBalances.Balance12 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CloseLiabilityOrRevenueAccount(LedgerAccount account, ERPContext context)
+        {
+            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(DateTime.Now.Year)).FirstOrDefault();
+
+            switch (Period)
+            {
+                case 1:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance1 += periodYearBalances.BeginningBalance;
+
+                    periodYearBalances.Balance1 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 2:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance2 += periodYearBalances.Balance1;
+
+                    periodYearBalances.Balance2 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 3:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance3 += periodYearBalances.Balance2;
+
+                    periodYearBalances.Balance3 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 4:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance4 += periodYearBalances.Balance3;
+
+                    periodYearBalances.Balance4 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 5:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance5 += periodYearBalances.Balance4;
+
+                    periodYearBalances.Balance5 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 6:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance6 += periodYearBalances.Balance5;
+
+                    periodYearBalances.Balance6 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 7:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance7 += periodYearBalances.Balance6;
+
+                    periodYearBalances.Balance7 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 8:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance8 += periodYearBalances.Balance7;
+
+                    periodYearBalances.Balance8 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 9:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance9 += periodYearBalances.Balance8;
+
+                    periodYearBalances.Balance9 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 10:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance10 += periodYearBalances.Balance9;
+
+                    periodYearBalances.Balance10 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 11:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance11 += periodYearBalances.Balance10;
+
+                    periodYearBalances.Balance11 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                case 12:
+                    if (!account.Class.Equals("Revenue"))
+                        periodYearBalances.Balance12 += periodYearBalances.Balance11;
+
+                    periodYearBalances.Balance12 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
+                    account.LedgerGeneral.Debit = 0;
+                    account.LedgerGeneral.Credit = 0;
+                    break;
+                default:
+                    break;
             }
         }
     }

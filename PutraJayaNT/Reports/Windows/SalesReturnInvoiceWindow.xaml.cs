@@ -51,7 +51,7 @@ namespace PutraJayaNT.Reports.Windows
                 dr["Units"] = line.Units;
                 dr["Pieces"] = line.Pieces;
                 dr["SalesPrice"] = line.SalesPrice;
-                dr["Discount"] = _salesReturnTransaction.GetNetDiscount(line);
+                dr["Discount"] = line.Discount;
                 line.UpdateTotal();
                 dr["Total"] = line.Total;
                 dt1.Rows.Add(dr);

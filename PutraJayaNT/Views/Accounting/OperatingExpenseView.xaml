@@ -48,7 +48,7 @@
                          Text="{Binding NewEntryDescription, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Grid.Row="1" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Amount:" />
                 <TextBox Grid.Row="1" Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding NewEntryAmount, UpdateSourceTrigger=PropertyChanged}" />
+                         Text="{Binding NewEntryAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
             <TextBlock Grid.Row="2" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Mode:" />
             <ComboBox Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                           ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding NewEntryPaymentMode, UpdateSourceTrigger=PropertyChanged}" 
@@ -63,7 +63,7 @@
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Account" Width="1*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
                 <DataGridTextColumn Header="Description" Width="2*" IsReadOnly="True" Binding="{Binding Description}" />
-                <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount}" />
+                <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="2">
@@ -77,7 +77,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total:" FontSize="28" />
             <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding Total, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Foreground="Red" />
+                         Text="{Binding Total, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
         </Grid>
     </Grid>
 </UserControl>

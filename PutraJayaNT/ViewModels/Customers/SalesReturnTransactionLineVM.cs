@@ -103,6 +103,16 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
+        public decimal ReturnPrice
+        {
+            get { return Model.ReturnPrice * Item.PiecesPerUnit; }
+            set
+            {
+                Model.ReturnPrice = value / Item.PiecesPerUnit;
+                OnPropertyChanged("ReturnPrice");
+            }
+        }
+
         public decimal Discount
         {
             get { return Model.Discount * Item.PiecesPerUnit; }
@@ -113,24 +123,11 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
-        public decimal NetDiscount
-        {
-            get
-            {
-                return Model.NetDiscount * Item.PiecesPerUnit;
-            }
-            set
-            {
-                Model.NetDiscount = value / Item.PiecesPerUnit;
-                OnPropertyChanged("NetDiscount");
-            }
-        }
-
         public decimal Total
         {
             get
             {
-                Model.Total = Quantity * ((SalesPrice - NetDiscount) / Item.PiecesPerUnit);
+                Model.Total = Quantity * Model.ReturnPrice;
                 return Model.Total;
             }
             set
@@ -152,7 +149,6 @@ namespace PutraJayaNT.ViewModels.Customers
 
         public void UpdateTotal()
         {
-            OnPropertyChanged("NetDiscount");
             OnPropertyChanged("Total");
         }
     }

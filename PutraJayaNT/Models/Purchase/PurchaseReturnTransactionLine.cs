@@ -38,7 +38,7 @@ namespace PutraJayaNT.Models.Purchase
         public decimal Discount { get; set; }
 
         [Required]
-        public decimal NetDiscount { get; set; }
+        public decimal ReturnPrice { get; set; }
 
         [Required]
         public int Quantity

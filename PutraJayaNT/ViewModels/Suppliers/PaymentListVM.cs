@@ -53,7 +53,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 }
 
                 SetProperty(ref _fromDate, value, "FromDate");
-                UpdatePurchaseTransactions();
+                if (_selectedSupplier != null) UpdatePurchaseTransactions();
             }
         }
 
@@ -69,7 +69,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 }
 
                 SetProperty(ref _toDate, value, "ToDate");
-                UpdatePurchaseTransactions();
+                if (_selectedSupplier != null) UpdatePurchaseTransactions();
             }
         }
 

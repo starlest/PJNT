@@ -127,7 +127,7 @@ namespace PutraJayaNT.ViewModels
             _suppliers.Add(new Supplier { ID = -1, Name = "All" });
             using (var context = new ERPContext())
             {
-                var suppliers = context.Suppliers.OrderBy(e => e.Name);
+                var suppliers = context.Suppliers.Where(e => !e.Name.Equals("-")).OrderBy(e => e.Name);
                 foreach (var supplier in suppliers)
                     _suppliers.Add(supplier);
             }

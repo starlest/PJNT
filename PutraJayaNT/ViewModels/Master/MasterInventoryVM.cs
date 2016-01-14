@@ -711,7 +711,7 @@ namespace PutraJayaNT.ViewModels.Master
                 var suppliers = uow.SupplierRepository.GetAll();
                 foreach (var supplier in suppliers)
                 {
-                    if (supplier.Active == true)
+                    if (supplier.Active == true && supplier.Name != "-")
                         _suppliers.Add(supplier);
                 }
             }

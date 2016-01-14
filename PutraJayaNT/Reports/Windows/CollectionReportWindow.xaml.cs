@@ -1,6 +1,7 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using Microsoft.Reporting.WinForms;
 using PutraJayaNT.Models.Sales;
+using PutraJayaNT.ViewModels.Customers;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -13,9 +14,9 @@ namespace PutraJayaNT.Reports.Windows
     /// </summary>
     public partial class CollectionReportWindow : ModernWindow
     {
-        ObservableCollection<SalesTransaction>  _salesTransactions;
+        ObservableCollection<PaymentListLineVM>  _salesTransactions;
 
-        public CollectionReportWindow(ObservableCollection<SalesTransaction> salesTransactions)
+        public CollectionReportWindow(ObservableCollection<PaymentListLineVM> salesTransactions)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
@@ -36,6 +37,8 @@ namespace PutraJayaNT.Reports.Windows
             dt.Columns.Add(new DataColumn("InvoicePaid", typeof(decimal)));
             dt.Columns.Add(new DataColumn("InvoiceRemaining", typeof(decimal)));
             dt.Columns.Add(new DataColumn("DueDate", typeof(string)));
+            dt.Columns.Add(new DataColumn("CollectionSalesman", typeof(string)));
+            dt.Columns.Add(new DataColumn("CollectionTotal", typeof(decimal)));
 
             foreach (var t in _salesTransactions)
             {
@@ -46,6 +49,8 @@ namespace PutraJayaNT.Reports.Windows
                 dr["InvoicePaid"] = t.Paid;
                 dr["InvoiceRemaining"] = t.Total - t.Paid;
                 dr["DueDate"] = t.DueDate.ToShortDateString();
+                dr["CollectionSalesman"] = t.CollectionSalesman != null ? t.CollectionSalesman.Name : "";
+                dr["CollectionTotal"] = t.Total;
                 dt.Rows.Add(dr);
             }
 

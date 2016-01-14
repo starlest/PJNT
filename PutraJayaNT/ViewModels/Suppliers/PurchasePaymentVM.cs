@@ -23,6 +23,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         decimal _purchaseReturnCredits;
         decimal _useCredits;
+        DateTime _date;
 
         decimal? _total;
         decimal _grossRemaining;
@@ -41,7 +42,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
             _supplierUnpaidPurchases = new ObservableCollection<PurchaseTransaction>();
             _selectedPurchaseLines = new ObservableCollection<PurchaseTransactionLineVM>();
             _paymentModes = new ObservableCollection<string>();
-
             _paymentModes.Add("Cash");
             using (var context = new ERPContext())
             {
@@ -51,6 +51,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     _paymentModes.Add(bank.Name);
             }
 
+            _date = DateTime.Now.Date;
             RefreshSuppliers();
         }
 
@@ -76,6 +77,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
         public ObservableCollection<string> PaymentModes
         {
             get { return _paymentModes; }
+        }
+
+        public DateTime Date
+        {
+            get { return _date; }
+            set { SetProperty(ref _date, value, "Date"); }
         }
 
         public decimal PurchaseReturnCredits
@@ -237,7 +244,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             var accountsPayableName = _selectedSupplier.Name + " Accounts Payable";
                             var transaction = new LedgerTransaction();
 
-                            if (!LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, _selectedPurchase.PurchaseID.ToString(), "Purchase Payment")) return;
+                            if (!LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedPurchase.PurchaseID.ToString(), "Purchase Payment")) return;
                             context.SaveChanges();
 
                             LedgerDBHelper.AddTransactionLine(context, transaction, accountsPayableName, "Debit", (decimal) _pay);
@@ -266,7 +273,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             _suppliers.Clear();
             using (var context = new ERPContext())
             {
-                var suppliers = context.Suppliers;
+                var suppliers = context.Suppliers.Where(e => !e.Name.Equals("-"));
                 foreach (var supplier in suppliers)
                     _suppliers.Add(supplier);
             }

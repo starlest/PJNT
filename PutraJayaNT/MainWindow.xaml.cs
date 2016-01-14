@@ -1,5 +1,6 @@
 ﻿using FirstFloor.ModernUI;
 using FirstFloor.ModernUI.Windows.Controls;
+using System.Configuration;
 
 namespace PutraJayaNT
 {
@@ -18,6 +19,9 @@ namespace PutraJayaNT
             var user = App.Current.TryFindResource("CurrentUser");
             if (user != null) this.IsEnabled = true;
             else App.Current.MainWindow.Close();
+
+            string constring = ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString;
+            this.Title = "Putra Jaya " + constring.Substring(7, 13);
         }
     }
 }

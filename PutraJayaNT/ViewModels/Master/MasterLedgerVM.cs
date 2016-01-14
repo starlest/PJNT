@@ -1,9 +1,12 @@
 ﻿using MVVMFramework;
+using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Utilities;
 using PutraJayaNT.ViewModels.Accounting;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Master
 {
@@ -11,22 +14,27 @@ namespace PutraJayaNT.ViewModels.Master
     {
         ObservableCollection<LedgerAccountVM> _displayAccounts;
         ObservableCollection<string> _classes;
+        ObservableCollection<string> _groups;
 
         string _selectedClass;
+
+        string _newEntryName;
+        string _newEntryGroup;
+        ICommand _newEntryCommand;
 
         public MasterLedgerVM()
         {
             _displayAccounts = new ObservableCollection<LedgerAccountVM>();
-            _classes = new ObservableCollection<string>();
+            _classes = new ObservableCollection<string>
+            {
+                "All", "Asset", "Liability", "Equity", "Expense", "Revenue"
+            };
+            _groups = new ObservableCollection<string>
+            {
+                "Bank", "Operating Expense", "Accounts Receivable", "Accounts Payable"
+            };
 
-            _classes.Add("All");
-            _classes.Add("Asset");
-            _classes.Add("Liability");
-            _classes.Add("Equity");
-            _classes.Add("Expense");
-            _classes.Add("Revenue");
-
-            SelectedClass = "All";
+            SelectedClass = _classes.FirstOrDefault();
         }
 
         public ObservableCollection<LedgerAccountVM> DisplayAccounts
@@ -39,10 +47,16 @@ namespace PutraJayaNT.ViewModels.Master
             get { return _classes; }
         }
 
+        public ObservableCollection<string> Groups
+        {
+            get { return _groups; }
+        }
+
         public string SelectedClass
         {
             get { return _selectedClass; }
-            set {
+            set
+            {
                 _displayAccounts.Clear();
                 SetProperty(ref _selectedClass, value, "SelectedClass");
 
@@ -55,7 +69,7 @@ namespace PutraJayaNT.ViewModels.Master
                             .OrderBy(e => e.Class)
                             .ThenBy(e => e.Notes)
                             .ThenBy(e => e.Name);
-                        
+
                         foreach (var account in accounts)
                             _displayAccounts.Add(new LedgerAccountVM { Model = account });
                     }
@@ -78,6 +92,123 @@ namespace PutraJayaNT.ViewModels.Master
                     }
                 }
             }
+        }
+
+        #region New Entry Properties
+        public string NewEntryName
+        {
+            get { return _newEntryName; }
+            set { SetProperty(ref _newEntryName, value, "NewEntryName"); }
+        }
+
+        public string NewEntryGroup
+        {
+            get { return _newEntryGroup; }
+            set { SetProperty(ref _newEntryGroup, value, "NewEntryGroup"); }
+        }
+
+        public ICommand NewEntryCommand
+        {
+            get
+            {
+                return _newEntryCommand ?? (_newEntryCommand = new RelayCommand(() =>
+                {
+                    if (MessageBox.Show("Confirmation adding this account?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+
+                    using (var context = new ERPContext())
+                    {
+                        CreateNewAccount(context);
+                        context.SaveChanges();
+                    }
+
+                    MessageBox.Show("Successfully added account!", "Success", MessageBoxButton.OK);
+                    ResetEntryFields();
+                }));
+            }
+        }
+        #endregion
+
+        private void CreateNewAccount(ERPContext context)
+        {
+            LedgerAccount newAccount;
+                
+            if (_newEntryGroup.Equals("Bank"))
+            {
+                newAccount = new LedgerAccount
+                {
+                    Name = _newEntryName,
+                    Class = "Asset",
+                    Notes = "Current Asset",
+                    LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
+                };
+            }
+
+            else if (_newEntryGroup.Equals("Operating Expense"))
+            {
+                newAccount = new LedgerAccount
+                {
+                    Name = _newEntryName,
+                    Class = "Expense",
+                    Notes = "Operating Expense",
+                    LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
+                };
+            }
+
+            else if (_newEntryGroup.Equals("Accounts Receivable"))
+            {
+                newAccount = new LedgerAccount
+                {
+                    Name = _newEntryName,
+                    Class = "Asset",
+                    Notes = "Accounts Receivable",
+                    LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
+                };
+            }
+
+            else if (_newEntryGroup.Equals("Accounts Payable"))
+            {
+                newAccount = new LedgerAccount
+                {
+                    Name = _newEntryName,
+                    Class = "Liability",
+                    Notes = "Accounts Payable",
+                    LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
+                };
+            }
+
+            else
+            {
+                newAccount = new LedgerAccount
+                {
+                    Name = _newEntryName,
+                    Class = "Expense",
+                    Notes = "Operating Expense",
+                    LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
+                };
+            }
+
+            var newAccountGeneralLedger = new LedgerGeneral
+            {
+                LedgerAccount = newAccount,
+                PeriodYear = context.Ledger_General.FirstOrDefault().PeriodYear,
+                Period = context.Ledger_General.FirstOrDefault().Period
+            };
+
+            var newAccountBalances = new LedgerAccountBalance
+            {
+                LedgerAccount = newAccount,
+                PeriodYear = context.Ledger_General.FirstOrDefault().PeriodYear
+            };
+
+            newAccount.LedgerGeneral = newAccountGeneralLedger;
+            newAccount.LedgerAccountBalances.Add(newAccountBalances);
+            context.Ledger_Accounts.Add(newAccount);
+        }
+
+        private void ResetEntryFields()
+        {
+            NewEntryName = null;
+            NewEntryGroup = null;
         }
     }
 }

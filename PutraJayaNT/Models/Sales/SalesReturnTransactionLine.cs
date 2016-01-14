@@ -35,7 +35,7 @@ namespace PutraJayaNT.Models.Sales
         public decimal Discount { get; set; }
 
         [Required]
-        public decimal NetDiscount { get; set; }
+        public decimal ReturnPrice { get; set; }
 
         [Required]
         public int Quantity
@@ -44,6 +44,7 @@ namespace PutraJayaNT.Models.Sales
             set { SetProperty(ref _quantity, value, "Quantity"); }
         }
 
+        [Required]
         public decimal Total { get; set; }
 
         [Required]

@@ -10,6 +10,8 @@
 
         public string Address { get; set; }
 
+        public string CollectionSalesman { get; set; }
+
         public decimal InvoiceNumber { get; set; }
 
         public string Date { get; set; }
@@ -29,5 +31,7 @@
         public decimal InvoiceRemaining { get; set; }
 
         public string Notes { get; set; }
+
+        public decimal CollectionTotal { get; set; }
     }
 }

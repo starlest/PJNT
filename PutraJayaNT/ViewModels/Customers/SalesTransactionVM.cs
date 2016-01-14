@@ -38,6 +38,7 @@
         string _newTransactionID;
         DateTime _newTransactionDate;
         CustomerVM _newTransactionCustomer;
+        string _newTransactionCustomerCity;
         string _newTransactionNotes;
         decimal? _newTransactionDiscountPercent;
         decimal? _newTransactionDiscount;
@@ -65,6 +66,7 @@
         #endregion
 
         ICommand _browseCommand;
+        ICommand _printListCommand;
         ICommand _printDOCommand;
         ICommand _printInvoiceCommand;
         ICommand _previewInvoiceCommand;
@@ -400,7 +402,17 @@
                 }
 
                 SetProperty(ref _newTransactionCustomer, value, "NewTransactionCustomer");
+
+                if (_newTransactionCustomer == null) return;
+
+                NewTransactionCustomerCity = _newTransactionCustomer.City;
             }
+        }
+
+        public string NewTransactionCustomerCity
+        {
+            get { return _newTransactionCustomerCity; }
+            set { SetProperty(ref _newTransactionCustomerCity, value, "NewTransactionCustomerCity"); }
         }
 
         public string NewTransactionNotes
@@ -712,7 +724,7 @@
                                 Model.Total = 0;
                                 foreach (var line in _salesTransactionLines)
                                 {
-                                    line.Item = context.Inventory .Where(e => e.ItemID.Equals(line.Item.ItemID)) .FirstOrDefault();
+                                    line.Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
                                     line.Warehouse = context.Warehouses.Where(e => e.ID == line.Warehouse.ID).FirstOrDefault();
                                     line.Salesman = context.Salesmans.Where(e => e.ID.Equals(line.Salesman.ID)).FirstOrDefault();
 
@@ -980,6 +992,7 @@
         }
         #endregion
 
+        #region Commands
         public ICommand BrowseCommand
         {
             get
@@ -990,6 +1003,20 @@
                     browseWindow.Owner = App.Current.MainWindow;
                     browseWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     browseWindow.Show();
+                }));
+            }
+        }
+
+        public ICommand PrintListCommand
+        {
+            get
+            {
+                return _printListCommand ?? (_printListCommand = new RelayCommand(() =>
+                {
+                    var printListWindow = new PrintListView();
+                    printListWindow.Owner = App.Current.MainWindow;
+                    printListWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    printListWindow.Show();
                 }));
             }
         }
@@ -1247,14 +1274,14 @@
                                     if (tracker <= availableQuantity)
                                     {
                                         var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                                        costOfGoodsSoldAmount += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount;
+                                        costOfGoodsSoldAmount += ((tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal) 1.1;
                                         purchase.SoldOrReturned += tracker;
                                         break;
                                     }
                                     else if (tracker > availableQuantity)
                                     {
                                         var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                                        costOfGoodsSoldAmount += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount;
+                                        costOfGoodsSoldAmount += ((availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
                                         purchase.SoldOrReturned += availableQuantity;
                                         tracker -= availableQuantity;
                                     }
@@ -1285,6 +1312,7 @@
                 }));
             }
         }
+        #endregion
 
         #region Sales Transaction Lines Event Handlers
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -1411,7 +1439,7 @@
 
             var month = _newTransactionDate.Month;
             var year = _newTransactionDate.Year;
-            _newTransactionID = "S" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
+            _newTransactionID = "M" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
 
             string lastTransactionID = null;
             using (var context = new ERPContext())
@@ -1423,7 +1451,7 @@
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
-            if (lastTransactionID != null) _newTransactionID = "S" + (Convert.ToInt64(lastTransactionID.Substring(1)) + 1).ToString();
+            if (lastTransactionID != null) _newTransactionID = "M" + (Convert.ToInt64(lastTransactionID.Substring(1)) + 1).ToString();
 
             Model.SalesTransactionID = _newTransactionID;
             OnPropertyChanged("NewTransactionID");
@@ -1454,6 +1482,7 @@
             NewTransactionDiscount = null;
             NewTransactionSalesExpense = null;
             NewTransactionCustomer = null;
+            NewTransactionCustomerCity = null;
             NewTransactionDate = DateTime.Now.Date;
             RefreshCustomers();
             ResetEntryFields();

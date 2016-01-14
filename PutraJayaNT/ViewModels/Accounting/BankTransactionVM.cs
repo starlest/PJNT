@@ -206,7 +206,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             using (var context = new ERPContext())
             {
                 var accounts = context.Ledger_Accounts
-                    .Where(e => !e.Name.Contains("Accounts Payable") && !e.Name.Equals("Cost of Goods Sold")
+                    .Where(e => !e.Name.Equals("Cost of Goods Sold")
                     && !e.Name.Equals("Inventory") && !e.Name.Equals("Retained Earnings")
                     && !e.Notes.Equals("Operating Expense") && !e.Name.Contains("Revenue"))
                     .ToList();
@@ -254,8 +254,10 @@ namespace PutraJayaNT.ViewModels.Accounting
             using (var context = new ERPContext())
             {
                 var transactionLines = context.Ledger_Transaction_Lines
+                    .Include("LedgerAccount")
                     .Include("LedgerTransaction")
                     .Include("LedgerTransaction.LedgerTransactionLines")
+                            .Include("LedgerTransaction.LedgerTransactionLines.LedgerAccount")
                     .Where(e => e.LedgerAccount.ID == _selectedBankID && _fromDate <= e.LedgerTransaction.Date && _toDate >= e.LedgerTransaction.Date)
                     .OrderBy(e => e.LedgerTransactionID);
 
@@ -265,14 +267,8 @@ namespace PutraJayaNT.ViewModels.Accounting
                     foreach (var l in line.LedgerTransaction.LedgerTransactionLines)
                     {
                         if (l.LedgerAccountID != _selectedBankID)
-                        {
-                            var transactionLine = context.Ledger_Transaction_Lines
-                                .Include("LedgerAccount")
-                                .Include("LedgerTransaction")
-                                .Where(e => e.LedgerTransactionID == l.LedgerTransactionID)
-                                .FirstOrDefault();
-
-                            _displayLines.Add(new LedgerTransactionLineVM { Model = transactionLine });
+                        { 
+                            _displayLines.Add(new LedgerTransactionLineVM { Model = l });
                         }
                     }
                 }

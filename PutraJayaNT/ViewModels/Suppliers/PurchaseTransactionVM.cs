@@ -42,6 +42,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         decimal? _newTransactionDiscountPercent;
         decimal? _newTransactionDiscount;
+        decimal? _newTransactionTax;
         decimal? _newTransactionGrossTotal;
         decimal? _newTransactionNetTotal;
         string _newTransactionNote;
@@ -147,6 +148,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 _lines.Add(new PurchaseTransactionLineVM { Model = line });
 
             NewTransactionDiscount = transaction.Discount;
+            NewTransactionTax = transaction.Tax;
             OnPropertyChanged("NewTransactionGrossTotal");
         }
 
@@ -239,7 +241,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 if (value != null && (value < 0 || value > _newTransactionGrossTotal))
                 {
-                    MessageBox.Show(string.Format("a Please enter a value from the range of 0 - {0}.", _newTransactionGrossTotal), "Invalid Range", MessageBoxButton.OK);
+                    MessageBox.Show(string.Format("Please enter a value from the range of 0 - {0}.", _newTransactionGrossTotal), "Invalid Range", MessageBoxButton.OK);
                     return;
                 }
 
@@ -248,11 +250,27 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        public decimal? NewTransactionTax
+        {
+            get { return _newTransactionTax; }
+            set
+            {
+                if (value != null && (value < 0 || value > _newTransactionGrossTotal))
+                {
+                    MessageBox.Show(string.Format("Please enter a value from the range of 0 - {0}.", _newTransactionGrossTotal), "Invalid Range", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _newTransactionTax, value, "NewTransactionTax");
+                OnPropertyChanged("NewTransactionNetTotal");
+            }
+        }
+
         public decimal? NewTransactionNetTotal
         {
             get
             {
-                _newTransactionNetTotal = (_newTransactionGrossTotal == null ? 0 : (decimal)_newTransactionGrossTotal) - (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount);
+                _newTransactionNetTotal = (_newTransactionGrossTotal == null ? 0 : (decimal)_newTransactionGrossTotal) - (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount) + (_newTransactionTax == null ? 0 : (decimal)_newTransactionTax);
                 return _newTransactionNetTotal;
             }
         }
@@ -272,7 +290,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 var suppliers = uow.SupplierRepository.GetAll();
                 foreach (var supplier in suppliers)
-                    _suppliers.Add(supplier);
+                    if (supplier.Name != "-")
+                        _suppliers.Add(supplier);
             }
         }
 

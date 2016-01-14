@@ -26,8 +26,8 @@
         <mui:LinkGroup DisplayName="Customers">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Sales Transaction" Source="/Views/Customers/SalesTransactionView.xaml" />
-                <mui:Link DisplayName="Payment" Source="/Views/Customers/PaymentView.xaml" />
                 <mui:Link DisplayName="Payment List" Source="/Views/Customers/PaymentListView.xaml" />
+                <mui:Link DisplayName="Payment" Source="/Views/Customers/PaymentView.xaml" />
                 <mui:Link DisplayName="Sales Return" Source="/Views/Customers/SalesReturnView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>

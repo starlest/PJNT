@@ -33,6 +33,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         int? _purchaseReturnEntryQuantity;
         int? _purchaseReturnEntryUnits;
         int? _purchaseReturnEntryPieces;
+        decimal? _purchaseReturnEntryPrice;
         ICommand _purchaseReturnEntryAddCommand;
 
         ICommand _newCommand;
@@ -161,6 +162,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
             set { SetProperty(ref _purchaseReturnEntryPieces, value, "PurchaseReturnEntryPieces"); }
         }
 
+        public decimal? PurchaseReturnEntryPrice
+        {
+            get { return _purchaseReturnEntryPrice; }
+            set { SetProperty(ref _purchaseReturnEntryPrice, value, "PurchaseReturnEntryPrice"); }
+        }
+
         public ICommand PurchaseReturnEntryAddCommand
         {
             get
@@ -195,10 +202,10 @@ namespace PutraJayaNT.ViewModels.Suppliers
                         line.Warehouse.ID.Equals(_selectedPurchaseTransactionLine.Warehouse.ID) &&
                         line.ReturnWarehouse.ID.Equals(_purchaseReturnEntryWarehouse.ID) &&
                         line.PurchasePrice.Equals(_selectedPurchaseTransactionLine.PurchasePrice) &&
-                        line.Discount.Equals(_selectedPurchaseTransactionLine.Discount))
+                        line.Discount.Equals(_selectedPurchaseTransactionLine.Discount) &&
+                        line.ReturnPrice.Equals(_purchaseReturnEntryPrice))
                         {
                             line.Quantity += (int)_purchaseReturnEntryQuantity;
-                            line.NetDiscount = GetNetDiscount(_selectedPurchaseTransactionLine, line.Quantity);
                             line.UpdateTotal();
                             OnPropertyChanged("PurchaseReturnTransactionNetTotal");
                             return;
@@ -219,9 +226,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
                         Warehouse = _selectedPurchaseTransactionLine.Warehouse,
                         ReturnWarehouse = _purchaseReturnEntryWarehouse.Model,
                         PurchasePrice = purchasePrice,
+                        ReturnPrice = (decimal)_purchaseReturnEntryPrice / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
                         Discount = _selectedPurchaseTransactionLine.Discount / _selectedPurchaseTransactionLine.Item.PiecesPerUnit,
-                        NetDiscount = discount,
-                        Total = (purchasePrice - discount) * (int)_purchaseReturnEntryQuantity,
+                        Total = (decimal) _purchaseReturnEntryPrice / _selectedPurchaseTransactionLine.Item.PiecesPerUnit * (int)_purchaseReturnEntryQuantity,
                         Quantity = (int)_purchaseReturnEntryQuantity
                     };
 
@@ -269,6 +276,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
                             context.PurchaseReturnTransactions.Add(Model);
 
+                            decimal cogs = 0;
                             // Calcculate the total amount of Purchase Return
                             // ,record the transaction and decrease the item's quantity in the database
                             foreach (var line in _purchaseReturnTransactionLines)
@@ -310,7 +318,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
                                 e.ItemID.Equals(stock.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID)
                                 && e.PurchasePrice.Equals(line.PurchasePrice / line.Item.PiecesPerUnit) && e.Discount.Equals(line.Discount / line.Item.PiecesPerUnit))
                                 .FirstOrDefault();
+
                                 purchaseTransactionLine.SoldOrReturned += line.Quantity;
+                                var purchaseLineNetTotal = purchaseTransactionLine.PurchasePrice - purchaseTransactionLine.Discount;
+                                var fractionOfTransactionDiscount = (line.Quantity * purchaseLineNetTotal / purchaseTransactionLine.PurchaseTransaction.GrossTotal) * purchaseTransactionLine.PurchaseTransaction.Discount;
+                                cogs += ((line.Quantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchaseTransactionLine.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
                             }
 
                             Model.PurchaseTransaction.Supplier.PurchaseReturnCredits += _purchaseReturnTransactionNetTotal;
@@ -321,7 +333,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now, _purchaseReturnEntryID, "Purchase Return")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Debit", _purchaseReturnTransactionNetTotal);
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", _purchaseReturnTransactionNetTotal);
+                            if (_purchaseReturnTransactionNetTotal - cogs > 0)
+                                LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Cost of Goods Sold", "Debit", _purchaseReturnTransactionNetTotal - cogs); // Debit the differences to COGS
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", cogs);
               
                             context.SaveChanges();
                             ts.Complete();

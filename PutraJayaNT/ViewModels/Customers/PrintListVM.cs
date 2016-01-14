@@ -2,27 +2,30 @@
 using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
-    class BrowseSalesTransactionsVM : ViewModelBase
+    class PrintListVM : ViewModelBase
     {
         ObservableCollection<SalesTransaction> _salesTransactions;
+        ObservableCollection<string> _modes;
 
+        string _selectedMode;
         DateTime _fromDate;
         DateTime _toDate;
-        decimal _total;
 
-        public BrowseSalesTransactionsVM()
+        public PrintListVM()
         {
             _salesTransactions = new ObservableCollection<SalesTransaction>();
+            _modes = new ObservableCollection<string> { "Printed", "Not Printed" };
             _fromDate = DateTime.Now.Date;
             _toDate = DateTime.Now.Date;
 
-            UpdateSalesTransactions();
+            SelectedMode = _modes.FirstOrDefault();
         }
 
         public ObservableCollection<SalesTransaction> SalesTransactions
@@ -30,6 +33,23 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return _salesTransactions; }
         }
 
+        public ObservableCollection<string> Modes
+        {
+            get { return _modes; }
+        }
+
+        public string SelectedMode
+        {
+            get { return _selectedMode; }
+            set
+            {
+                SetProperty(ref _selectedMode, value, "Selected Mode");
+
+                if (_selectedMode == null) return;
+
+                UpdateSalesTransactions();
+            }
+        }
         public DateTime FromDate
         {
             get { return _fromDate; }
@@ -62,35 +82,39 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
-        public decimal Total
-        {
-            get { return _total; }
-            set { SetProperty(ref _total, value, "Total"); }
-        }
-
         #region Helper methods
         private void UpdateSalesTransactions()
         {
-            _total = 0;
             _salesTransactions.Clear();
             using (var context = new ERPContext())
             {
-                var salesTransactions = context.SalesTransactions
-                    .Include("User")
-                    .Include("Customer")
-                    .Where(e => e.When >= _fromDate && e.When <= _toDate)
-                    .OrderBy(e => e.When)
-                    .ThenBy(e => e.SalesTransactionID)
-                    .ToList();
+                List<SalesTransaction> salesTransactions;
+
+                if (_selectedMode.Equals("Printed"))
+                {
+                    salesTransactions = context.SalesTransactions
+                        .Include("User")
+                        .Include("Customer")
+                        .Where(e => e.InvoicePrinted && e.When >= _fromDate && e.When <= _toDate)
+                        .OrderBy(e => e.When)
+                        .ThenBy(e => e.SalesTransactionID)
+                        .ToList();
+                }
+
+                else
+                {
+                    salesTransactions = context.SalesTransactions
+                        .Include("User")
+                        .Include("Customer")
+                        .Where(e => !e.InvoicePrinted && e.When >= _fromDate && e.When <= _toDate)
+                        .OrderBy(e => e.When)
+                        .ThenBy(e => e.SalesTransactionID)
+                        .ToList();
+                }
 
                 foreach (var t in salesTransactions)
-                {
                     _salesTransactions.Add(t);
-                    _total += t.Total;
-                }
             }
-
-            OnPropertyChanged("Total");
         }
         #endregion
     }
