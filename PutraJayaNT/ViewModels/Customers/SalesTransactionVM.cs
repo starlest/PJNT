@@ -1469,6 +1469,7 @@
             NewEntryUnits = null;
             RemainingStock = null;
             NewEntrySalesman = null;
+            RemainingStock = null;
         }
 
         private void ResetTransaction()

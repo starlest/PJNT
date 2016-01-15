@@ -98,58 +98,18 @@
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601080322235_Update.cs" />
-    <Compile Include="Migrations\201601080322235_Update.Designer.cs">
-      <DependentUpon>201601080322235_Update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601080324590_Update1.cs" />
-    <Compile Include="Migrations\201601080324590_Update1.Designer.cs">
-      <DependentUpon>201601080324590_Update1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601080328429_Update2.cs" />
-    <Compile Include="Migrations\201601080328429_Update2.Designer.cs">
-      <DependentUpon>201601080328429_Update2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601080330418_Update3.cs" />
-    <Compile Include="Migrations\201601080330418_Update3.Designer.cs">
-      <DependentUpon>201601080330418_Update3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601080334411_Update4.cs" />
-    <Compile Include="Migrations\201601080334411_Update4.Designer.cs">
-      <DependentUpon>201601080334411_Update4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601080340351_Update5.cs" />
-    <Compile Include="Migrations\201601080340351_Update5.Designer.cs">
-      <DependentUpon>201601080340351_Update5.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601080740322_Update6.cs" />
-    <Compile Include="Migrations\201601080740322_Update6.Designer.cs">
-      <DependentUpon>201601080740322_Update6.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601080750238_Update7.cs" />
-    <Compile Include="Migrations\201601080750238_Update7.Designer.cs">
-      <DependentUpon>201601080750238_Update7.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601090901283_Update8.cs" />
-    <Compile Include="Migrations\201601090901283_Update8.Designer.cs">
-      <DependentUpon>201601090901283_Update8.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601110825370_Update9.cs" />
-    <Compile Include="Migrations\201601110825370_Update9.Designer.cs">
-      <DependentUpon>201601110825370_Update9.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601140108113_Update10.cs" />
-    <Compile Include="Migrations\201601140108113_Update10.Designer.cs">
-      <DependentUpon>201601140108113_Update10.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601140110452_Update11.cs" />
-    <Compile Include="Migrations\201601140110452_Update11.Designer.cs">
-      <DependentUpon>201601140110452_Update11.cs</DependentUpon>
+    <Compile Include="Migrations\201601150916355_Update.cs" />
+    <Compile Include="Migrations\201601150916355_Update.Designer.cs">
+      <DependentUpon>201601150916355_Update.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransactionLine.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransaction.cs" />
+    <Compile Include="Models\StockCorrection\MoveStockTransaction.cs" />
+    <Compile Include="Models\StockCorrection\MoveStockTransactionLine.cs" />
+    <Compile Include="Reports\Dataset Objects\StockCard.cs" />
+    <Compile Include="Reports\Dataset Objects\StockCardLine.cs" />
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesReturnInvoiceLine.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
@@ -176,6 +136,9 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\StockCardReportWindow.xaml.cs">
+      <DependentUpon>StockCardReportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Windows\SalesDOWindow.xaml.cs">
       <DependentUpon>SalesDOWindow.xaml</DependentUpon>
@@ -225,6 +188,7 @@
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionLineVM.cs" />
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionVM.cs" />
     <Compile Include="ViewModels\Inventory\CloseStockVM.cs" />
+    <Compile Include="ViewModels\Inventory\MoveStockTransactionLineVM.cs" />
     <Compile Include="ViewModels\Inventory\MoveStockVM.cs" />
     <Compile Include="ViewModels\ItemVM.cs" />
     <Compile Include="ViewModels\Accounting\LedgerAccountVM.cs" />
@@ -364,6 +328,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Reports\Windows\StockCardReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Reports\Windows\SalesDOWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -518,7 +486,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
     <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
     <None Include="packages.config" />
@@ -534,43 +504,13 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601080322235_Update.resx">
-      <DependentUpon>201601080322235_Update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601080324590_Update1.resx">
-      <DependentUpon>201601080324590_Update1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601080328429_Update2.resx">
-      <DependentUpon>201601080328429_Update2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601080330418_Update3.resx">
-      <DependentUpon>201601080330418_Update3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601080334411_Update4.resx">
-      <DependentUpon>201601080334411_Update4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601080340351_Update5.resx">
-      <DependentUpon>201601080340351_Update5.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601080740322_Update6.resx">
-      <DependentUpon>201601080740322_Update6.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601080750238_Update7.resx">
-      <DependentUpon>201601080750238_Update7.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601090901283_Update8.resx">
-      <DependentUpon>201601090901283_Update8.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601110825370_Update9.resx">
-      <DependentUpon>201601110825370_Update9.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601140108113_Update10.resx">
-      <DependentUpon>201601140108113_Update10.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601140110452_Update11.resx">
-      <DependentUpon>201601140110452_Update11.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601150916355_Update.resx">
+      <DependentUpon>201601150916355_Update.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\CollectionReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\StockCardReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\SalesDOReport.rdlc">
@@ -592,6 +532,7 @@
       <Name>MVVMFramework</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

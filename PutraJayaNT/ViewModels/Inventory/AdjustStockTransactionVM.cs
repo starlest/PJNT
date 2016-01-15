@@ -412,6 +412,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                 return transaction != null;
             }
         }
+
         private void SetEditMode()
         {
             IsNotEditMode = false;
@@ -440,10 +441,10 @@ namespace PutraJayaNT.ViewModels.Inventory
             string lastTransactionID = null;
             using (var context = new ERPContext())
             {
-                var IDs = (from DecreaseStockTransaction in context.AdjustStockTransactions
-                           where DecreaseStockTransaction.AdjustStrockTransactionID.CompareTo(_newTransactionID) >= 0
-                           orderby DecreaseStockTransaction.AdjustStrockTransactionID descending
-                           select DecreaseStockTransaction.AdjustStrockTransactionID);
+                var IDs = (from AdjustStockTransaction in context.AdjustStockTransactions
+                           where AdjustStockTransaction.AdjustStrockTransactionID.CompareTo(_newTransactionID) >= 0 && AdjustStockTransaction.AdjustStrockTransactionID.Substring(0, 2).Equals("SA")
+                           orderby AdjustStockTransaction.AdjustStrockTransactionID descending
+                           select AdjustStockTransaction.AdjustStrockTransactionID);
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 

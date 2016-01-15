@@ -13,6 +13,8 @@ namespace PutraJayaNT.Models.StockCorrection
 
         public DateTime Date { get; set; }
 
+        public string Description { get; set; }
+
         public virtual ObservableCollection<AdjustStockTransactionLine> AdjustStockTransactionLines { get; set; }
 
         public virtual User User { get; set; }

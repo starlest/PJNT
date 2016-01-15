@@ -4,14 +4,14 @@ using PutraJayaNT.Models.StockCorrection;
 
 namespace PutraJayaNT.ViewModels.Inventory
 {
-    class AdjustStockTransactionLineVM : ViewModelBase<AdjustStockTransactionLine>
+    class MoveStockTransactionLineVM : ViewModelBase<MoveStockTransactionLine>
     {
         int _units;
         int _pieces;
 
-        public AdjustStockTransaction AdjustStockTransaction
+        public MoveStockTransaction MoveStockTransaction
         {
-            get { return Model.AdjustStockTransaction; }
+            get { return Model.MoveStockTransaction; }
         }
 
         public Item Item
@@ -21,16 +21,6 @@ namespace PutraJayaNT.ViewModels.Inventory
             {
                 Model.Item = value;
                 OnPropertyChanged("Item");
-            }
-        }
-
-        public Warehouse Warehouse
-        {
-            get { return Model.Warehouse; }
-            set
-            {
-                Model.Warehouse = value;
-                OnPropertyChanged("Warehouse");
             }
         }
 

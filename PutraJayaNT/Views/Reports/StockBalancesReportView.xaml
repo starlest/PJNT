@@ -8,11 +8,19 @@
              d:DesignHeight="768" d:DesignWidth="1024">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="0.125*" />
             <RowDefinition Height="0.25*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
-        <Border BorderBrush="Blue" BorderThickness="2">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.2*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Content="Print" Command="{Binding PrintCommand}"/>
+        </Grid>
+        <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="1">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -58,7 +66,7 @@
                      IsReadOnly="True" Text="{Binding EndingBalanceString, Mode=OneWay}" Margin="10, 10, 10, 0"  Foreground="Red" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
@@ -72,7 +80,7 @@
                 <DataGridTextColumn Header="Pieces Balance" Width="0.8*" IsReadOnly="True" Binding="{Binding Balance}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -82,9 +90,11 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+            <TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="28" Text="In: " />
+            <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
                      IsReadOnly="True" Text="{Binding TotalInString, Mode=OneWay}" Margin="50, 10, 50, 0"  Foreground="Red" TextAlignment="Center" />
-            <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+            <TextBlock Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="28" Text="Out: " />
+            <TextBox Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
                      IsReadOnly="True" Text="{Binding TotalOutString, Mode=OneWay}" Margin="50, 10, 50, 0"  Foreground="Red" TextAlignment="Center" />
         </Grid>
     </Grid>

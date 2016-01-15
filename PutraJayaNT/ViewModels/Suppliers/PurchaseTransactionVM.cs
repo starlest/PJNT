@@ -591,7 +591,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             using(var context = new ERPContext())
             {
                 var IDs = (from PurchaseTransaction in context.PurchaseTransactions
-                           where PurchaseTransaction.PurchaseID.CompareTo(_newTransactionID.ToString()) >= 0
+                           where PurchaseTransaction.PurchaseID.CompareTo(_newTransactionID.ToString()) >= 0 && PurchaseTransaction.PurchaseID.Substring(0, 1).Equals("P")
                            orderby PurchaseTransaction.PurchaseID descending
                            select PurchaseTransaction.PurchaseID);
                 if (IDs.Count() != 0)

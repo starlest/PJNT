@@ -129,9 +129,6 @@ namespace PutraJayaNT.ViewModels.Reports
             set { SetProperty(ref _globalVisibility, value, "GlobalVisibility"); }
         }
 
-        /// <summary>
-        /// Gets or sets the starting date of the transactions to be loaded.
-        /// </summary>
         public DateTime FromDate
         {
             get { return _fromDate; }
@@ -148,9 +145,6 @@ namespace PutraJayaNT.ViewModels.Reports
             }
         }
 
-        /// <summary>
-        /// Gets or sets the ending date of the transactions to be loaded.
-        /// </summary>
         public DateTime ToDate
         {
             get { return _toDate; }
@@ -167,9 +161,6 @@ namespace PutraJayaNT.ViewModels.Reports
             }
         }
 
-        /// <summary>
-        /// The selected category from <see cref="Categories"/>.
-        /// </summary>
         public Category SelectedCategory
         {
             get { return _selectedCategory; }
@@ -184,18 +175,12 @@ namespace PutraJayaNT.ViewModels.Reports
             }
         }
 
-        /// <summary>
-        /// The selected item from <see cref="CategoryItems"/>.
-        /// </summary>
         public Item SelectedItem
         {
             get { return _selectedItem; }
             set { SetProperty(ref _selectedItem, value, "SelectedItem"); }
         }
 
-        /// <summary>
-        /// The selected customer from <see cref="Customers"/>.
-        /// </summary>
         public CustomerVM SelectedCustomer
         {
             get { return _selectedCustomer; }
@@ -208,13 +193,9 @@ namespace PutraJayaNT.ViewModels.Reports
                 }
                 SetProperty(ref _selectedCustomer, value, "SelectedCustomer");
                 RefreshDisplayLines();
-                RefreshTotal();
             }
         }
 
-        /// <summary>
-        /// The selected mode from <see cref="Modes"/>.
-        /// </summary>
         public string SelectedMode
         {
             get { return _selectedMode; }
@@ -388,6 +369,8 @@ namespace PutraJayaNT.ViewModels.Reports
                         }
                     }
                 }
+
+                RefreshTotal();
             }
         }
 
@@ -395,7 +378,8 @@ namespace PutraJayaNT.ViewModels.Reports
         {
             _total = 0;
             foreach (var line in _detailedDisplayLines)
-                Total += line.NetTotal;
+                _total += line.NetTotal;
+            OnPropertyChanged("Total");
         }
         #endregion
     }

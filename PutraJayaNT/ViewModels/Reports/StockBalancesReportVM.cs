@@ -1,15 +1,17 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Reports.Windows;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Reports
 {
-    class StockBalancesReportVM : ViewModelBase
+    public class StockBalancesReportVM : ViewModelBase
     {
         ObservableCollection<ItemVM> _products;
         ObservableCollection<StockBalanceLineVM> _lines;
@@ -22,6 +24,8 @@ namespace PutraJayaNT.ViewModels.Reports
         string _endingBalanceString;
         string _totalInString;
         string _totalOutString;
+
+        ICommand _printCommand;
 
         int _beginningBalance = 0;
 
@@ -50,6 +54,8 @@ namespace PutraJayaNT.ViewModels.Reports
             set
             {
                 SetProperty(ref _selectedProduct, value, "SelectedProduct");
+
+                if (_selectedProduct == null) return;
 
                 ProductUnit = _selectedProduct.UnitName + "/" + _selectedProduct.PiecesPerUnit;
                 SetBeginningBalance();
@@ -127,6 +133,22 @@ namespace PutraJayaNT.ViewModels.Reports
             set { SetProperty(ref _productUnit, value, "ProductUnit"); }
         }
 
+        public ICommand PrintCommand
+        {
+            get
+            {
+                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                {
+                    if (_lines.Count == 0) return;
+
+                    var stockCardReportWindow = new StockCardReportWindow(this);
+                    stockCardReportWindow.Owner = App.Current.MainWindow;
+                    stockCardReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    stockCardReportWindow.Show();
+                }));
+            }
+        }
+
         #region Helper Methods
         private void UpdateProducts()
         {
@@ -173,6 +195,13 @@ namespace PutraJayaNT.ViewModels.Reports
                 var stockAdjustmentLines = context.AdjustStockTransactionLines
                     .Include("AdjustStockTransaction")
                     .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.AdjustStockTransaction.Date >= _fromDate && e.AdjustStockTransaction.Date <= _toDate)
+                    .ToList();
+
+                var stockMovementLines = context.MoveStockTransactionLines
+                    .Include("MoveStockTransaction")
+                    .Include("MoveStockTransaction.FromWarehouse")
+                    .Include("MoveStockTransaction.ToWarehouse")
+                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.MoveStockTransaction.Date >= _fromDate && e.MoveStockTransaction.Date <= _toDate)
                     .ToList();
 
                 foreach (var line in purchaseLines)
@@ -242,7 +271,34 @@ namespace PutraJayaNT.ViewModels.Reports
                         CustomerSupplier = "",
                         Amount = line.Quantity,
                     };
+
                     lines.Add(vm);
+                }
+
+                foreach (var line in stockMovementLines)
+                {
+                    var vm1 = new StockBalanceLineVM
+                    {
+                        Item = line.Item,
+                        Date = line.MoveStockTransaction.Date,
+                        Documentation = line.MoveStockTransaction.MoveStrockTransactionID,
+                        Description = line.MoveStockTransaction.FromWarehouse.Name + " Stock Movement",
+                        CustomerSupplier = "",
+                        Amount = -line.Quantity,
+                    };
+
+                    var vm2 = new StockBalanceLineVM
+                    {
+                        Item = line.Item,
+                        Date = line.MoveStockTransaction.Date,
+                        Documentation = line.MoveStockTransaction.MoveStrockTransactionID,
+                        Description = line.MoveStockTransaction.ToWarehouse.Name + " Stock Movement",
+                        CustomerSupplier = "",
+                        Amount = line.Quantity,
+                    };
+
+                    lines.Add(vm1);
+                    lines.Add(vm2);
                 }
 
                 var balance = _beginningBalance;

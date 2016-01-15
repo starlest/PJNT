@@ -4,7 +4,7 @@ using System;
 
 namespace PutraJayaNT.ViewModels.Reports
 {
-    class StockBalanceLineVM : ViewModelBase
+    public class StockBalanceLineVM : ViewModelBase
     {
         DateTime _date;
         string _documentation;

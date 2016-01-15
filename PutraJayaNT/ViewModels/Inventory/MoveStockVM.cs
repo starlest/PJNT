@@ -1,33 +1,55 @@
 ﻿using MVVMFramework;
+using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.StockCorrection;
 using PutraJayaNT.Utilities;
+using System;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Inventory
 {
-    class MoveStockVM : ViewModelBase
+    class MoveStockVM : ViewModelBase<MoveStockTransaction>
     {
         ObservableCollection<ItemVM> _products;
         ObservableCollection<WarehouseVM> _warehouses;
+        ObservableCollection<MoveStockTransactionLineVM> _lines;
 
-        ItemVM _selectedProduct;
-        WarehouseVM _fromWarehouse;
-        WarehouseVM _toWarehouse;
-        string _remainingStock;
-        int? _units;
-        int? _pieces;
-        ICommand _submitCommand;
+        bool _isNotEditMode;
+        bool _isFromWarehouseNotSelected;
+        bool _isToWarehouseNotSelected;
+
+        ItemVM _newEntryProduct;
+        WarehouseVM _newTransactionFromWarehouse;
+        WarehouseVM _newTransactionToWarehouse;
+        string _newEntryRemainingStock;
+        int? _newEntryUnits;
+        int? _newEntryPieces;
+        ICommand _newEntrySubmitCommand;
+
+        string _newTransactionID;
+
+        ICommand _newTransactionCommand;
+        ICommand _saveTransactionCommand;
 
         public MoveStockVM()
         {
+            Model = new MoveStockTransaction();
+            Model.MoveStockTransactionLines = new ObservableCollection<MoveStockTransactionLine>();
+
             _products = new ObservableCollection<ItemVM>();
             _warehouses = new ObservableCollection<WarehouseVM>();
+            _lines = new ObservableCollection<MoveStockTransactionLineVM>();
 
-            UpdateProducts();
+            _isNotEditMode = true;
+            _isFromWarehouseNotSelected = true;
+            _isToWarehouseNotSelected = true;
+
             UpdateWarehouses();
+            SetTransactionID();
         }
 
         #region Collections
@@ -40,118 +62,245 @@ namespace PutraJayaNT.ViewModels.Inventory
         {
             get { return _warehouses; }
         }
+
+        public ObservableCollection<MoveStockTransactionLineVM> Lines
+        {
+            get { return _lines; }
+        }
         #endregion
 
-        public ItemVM SelectedProduct
+        public bool IsNotEditMode
         {
-            get { return _selectedProduct; }
+            get { return _isNotEditMode; }
+            set { SetProperty(ref _isNotEditMode, value, "IsNotEditMode"); }
+        }
+
+
+        public bool IsFromWarehouseNotSelected
+        {
+            get { return _isFromWarehouseNotSelected; }
+            set { SetProperty(ref _isFromWarehouseNotSelected, value, "IsFromWarehouseNotSelected"); }
+        }
+
+
+        public bool IsToWarehouseNotSelected
+        {
+            get { return _isToWarehouseNotSelected; }
+            set { SetProperty(ref _isToWarehouseNotSelected, value, "IsToWarehouseNotSelected"); }
+        }
+
+
+        #region New Entry Properties
+        public ItemVM NewEntryProduct
+        {
+            get { return _newEntryProduct; }
             set
             {
-                if (value == null) return;
+                SetProperty(ref _newEntryProduct, value, "NewEntryProduct");
 
-                UpdateProducts();
-
-                SetProperty(ref _selectedProduct, value, "SelectedProduct");
-
-                if (_fromWarehouse != null) SetRemainingStock();
+                if (_newEntryProduct != null) SetRemainingStock();
             }
         }
 
-        public WarehouseVM FromWarehouse
+        public string NewEntryRemainingStock
         {
-            get { return _fromWarehouse; }
-            set
-            {
-                SetProperty(ref _fromWarehouse, value, "FromWarehouse");
-
-                if (_fromWarehouse == null) return;
-
-                if (_selectedProduct != null) SetRemainingStock();
-            }
+            get { return _newEntryRemainingStock; }
+            set { SetProperty(ref _newEntryRemainingStock, value, "NewEntryRemainingStock"); }
         }
 
-        public WarehouseVM ToWarehouse
+        public int? NewEntryUnits
         {
-            get { return _toWarehouse; }
-            set { SetProperty(ref _toWarehouse, value, "ToWarehouse"); }
+            get { return _newEntryUnits; }
+            set { SetProperty(ref _newEntryUnits, value, "NewEntryUnits"); }
         }
 
-        public string RemainingStock
+        public int? NewEntryPieces
         {
-            get { return _remainingStock; }
-            set { SetProperty(ref _remainingStock, value, "RemainingStock"); }
+            get { return _newEntryPieces; }
+            set { SetProperty(ref _newEntryPieces, value, "NewEntryPieces"); }
         }
 
-        public int? Units
-        {
-            get { return _units; }
-            set { SetProperty(ref _units, value, "Units"); }
-        }
-
-        public int? Pieces
-        {
-            get { return _pieces; }
-            set { SetProperty(ref _pieces, value, "Pieces"); }
-        }
-
-        public ICommand SubmitCommand
+        public ICommand NewEntrySubmitCommand
         {
             get
             {
-                return _submitCommand ?? (_submitCommand = new RelayCommand(() =>
+                return _newEntrySubmitCommand ?? (_newEntrySubmitCommand = new RelayCommand(() =>
                 {
-                    if (MessageBox.Show("Confirm movement?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
-
-                    if (_selectedProduct == null || _fromWarehouse == null || _toWarehouse == null)
+                    if (_newEntryProduct == null || _newTransactionFromWarehouse == null || _newTransactionToWarehouse == null || (_newEntryUnits == null && _newEntryPieces == null))
                     {
                         MessageBox.Show("Please enter the missing field(s).", "Missing Field(s)", MessageBoxButton.OK);
                         return;
                     }
 
-                    if (_fromWarehouse.Equals(_toWarehouse))
+                    if (_newTransactionFromWarehouse.Equals(_newTransactionToWarehouse))
                     {
                         MessageBox.Show("Cannot move between the same warehouses.", "Invalid Command", MessageBoxButton.OK);
                         return;
                     }
 
-                    var units = _units == null ? 0 : (int)_units;
-                    var pieces = _pieces == null ? 0 : (int)_pieces;
-                    var quantity = (units * _selectedProduct.PiecesPerUnit) + pieces;
+                    var units = _newEntryUnits == null ? 0 : (int)_newEntryUnits;
+                    var pieces = _newEntryPieces == null ? 0 : (int)_newEntryPieces;
+                    var quantity = (units * _newEntryProduct.PiecesPerUnit) + pieces;
 
-                    if (GetRemainingStock(_selectedProduct, _fromWarehouse) == 0 || quantity > GetRemainingStock(_selectedProduct, _fromWarehouse))
+                    if (units < 0 || pieces < 0)
+                    {
+                        MessageBox.Show("Please enter a value higher than 0.", "Invalid Quantity", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    if (GetRemainingStock(_newEntryProduct.Model, _newTransactionFromWarehouse.Model) == 0 || quantity > GetRemainingStock(_newEntryProduct.Model, _newTransactionFromWarehouse.Model))
                     {
                         MessageBox.Show("Not enough stock to be moved.", "Invalid Command", MessageBoxButton.OK);
                         return;
                     }
+
+                    foreach (var line in _lines)
+                    {
+                        if (_newEntryProduct.ID.Equals(line.Item.ItemID))
+                            line.Quantity += quantity;
+                    }
+
+                    var newEntry = new MoveStockTransactionLine
+                    {
+                        MoveStockTransaction = this.Model,
+                        Item = _newEntryProduct.Model,
+                        Quantity = quantity
+                    };
+
+                    _lines.Add(new MoveStockTransactionLineVM { Model = newEntry });
+                    ResetEntryFields();
+                }));
+            }
+        }
+        #endregion
+
+        #region New Transaction Properties
+        public string NewTransactionID
+        {
+            get { return _newTransactionID; }
+            set
+            {
+                if (!CheckIDExists(value))
+                {
+                    MessageBox.Show("Transaction does not exists.", "Invalid ID", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _newTransactionID, value, "NewTransactionID");
+
+                SetEditMode();
+            }
+        }
+
+        public WarehouseVM NewTransactionFromWarehouse
+        {
+            get { return _newTransactionFromWarehouse; }
+            set
+            {
+                SetProperty(ref _newTransactionFromWarehouse, value, "NewTransactionFromWarehouse");
+
+                if (_newTransactionFromWarehouse == null) return;
+                IsFromWarehouseNotSelected = false;
+                UpdateProducts();
+            }
+        }
+
+        public WarehouseVM NewTransactionToWarehouse
+        {
+            get { return _newTransactionToWarehouse; }
+            set
+            {
+                SetProperty(ref _newTransactionToWarehouse, value, "NewTransactionToWarehouse");
+
+                if (_newTransactionToWarehouse == null) return;
+                IsToWarehouseNotSelected = false;
+            }
+        }
+
+        public ICommand NewTransactionCommand
+        {
+            get
+            {
+                return _newTransactionCommand ?? (_newTransactionCommand = new RelayCommand(() =>
+                {
+                    ResetTransaction();
+                }));
+            }
+        }
+
+        public ICommand SaveTransactionCommand
+        {
+            get
+            {
+                return _saveTransactionCommand ?? (_saveTransactionCommand = new RelayCommand(() =>
+                {
+                    if (_newTransactionToWarehouse == null)
+                    {
+                        MessageBox.Show("Please select a destination warehouse.", "Missing Selection", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    if (MessageBox.Show("Confirm movement?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
 
                     // Verification
                     if (!UtilityMethods.GetVerification()) return;
 
                     using (var context = new ERPContext())
                     {
-                        var fromStock = context.Stocks.Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(_fromWarehouse.ID)).FirstOrDefault();
-                        var toStock = context.Stocks.Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(_toWarehouse.ID)).FirstOrDefault();
+                        var fromWarehouse = context.Warehouses.Where(e => e.ID.Equals(_newTransactionFromWarehouse.ID)).FirstOrDefault();
+                        var toWarehouse = context.Warehouses.Where(e => e.ID.Equals(_newTransactionToWarehouse.ID)).FirstOrDefault();
 
-                        fromStock.Pieces -= quantity;
-                        if (toStock != null) toStock.Pieces += quantity;
-                        else
+                        foreach (var line in _lines)
                         {
-                            var newStock = new Stock
+                            if (GetRemainingStock(line.Item, fromWarehouse) == 0 || line.Quantity > GetRemainingStock(line.Item, fromWarehouse))
                             {
-                                Warehouse = context.Warehouses.Where(e => e.ID.Equals(_toWarehouse.ID)).FirstOrDefault(),
-                                Item = context.Inventory.Where(e => e.ItemID.Equals(_selectedProduct.ID)).FirstOrDefault(),
-                                Pieces = quantity
-                            };
-                            context.Stocks.Add(newStock);
+                                MessageBox.Show("Not enough stock to be moved.", "Invalid Command", MessageBoxButton.OK);
+                                return;
+                            }
+
+                            var item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
+
+                            line.Item = item;
+
+                            Model.MoveStockTransactionLines.Add(line.Model);
+
+                            // Adjust the stock for the affected warehouses
+                            var fromStock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(fromWarehouse.ID)).FirstOrDefault();
+                            var toStock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(toWarehouse.ID)).FirstOrDefault();
+ 
+                            fromStock.Pieces -= line.Quantity;
+                            if (fromStock.Pieces == 0) context.Stocks.Remove(fromStock);
+
+                            if (toStock == null)
+                            {
+                                var newStock = new Stock
+                                {
+                                    Item = item,
+                                    Warehouse = toWarehouse,
+                                    Pieces = line.Quantity
+                                };
+
+                                context.Stocks.Add(newStock);
+                            }
+                            else toStock.Pieces += line.Quantity;
                         }
 
+                        Model.Date = DateTime.Now.Date;
+                        Model.FromWarehouse = fromWarehouse;
+                        Model.ToWarehouse = toWarehouse;
+                        var user = App.Current.TryFindResource("CurrentUser") as User;
+                        var _user = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
+                        Model.User = _user;
+                        context.MoveStockTransactions.Add(Model);
                         context.SaveChanges();
                     }
-                    MessageBox.Show(string.Format("Sucessfully moved {0} from {1} to {2}!", _selectedProduct.Name, _fromWarehouse.Name, _toWarehouse.Name), "Sucess", MessageBoxButton.OK);
+
+                    MessageBox.Show("Transaction is saved.", "Success", MessageBoxButton.OK);
                     ResetTransaction();
                 }));
             }
         }
+        #endregion
 
         #region Helper Methods
         private void UpdateProducts()
@@ -160,9 +309,13 @@ namespace PutraJayaNT.ViewModels.Inventory
 
             using (var context = new ERPContext())
             {
-                var products = context.Inventory.Include("Stocks").ToList();
-                foreach (var product in products)
-                    _products.Add(new ItemVM { Model = product });
+                var stocks = context.Stocks.Where(e => e.WarehouseID.Equals(_newTransactionFromWarehouse.ID))
+                .Include("Item")
+                .Include("Warehouse")
+                .ToList();
+
+                foreach (var s in stocks)
+                    _products.Add(new ItemVM { Model = s.Item });
             }
         }
 
@@ -178,21 +331,90 @@ namespace PutraJayaNT.ViewModels.Inventory
             }
         }
 
-        private void ResetTransaction()
-        {
-            SelectedProduct = null;
-            FromWarehouse = null;
-            ToWarehouse = null;
-            RemainingStock = null;
-            Units = null;
-            Pieces = null;
-        }
-
-        private int GetRemainingStock(ItemVM item, WarehouseVM warehouse)
+        private bool CheckIDExists(string id)
         {
             using (var context = new ERPContext())
             {
-                var stock = context.Stocks.Where(e => e.ItemID.Equals(item.ID) && e.WarehouseID.Equals(warehouse.ID)).FirstOrDefault();
+                var transaction = context.MoveStockTransactions.Where(e => e.MoveStrockTransactionID.Equals(id)).FirstOrDefault();
+                return transaction != null;
+            }
+        }
+
+        private void SetTransactionID()
+        {
+            var month = DateTime.Now.Month;
+            var year = DateTime.Now.Year;
+            _newTransactionID = "MS" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
+
+            string lastTransactionID = null;
+            using (var context = new ERPContext())
+            {
+                var IDs = (from MoveStockTransaction in context.MoveStockTransactions
+                           where MoveStockTransaction.MoveStrockTransactionID.CompareTo(_newTransactionID) >= 0
+                           orderby MoveStockTransaction.MoveStrockTransactionID descending
+                           select MoveStockTransaction.MoveStrockTransactionID);
+                if (IDs.Count() != 0) lastTransactionID = IDs.First();
+            }
+
+            if (lastTransactionID != null) _newTransactionID = "MS" + (Convert.ToInt64(lastTransactionID.Substring(2)) + 1).ToString();
+
+            Model.MoveStrockTransactionID = _newTransactionID;
+            OnPropertyChanged("NewTransactionID");
+        }
+
+        private void ResetEntryFields()
+        {
+            NewEntryProduct = null;
+            NewEntryRemainingStock = null;
+            NewEntryUnits = null;
+            NewEntryPieces = null;
+        }
+
+        private void ResetTransaction()
+        {
+            ResetEntryFields();
+            _lines.Clear();
+            _products.Clear();
+            Model = new MoveStockTransaction();
+            Model.MoveStockTransactionLines = new ObservableCollection<MoveStockTransactionLine>();
+            SetTransactionID();
+            IsNotEditMode = true;
+            NewTransactionFromWarehouse = null;
+            NewTransactionToWarehouse = null;
+            IsFromWarehouseNotSelected = true;
+            IsToWarehouseNotSelected = true;
+        }
+
+        private void SetEditMode()
+        {
+            IsNotEditMode = false;
+
+            ResetEntryFields();
+            _lines.Clear();
+
+            using (var context = new ERPContext())
+            {
+                var transaction = context.MoveStockTransactions
+                    .Include("FromWarehouse")
+                    .Include("ToWarehouse")
+                    .Where(e => e.MoveStrockTransactionID.Equals(_newTransactionID))
+                    .FirstOrDefault();
+
+                NewTransactionFromWarehouse = new WarehouseVM { Model = transaction.FromWarehouse };
+                NewTransactionToWarehouse = new WarehouseVM { Model = transaction.ToWarehouse };
+
+                var lines = transaction.MoveStockTransactionLines.ToList();
+
+                foreach (var line in lines)
+                    _lines.Add(new MoveStockTransactionLineVM { Model = line });
+            }
+        }
+
+        private int GetRemainingStock(Item item, Warehouse warehouse)
+        {
+            using (var context = new ERPContext())
+            {
+                var stock = context.Stocks.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID)).FirstOrDefault();
 
                 if (stock == null) return 0;
                 else return stock.Pieces;
@@ -201,9 +423,10 @@ namespace PutraJayaNT.ViewModels.Inventory
 
         private void SetRemainingStock()
         {
-            var remainingStock = GetRemainingStock(_selectedProduct, _fromWarehouse);
-            RemainingStock = (remainingStock / _selectedProduct.PiecesPerUnit) + "/" + (remainingStock % _selectedProduct.PiecesPerUnit) + " " + _selectedProduct.UnitName;
+            var remainingStock = GetRemainingStock(_newEntryProduct.Model, _newTransactionFromWarehouse.Model);
+            NewEntryRemainingStock = (remainingStock / _newEntryProduct.PiecesPerUnit) + "/" + (remainingStock % _newEntryProduct.PiecesPerUnit) + " " + _newEntryProduct.UnitName;
         }
+
         #endregion
     }
 }
