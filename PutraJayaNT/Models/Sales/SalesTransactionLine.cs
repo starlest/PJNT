@@ -58,7 +58,6 @@ namespace PutraJayaNT.Models.Sales
         [Column("Salesman_ID")]
         public int Salesman_ID { get; set; }
 
-
         public virtual Salesman Salesman { get; set; }
     }
 }

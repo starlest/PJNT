@@ -165,7 +165,7 @@
                   CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
-                  IsEnabled="{Binding InvoiceNotIssued}" SelectedItem="{Binding SelectedLine}" >
+                  IsEnabled="{Binding InvoiceNotIssued}" SelectedItem="{Binding SelectedLine}" SelectedIndex="{Binding SelectedIndex}" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
                     <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />

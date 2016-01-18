@@ -102,6 +102,10 @@
     <Compile Include="Migrations\201601150916355_Update.Designer.cs">
       <DependentUpon>201601150916355_Update.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601160448217_Update1.cs" />
+    <Compile Include="Migrations\201601160448217_Update1.Designer.cs">
+      <DependentUpon>201601160448217_Update1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransactionLine.cs" />
@@ -110,6 +114,8 @@
     <Compile Include="Models\StockCorrection\MoveStockTransactionLine.cs" />
     <Compile Include="Reports\Dataset Objects\StockCard.cs" />
     <Compile Include="Reports\Dataset Objects\StockCardLine.cs" />
+    <Compile Include="Reports\Dataset Objects\StockMovement.cs" />
+    <Compile Include="Reports\Dataset Objects\StockMovementLine.cs" />
     <Compile Include="Reports\SalesInvoice.cs" />
     <Compile Include="Reports\SalesReturnInvoiceLine.cs" />
     <Compile Include="Reports\SalesInvoiceLine.cs" />
@@ -136,6 +142,9 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\StockMovementReportWindow.xaml.cs">
+      <DependentUpon>StockMovementReportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Windows\StockCardReportWindow.xaml.cs">
       <DependentUpon>StockCardReportWindow.xaml</DependentUpon>
@@ -214,6 +223,7 @@
     <Compile Include="ViewModels\Suppliers\PurchaseTransactionLineVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseTransactionVM.cs" />
     <Compile Include="ViewModels\SupplierVM.cs" />
+    <Compile Include="ViewModels\Test\TestVM.cs" />
     <Compile Include="ViewModels\VerificationVM.cs" />
     <Compile Include="ViewModels\WarehouseVM.cs" />
     <Compile Include="Views\Accounting\BalanceSheetView.xaml.cs">
@@ -315,6 +325,9 @@
     <Compile Include="Views\Suppliers\PurchaseTransactionView.xaml.cs">
       <DependentUpon>PurchaseTransactionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Test\TestView.xaml.cs">
+      <DependentUpon>TestView.xaml</DependentUpon>
+    </Compile>
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -328,6 +341,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Reports\Windows\StockMovementReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Reports\Windows\StockCardReportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -484,6 +501,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Test\TestView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -507,7 +528,13 @@
     <EmbeddedResource Include="Migrations\201601150916355_Update.resx">
       <DependentUpon>201601150916355_Update.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601160448217_Update1.resx">
+      <DependentUpon>201601160448217_Update1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\CollectionReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\StockMovementReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\StockCardReport.rdlc">

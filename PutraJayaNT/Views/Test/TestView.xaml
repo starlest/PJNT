@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="PutraJayaNT.Views.Test.TestView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PutraJayaNT.Views.Test"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Button Content="Check Sales Transactions" Command="{Binding CheckSalesTransactionsCommand}" />
+        <Button Grid.Row="1" Content="Check Purchase Transactions" Command="{Binding CheckPurchaseTransactionsCommand}" />
+        <Button Grid.Row="2" Content="Check Inventory" Command="{Binding CheckInventoryCommand}" />
+        <Button Grid.Row="3" Content="Check Stock" Command="{Binding CheckStockCommand}" />
+        <Button Grid.Row="4" Content="Check Ledger Transactions" Command="{Binding CheckLedgerTransactionsCommand}" />
+        <Button Grid.Row="5" Content="Check Ledger General" Command="{Binding CheckLedgerGeneralCommand}" />
+    </Grid>
+</UserControl>

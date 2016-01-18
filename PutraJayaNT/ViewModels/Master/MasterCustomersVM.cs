@@ -352,8 +352,6 @@ namespace PUJASM.ERP.ViewModels.Master
         }
         #endregion
 
-        // -------------------------------------------------------------------- //
-
         // ------------------------- Edit Properties ------------------------- //
 
         public int EditID

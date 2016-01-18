@@ -213,7 +213,6 @@ namespace PutraJayaNT.ViewModels.Accounting
             }
         }
 
-
         private void ResetEntryFields()
         {
             UpdateAccounts();
@@ -257,6 +256,11 @@ namespace PutraJayaNT.ViewModels.Accounting
                 {
                     using (var context = new ERPContext())
                     {
+                        var firstLine = context.Ledger_Transaction_Lines
+                            .Include("LedgerAccount")
+                            .Where(l => l.LedgerTransactionID.Equals(line.LedgerTransaction.ID) &&
+                            l.LedgerAccountID.Equals(line.LedgerAccount.ID))
+                            .FirstOrDefault();
                         var oppostieLine = context.Ledger_Transaction_Lines
                             .Include("LedgerAccount")
                             .Where(l => l.LedgerTransactionID.Equals(line.LedgerTransaction.ID) &&
@@ -272,7 +276,8 @@ namespace PutraJayaNT.ViewModels.Accounting
                             .Where(g => g.ID.Equals(oppostieLine.LedgerAccount.ID))
                             .FirstOrDefault();
                         context.Ledger_Transactions.Remove(transaction);
-
+                        context.Ledger_Transaction_Lines.Remove(firstLine);
+                        context.Ledger_Transaction_Lines.Remove(oppostieLine);
                         if (line.Seq.Equals("Debit"))
                         {
                             ledgerGeneral.Debit -= line.Amount;

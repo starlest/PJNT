@@ -34,7 +34,9 @@ namespace PutraJayaNT.Models.Sales
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public decimal Discount { get; set; }
 
-        [Required]
+        [Key]
+        [Column(Order = 5)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public decimal ReturnPrice { get; set; }
 
         [Required]

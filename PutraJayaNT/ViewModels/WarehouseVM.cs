@@ -3,7 +3,7 @@ using PutraJayaNT.Models.Inventory;
 
 namespace PutraJayaNT.ViewModels
 {
-    class WarehouseVM : ViewModelBase<Warehouse>
+    public class WarehouseVM : ViewModelBase<Warehouse>
     {
         public int ID
         {

@@ -321,8 +321,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                                 purchaseTransactionLine.SoldOrReturned += line.Quantity;
                                 var purchaseLineNetTotal = purchaseTransactionLine.PurchasePrice - purchaseTransactionLine.Discount;
+                                if (purchaseLineNetTotal == 0) continue;
                                 var fractionOfTransactionDiscount = (line.Quantity * purchaseLineNetTotal / purchaseTransactionLine.PurchaseTransaction.GrossTotal) * purchaseTransactionLine.PurchaseTransaction.Discount;
-                                cogs += ((line.Quantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchaseTransactionLine.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
+                                cogs += ((line.Quantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * (purchaseTransactionLine.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1);
                             }
 
                             Model.PurchaseTransaction.Supplier.PurchaseReturnCredits += _purchaseReturnTransactionNetTotal;
@@ -457,16 +458,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     quantity -= line.Quantity;    
             }
             return quantity;
-        }
-
-        private decimal GetNetDiscount(PurchaseTransactionLineVM line, int quantity)
-        {
-            var lineDiscount = line.Discount / line.Item.PiecesPerUnit;
-            var linePurchasePrice = line.PurchasePrice / line.Item.PiecesPerUnit;
-            var fractionOfTransaction = (quantity * (linePurchasePrice - lineDiscount)) / line.PurchaseTransaction.GrossTotal;
-            var fractionOfTransactionDiscount = (fractionOfTransaction * line.PurchaseTransaction.Discount) / quantity;
-            var discount = (lineDiscount + fractionOfTransactionDiscount) * line.Item.PiecesPerUnit;
-            return discount;
         }
         #endregion
     }

@@ -319,6 +319,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _newEntryDate; }
             set
             {
+                if (value > DateTime.Now.Date)
+                {
+                    MessageBox.Show("Cannot set to a future date.", "Invalid Date", MessageBoxButton.OK);
+                    return;
+                }
+
                 SetProperty(ref _newEntryDate, value, "NewEntryDate");
                 Model.Date = _newEntryDate;
                 SetTransactionID();
@@ -330,6 +336,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _newEntryDueDate; }
             set
             {
+                if (value < _newEntryDate)
+                {
+                    MessageBox.Show("Cannot set to before transaction date.", "Invalid Date", MessageBoxButton.OK);
+                    return;
+                }
+
                 SetProperty(ref _newEntryDueDate, value, "NewEntryDueDate");
                 Model.DueDate = _newEntryDueDate;
             }

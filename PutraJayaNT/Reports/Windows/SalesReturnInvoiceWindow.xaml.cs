@@ -36,8 +36,7 @@ namespace PutraJayaNT.Reports.Windows
             dt1.Columns.Add(new DataColumn("Unit", typeof(string)));
             dt1.Columns.Add(new DataColumn("Units", typeof(int)));
             dt1.Columns.Add(new DataColumn("Pieces", typeof(int)));
-            dt1.Columns.Add(new DataColumn("SalesPrice", typeof(decimal)));
-            dt1.Columns.Add(new DataColumn("Discount", typeof(decimal)));
+            dt1.Columns.Add(new DataColumn("ReturnPrice", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
 
             int count = 1;
@@ -50,9 +49,7 @@ namespace PutraJayaNT.Reports.Windows
                 dr["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
                 dr["Units"] = line.Units;
                 dr["Pieces"] = line.Pieces;
-                dr["SalesPrice"] = line.SalesPrice;
-                dr["Discount"] = line.Discount;
-                line.UpdateTotal();
+                dr["ReturnPrice"] = line.ReturnPrice;
                 dr["Total"] = line.Total;
                 dt1.Rows.Add(dr);
             }

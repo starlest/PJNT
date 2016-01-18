@@ -22,6 +22,8 @@ namespace PutraJayaNT.ViewModels.Reports
         Supplier _selectedSupplier;
         Warehouse _selectedWarehouse;
 
+        decimal _total;
+
         public InventoryReportVM()
         {
             _items = new ObservableCollection<ItemVM>();
@@ -110,6 +112,8 @@ namespace PutraJayaNT.ViewModels.Reports
                         if (item.Category.Name == _selectedCategory.Name) _displayedItems.Add(item);
                     }
                 }
+
+                OnPropertyChanged("Total");
             }
         }
 
@@ -141,6 +145,8 @@ namespace PutraJayaNT.ViewModels.Reports
                             break;
                         }
                     }
+
+                    OnPropertyChanged("Total");
                 }
             }
         }
@@ -172,6 +178,8 @@ namespace PutraJayaNT.ViewModels.Reports
                         if (item.Suppliers.Contains(value))
                             _displayedItems.Add(item);
                     }
+
+                    OnPropertyChanged("Total");
                 }
             }
         }
@@ -207,8 +215,24 @@ namespace PutraJayaNT.ViewModels.Reports
                             }
                         }     
                     }
+
+                    OnPropertyChanged("Total");
                 }
             }
+        }
+
+        public decimal Total
+        {
+            get
+            {
+                _total = 0;
+                foreach (var line in _displayedItems)
+                {
+                    _total += line.InventoryValue;
+                }
+                return _total;
+            }
+            set { SetProperty(ref _total, value, "Total"); }
         }
 
         #region Helper Methods

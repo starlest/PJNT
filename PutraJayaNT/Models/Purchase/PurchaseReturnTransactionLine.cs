@@ -37,7 +37,9 @@ namespace PutraJayaNT.Models.Purchase
         [Column(Order = 5)]
         public decimal Discount { get; set; }
 
-        [Required]
+        [Key]
+        [Column(Order = 6)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public decimal ReturnPrice { get; set; }
 
         [Required]

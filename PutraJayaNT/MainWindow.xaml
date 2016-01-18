@@ -67,5 +67,10 @@
                 <mui:Link DisplayName="Close" Source="/Views/Accounting/ClosingView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
+        <!--<mui:LinkGroup DisplayName="JANGAN DI KLIK">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="Test" Source="/Views/Test/TestView.xaml" />
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>-->
     </mui:ModernWindow.MenuLinkGroups>
 </mui:ModernWindow>

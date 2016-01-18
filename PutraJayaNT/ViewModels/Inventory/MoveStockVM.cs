@@ -2,6 +2,7 @@
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Models.StockCorrection;
+using PutraJayaNT.Reports.Windows;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
@@ -12,7 +13,7 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Inventory
 {
-    class MoveStockVM : ViewModelBase<MoveStockTransaction>
+    public class MoveStockVM : ViewModelBase<MoveStockTransaction>
     {
         ObservableCollection<ItemVM> _products;
         ObservableCollection<WarehouseVM> _warehouses;
@@ -31,9 +32,11 @@ namespace PutraJayaNT.ViewModels.Inventory
         ICommand _newEntrySubmitCommand;
 
         string _newTransactionID;
-
+        DateTime _newTransactionDate;
         ICommand _newTransactionCommand;
         ICommand _saveTransactionCommand;
+
+        ICommand _printCommand;
 
         public MoveStockVM()
         {
@@ -43,6 +46,8 @@ namespace PutraJayaNT.ViewModels.Inventory
             _products = new ObservableCollection<ItemVM>();
             _warehouses = new ObservableCollection<WarehouseVM>();
             _lines = new ObservableCollection<MoveStockTransactionLineVM>();
+
+            _newTransactionDate = DateTime.Now.Date;
 
             _isNotEditMode = true;
             _isFromWarehouseNotSelected = true;
@@ -75,20 +80,17 @@ namespace PutraJayaNT.ViewModels.Inventory
             set { SetProperty(ref _isNotEditMode, value, "IsNotEditMode"); }
         }
 
-
         public bool IsFromWarehouseNotSelected
         {
             get { return _isFromWarehouseNotSelected; }
             set { SetProperty(ref _isFromWarehouseNotSelected, value, "IsFromWarehouseNotSelected"); }
         }
 
-
         public bool IsToWarehouseNotSelected
         {
             get { return _isToWarehouseNotSelected; }
             set { SetProperty(ref _isToWarehouseNotSelected, value, "IsToWarehouseNotSelected"); }
         }
-
 
         #region New Entry Properties
         public ItemVM NewEntryProduct
@@ -192,6 +194,21 @@ namespace PutraJayaNT.ViewModels.Inventory
             }
         }
 
+        public DateTime NewTransactionDate
+        {
+            get { return _newTransactionDate; }
+            set
+            {
+                if (value > DateTime.Now.Date)
+                {
+                    MessageBox.Show("Cannot set to a future date.", "Invalid Date", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _newTransactionDate, value, "NewTransactionDate");
+            }
+        }
+
         public WarehouseVM NewTransactionFromWarehouse
         {
             get { return _newTransactionFromWarehouse; }
@@ -285,7 +302,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                             else toStock.Pieces += line.Quantity;
                         }
 
-                        Model.Date = DateTime.Now.Date;
+                        Model.Date = _newTransactionDate;
                         Model.FromWarehouse = fromWarehouse;
                         Model.ToWarehouse = toWarehouse;
                         var user = App.Current.TryFindResource("CurrentUser") as User;
@@ -301,6 +318,22 @@ namespace PutraJayaNT.ViewModels.Inventory
             }
         }
         #endregion
+
+        public ICommand PrintCommand
+        {
+            get
+            {
+                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                {
+                    if (_lines.Count == 0) return;
+
+                    var stockMovementReportWindow = new StockMovementReportWindow(this);
+                    stockMovementReportWindow.Owner = App.Current.MainWindow;
+                    stockMovementReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    stockMovementReportWindow.Show();
+                }));
+            }
+        }
 
         #region Helper Methods
         private void UpdateProducts()
@@ -381,6 +414,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             IsNotEditMode = true;
             NewTransactionFromWarehouse = null;
             NewTransactionToWarehouse = null;
+            NewTransactionDate = DateTime.Now.Date;
             IsFromWarehouseNotSelected = true;
             IsToWarehouseNotSelected = true;
         }
@@ -395,6 +429,8 @@ namespace PutraJayaNT.ViewModels.Inventory
             using (var context = new ERPContext())
             {
                 var transaction = context.MoveStockTransactions
+                    .Include("MoveStockTransactionLines")
+                    .Include("MoveStockTransactionLines.Item")
                     .Include("FromWarehouse")
                     .Include("ToWarehouse")
                     .Where(e => e.MoveStrockTransactionID.Equals(_newTransactionID))
@@ -402,7 +438,7 @@ namespace PutraJayaNT.ViewModels.Inventory
 
                 NewTransactionFromWarehouse = new WarehouseVM { Model = transaction.FromWarehouse };
                 NewTransactionToWarehouse = new WarehouseVM { Model = transaction.ToWarehouse };
-
+                NewTransactionDate = transaction.Date;
                 var lines = transaction.MoveStockTransactionLines.ToList();
 
                 foreach (var line in lines)
@@ -426,7 +462,6 @@ namespace PutraJayaNT.ViewModels.Inventory
             var remainingStock = GetRemainingStock(_newEntryProduct.Model, _newTransactionFromWarehouse.Model);
             NewEntryRemainingStock = (remainingStock / _newEntryProduct.PiecesPerUnit) + "/" + (remainingStock % _newEntryProduct.PiecesPerUnit) + " " + _newEntryProduct.UnitName;
         }
-
         #endregion
     }
 }

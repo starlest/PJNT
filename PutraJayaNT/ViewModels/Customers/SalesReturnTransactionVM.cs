@@ -230,8 +230,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     var availableReturnQuantity = GetAvailableReturnQuantity(_selectedSalesTransactionLine);
                     int quantity = ((_salesReturnEntryUnits != null ? (int) _salesReturnEntryUnits : 0) * _selectedSalesTransactionLine.Item.PiecesPerUnit) + (_salesReturnEntryPieces != null ? (int) _salesReturnEntryPieces : 0);
 
-                    if (quantity > _selectedSalesTransactionLine.Quantity 
-                    || quantity > availableReturnQuantity
+                    if (quantity > availableReturnQuantity
                     || quantity <= 0)
                     {
                         MessageBox.Show(string.Format("The available return amount for {0} is {1} units {2} pieces.", 
@@ -251,8 +250,7 @@ namespace PutraJayaNT.ViewModels.Customers
                            line.Discount.Equals(_selectedSalesTransactionLine.Discount) &&
                            line.ReturnPrice.Equals(_salesReturnEntryPrice))
                         {
-                            if ((line.Quantity + quantity) > _selectedSalesTransactionLine.Quantity ||
-                            (line.Quantity + quantity) > availableReturnQuantity ||
+                            if ((line.Quantity + quantity) > availableReturnQuantity ||
                             (line.Quantity + quantity) <= 0)
                             {
                                 MessageBox.Show("Please enter the right amount of quantity.", "Invalid Quantity Input", MessageBoxButton.OK);
@@ -374,6 +372,7 @@ namespace PutraJayaNT.ViewModels.Customers
                                     };
 
                                     context.Stocks.Add(s);
+                                    context.SaveChanges();
                                 }
                             }
 
@@ -502,6 +501,17 @@ namespace PutraJayaNT.ViewModels.Customers
                 }
             }
 
+            foreach (var l in _salesReturnTransactionLines)
+            {
+                if (l.Item.ItemID.Equals(_selectedSalesTransactionLine.Item.ItemID) &&
+                    l.Warehouse.ID.Equals(_selectedSalesTransactionLine.Warehouse.ID) &&
+                    l.SalesPrice.Equals(_selectedSalesTransactionLine.SalesPrice) &&
+                    l.Discount.Equals(_selectedSalesTransactionLine.Discount))
+                {
+                    availableReturnQuantity -= l.Quantity;
+                }
+            }
+
             return availableReturnQuantity;
         }
 
@@ -523,15 +533,17 @@ namespace PutraJayaNT.ViewModels.Customers
 
                     if (purchase.SoldOrReturned >= tracker)
                     {
+                        if (purchaseLineTotal == 0) break;
                         var fractionOfTransactionDiscount = (tracker * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                        amount += ((tracker * purchaseLineTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
+                        amount += ((tracker * purchaseLineTotal) - fractionOfTransactionDiscount) * (purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1);
                         break;
                     }
                     else if (purchase.SoldOrReturned < tracker)
                     {
-                        var fractionOfTransactionDiscount = (purchase.SoldOrReturned * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                        amount += (purchase.SoldOrReturned * purchaseLineTotal) - fractionOfTransactionDiscount * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
                         tracker -= purchase.SoldOrReturned;
+                        if (purchaseLineTotal == 0) continue;
+                        var fractionOfTransactionDiscount = (purchase.SoldOrReturned * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                        amount += (purchase.SoldOrReturned * purchaseLineTotal) - fractionOfTransactionDiscount * (purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1);
                     }
                 }
 
@@ -556,6 +568,8 @@ namespace PutraJayaNT.ViewModels.Customers
             SalesReturnEntryProduct = null;
             SalesReturnEntryUnits = null;
             SalesReturnEntryPieces = null;
+
+            SalesReturnTransactionNetTotal = 0;
         }
         #endregion
     }

@@ -119,6 +119,11 @@ namespace PutraJayaNT.ViewModels
             get { return Quantity % Model.PiecesPerUnit; }
         }
 
+        public decimal InventoryValue
+        {
+            get { return Quantity * Model.PurchasePrice; }
+        }
+
         public decimal SalesExpense
         {
             get { return Model.SalesExpense; }

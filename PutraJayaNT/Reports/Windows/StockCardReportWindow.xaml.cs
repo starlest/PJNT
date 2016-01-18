@@ -36,6 +36,7 @@ namespace PutraJayaNT.Reports.Windows
             dt1.Columns.Add(new DataColumn("Date", typeof(string)));
             dt1.Columns.Add(new DataColumn("Documentation", typeof(string)));
             dt1.Columns.Add(new DataColumn("Description", typeof(string)));
+            dt1.Columns.Add(new DataColumn("CustomerSupplier", typeof(string)));
             dt1.Columns.Add(new DataColumn("InQuantity", typeof(string)));
             dt1.Columns.Add(new DataColumn("OutQuantity", typeof(string)));
             dt1.Columns.Add(new DataColumn("Balance", typeof(string)));
@@ -54,6 +55,7 @@ namespace PutraJayaNT.Reports.Windows
                 dr1["Date"] = line.Date.ToShortDateString();
                 dr1["Documentation"] = line.Documentation;
                 dr1["Description"] = line.Description;
+                dr1["CustomerSupplier"] = line.CustomerSupplier;
                 dr1["InQuantity"] = line.InQuantity;
                 dr1["OutQuantity"] = line.OutQuantity;
                 dr1["Balance"] = line.StringBalance;

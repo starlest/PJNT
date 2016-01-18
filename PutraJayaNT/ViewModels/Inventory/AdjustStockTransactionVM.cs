@@ -183,17 +183,19 @@ namespace PutraJayaNT.ViewModels.Inventory
 
                                     if (tracker <= availableQuantity)
                                     {
+                                        purchase.SoldOrReturned += tracker;
+                                        if (purchaseLineNetTotal == 0) break;
                                         var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
                                         cogs += ((tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
-                                        purchase.SoldOrReturned += tracker;
                                         break;
                                     }
                                     else if (tracker > availableQuantity)
                                     {
-                                        var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                                        cogs += ((availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
                                         purchase.SoldOrReturned += availableQuantity;
                                         tracker -= availableQuantity;
+                                        if (purchaseLineNetTotal == 0) continue;
+                                        var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                                        cogs += ((availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
                                     }
                                 }
                             }
@@ -242,7 +244,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                         if (decreaseAdjustment)
                         {
                             var transaction = new LedgerTransaction();
-                            if (!LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, Model.AdjustStrockTransactionID, "Stock Adjustment (Decrement)")) return;
+                            if (!LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, _newTransactionID, "Stock Adjustment (Decrement)")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
                             LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);

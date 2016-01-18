@@ -4,7 +4,7 @@ using PutraJayaNT.Models.StockCorrection;
 
 namespace PutraJayaNT.ViewModels.Inventory
 {
-    class MoveStockTransactionLineVM : ViewModelBase<MoveStockTransactionLine>
+    public class MoveStockTransactionLineVM : ViewModelBase<MoveStockTransactionLine>
     {
         int _units;
         int _pieces;

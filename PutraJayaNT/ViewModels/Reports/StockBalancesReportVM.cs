@@ -338,7 +338,6 @@ namespace PutraJayaNT.ViewModels.Reports
 
                 if (stockBalance == null)
                 {
-                    MessageBox.Show("Invalid Date Selected", "Invalid", MessageBoxButton.OK);
                     _lines.Clear();
                     return beginningBalance;
                 }
@@ -422,7 +421,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
                 var stockAdjustmentLines = context.AdjustStockTransactionLines
                     .Include("AdjustStockTransaction")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date <= fromDate)
+                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date < fromDate)
                     .ToList();
 
                 foreach (var line in purchaseLines)
