@@ -147,7 +147,7 @@ namespace PutraJayaNT.ViewModels.Test
 
                         var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().BeginningBalance +
                         context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit - 
-                        context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Credit;
+                        context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Credit; // changge beginningbalaance
 
                         decimal calculatedCOGS = 0;
 
@@ -161,11 +161,11 @@ namespace PutraJayaNT.ViewModels.Test
                             var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
                             if (purchaseLineNetTotal == 0) continue;
                             var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                            calculatedCOGS += ((availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * (purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1);
-
+                            var fractionOfTransactionTax = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                            calculatedCOGS += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                         }
 
-                        if (actualCOGS != calculatedCOGS)
+                        if (actualCOGS != Math.Round(calculatedCOGS, 2))
                         {
                            if (MessageBox.Show(string.Format("Actual Inventory: {0} \n Calculated Inventory: {1} \n Fix?", actualCOGS, calculatedCOGS), "Error", MessageBoxButton.YesNo) ==
                                 MessageBoxResult.Yes)

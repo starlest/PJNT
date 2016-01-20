@@ -30,12 +30,9 @@
                 <ComboBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                       ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier, UpdateSourceTrigger=Explicit}" IsEditable="True"
                           DisplayMemberPath="Name" />
-                <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Text="From:" FontSize="28" />
-                <DatePicker Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Right" Text="To:" FontSize="28" />
+                <TextBlock Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Date:" FontSize="28" />
                 <DatePicker Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            SelectedDateFormat="Long" SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding PurchaseTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
@@ -43,10 +40,12 @@
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseID}" />
+                <DataGridTextColumn Header="DO ID" Width="1*" IsReadOnly="True" Binding="{Binding DOID}" />
                 <DataGridTextColumn Header="Supplier" Width="1*" IsReadOnly="True" Binding="{Binding Supplier.Name}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
                 <DataGridTextColumn Header="Paid" Width="1*" IsReadOnly="True" Binding="{Binding Paid, StringFormat=N2}" />
                 <DataGridTextColumn Header="Remaining" Width="1*" IsReadOnly="True" Binding="{Binding Remaining, StringFormat=N2}" />
+                <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
             </DataGrid.Columns>
         </DataGrid>

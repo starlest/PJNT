@@ -186,7 +186,7 @@
 
                                 foreach (var l in categorySalesTransactionLines)
                                     categoryCommission.Total += GetLineNetTotal(l);
-                                categoryCommission.Commission = categoryCommission.Total * categoryCommission.Percentage;
+                                categoryCommission.Commission = categoryCommission.Total * (categoryCommission.Percentage / 100);
 
                                 _lines.Add(categoryCommission);
                                 _total += categoryCommission.Commission;
@@ -225,7 +225,7 @@
                         var categorySalesTransactionLines = transactionLines.Where(e => e.Item.Category.ID.Equals(category.ID));
                         foreach (var l in categorySalesTransactionLines)
                             categoryCommission.Total += GetLineNetTotal(l);
-                        categoryCommission.Commission = categoryCommission.Total * categoryCommission.Percentage;
+                        categoryCommission.Commission = categoryCommission.Total * (categoryCommission.Percentage / 100);
 
                         _lines.Add(categoryCommission);
                         _total += categoryCommission.Commission;

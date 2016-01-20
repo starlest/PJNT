@@ -87,7 +87,8 @@
         #endregion
 
         bool _editMode = false;
-        
+        CustomerVM _editCustomer;
+
         public SalesTransactionVM()
         {
             _isEditWindowNotOpen = true;
@@ -384,13 +385,30 @@
             get { return _newTransactionCustomer; }
             set
             {
-                if (_editMode == false && value != null && !value.Name.Equals("Kontan"))
+                if ((_editCustomer == null && value != null && !value.Name.Equals("Kontan")) ||
+                    (_editCustomer != null && !value.ID.Equals(_editCustomer.ID)))
                 {
                     using (var context = new ERPContext())
                     {
                         var customerTransactions = context.SalesTransactions.Where(e => e.Customer.ID.Equals(value.ID) && e.Paid < e.Total).ToList();
 
-                        if (customerTransactions.Count != 0)
+                        var verified = false;
+                        if (customerTransactions.Count > 5)
+                        {
+                            MessageBox.Show("This customer has maximum number of invoice(s).", "Invalid Customer", MessageBoxButton.OK);
+
+                            // Verification
+                            if (!UtilityMethods.GetVerification())
+                            {
+                                _newTransactionCustomer = null;
+                                RefreshCustomers();
+                                return;
+                            }
+
+                            verified = true;
+                        }
+
+                        if (customerTransactions.Count != 0 && !verified)
                         {
                             foreach (var t in customerTransactions)
                             {
@@ -554,7 +572,6 @@
                         try
                         {
                             SaveTransactionEditMode(context);
-                            context.SaveChanges();
                         }
                         catch (Exception e)
                         {
@@ -575,7 +592,6 @@
                         try
                         {
                             SaveNewTransaction(context);
-                            context.SaveChanges();
                         }
 
                         catch (Exception e)
@@ -591,9 +607,7 @@
                     }
                     #endregion
 
-                    MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
                     SetEditMode();
-
                 }));
             }
         }
@@ -1082,7 +1096,8 @@
                                         purchase.SoldOrReturned += tracker;
                                         if (purchaseLineNetTotal == 0) break;
                                         var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                                        costOfGoodsSoldAmount += ((tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount) * (purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal) 1.1);
+                                        var fractionOfTransactionTax = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                                        costOfGoodsSoldAmount += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                                         break;
                                     }
                                     else if (tracker > availableQuantity)
@@ -1091,7 +1106,8 @@
                                         tracker -= availableQuantity;
                                         if (purchaseLineNetTotal == 0) continue; 
                                         var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                                        costOfGoodsSoldAmount += ((availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * (purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1);
+                                        var fractionOfTransactionTax = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                                        costOfGoodsSoldAmount += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                                      }
                                 }
                             }
@@ -1227,6 +1243,7 @@
 
         private void ResetTransaction()
         {
+            _editCustomer = null;
             InvoiceNotIssued = true;
             Model = new SalesTransaction();
             _salesTransactionLines.Clear();
@@ -1255,6 +1272,7 @@
         private void SetEditMode()
         {
             EditMode = true;
+            _editCustomer = new CustomerVM { Model = Model.Customer };
             _salesTransactionLines.Clear();
             _deletedLines.Clear();
             foreach (var line in Model.TransactionLines)
@@ -1362,21 +1380,21 @@
                         // If there are more quantity than the original, minus the additional quantity from stock
                         if (line.Quantity > originalQuantity)
                         {
-                            stock.Pieces -= line.Quantity - originalQuantity;
+                            stock.Pieces -= (line.Quantity - originalQuantity);
                             if (stock.Pieces == 0) context.Stocks.Remove(stock);
                         }
 
                         // If there are lesser quantity than the original, add the additional quantity to stock
                         else if (line.Quantity < originalQuantity)
                         {
-                            if (stock != null) stock.Pieces += originalQuantity - line.Quantity;
+                            if (stock != null) stock.Pieces += (originalQuantity - line.Quantity);
                             else
                             {
                                 var s = new Stock
                                 {
                                     Item = line.Item,
                                     Warehouse = line.Warehouse,
-                                    Pieces = originalQuantity - line.Quantity
+                                    Pieces = (originalQuantity - line.Quantity)
                                 };
                                 context.Stocks.Add(s);
                             }
@@ -1411,7 +1429,7 @@
             }
 
             // Check if there are items deleted
-            foreach (var line in originalTransactionLines)
+            foreach (var line in _deletedLines)
             {
                 var item = context.Inventory
                 .Include("SalesTransactionLines")
@@ -1422,21 +1440,21 @@
                 .Stocks.Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID))
                 .FirstOrDefault();
 
-                var found = false;
+                var deleted = true;
                 foreach (var l in _salesTransactionLines)
                 {
                     if (line.Item.ItemID.Equals(l.Model.Item.ItemID)
                     && line.Warehouse.ID.Equals(l.Model.Warehouse.ID)
-                    && line.SalesPrice.Equals(l.Model.SalesPrice)
-                    && line.Discount.Equals(l.Model.Discount))
+                    && line.SalesPrice.Equals(l.SalesPrice)
+                    && line.Discount.Equals(l.Discount))
                     {
-                        found = true;
+                        deleted = false;
                         break;
                     }
                 }
 
                 // If item has been deleted, delete transaction line as well as increasing the item's stock
-                if (!found)
+                if (deleted)
                 {
                     if (stock != null) stock.Pieces += line.Quantity;
                     else
@@ -1451,7 +1469,18 @@
                         };
                         context.Stocks.Add(s);
                     }
-                    transaction.TransactionLines.Remove(line);
+
+                    foreach (var l in originalTransactionLines)
+                    {
+                        if (line.Item.ItemID.Equals(l.Item.ItemID)
+                            && line.Warehouse.ID.Equals(l.Warehouse.ID)
+                            && line.SalesPrice.Equals(l.SalesPrice * l.Item.PiecesPerUnit)
+                            && line.Discount.Equals(l.Discount * l.Item.PiecesPerUnit))
+                        {
+                            transaction.TransactionLines.Remove(l);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -1470,6 +1499,9 @@
             transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
 
             Model = transaction;
+
+            context.SaveChanges();
+            MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
         }
 
         private void SaveNewTransaction(ERPContext context)
@@ -1507,6 +1539,8 @@
             Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
 
             context.SalesTransactions.Add(Model);
+            context.SaveChanges();
+            MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
         }
 
         #region Reports Creation Methods

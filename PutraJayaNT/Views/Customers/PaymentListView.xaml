@@ -51,6 +51,7 @@
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
                 <DataGridTextColumn Header="Paid" Width="1*" IsReadOnly="True" Binding="{Binding Paid, StringFormat=N2}" />
                 <DataGridTextColumn Header="Remaining" Width="1*" IsReadOnly="True" Binding="{Binding Remaining, StringFormat=N2}" />
+                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding When, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTemplateColumn Header="Salesman" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>

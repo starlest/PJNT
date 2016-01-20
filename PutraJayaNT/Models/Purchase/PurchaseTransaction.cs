@@ -18,6 +18,8 @@ namespace PutraJayaNT.Models.Purchase
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 0)]
         public string PurchaseID { get; set; }
 
+        public string DOID { get; set; }
+
         [Required]
         public Supplier Supplier { get; set; }
 

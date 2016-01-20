@@ -535,7 +535,8 @@ namespace PutraJayaNT.ViewModels.Customers
                     {
                         if (purchaseLineTotal == 0) break;
                         var fractionOfTransactionDiscount = (tracker * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                        amount += ((tracker * purchaseLineTotal) - fractionOfTransactionDiscount) * (purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1);
+                        var fractionOfTransactionTax = (tracker * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                        amount += (tracker * purchaseLineTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                         break;
                     }
                     else if (purchase.SoldOrReturned < tracker)
@@ -543,7 +544,8 @@ namespace PutraJayaNT.ViewModels.Customers
                         tracker -= purchase.SoldOrReturned;
                         if (purchaseLineTotal == 0) continue;
                         var fractionOfTransactionDiscount = (purchase.SoldOrReturned * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                        amount += (purchase.SoldOrReturned * purchaseLineTotal) - fractionOfTransactionDiscount * (purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1);
+                        var fractionOfTransactionTax = (purchase.SoldOrReturned * purchaseLineTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                        amount += (purchase.SoldOrReturned * purchaseLineTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                     }
                 }
 

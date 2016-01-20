@@ -176,6 +176,7 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             var lineDiscount = Model.Discount / Model.Item.PiecesPerUnit;
             var lineSalesPrice = Model.SalesPrice / Model.Item.PiecesPerUnit;
+            if ((lineSalesPrice - lineDiscount) == 0) return 0;
             var fractionOfTransaction = (Model.Quantity * (lineSalesPrice - lineDiscount)) / Model.SalesTransaction.GrossTotal;
             var fractionOfTransactionDiscount = (fractionOfTransaction * Model.SalesTransaction.Discount) / Model.Quantity;
             var discount = (lineDiscount + fractionOfTransactionDiscount) * Model.Item.PiecesPerUnit;

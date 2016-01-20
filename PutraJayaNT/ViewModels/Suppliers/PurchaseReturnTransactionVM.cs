@@ -323,7 +323,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
                                 var purchaseLineNetTotal = purchaseTransactionLine.PurchasePrice - purchaseTransactionLine.Discount;
                                 if (purchaseLineNetTotal == 0) continue;
                                 var fractionOfTransactionDiscount = (line.Quantity * purchaseLineNetTotal / purchaseTransactionLine.PurchaseTransaction.GrossTotal) * purchaseTransactionLine.PurchaseTransaction.Discount;
-                                cogs += ((line.Quantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * (purchaseTransactionLine.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1);
+                                var fractionOfTransactionTax = (line.Quantity * purchaseLineNetTotal / purchaseTransactionLine.PurchaseTransaction.GrossTotal) * purchaseTransactionLine.PurchaseTransaction.Tax;
+                                cogs += (line.Quantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                             }
 
                             Model.PurchaseTransaction.Supplier.PurchaseReturnCredits += _purchaseReturnTransactionNetTotal;
@@ -334,8 +335,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now, _purchaseReturnEntryID, "Purchase Return")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Debit", _purchaseReturnTransactionNetTotal);
-                            if (_purchaseReturnTransactionNetTotal - cogs > 0)
-                                LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Cost of Goods Sold", "Debit", _purchaseReturnTransactionNetTotal - cogs); // Debit the differences to COGS
+                            if (cogs - PurchaseReturnTransactionNetTotal > 0)
+                                LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Cost of Goods Sold", "Debit", cogs - PurchaseReturnTransactionNetTotal); // Debit the differences to COGS
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", cogs);
               
                             context.SaveChanges();
@@ -455,7 +456,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     line.Warehouse.ID.Equals(_selectedPurchaseTransactionLine.Warehouse.ID) &&
                     line.Discount.Equals(_selectedPurchaseTransactionLine.Discount) &&
                     line.PurchasePrice.Equals(_selectedPurchaseTransactionLine.PurchasePrice))
-                    quantity -= line.Quantity;    
+                {
+                    quantity -= line.Quantity;
+                }
             }
             return quantity;
         }

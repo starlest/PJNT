@@ -24,12 +24,21 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         bool _notEditMode;
 
+        #region Transaction backing fields
         Supplier _newTransactionSupplier;
+        string _newTransactionID;
+        string _newTransactionDOID;
+        DateTime _newTransactionDate;
+        DateTime _newTransactionDueDate;
+        decimal? _newTransactionDiscountPercent;
+        decimal? _newTransactionDiscount;
+        decimal? _newTransactionTax;
+        decimal? _newTransactionGrossTotal;
+        decimal? _newTransactionNetTotal;
+        string _newTransactionNote;
+        #endregion
 
         Warehouse _newEntryWarehouse;
-        string _newTransactionID;
-        DateTime _newEntryDate;
-        DateTime _newEntryDueDate;
         Item _newEntryItem;
         string _newEntryUnitName;
         int _newEntryQuantity;
@@ -39,13 +48,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
         decimal? _newEntryPrice;
         decimal? _newEntryDiscountPercent;
         decimal? _newEntryDiscount;
-
-        decimal? _newTransactionDiscountPercent;
-        decimal? _newTransactionDiscount;
-        decimal? _newTransactionTax;
-        decimal? _newTransactionGrossTotal;
-        decimal? _newTransactionNetTotal;
-        string _newTransactionNote;
 
         bool _newEntrySubmitted;
 
@@ -66,11 +68,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
             UpdateSuppliers();
 
-            NewEntryDate = DateTime.Now.Date;
-            NewEntryDueDate = DateTime.Now.Date;
+            NewTransactionDate = DateTime.Now.Date;
+            NewTransactionDueDate = DateTime.Now.Date;
 
             SetTransactionID();
-            Model.DueDate = _newEntryDueDate;
+            Model.DueDate = _newTransactionDueDate;
             Model.Total = 0;
         }
 
@@ -135,21 +137,40 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
-        private void SetTransaction(PurchaseTransaction transaction)
+        public string NewTransactionDOID
         {
-            UpdateSuppliers();
-            NewTransactionSupplier = transaction.Supplier;
-            NewEntryDate = transaction.Date;
-            NewEntryDueDate = transaction.DueDate;
-            NewTransactionNote = transaction.Note;
+            get { return _newTransactionDOID; }
+            set { SetProperty(ref _newTransactionDOID, value, "NewTransactionDOID"); }
+        }
 
-            _lines.Clear();
-            foreach (var line in transaction.PurchaseTransactionLines)
-                _lines.Add(new PurchaseTransactionLineVM { Model = line });
+        public DateTime NewTransactionDate
+        {
+            get { return _newTransactionDate; }
+            set
+            {
+                if (value > DateTime.Now.Date)
+                {
+                    MessageBox.Show("Cannot set to a future date.", "Invalid Date", MessageBoxButton.OK);
+                    return;
+                }
 
-            NewTransactionDiscount = transaction.Discount;
-            NewTransactionTax = transaction.Tax;
-            OnPropertyChanged("NewTransactionGrossTotal");
+                SetProperty(ref _newTransactionDate, value, "NewTransactionDate");
+            }
+        }
+
+        public DateTime NewTransactionDueDate
+        {
+            get { return _newTransactionDueDate; }
+            set
+            {
+                if (value < _newTransactionDate)
+                {
+                    MessageBox.Show("Cannot set to before transaction date.", "Invalid Date", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _newTransactionDueDate, value, "NewTransactionDueDate");
+            }
         }
 
         public Supplier NewTransactionSupplier
@@ -159,44 +180,42 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 if (value == null)
                 {
+                    SetProperty(ref _newTransactionSupplier, value, "NewTransactionSupplier");
                     _supplierItems.Clear();                    
                     return;
                 }
 
-                foreach (var supplier in Suppliers)
+                UpdateSuppliers();
+                UpdateWarehouses();
+
+                foreach (var supplier in _suppliers)
                 {
                     if (supplier.ID.Equals(value.ID))
                     {
                         value = supplier;
-
-                        // No longer allows user to select another supplier
-                        _suppliers.Clear();
-                        _suppliers.Add(value);
-
-                        UpdateWarehouses();
-
-                        // Display Supplier's Items and IDs
-                        _supplierItems.Clear();
-                        using (var context = new ERPContext())
-                        {
-                            var items = context.Inventory
-                                .Include("Suppliers")
-                                .ToList();
-
-                            foreach (var item in items)
-                            {
-                                if (item.Active == true && item.Suppliers.Contains(value))
-                                    _supplierItems.Add(item);
-                            }
-                        }
-
-                        SetProperty(ref _newTransactionSupplier, value, "NewTransactionSupplier");
-                        OnPropertyChanged("SupplierItems");
-                        Model.Supplier = value;
-
                         break;
                     }
                 }
+
+                _suppliers.Clear();
+                _suppliers.Add(value);
+
+                // Display Supplier's Items and IDs
+                _supplierItems.Clear();
+                using (var context = new ERPContext())
+                {
+                    var items = context.Inventory
+                        .Include("Suppliers")
+                        .ToList();
+
+                    foreach (var item in items)
+                    {
+                        if (item.Active == true && item.Suppliers.Contains(value))
+                            _supplierItems.Add(item);
+                    }
+                }
+
+                SetProperty(ref _newTransactionSupplier, value, "NewTransactionSupplier");
             }
         }
 
@@ -312,39 +331,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             get { return _newEntryWarehouse; }
             set { SetProperty(ref _newEntryWarehouse, value, "NewEntryWarehouse"); }
-        }
-
-        public DateTime NewEntryDate
-        {
-            get { return _newEntryDate; }
-            set
-            {
-                if (value > DateTime.Now.Date)
-                {
-                    MessageBox.Show("Cannot set to a future date.", "Invalid Date", MessageBoxButton.OK);
-                    return;
-                }
-
-                SetProperty(ref _newEntryDate, value, "NewEntryDate");
-                Model.Date = _newEntryDate;
-                SetTransactionID();
-            }
-        }
-
-        public DateTime NewEntryDueDate
-        {
-            get { return _newEntryDueDate; }
-            set
-            {
-                if (value < _newEntryDate)
-                {
-                    MessageBox.Show("Cannot set to before transaction date.", "Invalid Date", MessageBoxButton.OK);
-                    return;
-                }
-
-                SetProperty(ref _newEntryDueDate, value, "NewEntryDueDate");
-                Model.DueDate = _newEntryDueDate;
-            }
         }
 
         public Item NewEntryItem
@@ -490,17 +476,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 }));
             }
         }
-
-        private void ResetEntryFields()
-        {
-            NewEntryItem = null;
-            _newEntryQuantity = 0;
-            NewEntryPieces = null;
-            NewEntryUnits = null;
-            NewEntryPrice = null;
-            NewEntryUnitName = null;
-            NewEntryPiecesPerUnit = null;
-        }
         #endregion
 
         public ICommand ConfirmTransactionCommand
@@ -523,7 +498,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             var context = new ERPContext();
 
                             // Increase the respective item's Quantity
-                            foreach (var line in Model.PurchaseTransactionLines)
+                            foreach (var line in _lines)
                             {
                                 var item = context.Inventory
                                 .Where(e => e.ItemID.Equals(line.Item.ItemID))
@@ -547,13 +522,19 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                                 line.Item = item;
                                 line.Warehouse = warehouse;
+
+                                Model.PurchaseTransactionLines.Add(line.Model);
                             }
 
+                            Model.DOID = _newTransactionDOID;
+                            Model.Date = _newTransactionDate;
+                            Model.DueDate = _newTransactionDueDate;
                             Model.Total = (decimal) _newTransactionNetTotal;
+                            Model.Tax = _newTransactionTax == null ? 0 : (decimal)_newTransactionTax;
                             Model.Discount = _newTransactionDiscount == null ? 0 : (decimal) _newTransactionDiscount;
                             Model.GrossTotal = _newTransactionGrossTotal == null ? 0 : (decimal) _newTransactionGrossTotal;
                             Model.Note = _newTransactionNote;
-                            Model.Supplier = context.Suppliers.Where(e => e.ID == Model.Supplier.ID).FirstOrDefault();
+                            Model.Supplier = context.Suppliers.Where(e => e.ID == _newTransactionSupplier.ID).FirstOrDefault();
                             var user = App.Current.FindResource("CurrentUser") as User;
                             Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
                             context.PurchaseTransactions.Add(Model);
@@ -562,7 +543,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             LedgerTransaction transaction = new LedgerTransaction();
                             string accountsPayableName = _newTransactionSupplier.Name + " Accounts Payable";
 
-                            if (!LedgerDBHelper.AddTransaction(context, transaction, _newEntryDate, _newTransactionID.ToString(), "Purchase Transaction")) return;
+                            if (!LedgerDBHelper.AddTransaction(context, transaction, _newTransactionDate, _newTransactionID.ToString(), "Purchase Transaction")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Debit", Model.Total);
                             LedgerDBHelper.AddTransactionLine(context, transaction, accountsPayableName, "Credit", Model.Total);
@@ -593,10 +574,29 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        private void SetTransaction(PurchaseTransaction transaction)
+        {
+            Model = transaction;
+            NewTransactionDOID = transaction.DOID;
+            NewTransactionSupplier = null; // to prevent buggy outcome
+            NewTransactionSupplier = transaction.Supplier;
+            NewTransactionDate = transaction.Date;
+            NewTransactionDueDate = transaction.DueDate;
+            NewTransactionNote = transaction.Note;
+
+            _lines.Clear();
+            foreach (var line in transaction.PurchaseTransactionLines)
+                _lines.Add(new PurchaseTransactionLineVM { Model = line });
+
+            NewTransactionDiscount = transaction.Discount;
+            NewTransactionTax = transaction.Tax;
+            OnPropertyChanged("NewTransactionGrossTotal"); // Updates transaction's net total too
+        }
+
         private void SetTransactionID()
         {
-            var month = _newEntryDate.Month;
-            var year = _newEntryDate.Year;
+            var month = _newTransactionDate.Month;
+            var year = _newTransactionDate.Year;
             _newTransactionID = "P" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
 
             string lastEntryID = null;
@@ -627,25 +627,35 @@ namespace PutraJayaNT.ViewModels.Suppliers
             OnPropertyChanged("NewTransactionID");
         }
 
+        private void ResetEntryFields()
+        {
+            NewEntryItem = null;
+            _newEntryQuantity = 0;
+            NewEntryPieces = null;
+            NewEntryUnits = null;
+            NewEntryPrice = null;
+            NewEntryUnitName = null;
+            NewEntryPiecesPerUnit = null;
+        }
+
         private void ResetFields()
         {
             ResetEntryFields();
 
             NotEditMode = true;
 
+            Model = new PurchaseTransaction();
             NewTransactionSupplier = null;
+            NewTransactionDOID = null;
             NewTransactionDiscount = null;
             NewTransactionNote = null;
-
-            Model.Date = _newEntryDate;
-            Model.DueDate = _newEntryDueDate;
+            NewTransactionDate = DateTime.Now.Date;
+            NewTransactionDueDate = DateTime.Now.Date;
 
             _warehouses.Clear();
             _supplierItems.Clear();
-            UpdateSuppliers();
-
-            Model.PurchaseTransactionLines.Clear();
             _lines.Clear();
+            UpdateSuppliers();
 
             OnPropertyChanged("Suppliers");
             OnPropertyChanged("NewTransactionGrossTotal");
@@ -664,30 +674,17 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 {
                     // Unsuscribe to event handler to prevent strong reference
                     line.PropertyChanged -= LinePropertyChangedHandler;
-                    foreach (PurchaseTransactionLine l in Model.PurchaseTransactionLines)
-                    {
-                        if (l.Item.Name == line.Item.Name)
-                        {
-                            Model.PurchaseTransactionLines.Remove(l);
-                            break;
-                        }
-                    }
                 }
             }
 
             else if (e.NewItems != null)
             {
-                // Suscribe an event handler to the line and
-                // add the corresponding Transaction Line into the Model's collection too
+                // Suscribe an event handler to the line
                 foreach (PurchaseTransactionLineVM line in e.NewItems)
                 {
                     line.PropertyChanged += LinePropertyChangedHandler;
-                    Model.PurchaseTransactionLines.Add(line.Model);
                 }
             }
-
-            // Refresh Total Amount
-            OnPropertyChanged("NewTransactionGrossTotal");
         }
 
         void LinePropertyChangedHandler(object o, PropertyChangedEventArgs e)

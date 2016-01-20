@@ -152,7 +152,7 @@
                      Text="{Binding NewEntryDiscountPercent, UpdateSourceTrigger=Explicit}" KeyDown="DiscountPercentTextBox_KeyDown"/>
                         <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="%" />
                         <TextBox Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                     Text="{Binding NewEntryDiscount, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding NewEntryDiscount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
                     </Grid>
                     <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Salesman:" FontSize="28" />
                     <ComboBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 

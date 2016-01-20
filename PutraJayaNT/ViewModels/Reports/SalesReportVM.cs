@@ -26,12 +26,10 @@ namespace PutraJayaNT.ViewModels.Reports
         Visibility _detailedVisibility;
         Visibility _globalVisibility;
 
-        /// <summary>
-        /// Backing field for the <see cref="FromDate"/> property
-        /// </summary>
         DateTime _fromDate;
         DateTime _toDate;
         decimal _total;
+        string _quantitySold;
 
         Category _selectedCategory;
         Item _selectedItem;
@@ -224,6 +222,12 @@ namespace PutraJayaNT.ViewModels.Reports
             set { SetProperty(ref _total, value, "Total"); }
         }
 
+        public string QuantitySold
+        {
+            get { return _quantitySold; }
+            set { SetProperty(ref _quantitySold, value, "QuantitySold"); }
+        }
+
         #region Helper Methods
         private void UpdateCategories()
         {
@@ -288,7 +292,6 @@ namespace PutraJayaNT.ViewModels.Reports
             if (_selectedItem == null) return;
 
             var transactionLines = new List<SalesTransactionLine>();
-
 
             using (var context = new ERPContext())
             {
@@ -377,8 +380,18 @@ namespace PutraJayaNT.ViewModels.Reports
         private void RefreshTotal()
         {
             _total = 0;
+            var quantitySold = 0;
             foreach (var line in _detailedDisplayLines)
+            {
+                quantitySold += line.Quantity;
                 _total += line.NetTotal;
+            }
+
+            if (_selectedItem.Name != "All")
+                QuantitySold = (quantitySold / _selectedItem.PiecesPerUnit) + "/" + (quantitySold % _selectedItem.PiecesPerUnit);
+
+            else
+                QuantitySold = "";
             OnPropertyChanged("Total");
         }
         #endregion

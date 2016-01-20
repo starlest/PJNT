@@ -57,7 +57,7 @@
             <Button Grid.Row="2" Grid.Column="8"  Content="Cancel" Command="{Binding NewEntryCancelCommand}" Margin="10" />
         </Grid>
             <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
-                      CanUserDeleteRows="True" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                      CanUserDeleteRows="False" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                       AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" PreviewKeyDown="DataGrid_PreviewKeyDown">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />

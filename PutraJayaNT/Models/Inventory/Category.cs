@@ -9,7 +9,7 @@ namespace PutraJayaNT.Models.Inventory
 
         public string Name { get; set; }
 
-        public virtual ICollection<Item> ItemDetails { get; set; }
+        public virtual ICollection<Item> Items { get; set; }
 
         public override bool Equals(object obj)
         {

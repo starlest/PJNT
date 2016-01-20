@@ -41,18 +41,21 @@
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="28" Text="Purchase ID:" />
-                <TextBox Name="PurchaseIDTextBox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
+                <TextBox Name="PurchaseIDTextBox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding NewTransactionID, Mode=TwoWay, UpdateSourceTrigger=Explicit}" MaxLength="12" KeyDown="TextBox_KeyDown" />
                 <TextBlock Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Text="Supplier:" FontSize="28" />
-                <ComboBox Grid.Column="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
+                <ComboBox Grid.Column="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                       ItemsSource="{Binding Suppliers}" SelectedItem="{Binding NewTransactionSupplier, UpdateSourceTrigger=Explicit}" 
                       DisplayMemberPath="Name" IsEditable="True" IsEnabled="{Binding NotEditMode}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="28" Text="DO ID:" />
+                <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewTransactionDOID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxLength="20" IsEnabled="{Binding NotEditMode}" />
                 <TextBlock Grid.Column="4" VerticalAlignment="Top" HorizontalAlignment="Right" Text="Date:" FontSize="28" />
                 <DatePicker Grid.Column="5" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                                SelectedDateFormat="Long" SelectedDate="{Binding NewEntryDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding NotEditMode}" />
+                                SelectedDateFormat="Long" SelectedDate="{Binding NewTransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding NotEditMode}" />
                 <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Top" HorizontalAlignment="Right" Text="Due Date:" FontSize="28" />
                 <DatePicker Grid.Row="1" Grid.Column="5" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                                SelectedDateFormat="Long" SelectedDate="{Binding NewEntryDueDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding NotEditMode}" />
+                                SelectedDateFormat="Long" SelectedDate="{Binding NewTransactionDueDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding NotEditMode}" />
             </Grid>
         </Border>
         <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2" IsEnabled="{Binding NotEditMode}">
@@ -129,7 +132,7 @@
                      Text="{Binding NewEntryDiscountPercent, UpdateSourceTrigger=Explicit}" KeyDown="DiscountPercentTextBox_KeyDown"/>
                     <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Text="%" />
                     <TextBox Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                     Text="{Binding NewEntryDiscount, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding NewEntryDiscount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
                 </Grid>
                 <Button Grid.Row="0" Grid.Column="7" Grid.RowSpan="2" Margin="20" Content="Enter" Command="{Binding NewEntryCommand}" />
             </Grid>

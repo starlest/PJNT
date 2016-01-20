@@ -12,12 +12,12 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Accounting
 {
-    class BankTransactionVM : ViewModelBase
+    class CashBankTransactionVM : ViewModelBase
     {
         DateTime _fromDate;
         DateTime _toDate;
 
-        ObservableCollection<LedgerAccountVM> _banks;
+        ObservableCollection<LedgerAccountVM> _banks; // inclusive of Cash Account
         ObservableCollection<LedgerTransactionLineVM> _displayLines;
 
         LedgerAccountVM _selectedBank;
@@ -33,7 +33,10 @@ namespace PutraJayaNT.ViewModels.Accounting
         ICommand _newEntryConfirmCommand;
         ICommand _newEntryCancelCommand;
 
-        public BankTransactionVM()
+        LedgerTransactionLineVM _selectedLine;
+        ICommand _deleteLineCommand;
+
+        public CashBankTransactionVM()
         {
             _fromDate = DateTime.Now.Date;
             _toDate = DateTime.Now.Date;
@@ -96,6 +99,37 @@ namespace PutraJayaNT.ViewModels.Accounting
                 UpdateDisplayLines();
             }
         }
+
+        public LedgerTransactionLineVM SelectedLine
+        {
+            get { return _selectedLine; }
+            set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
+        }
+
+        public ICommand DeleteLineCommand
+        {
+            get
+            {
+                return _deleteLineCommand ?? (_deleteLineCommand = new RelayCommand(() =>
+                {
+                    if (_selectedLine == null)
+                    {
+                        MessageBox.Show("Please select a line.", "Invalid Command", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    if (_selectedLine.Description.Equals("Purchase Payment") || _selectedLine.Description.Equals("Sales Transaction Payment"))
+                    {
+                        MessageBox.Show("Cannot delete this line.", "Invalid Command", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    if (MessageBox.Show("Confirm deletion?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        _displayLines.Remove(_selectedLine);                  
+                }));
+            }
+        }
+
 
         #region New Entry Propeties
         public DateTime NewEntryDate
@@ -195,7 +229,6 @@ namespace PutraJayaNT.ViewModels.Accounting
                 }));
             }
         }
-
         #endregion
 
         #region Helper Methods
@@ -206,8 +239,8 @@ namespace PutraJayaNT.ViewModels.Accounting
             using (var context = new ERPContext())
             {
                 var accounts = context.Ledger_Accounts
-                    .Where(e => !e.Name.Equals("Cost of Goods Sold")
-                    && !e.Name.Equals("Inventory") && !e.Name.Equals("Retained Earnings")
+                    .Where(e => !e.Name.Equals("Cost of Goods Sold") && !e.Name.Equals("- Accounts Payable")
+                    && !e.Name.Equals("Inventory") && !e.Class.Equals("Equity")
                     && !e.Notes.Equals("Operating Expense") && !e.Name.Contains("Revenue"))
                     .ToList();
 
@@ -236,7 +269,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             using (var context = new ERPContext())
             {
                 var banks = context.Ledger_Accounts
-                    .Where(e => e.Name.Contains("Bank"))
+                    .Where(e => e.Name.Contains("Bank") || e.Name.Equals("Cash"))
                     .Include("TransactionLines");
 
                 foreach (var bank in banks)

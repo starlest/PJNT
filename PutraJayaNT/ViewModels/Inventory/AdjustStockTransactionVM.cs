@@ -186,7 +186,8 @@ namespace PutraJayaNT.ViewModels.Inventory
                                         purchase.SoldOrReturned += tracker;
                                         if (purchaseLineNetTotal == 0) break;
                                         var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                                        cogs += ((tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
+                                        var fractionOfTransactionTax = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                                        cogs += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                                         break;
                                     }
                                     else if (tracker > availableQuantity)
@@ -195,7 +196,8 @@ namespace PutraJayaNT.ViewModels.Inventory
                                         tracker -= availableQuantity;
                                         if (purchaseLineNetTotal == 0) continue;
                                         var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                                        cogs += ((availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount) * purchase.PurchaseTransaction.Tax == 0 ? 1 : (decimal)1.1;
+                                        var fractionOfTransactionTax = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                                        cogs += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                                     }
                                 }
                             }

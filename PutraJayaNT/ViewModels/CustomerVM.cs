@@ -85,6 +85,16 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        public int MaxInvoices
+        {
+            get { return Model.MaxInvoices; }
+            set
+            {
+                Model.MaxInvoices = value;
+                OnPropertyChanged("MaxInvoices");
+            }
+        }
+
         public decimal SalesReturnCredits
         {
             get { return Model.SalesReturnCredits; }

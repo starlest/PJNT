@@ -80,8 +80,11 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total:" FontSize="28" />
-                <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Quantity Sold:" FontSize="28" />
+                <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding QuantitySold, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Foreground="Red" />
+                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Total:" FontSize="28" />
+                <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
             </Grid>
         </Grid>

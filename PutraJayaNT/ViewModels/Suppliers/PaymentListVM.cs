@@ -19,15 +19,13 @@ namespace PutraJayaNT.ViewModels.Suppliers
         ObservableCollection<PurchaseTransaction> _purchaseTransactions;
 
         SupplierVM _selectedSupplier;
-        DateTime _fromDate;
-        DateTime _toDate;
+        DateTime _date;
 
         public PaymentListVM()
         {
             _suppliers = new ObservableCollection<SupplierVM>();
             _purchaseTransactions = new ObservableCollection<PurchaseTransaction>();
-            _fromDate = DateTime.Now.Date;
-            _toDate = DateTime.Now.Date;
+            _date = DateTime.Now.Date;
             UpdateSuppliers();
         }
 
@@ -41,34 +39,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _purchaseTransactions; }
         }
 
-        public DateTime FromDate
+        public DateTime Date
         {
-            get { return _fromDate; }
+            get { return _date; }
             set
             {
-                if (_toDate < value)
-                {
-                    MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
-                    return;
-                }
-
-                SetProperty(ref _fromDate, value, "FromDate");
-                if (_selectedSupplier != null) UpdatePurchaseTransactions();
-            }
-        }
-
-        public DateTime ToDate
-        {
-            get { return _toDate; }
-            set
-            {
-                if (_fromDate > value)
-                {
-                    MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
-                    return;
-                }
-
-                SetProperty(ref _toDate, value, "ToDate");
+                SetProperty(ref _date, value, "Date");
                 if (_selectedSupplier != null) UpdatePurchaseTransactions();
             }
         }
@@ -99,30 +75,23 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         private void UpdatePurchaseTransactions()
         {
-
             _purchaseTransactions.Clear();
-            List<PurchaseTransaction> purchaseTransactions;
+            Func<PurchaseTransaction, bool> query;
+
             using (var context = new ERPContext())
             {
                 if (_selectedSupplier.Name.Equals("All"))
-                {
-                    purchaseTransactions = context.PurchaseTransactions
-                        .Include("Supplier")
-                        .Where(e => !e.Supplier.Name.Equals("-") && e.Paid < e.Total && (e.DueDate >= _fromDate && e.DueDate <= _toDate))
-                        .OrderBy(e => e.DueDate)
-                        .ThenBy(e => e.Supplier.Name)
-                        .ToList();
-                }
+                    query = e => !e.Supplier.Name.Equals("-") && e.Paid < e.Total && e.DueDate <= _date;
 
                 else
-                {
-                    purchaseTransactions = context.PurchaseTransactions
-                        .Include("Supplier")
-                        .Where(e => e.Supplier.Name.Equals(_selectedSupplier.Name) && e.Paid < e.Total && (e.DueDate >= _fromDate && e.DueDate <= _toDate))
-                        .OrderBy(e => e.DueDate)
-                        .ThenBy(e => e.Supplier.Name)
-                        .ToList();
-                }
+                    query = e => e.Supplier.Name.Equals(_selectedSupplier.Name) && e.Paid < e.Total && e.DueDate <= _date;
+
+                var purchaseTransactions = context.PurchaseTransactions
+                    .Include("Supplier")
+                    .Where(query)
+                    .OrderBy(e => e.DueDate)
+                    .ThenBy(e => e.Supplier.Name)
+                    .ToList();
 
                 foreach (var t in purchaseTransactions)
                 {

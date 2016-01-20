@@ -51,6 +51,11 @@
             get { return Model.Total - Model.Paid; }
         }
 
+        public DateTime When
+        {
+            get { return Model.When; }
+        }
+
         public DateTime DueDate
         {
             get { return Model.DueDate; }

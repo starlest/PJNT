@@ -149,7 +149,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     .Include("TransactionLines")
                     .Include("TransactionLines.Item")
                     .Include("TransactionLines.Warehouse")
-                    .Where(e => e.Customer.ID.Equals(_selectedCustomer.ID) && (e.Paid < e.Total))
+                    .Where(e => e.InvoiceIssued != null && e.Customer.ID.Equals(_selectedCustomer.ID) && (e.Paid < e.Total))
                     .ToList();
 
                 foreach (var transaction in transactions)
