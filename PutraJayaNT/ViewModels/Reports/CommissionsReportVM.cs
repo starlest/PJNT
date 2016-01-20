@@ -10,9 +10,9 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
-
-
-    class CommissionsReportVM : ViewModelBase
+    using System.Windows.Input;
+    using PutraJayaNT.Reports.Windows;
+    public class CommissionsReportVM : ViewModelBase
     {
         ObservableCollection<SalesmanVM> _salesmen;
         ObservableCollection<SalesCommissionVM> _lines;
@@ -21,6 +21,8 @@
         DateTime _fromDate;
         DateTime _toDate;
         decimal _total;
+
+        ICommand _printCommand;
 
         public CommissionsReportVM()
         {
@@ -98,6 +100,22 @@
         {
             get { return _total; }
             set { SetProperty(ref _total, value, "Total"); }
+        }
+
+        public ICommand PrintCommand
+        {
+            get
+            {
+                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                {
+                    if (_lines.Count == 0) return;
+
+                    var commissionsReportWindow = new CommissionsReportWindow(this);
+                    commissionsReportWindow.Owner = App.Current.MainWindow;
+                    commissionsReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    commissionsReportWindow.Show();
+                }));
+            }
         }
 
         #region Helper Methods
@@ -249,6 +267,8 @@
 
                 var lineDiscount = line.Discount / line.Item.PiecesPerUnit;
                 var lineSalesPrice = line.SalesPrice / line.Item.PiecesPerUnit;
+                var lineTotal = line.SalesPrice - line.Discount;
+                if (lineTotal == 0) return 0;
                 var fractionOfTransaction = (line.Quantity * (lineSalesPrice - lineDiscount)) / transaction.GrossTotal;
                 var fractionOfTransactionDiscount = (fractionOfTransaction * transaction.Discount) / line.Quantity;
                 var discount = lineDiscount + fractionOfTransactionDiscount;

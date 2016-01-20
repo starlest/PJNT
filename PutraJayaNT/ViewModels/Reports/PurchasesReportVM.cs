@@ -24,6 +24,8 @@ namespace PutraJayaNT.ViewModels
         Supplier _selectedSupplier;
         ItemVM _selectedItem;
 
+        decimal _total;
+
         public PurchasesReportVM()
         {
             _suppliers = new ObservableCollection<Supplier>();
@@ -116,6 +118,19 @@ namespace PutraJayaNT.ViewModels
 
                 RefreshDisplaylines();
              }
+        }
+
+        public decimal Total
+        {
+            get
+            {
+                _total = 0;
+
+                foreach (var line in _displayLines)
+                    _total += line.Total;
+
+                return _total;
+            }
         }
 
         private void UpdateSuppliers()
@@ -223,6 +238,8 @@ namespace PutraJayaNT.ViewModels
                     }
                 }
             }
+
+            OnPropertyChanged("Total");
         }
     }
 }

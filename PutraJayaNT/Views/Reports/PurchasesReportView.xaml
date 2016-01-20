@@ -10,6 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*" />
             <RowDefinition Height="1*" />
+            <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
         <Border BorderBrush="Blue" BorderThickness="2">
             <Grid>
@@ -47,7 +48,7 @@
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Purchase ID" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseTransactionID}" />
-                <DataGridTextColumn Header="DO ID" Width="1*" IsReadOnly="True" Binding="{Binding DOID}" />
+                <DataGridTextColumn Header="DO ID" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseTransaction.DOID}" />
                 <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="Item ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
@@ -58,5 +59,15 @@
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.2*" />
+                <ColumnDefinition Width="0.2*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total:" FontSize="28" />
+            <TextBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="0, 10, 0, 0"
+                         Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
+        </Grid>
     </Grid>
 </UserControl>

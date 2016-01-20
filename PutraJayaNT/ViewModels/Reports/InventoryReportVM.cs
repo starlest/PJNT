@@ -332,6 +332,8 @@ namespace PutraJayaNT.ViewModels.Reports
                     if (stock != null) line.Quantity = stock.Pieces;
                     _lines.Add(line);
                 }
+
+                OnPropertyChanged("Total");
             }
         }
         #endregion

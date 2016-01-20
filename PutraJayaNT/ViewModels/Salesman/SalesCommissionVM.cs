@@ -4,7 +4,7 @@
     using MVVMFramework;
     using Models.Salesman;
 
-    class SalesCommissionVM : ViewModelBase<SalesCommission>
+    public class SalesCommissionVM : ViewModelBase<SalesCommission>
     {
         public Salesman Salesman
         {

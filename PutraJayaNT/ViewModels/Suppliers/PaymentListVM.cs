@@ -1,15 +1,10 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Purchase;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.Reports;
 using PutraJayaNT.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Suppliers
 {
@@ -20,6 +15,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
         SupplierVM _selectedSupplier;
         DateTime _date;
+        decimal _total;
 
         public PaymentListVM()
         {
@@ -56,9 +52,24 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 SetProperty(ref _selectedSupplier, value, "SelectedSupplier");
                 UpdatePurchaseTransactions();
+                OnPropertyChanged("Total");
             }
         }
 
+        public decimal Total
+        {
+            get
+            {
+                _total = 0;
+
+                foreach (var line in _purchaseTransactions)
+                {
+                    _total += line.Total;
+                }
+
+                return _total;
+            }
+        }
         #region Helper Methods 
         private void UpdateSuppliers()
         {
