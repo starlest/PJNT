@@ -47,7 +47,7 @@
                       DisplayMemberPath="Name" IsEditable="True" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" 
+        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding Lines}" 
                           CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                           ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">

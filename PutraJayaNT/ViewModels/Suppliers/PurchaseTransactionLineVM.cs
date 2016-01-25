@@ -52,7 +52,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             set
             {
                 Model.Quantity = value;
-                Total = value * PurchasePrice;
+                Total = value * Model.PurchasePrice;
                 OnPropertyChanged("Units");
                 OnPropertyChanged("Pieces");
             }
@@ -124,7 +124,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             set
             {
                 Model.PurchasePrice = value / Model.Item.PiecesPerUnit;
-                OnPropertyChanged("PurchasePricePerUnit");
+                OnPropertyChanged("PurchasePrice");
                 Total = Model.Quantity * (Model.PurchasePrice - Model.Discount);
             }
         }

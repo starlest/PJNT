@@ -12,8 +12,8 @@ using System.Windows.Input;
 using PutraJayaNT.Models.Inventory;
 using System.Data.Entity.Infrastructure;
 using PutraJayaNT.Models;
-using PutraJayaNT.Reports;
-using PutraJayaNT.Reports.Windows;
+using Microsoft.Reporting.WinForms;
+using System.Data;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
@@ -26,13 +26,12 @@ namespace PutraJayaNT.ViewModels.Customers
 
         string _salesReturnTransactionID;
         decimal _salesReturnTransactionNetTotal;
+        DateTime _salesReturnTransactionDate;
 
         string _selectedSalesTransactionID;
         SalesTransactionLineVM _selectedSalesTransactionLine;
         CustomerVM _selectedSalesTransactionCustomer;
-        DateTime? _selectedSalesTransactionWhen;
 
-        DateTime _salesReturnEntryDate;
         string _salesReturnEntryProduct;
         int? _salesReturnEntryUnits;
         int? _salesReturnEntryPieces;
@@ -52,7 +51,7 @@ namespace PutraJayaNT.ViewModels.Customers
             _salesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
             _salesReturnTransactionLines = new ObservableCollection<SalesReturnTransactionLineVM>();
 
-            _salesReturnEntryDate = DateTime.Now.Date;
+            _salesReturnTransactionDate = DateTime.Now.Date;
 
             SetSalesReturnTransactionID();
         }
@@ -96,7 +95,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                     Model = sr;
                     SelectedSalesTransactionID = Model.SalesTransaction.SalesTransactionID;
-                
+                    SalesReturnTransactionDate = Model.Date;
                     foreach (var line in Model.TransactionLines)
                         _salesReturnTransactionLines.Add(new SalesReturnTransactionLineVM { Model = line });
 
@@ -106,6 +105,12 @@ namespace PutraJayaNT.ViewModels.Customers
                 SetProperty(ref _salesReturnTransactionID, value, "SalesReturnTransactionID");
                 NotEditing = false;
             }
+        }
+
+        public DateTime SalesReturnTransactionDate
+        {
+            get { return _salesReturnTransactionDate; }
+            set { SetProperty(ref _salesReturnTransactionDate, value, "SalesReturnTransactionDate"); }
         }
 
         public decimal SalesReturnTransactionNetTotal
@@ -136,7 +141,6 @@ namespace PutraJayaNT.ViewModels.Customers
                 if (UpdateSalesTransactionLines(value))
                 {
                     SetProperty(ref _selectedSalesTransactionID, value, "SelectedSalesTransactionID");
-                    SelectedSalesTransactionWhen = _salesTransactionLines.FirstOrDefault().SalesTransaction.When;
                     Model.SalesTransaction = _salesTransactionLines.FirstOrDefault().SalesTransaction;
                     SelectedSalesTransactionCustomer = new CustomerVM { Model = Model.SalesTransaction.Customer };
                     _salesReturnTransactionLines.Clear();
@@ -155,12 +159,6 @@ namespace PutraJayaNT.ViewModels.Customers
             set { SetProperty(ref _selectedSalesTransactionCustomer, value, "SelectedSalesTransactionCustomer"); }
         }
 
-        public DateTime? SelectedSalesTransactionWhen
-        {
-            get { return _selectedSalesTransactionWhen; }
-            set { SetProperty(ref _selectedSalesTransactionWhen, value, "SelectedSalesTransactionWhen"); }
-        }
-
         public SalesTransactionLineVM SelectedSalesTransactionLine
         {
             get { return _selectedSalesTransactionLine; }
@@ -174,16 +172,6 @@ namespace PutraJayaNT.ViewModels.Customers
         #endregion
 
         #region Return Entry Properties
-        public DateTime SalesReturnEntryDate
-        {
-            get { return _salesReturnEntryDate; }
-            set
-            {
-                SetProperty(ref _salesReturnEntryDate, value, "SalesReturnEntryDate");
-                SetSalesReturnTransactionID();
-            }
-        }
-
         public string SalesReturnEntryProduct
         {
             get { return _salesReturnEntryProduct; }
@@ -314,7 +302,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             decimal totalCOGS = 0;
                             // Calcculate the total amount of Sales Return, total amount of Cost of Goods Sold
                             // ,record the transaction and increase the item's quantity in the database
-                            Model.Date = DateTime.Now.Date;
+                            Model.Date = _salesReturnTransactionDate;
                             Model.NetTotal = _salesReturnTransactionNetTotal;
                             var user = App.Current.FindResource("CurrentUser") as User;
                             Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
@@ -400,7 +388,6 @@ namespace PutraJayaNT.ViewModels.Customers
 
                         ResetTransaction();
                         Model = new SalesReturnTransaction();
-                        Model.Date = _salesReturnEntryDate;
                         SetSalesReturnTransactionID();
                     }
                 }));
@@ -415,10 +402,43 @@ namespace PutraJayaNT.ViewModels.Customers
                 {
                     if (_salesReturnTransactionLines.Count == 0) return;
 
-                    var salesReturnInvoiceWindow = new SalesReturnInvoiceWindow(this);
-                    salesReturnInvoiceWindow.Owner = App.Current.MainWindow;
-                    salesReturnInvoiceWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    salesReturnInvoiceWindow.Show();
+                    if (MessageBox.Show("Confirm printing?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
+                    SalesReturnTransaction transaction;
+                    using (var context = new ERPContext())
+                    {
+                        transaction = context.SalesReturnTransactions
+                        .Include("TransactionLines")
+                        .Include("TransactionLines.Item")
+                        .Include("TransactionLines.Warehouse")
+                        .Include("SalesTransaction.Customer")
+                        .Include("SalesTransaction")
+                        .Where(e => e.SalesReturnTransactionID.Equals(Model.SalesReturnTransactionID))
+                        .FirstOrDefault();
+
+                        if (transaction == null)
+                        {
+                            MessageBox.Show("Transaction not found.", "Invalid Command", MessageBoxButton.OK);
+                            return;
+                        }
+                    }
+
+                    LocalReport localReport = CreateReturnInvoiceLocalReport(transaction);
+                    PrintHelper printHelper = new PrintHelper();
+                    try
+                    {
+                        printHelper.Run(localReport);
+                    }
+
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK);
+                    }
+
+                    finally
+                    {
+                        printHelper.Dispose();
+                    }
                 }));
             }
         }
@@ -460,8 +480,8 @@ namespace PutraJayaNT.ViewModels.Customers
 
         private void SetSalesReturnTransactionID()
         {
-            var year = _salesReturnEntryDate.Year;
-            var month = _salesReturnEntryDate.Month;
+            var year = _salesReturnTransactionDate.Year;
+            var month = _salesReturnTransactionDate.Month;
 
             var newEntryID = "MR" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
 
@@ -562,17 +582,74 @@ namespace PutraJayaNT.ViewModels.Customers
             Model.SalesTransaction = null;
 
             SelectedSalesTransactionID = null;
-            SelectedSalesTransactionWhen = null;
+            SalesReturnTransactionDate = DateTime.Now.Date;
             SelectedSalesTransactionCustomer = null;
             SelectedSalesTransactionLine = null;
 
-            SalesReturnEntryDate = DateTime.Now;
             SalesReturnEntryProduct = null;
             SalesReturnEntryUnits = null;
             SalesReturnEntryPieces = null;
 
             SalesReturnTransactionNetTotal = 0;
         }
+
+        private LocalReport CreateReturnInvoiceLocalReport(SalesReturnTransaction transaction)
+        {
+            var localReport = new LocalReport();
+
+            DataTable dt1 = new DataTable();
+            DataTable dt2 = new DataTable();
+
+            dt1.Columns.Add(new DataColumn("LineNumber", typeof(int)));
+            dt1.Columns.Add(new DataColumn("ItemID", typeof(string)));
+            dt1.Columns.Add(new DataColumn("ItemName", typeof(string)));
+            dt1.Columns.Add(new DataColumn("Unit", typeof(string)));
+            dt1.Columns.Add(new DataColumn("Units", typeof(int)));
+            dt1.Columns.Add(new DataColumn("Pieces", typeof(int)));
+            dt1.Columns.Add(new DataColumn("ReturnPrice", typeof(decimal)));
+            dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
+
+            int count = 1;
+            foreach (var line in transaction.TransactionLines)
+            {
+                DataRow dr = dt1.NewRow();
+                dr["LineNumber"] = count++;
+                dr["ItemID"] = line.Item.ItemID;
+                dr["ItemName"] = line.Item.Name;
+                dr["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
+                dr["Units"] = line.Quantity / line.Item.PiecesPerUnit;
+                dr["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
+                dr["ReturnPrice"] = line.ReturnPrice;
+                dr["Total"] = line.Total;
+                dt1.Rows.Add(dr);
+            }
+
+            DataRow dr2 = dt2.NewRow();
+            dt2.Columns.Add(new DataColumn("Customer", typeof(string)));
+            dt2.Columns.Add(new DataColumn("Address", typeof(string)));
+            dt2.Columns.Add(new DataColumn("SalesInvoiceNumber", typeof(string)));
+            dt2.Columns.Add(new DataColumn("SalesReturnInvoiceNumber", typeof(string)));
+            dt2.Columns.Add(new DataColumn("Date", typeof(string)));
+            dr2["Customer"] = transaction.SalesTransaction.Customer.Name;
+            dr2["Address"] = transaction.SalesTransaction.Customer.City;
+            dr2["SalesInvoiceNumber"] = transaction.SalesTransaction.SalesTransactionID;
+            dr2["SalesReturnInvoiceNumber"] = transaction.SalesReturnTransactionID;
+            dr2["Date"] = transaction.Date.ToShortDateString();
+
+            dt2.Rows.Add(dr2);
+
+
+            ReportDataSource reportDataSource1 = new ReportDataSource("SalesReturnInvoiceLineDataSet", dt1);
+            ReportDataSource reportDataSource2 = new ReportDataSource("SalesReturnInvoiceDataSet", dt2);
+
+            localReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\SalesReturnInvoiceReport.rdlc"); // Path of the rdlc file
+
+            localReport.DataSources.Add(reportDataSource1);
+            localReport.DataSources.Add(reportDataSource2);
+
+            return localReport;
+        }
+
         #endregion
     }
 }

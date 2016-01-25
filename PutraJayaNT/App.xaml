@@ -16,12 +16,11 @@
             <Style TargetType="{x:Type ComboBox}">
                 <EventSetter Event="PreviewKeyDown" Handler="ComboBox_KeyDown" />
             </Style>
-            
             <Style TargetType="{x:Type ComboBoxItem}">
                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
-            
+            <Style TargetType="{x:Type DataGrid}" />
             <Style TargetType="{x:Type DataGridCell}">
                 <Setter Property="Template">
                     <Setter.Value>

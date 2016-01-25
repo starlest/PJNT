@@ -82,12 +82,12 @@
             <TextBlock Grid.Row="12" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Tax" />
             <TextBlock Grid.Row="13" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Net Income" />
 
-            <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding Revenues}" />
-            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding SalesReturnsAndAllowances}" />
-            <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding CostOfGoodsSold}" />
-            <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding GrossMargin}" />
-            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding OperatingExpenses}" />
-            <TextBlock Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding OperatingIncome}" />
+            <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding Revenues, StringFormat=N2}" />
+            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding SalesReturnsAndAllowances, StringFormat=N2}" />
+            <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding CostOfGoodsSold, StringFormat=N2}" />
+            <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding GrossMargin, StringFormat=N2}" />
+            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding OperatingExpenses, StringFormat=N2}" />
+            <TextBlock Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding OperatingIncome, StringFormat=N2}" />
         </Grid>
     </Grid>
 </UserControl>

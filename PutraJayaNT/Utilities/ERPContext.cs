@@ -8,6 +8,7 @@ namespace PutraJayaNT.Utilities
     using Models.Purchase;
     using Models.StockCorrection;
     using Models.Salesman;
+    using System.Data.Entity.ModelConfiguration.Conventions;
     public partial class ERPContext : DbContext
     {
         public ERPContext()
@@ -51,5 +52,11 @@ namespace PutraJayaNT.Utilities
         public virtual DbSet<LedgerTransactionLine> Ledger_Transaction_Lines { get; set; }
         public virtual DbSet<LedgerGeneral> Ledger_General { get; set; }
         public virtual DbSet<LedgerAccountBalance> Ledger_Account_Balances { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Conventions.Remove<DecimalPropertyConvention>();
+            modelBuilder.Conventions.Add(new DecimalPropertyConvention(50, 30));
+        }
     }
 }

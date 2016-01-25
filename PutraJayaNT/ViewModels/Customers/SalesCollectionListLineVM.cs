@@ -9,11 +9,11 @@
     using System.Linq;
     using Utilities;
 
-    public class PaymentListLineVM : ViewModelBase<SalesTransaction>
+    public class SalesCollectionListLineVM : ViewModelBase<SalesTransaction>
     {
         ObservableCollection<Salesman> _salesmen;
 
-        public PaymentListLineVM()
+        public SalesCollectionListLineVM()
         {
             _salesmen = new ObservableCollection<Salesman>();
 

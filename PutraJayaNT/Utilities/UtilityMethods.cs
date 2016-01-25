@@ -1,5 +1,8 @@
 ﻿using PutraJayaNT.Models.Inventory;
+using System;
 using System.Linq;
+using System.Threading;
+using System.Windows;
 
 namespace PutraJayaNT.Utilities
 {
@@ -25,6 +28,5 @@ namespace PutraJayaNT.Utilities
                 else return stock.Pieces;
             }
         }
-
     }
 }

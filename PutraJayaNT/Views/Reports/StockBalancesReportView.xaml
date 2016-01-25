@@ -66,7 +66,7 @@
                      IsReadOnly="True" Text="{Binding EndingBalanceString, Mode=OneWay}" Margin="10, 10, 10, 0"  Foreground="Red" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding Lines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>

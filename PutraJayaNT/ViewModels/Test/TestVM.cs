@@ -160,14 +160,14 @@ namespace PutraJayaNT.ViewModels.Test
                             var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
                             var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
                             if (purchaseLineNetTotal == 0) continue;
-                            var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                            var fractionOfTransactionTax = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                            var fractionOfTransactionDiscount = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                            var fractionOfTransactionTax = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
                             calculatedCOGS += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                         }
 
-                        if (actualCOGS != Math.Round(calculatedCOGS, 2))
+                        if (actualCOGS != calculatedCOGS)
                         {
-                           if (MessageBox.Show(string.Format("Actual Inventory: {0} \n Calculated Inventory: {1} \n Fix?", actualCOGS, calculatedCOGS), "Error", MessageBoxButton.YesNo) ==
+                           if (MessageBox.Show(string.Format("Actual Inventory: {0} \n Calculated Inventory: {1} \n Difference: {2} \n Fix?", actualCOGS, calculatedCOGS, actualCOGS - calculatedCOGS), "Error", MessageBoxButton.YesNo) ==
                                 MessageBoxResult.Yes)
                             {
                                 var newTransaction = new LedgerTransaction();

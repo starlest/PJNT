@@ -92,7 +92,7 @@
                       ItemsSource="{Binding Suppliers}" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay, UpdateSourceTrigger=Explicit}" 
                       IsEditable="True" />
         </Grid>
-        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedItems}" 
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding DisplayedItems}" 
                   CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"

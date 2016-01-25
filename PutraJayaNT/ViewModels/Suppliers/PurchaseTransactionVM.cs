@@ -12,6 +12,8 @@ using System.Transactions;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Purchase;
+using System.Collections.Generic;
+using System.Data.Entity;
 
 namespace PutraJayaNT.ViewModels.Suppliers
 {
@@ -23,6 +25,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         ObservableCollection<Warehouse> _warehouses;
 
         bool _notEditMode;
+        bool _isTransactionNotPaid;
 
         #region Transaction backing fields
         Supplier _newTransactionSupplier;
@@ -55,13 +58,19 @@ namespace PutraJayaNT.ViewModels.Suppliers
         ICommand _confirmTransactionCommand;
         ICommand _newTransactionCommand;
 
+        PurchaseTransactionLineVM _selectedLine;
+        decimal _editLinePurchasePrice;
+        decimal _editLineDiscount;
+        bool _isEditWindowNotOpen;
+        Visibility _editWindowVisibility;
+        ICommand _editLineCommand;
+        ICommand _editLineConfirmCommand;
+        ICommand _editLineCancelCommand;
+
         public PurchaseTransactionVM()
         {
-            _notEditMode = true;
             Model = new PurchaseTransaction();
             _lines = new ObservableCollection<PurchaseTransactionLineVM>();
-            // Add an event handler for this collection
-            _lines.CollectionChanged += OnCollectionChanged;
             _suppliers = new ObservableCollection<Supplier>();
             _supplierItems = new ObservableCollection<Item>();
             _warehouses = new ObservableCollection<Warehouse>();
@@ -74,6 +83,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
             SetTransactionID();
             Model.DueDate = _newTransactionDueDate;
             Model.Total = 0;
+
+            _notEditMode = true;
+            _isTransactionNotPaid = true;
+            _isEditWindowNotOpen = true;
+            _editWindowVisibility = Visibility.Hidden;
         }
 
         public ObservableCollection<PurchaseTransactionLineVM> Lines
@@ -94,6 +108,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
         public ObservableCollection<Warehouse> Warehouses
         {
             get { return _warehouses; }
+        }
+
+        public bool IsTransactionNotPaid
+        {
+            get { return _isTransactionNotPaid; }
+            set { SetProperty(ref _isTransactionNotPaid, value, "IsTransactionNotPaid"); }
         }
 
         public bool NotEditMode
@@ -301,31 +321,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
         }
         #endregion
 
-        private void UpdateSuppliers()
-        {
-            _suppliers.Clear();
-
-            using (var uow = new UnitOfWork())
-            {
-                var suppliers = uow.SupplierRepository.GetAll();
-                foreach (var supplier in suppliers)
-                    if (supplier.Name != "-")
-                        _suppliers.Add(supplier);
-            }
-        }
-
-        private void UpdateWarehouses()
-        {
-            _warehouses.Clear();
-
-            using (var context = new ERPContext())
-            {
-                var warehouses = context.Warehouses.ToList();
-                foreach (var warehouse in warehouses)
-                    _warehouses.Add(warehouse);
-            }
-        }
-
         #region New Entry Properties
         public Warehouse NewEntryWarehouse
         {
@@ -478,86 +473,107 @@ namespace PutraJayaNT.ViewModels.Suppliers
         }
         #endregion
 
+        #region Line Properties
+        public bool IsEditWindowNotOpen
+        {
+            get { return _isEditWindowNotOpen; }
+            set { SetProperty(ref _isEditWindowNotOpen, value, "IsEditWindowNotOpen"); }
+        }
+
+        public Visibility EditWindowVisibility
+        {
+            get { return _editWindowVisibility; }
+            set { SetProperty(ref _editWindowVisibility, value, "EditWindowVisibility"); }
+        }
+
+        public PurchaseTransactionLineVM SelectedLine
+        {
+            get { return _selectedLine; }
+            set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
+        }
+
+        public decimal EditLinePurchasePrice
+        {
+            get { return _editLinePurchasePrice; }
+            set { SetProperty(ref _editLinePurchasePrice, value, "EditLinePurchasePrice"); }
+        }
+
+        public decimal EditLineDiscount
+        {
+            get { return _editLineDiscount; }
+            set { SetProperty(ref _editLineDiscount, value, "EditLineDiscount"); }
+        }
+
+        public ICommand EditLineCommand
+        {
+            get
+            {
+                return _editLineCommand ?? (_editLineCommand = new RelayCommand(() =>
+                {
+                    if (_selectedLine != null)
+                    {
+                        IsEditWindowNotOpen = false;
+                        EditWindowVisibility = Visibility.Visible;
+
+                        EditLinePurchasePrice = _selectedLine.PurchasePrice;
+                        EditLineDiscount = _selectedLine.Discount;
+                    }
+                }));
+            }
+        }
+
+        public ICommand EditLineCancelCommand
+        {
+            get
+            {
+                return _editLineCancelCommand ?? (_editLineCancelCommand = new RelayCommand(() =>
+                {
+                    IsEditWindowNotOpen = true;
+                    EditWindowVisibility = Visibility.Hidden;
+                }));
+            }
+        }
+
+        public ICommand EditLineConfirmCommand
+        {
+            get
+            {
+                return _editLineConfirmCommand ?? (_editLineConfirmCommand = new RelayCommand(() =>
+                {
+                    _selectedLine.PurchasePrice = _editLinePurchasePrice;
+                    _selectedLine.Discount = _editLineDiscount;
+                    IsEditWindowNotOpen = true;
+                    EditWindowVisibility = Visibility.Hidden;
+
+                    OnPropertyChanged("NewTransactionGrossTotal");
+                }));
+            }
+        }
+        #endregion
+
         public ICommand ConfirmTransactionCommand
         {
             get
             {
                 return _confirmTransactionCommand ?? (_confirmTransactionCommand = new RelayCommand(() =>
                 {
-                    if (_lines.Count == 0)
+                    if (_notEditMode)
                     {
-                        MessageBox.Show("Please input at least one entry.", "Empty Transaction", MessageBoxButton.OK);
-                        return;
-                    }
-                    
-                    if (MessageBox.Show("Confirm Purchase?", "Confirmation", MessageBoxButton.YesNo)
-                    == MessageBoxResult.Yes)
-                    {
-                        using (var ts = new TransactionScope(TransactionScopeOption.Required))
+                        if (_lines.Count == 0)
                         {
-                            var context = new ERPContext();
-
-                            // Increase the respective item's Quantity
-                            foreach (var line in _lines)
-                            {
-                                var item = context.Inventory
-                                .Where(e => e.ItemID.Equals(line.Item.ItemID))
-                                .FirstOrDefault();
-
-                                var warehouse = context.Warehouses
-                                .Where(e => e.ID.Equals(line.Warehouse.ID))
-                                .FirstOrDefault();
-
-                                var stock = context.Stocks
-                                .Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID))
-                                .FirstOrDefault();
-
-                                if (stock == null)
-                                {
-                                    context.Stocks.Add(new Stock { Item = item, Warehouse = warehouse, Pieces = line.Quantity });
-                                    context.SaveChanges();
-                                }
-                                else
-                                    stock.Pieces += line.Quantity;
-
-                                line.Item = item;
-                                line.Warehouse = warehouse;
-
-                                Model.PurchaseTransactionLines.Add(line.Model);
-                            }
-
-                            Model.DOID = _newTransactionDOID;
-                            Model.Date = _newTransactionDate;
-                            Model.DueDate = _newTransactionDueDate;
-                            Model.Total = (decimal) _newTransactionNetTotal;
-                            Model.Tax = _newTransactionTax == null ? 0 : (decimal)_newTransactionTax;
-                            Model.Discount = _newTransactionDiscount == null ? 0 : (decimal) _newTransactionDiscount;
-                            Model.GrossTotal = _newTransactionGrossTotal == null ? 0 : (decimal) _newTransactionGrossTotal;
-                            Model.Note = _newTransactionNote;
-                            Model.Supplier = context.Suppliers.Where(e => e.ID == _newTransactionSupplier.ID).FirstOrDefault();
-                            var user = App.Current.FindResource("CurrentUser") as User;
-                            Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
-                            context.PurchaseTransactions.Add(Model);
-
-                            // Record the accounting journal entry for this purchase
-                            LedgerTransaction transaction = new LedgerTransaction();
-                            string accountsPayableName = _newTransactionSupplier.Name + " Accounts Payable";
-
-                            if (!LedgerDBHelper.AddTransaction(context, transaction, _newTransactionDate, _newTransactionID.ToString(), "Purchase Transaction")) return;
-                            context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Debit", Model.Total);
-                            LedgerDBHelper.AddTransactionLine(context, transaction, accountsPayableName, "Credit", Model.Total);
-                            context.SaveChanges();
-
-                            ts.Complete();
+                            MessageBox.Show("Please input at least one entry.", "Empty Transaction", MessageBoxButton.OK);
+                            return;
                         }
 
-                        // Reset the fields for a new transaction
-                        Model = new PurchaseTransaction();
-                        ResetFields();
-                        SetTransactionID();
-                        Model.Total = 0;
-                    }
+                        if (MessageBox.Show("Confirm saving transaction?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+                        SaveTransaction();
+                    }       
+                    
+                    else
+                    {
+                        if (MessageBox.Show("Confirm saving transaction?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+                        EditTransaction();
+                    }  
                 }));
             }
         }
@@ -574,8 +590,34 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        private void UpdateSuppliers()
+        {
+            _suppliers.Clear();
+
+            using (var uow = new UnitOfWork())
+            {
+                var suppliers = uow.SupplierRepository.GetAll();
+                foreach (var supplier in suppliers)
+                    if (supplier.Name != "-")
+                        _suppliers.Add(supplier);
+            }
+        }
+
+        private void UpdateWarehouses()
+        {
+            _warehouses.Clear();
+
+            using (var context = new ERPContext())
+            {
+                var warehouses = context.Warehouses.ToList();
+                foreach (var warehouse in warehouses)
+                    _warehouses.Add(warehouse);
+            }
+        }
+
         private void SetTransaction(PurchaseTransaction transaction)
         {
+            IsTransactionNotPaid = transaction.Paid == 0; 
             Model = transaction;
             NewTransactionDOID = transaction.DOID;
             NewTransactionSupplier = null; // to prevent buggy outcome
@@ -588,8 +630,10 @@ namespace PutraJayaNT.ViewModels.Suppliers
             foreach (var line in transaction.PurchaseTransactionLines)
                 _lines.Add(new PurchaseTransactionLineVM { Model = line });
 
-            NewTransactionDiscount = transaction.Discount;
-            NewTransactionTax = transaction.Tax;
+            _newTransactionDiscount = transaction.Discount;
+            _newTransactionTax = transaction.Tax;
+            OnPropertyChanged("NewTransactionDiscount");
+            OnPropertyChanged("NewTransactionTax");
             OnPropertyChanged("NewTransactionGrossTotal"); // Updates transaction's net total too
         }
 
@@ -642,11 +686,13 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             ResetEntryFields();
 
+            IsTransactionNotPaid = true;
             NotEditMode = true;
 
             Model = new PurchaseTransaction();
             NewTransactionSupplier = null;
             NewTransactionDOID = null;
+            NewTransactionTax = null;
             NewTransactionDiscount = null;
             NewTransactionNote = null;
             NewTransactionDate = DateTime.Now.Date;
@@ -664,34 +710,207 @@ namespace PutraJayaNT.ViewModels.Suppliers
             SetTransactionID();
         }
 
-        #region Purchase Transaction Lines Event Handler
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SaveTransaction()
         {
-            if (e.OldItems != null)
+            using (var ts = new TransactionScope())
             {
-                // Remove the corresponding Transaction Line in the Model's collection
-                foreach (PurchaseTransactionLineVM line in e.OldItems)
+                var context = new ERPContext();
+
+                // Increase the respective item's Quantity
+                foreach (var line in _lines)
                 {
-                    // Unsuscribe to event handler to prevent strong reference
-                    line.PropertyChanged -= LinePropertyChangedHandler;
+                    var item = context.Inventory
+                    .Where(e => e.ItemID.Equals(line.Item.ItemID))
+                    .FirstOrDefault();
+
+                    var warehouse = context.Warehouses
+                    .Where(e => e.ID.Equals(line.Warehouse.ID))
+                    .FirstOrDefault();
+
+                    var stock = context.Stocks
+                    .Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID))
+                    .FirstOrDefault();
+
+                    if (stock == null)
+                    {
+                        context.Stocks.Add(new Stock { Item = item, Warehouse = warehouse, Pieces = line.Quantity });
+                        context.SaveChanges();
+                    }
+                    else
+                        stock.Pieces += line.Quantity;
+
+                    line.Item = item;
+                    line.Warehouse = warehouse;
+
+                    Model.PurchaseTransactionLines.Add(line.Model);
                 }
+
+                Model.DOID = _newTransactionDOID;
+                Model.Date = _newTransactionDate;
+                Model.DueDate = _newTransactionDueDate;
+                Model.GrossTotal = _newTransactionGrossTotal == null ? 0 : (decimal)_newTransactionGrossTotal;
+                Model.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
+                Model.Tax = _newTransactionTax == null ? 0 : (decimal)_newTransactionTax;
+                Model.Total = (decimal)_newTransactionNetTotal;
+                Model.Note = _newTransactionNote;
+                Model.Supplier = context.Suppliers.Where(e => e.ID == _newTransactionSupplier.ID).FirstOrDefault();
+                var user = App.Current.FindResource("CurrentUser") as User;
+                Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
+
+                context.PurchaseTransactions.Add(Model); // Insert into database
+
+                // Record the accounting journal entry for this purchase
+                LedgerTransaction transaction = new LedgerTransaction();
+                string accountsPayableName = _newTransactionSupplier.Name + " Accounts Payable";
+
+                if (!LedgerDBHelper.AddTransaction(context, transaction, _newTransactionDate, _newTransactionID.ToString(), "Purchase Transaction")) return;
+                context.SaveChanges();
+                LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Debit", Model.Total);
+                LedgerDBHelper.AddTransactionLine(context, transaction, accountsPayableName, "Credit", Model.Total);
+                context.SaveChanges();
+
+                ts.Complete();
+
+                MessageBox.Show("Transaction saved!", "Success", MessageBoxButton.OK);
             }
 
-            else if (e.NewItems != null)
-            {
-                // Suscribe an event handler to the line
-                foreach (PurchaseTransactionLineVM line in e.NewItems)
-                {
-                    line.PropertyChanged += LinePropertyChangedHandler;
-                }
-            }
+            // Reset the fields for a new transaction
+            Model = new PurchaseTransaction();
+            ResetFields();
+            SetTransactionID();
+            Model.Total = 0;
         }
 
-        void LinePropertyChangedHandler(object o, PropertyChangedEventArgs e)
+        private void EditTransaction()
         {
-            if (e.PropertyName == "Total")
-                OnPropertyChanged("NewTransactionGrossTotal");
+            using (var ts = new TransactionScope())
+            {
+                var context = new ERPContext();
+
+                var transaction = context.PurchaseTransactions
+                    .Include("PurchaseTransactionLines")
+                    .Include("PurchaseTransactionLines.Item")
+                    .Include("PurchaseTransactionLines.Warehouse")
+                    .Where(e => e.PurchaseID.Equals(Model.PurchaseID))
+                    .FirstOrDefault();
+
+                // Ledger adjustments when the purchase total is changed
+                if (transaction.Total != _newTransactionNetTotal)
+                {
+                    // Adjust Supplier's Accounts Payable and Inventory
+                    var ledgerTransaction1 = new LedgerTransaction();
+                    LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now.Date, _newTransactionID, "Purchase Transaction Adjustment");
+                    context.SaveChanges();
+
+                    if (_newTransactionNetTotal > transaction.Total)
+                    {
+                        var valueChanged = (decimal)_newTransactionNetTotal - transaction.Total;
+                        LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Debit", valueChanged);
+                        LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", _newTransactionSupplier.Name), "Credit", valueChanged);
+                    }
+                    else
+                    {
+                        var valueChanged = transaction.Total - (decimal)_newTransactionNetTotal;
+                        LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", _newTransactionSupplier.Name), "Debit", valueChanged);
+                        LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", valueChanged);
+                    }
+
+                    var originalTransactionGrossTotal = transaction.GrossTotal;
+                    var originalTransactionDiscount = transaction.Discount;
+                    var originalTransactionTax = transaction.Tax;
+                    var totalValueChanged = 0m;
+                    var changesMade = false; // Flag to indicate if the COGS and Inventory needs to be adjusted
+                    List<int> linesChanged = new List<int>(); // List of indexes of lines that have been changed (Price/Discount)
+                    for (int i = 0; i < _lines.Count; i++)
+                    {
+                        var line = _lines[i];
+                        var originalLine = transaction.PurchaseTransactionLines[i];
+
+                        if (originalLine.SoldOrReturned > 0)
+                        {
+                            changesMade = true;
+                            // Calculate the original line's COGS
+                            decimal originalLineCOGS;
+                            var originalLineNetTotal = originalLine.PurchasePrice - originalLine.Discount;
+                            if (originalLineNetTotal == 0) originalLineCOGS = 0;
+                            var originalLineFractionOfTransactionDiscount = (originalLine.SoldOrReturned * originalLineNetTotal / originalTransactionGrossTotal) * originalTransactionDiscount;
+                            var originalLineFractionOfTransactionTax = (originalLine.SoldOrReturned * originalLineNetTotal / originalTransactionGrossTotal) * originalTransactionTax;
+                            originalLineCOGS = (originalLine.SoldOrReturned * originalLineNetTotal) - originalLineFractionOfTransactionDiscount + originalLineFractionOfTransactionTax;
+
+                            // Calculate the current line's COGS
+                            decimal lineCOGS;
+                            var lineNetTotal = (line.PurchasePrice - line.Discount) / line.Item.PiecesPerUnit;
+                            if (lineNetTotal == 0) lineCOGS = 0;
+                            var lineFractionOfTransactionDiscount = (line.SoldOrReturned * lineNetTotal / (decimal)_newTransactionGrossTotal)
+                                * (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount);
+                            var lineFractionOfTransactionTax = (line.SoldOrReturned * lineNetTotal / (decimal)_newTransactionGrossTotal)
+                                * (_newTransactionTax == null ? 0 : (decimal)_newTransactionTax);
+                            lineCOGS = (line.SoldOrReturned * lineNetTotal) - lineFractionOfTransactionDiscount + lineFractionOfTransactionTax;
+
+                            totalValueChanged += (lineCOGS - originalLineCOGS);
+                        }
+
+                        if (originalLine.PurchasePrice != (line.PurchasePrice / line.Item.PiecesPerUnit) 
+                            || originalLine.Discount != (line.Discount / line.Item.PiecesPerUnit))
+                        {
+                            linesChanged.Add(i);
+                            line.PurchaseTransaction = transaction;
+                            line.Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
+                            line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                            context.PurchaseTransactionLines.Add(line.Model); // Add the modified line
+                        }
+                    }
+
+                    foreach (var index in linesChanged)
+                    {
+                        context.PurchaseTransactionLines.Remove(transaction.PurchaseTransactionLines[index]);
+                    }
+
+                    if (changesMade)
+                    {
+                        var ledgerTransaction2 = new LedgerTransaction();
+                        LedgerDBHelper.AddTransaction(context, ledgerTransaction2, DateTime.Now.Date, _newTransactionID, "Purchase Transaction Adjustment (COGS)");
+                        context.SaveChanges();
+
+                        // Indicates there is an increase in COGS
+                        if (totalValueChanged > 0)
+                        {
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Debit", totalValueChanged);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Credit", totalValueChanged);
+                        }
+
+                        else
+                        {
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Debit", -totalValueChanged);
+                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Credit", -totalValueChanged);
+                        }
+                    }
+                }
+
+                Model = transaction;
+                Model.DOID = _newTransactionDOID;
+                Model.Date = _newTransactionDate;
+                Model.DueDate = _newTransactionDueDate;
+                Model.GrossTotal = _newTransactionGrossTotal == null ? 0 : (decimal)_newTransactionGrossTotal;
+                Model.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
+                Model.Tax = _newTransactionTax == null ? 0 : (decimal)_newTransactionTax;
+                Model.Total = (decimal)_newTransactionNetTotal;
+                Model.Note = _newTransactionNote;
+                Model.Supplier = context.Suppliers.Where(e => e.ID == _newTransactionSupplier.ID).FirstOrDefault();
+                var user = App.Current.FindResource("CurrentUser") as User;
+                Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
+
+                context.SaveChanges();
+                ts.Complete();
+
+                MessageBox.Show("Transaction saved!", "Success", MessageBoxButton.OK);
+            }
+
+            // Reset the fields for a new transaction
+            Model = new PurchaseTransaction();
+            ResetFields();
+            SetTransactionID();
+            Model.Total = 0;
         }
-        #endregion
     }
 }

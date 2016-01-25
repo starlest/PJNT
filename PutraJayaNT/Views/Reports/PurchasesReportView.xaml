@@ -43,7 +43,7 @@
                       DisplayMemberPath="Name" IsEditable="True" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>

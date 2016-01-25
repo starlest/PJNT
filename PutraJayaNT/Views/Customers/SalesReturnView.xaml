@@ -53,8 +53,8 @@
                          Text="{Binding Path=SelectedSalesTransactionCustomer.Name, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
                 <TextBlock Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Date:" />
                 <DatePicker Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding SelectedPurchaseTransactionWhen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                            IsEnabled="False" />
+                            SelectedDateFormat="Long" SelectedDate="{Binding SalesReturnTransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            IsEnabled="{Binding NotEditing}" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="2" ItemsSource="{Binding SalesTransactionLines}" SelectedItem="{Binding SelectedSalesTransactionLine, UpdateSourceTrigger=PropertyChanged}" 
@@ -68,8 +68,8 @@
                 <DataGridTextColumn Header="Unit" Width="1*" IsReadOnly="True" Binding="{Binding Unit}" />
                 <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
-                <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice}" />
-                <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount}" />
+                <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice, StringFormat=N2}" />
+                <DataGridTextColumn Header="Discount" Width="1*" IsReadOnly="True" Binding="{Binding Discount, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
         <Border Grid.Row="3" BorderBrush="Blue" BorderThickness="2">

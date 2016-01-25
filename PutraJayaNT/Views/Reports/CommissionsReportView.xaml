@@ -51,7 +51,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Salesman" Width="1*" IsReadOnly="True" Binding="{Binding Salesman.Name}" />
                 <DataGridTextColumn Header="Category" Width="1*" IsReadOnly="True" Binding="{Binding Category.Name}" />
-                <DataGridTextColumn Header="Percentage" Width="1*" IsReadOnly="True" Binding="{Binding Percentage}" />
+                <DataGridTextColumn Header="Percentage" Width="1*" IsReadOnly="True" Binding="{Binding Percentage, StringFormat=N2}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
                 <DataGridTextColumn Header="Commission" Width="1*" IsReadOnly="True" Binding="{Binding Commission, StringFormat=N2}" />
             </DataGrid.Columns>

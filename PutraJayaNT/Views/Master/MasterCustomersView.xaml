@@ -83,7 +83,7 @@
                       ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                       DisplayMemberPath="Name" IsEditable="True" />
         </Grid>
-        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedCustomers}" 
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding DisplayedCustomers}" 
                   CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"

@@ -55,13 +55,23 @@ namespace PutraJayaNT.ViewModels.Accounting
         public DateTime FromDate
         {
             get { return _fromDate; }
-            set { SetProperty(ref _fromDate, value, "FromDate"); }
+            set
+            {
+                SetProperty(ref _fromDate, value, "FromDate");
+
+                if (_fromDate != null && _toDate != null && _selectedBank != null) UpdateDisplayLines();
+            }
         }
 
         public DateTime ToDate
         {
             get { return _toDate; }
-            set { SetProperty(ref _toDate, value, "ToDate"); }
+            set
+            {
+                SetProperty(ref _toDate, value, "ToDate");
+
+                if (_fromDate != null && _toDate != null && _selectedBank != null) UpdateDisplayLines();
+            }
         }
 
         public ObservableCollection<LedgerAccountVM> Banks
@@ -129,7 +139,6 @@ namespace PutraJayaNT.ViewModels.Accounting
                 }));
             }
         }
-
 
         #region New Entry Propeties
         public DateTime NewEntryDate
@@ -292,7 +301,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     .Include("LedgerTransaction.LedgerTransactionLines")
                             .Include("LedgerTransaction.LedgerTransactionLines.LedgerAccount")
                     .Where(e => e.LedgerAccount.ID == _selectedBankID && _fromDate <= e.LedgerTransaction.Date && _toDate >= e.LedgerTransaction.Date)
-                    .OrderBy(e => e.LedgerTransactionID);
+                    .OrderBy(e => e.LedgerTransaction.Date);
 
                 foreach (var line in transactionLines)
                 {

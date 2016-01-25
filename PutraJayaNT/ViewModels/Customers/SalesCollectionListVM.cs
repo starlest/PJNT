@@ -13,12 +13,12 @@
     using System.Windows;
     using System.Windows.Input;
 
-    class PaymentListVM : ViewModelBase
+    class SalesCollectionListVM : ViewModelBase
     {
         ObservableCollection<string> _cities;
         ObservableCollection<Salesman> _salesmen;
         ObservableCollection<Customer> _customers;
-        ObservableCollection<PaymentListLineVM> _salesTransactions;
+        ObservableCollection<SalesCollectionListLineVM> _salesTransactions;
 
         string _selectedCity;
         Salesman _selectedSalesman;
@@ -27,12 +27,12 @@
         decimal _total;
         ICommand _printCommand;
 
-        public PaymentListVM()
+        public SalesCollectionListVM()
         {
             _cities = new ObservableCollection<string>();
             _salesmen = new ObservableCollection<Salesman>();
             _customers = new ObservableCollection<Customer>();
-            _salesTransactions = new ObservableCollection<PaymentListLineVM>();
+            _salesTransactions = new ObservableCollection<SalesCollectionListLineVM>();
             _date = DateTime.Now.Date;
             UpdateCities();
             UpdateSalesmen();
@@ -54,7 +54,7 @@
             get { return _customers; }
         }
 
-        public ObservableCollection<PaymentListLineVM> SalesTransactions
+        public ObservableCollection<SalesCollectionListLineVM> SalesTransactions
         {
             get { return _salesTransactions; }
         }
@@ -239,7 +239,7 @@
 
                 foreach (var t in salesTransactions)
                 {
-                    var vm = new PaymentListLineVM { Model = t };
+                    var vm = new SalesCollectionListLineVM { Model = t };
                     _salesTransactions.Add(vm);
                     _total += vm.Remaining;
                 }
@@ -283,7 +283,7 @@
 
                 foreach (var transaction in transactions)
                 {
-                    _salesTransactions.Add(new PaymentListLineVM { Model = transaction });
+                    _salesTransactions.Add(new SalesCollectionListLineVM { Model = transaction });
                     _total += transaction.Total - transaction.Paid;
                 }
 

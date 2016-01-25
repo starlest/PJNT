@@ -78,7 +78,7 @@
         int _editLinePieces;
         decimal _editLineDiscount;
         decimal _editLineSalesPrice;
-        PutraJayaNT.Models.Salesman.Salesman _editLineSalesman;
+        Salesman _editLineSalesman;
         ICommand _editConfirmCommand;
         ICommand _editCancelCommand;
         bool _isEditWindowNotOpen;
@@ -222,7 +222,7 @@
                     if (availableQuantity - quantityDifference < 0)
                     {
                         MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces available.",
-                            _selectedLine.Item.Name, (availableQuantity / _selectedLine.Item.PiecesPerUnit) + _selectedLine.Units, 
+                            _selectedLine.Item.Name, (availableQuantity / _selectedLine.Item.PiecesPerUnit) + _selectedLine.Units,
                             (availableQuantity % _selectedLine.Item.PiecesPerUnit) + _selectedLine.Pieces),
                             "Insufficient Stock", MessageBoxButton.OK);
                         return;
@@ -231,6 +231,13 @@
                     var oldDiscount = _selectedLine.Discount;
                     var oldSalesPrice = _selectedLine.SalesPrice;
                     var oldSalesman = _selectedLine.Salesman;
+
+
+                    if (oldDiscount != _editLineDiscount || oldSalesPrice != _editLineSalesPrice)
+                    {
+                        var deletedLine = _selectedLine.Clone();
+                        _deletedLines.Add(deletedLine);
+                    }
 
                     _selectedLine.Units = _editLineUnits;
                     _selectedLine.Pieces = _editLinePieces;

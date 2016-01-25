@@ -18,15 +18,15 @@
                 <mui:Link DisplayName="Inventory" Source="/Views/Master/MasterInventoryView.xaml"  />
                 <mui:Link DisplayName="Suppliers" Source="/Views/Master/MasterSuppliersView.xaml" />
                 <mui:Link DisplayName="Customers" Source="/Views/Master/MasterCustomersView.xaml" />
-                <mui:Link DisplayName="Salesman" Source="/Views/Master/MasterSalesmanView.xaml" />
+                <mui:Link DisplayName="Salesmen" Source="/Views/Master/MasterSalesmanView.xaml" />
                 <mui:Link DisplayName="Accounts" Source="/Views/Master/LedgerView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Customers">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Sales Transaction" Source="/Views/Customers/SalesTransactionView.xaml" />
-                <mui:Link DisplayName="Payment List" Source="/Views/Customers/PaymentListView.xaml" />
-                <mui:Link DisplayName="Payment" Source="/Views/Customers/PaymentView.xaml" />
+                <mui:Link DisplayName="Collection List" Source="/Views/Customers/SalesCollectionListView.xaml" />
+                <mui:Link DisplayName="Collect" Source="/Views/Customers/SalesCollectView.xaml" />
                 <mui:Link DisplayName="Sales Return" Source="/Views/Customers/SalesReturnView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
@@ -64,11 +64,6 @@
                 <mui:Link DisplayName="Balance Sheet" Source="/Views/Accounting/BalanceSheetView.xaml" />
                 <mui:Link DisplayName="Income Statement" Source="/Views/Accounting/IncomeStatementView.xaml" />
                 <mui:Link DisplayName="Close" Source="/Views/Accounting/ClosingView.xaml" />
-            </mui:LinkGroup.Links>
-        </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="JANGAN DI KLIK">
-            <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Test" Source="/Views/Test/TestView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
     </mui:ModernWindow.MenuLinkGroups>

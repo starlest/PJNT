@@ -14,9 +14,9 @@ namespace PutraJayaNT.Reports.Windows
     /// </summary>
     public partial class CollectionReportWindow : ModernWindow
     {
-        ObservableCollection<PaymentListLineVM>  _salesTransactions;
+        ObservableCollection<SalesCollectionListLineVM>  _salesTransactions;
 
-        public CollectionReportWindow(ObservableCollection<PaymentListLineVM> salesTransactions)
+        public CollectionReportWindow(ObservableCollection<SalesCollectionListLineVM> salesTransactions)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
@@ -50,7 +50,6 @@ namespace PutraJayaNT.Reports.Windows
                 dr["InvoiceRemaining"] = t.Total - t.Paid;
                 dr["DueDate"] = t.DueDate.ToShortDateString();
                 dr["CollectionSalesman"] = t.CollectionSalesman != null ? t.CollectionSalesman.Name : "";
-                dr["CollectionTotal"] = t.Total;
                 dt.Rows.Add(dr);
             }
 

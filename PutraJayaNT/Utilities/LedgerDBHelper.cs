@@ -1,8 +1,6 @@
 ﻿using PutraJayaNT.Models;
 using PutraJayaNT.Models.Accounting;
 using System;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Windows;
 

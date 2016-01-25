@@ -11,10 +11,10 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
-    class SalesPaymentVM : ViewModelBase
+    class SalesCollectVM : ViewModelBase
     {
         ObservableCollection<CustomerVM> _customers;
-        ObservableCollection<string> _paymentModes;
+        ObservableCollection<string> _collectmentModes;
         ObservableCollection<SalesTransaction> _customerUnpaidSalesTransactions;
         ObservableCollection<SalesTransactionLineVM> _selectedSalesTransactionLines;
 
@@ -27,16 +27,16 @@ namespace PutraJayaNT.ViewModels.Customers
         decimal _total;
         decimal _useCredits;
         decimal _remaining;
-        decimal? _pay;
+        decimal? _collect;
 
         ICommand _confirmPaymentCommand;
 
-        public SalesPaymentVM()
+        public SalesCollectVM()
         {
             _customers = new ObservableCollection<CustomerVM>();
             _customerUnpaidSalesTransactions = new ObservableCollection<SalesTransaction>();
             _selectedSalesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
-            _paymentModes = new ObservableCollection<string>();
+            _collectmentModes = new ObservableCollection<string>();
             _date = DateTime.Now.Date;
             UpdatePaymentModes();
             UpdateCustomers();
@@ -49,7 +49,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
         public ObservableCollection<string> PaymentModes
         {
-            get { return _paymentModes; }
+            get { return _collectmentModes; }
         }
 
         public ObservableCollection<SalesTransaction> CustomerUnpaidSalesTransactions
@@ -111,9 +111,9 @@ namespace PutraJayaNT.ViewModels.Customers
 
         private void UpdatePaymentModes()
         {
-            _paymentModes.Clear();
+            _collectmentModes.Clear();
 
-            _paymentModes.Add("Cash");
+            _collectmentModes.Add("Cash");
 
             using (var context = new ERPContext())
             {
@@ -122,7 +122,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     .ToList();
 
                 foreach (var bank in banks)
-                    _paymentModes.Add(bank.Name);
+                    _collectmentModes.Add(bank.Name);
             }
         }
 
@@ -206,9 +206,9 @@ namespace PutraJayaNT.ViewModels.Customers
             }
         }
 
-        public decimal? Pay
+        public decimal? Collect
         {
-            get { return _pay; }
+            get { return _collect; }
             set
             {
                 if (value < 0 || value > _remaining)
@@ -217,7 +217,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     return;
                 }
 
-                SetProperty(ref _pay, value, "Pay");
+                SetProperty(ref _collect, value, "Collect");
             }
         }
         #endregion
@@ -228,7 +228,7 @@ namespace PutraJayaNT.ViewModels.Customers
             {
                 return _confirmPaymentCommand ?? (_confirmPaymentCommand = new RelayCommand(() =>
                 {
-                    if (_pay == null)
+                    if (_collect == null)
                     {
                         MessageBox.Show("Please enter payment amount", "Empty Field", MessageBoxButton.OK);
                         return;
@@ -250,24 +250,24 @@ namespace PutraJayaNT.ViewModels.Customers
                             .Include("Customer")
                             .Where(e => e.SalesTransactionID.Equals(_selectedSalesTransaction.SalesTransactionID)).FirstOrDefault();
 
-                            _selectedSalesTransaction.Paid += (decimal)_pay + _useCredits;
+                            _selectedSalesTransaction.Paid += (decimal)_collect + _useCredits;
                             _selectedSalesTransaction.Customer.SalesReturnCredits -= _useCredits;
 
                             var accountsReceivableName = _selectedCustomer.Name + " Accounts Receivable";
                             var transaction = new LedgerTransaction();
 
-                            LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedSalesTransaction.SalesTransactionID, "Sales Transaction Payment");
+                            LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedSalesTransaction.SalesTransactionID, "Sales Transaction Receipt");
                             context.SaveChanges();
 
-                            LedgerDBHelper.AddTransactionLine(context, transaction, _selectedPaymentMode, "Debit", (decimal)_pay);
-                            LedgerDBHelper.AddTransactionLine(context, transaction, accountsReceivableName, "Credit", (decimal)_pay);
+                            LedgerDBHelper.AddTransactionLine(context, transaction, _selectedPaymentMode, "Debit", (decimal)_collect);
+                            LedgerDBHelper.AddTransactionLine(context, transaction, accountsReceivableName, "Credit", (decimal)_collect);
                             context.SaveChanges();
 
                             ts.Complete();
                         }
 
                         Total = 0;
-                        Pay = null;
+                        Collect = null;
                         SelectedCustomer = null;
                         SelectedPaymentMode = null;
                         SelectedSalesTransaction = null;
@@ -293,7 +293,7 @@ namespace PutraJayaNT.ViewModels.Customers
             Total = 0;
             UseCredits = 0;
             Remaining = 0;
-            Pay = 0;
+            Collect = null;
         }
     }
 }

@@ -23,6 +23,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         decimal _totalDebit;
         decimal _totalCredit;
+        decimal _endingBalance;
 
         string _normalSeq;
 
@@ -94,6 +95,12 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get { return _totalCredit; }
             set { SetProperty(ref _totalCredit, value, "TotalCredit"); }
+        }
+
+        public decimal EndingBalance
+        {
+            get { return _endingBalance; }
+            set { SetProperty(ref _endingBalance, value, "EndingBalance"); }
         }
 
         public string SelectedAccount
@@ -218,8 +225,8 @@ namespace PutraJayaNT.ViewModels.Accounting
                         l.Balance = balanceTracker;
                         _displayTransactions.Add(l);
                     }
-
                 }
+                EndingBalance = balanceTracker;
 
                 OnPropertyChanged("TotalDebit");
                 OnPropertyChanged("TotalCredit");

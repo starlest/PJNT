@@ -4,14 +4,14 @@ using System.Windows.Controls;
 namespace PutraJayaNT.Views.Customers
 {
     /// <summary>
-    /// Interaction logic for CollectionView.xaml
+    /// Interaction logic for SalesCollectView.xaml
     /// </summary>
-    public partial class PaymentListView : UserControl
+    public partial class SalesCollectView : UserControl
     {
-        public PaymentListView()
+        public SalesCollectView()
         {
             InitializeComponent();
-            var vm = new PaymentListVM();
+            var vm = new SalesCollectVM();
             DataContext = vm;
         }
     }

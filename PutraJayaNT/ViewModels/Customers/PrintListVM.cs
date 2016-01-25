@@ -43,7 +43,7 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return _selectedMode; }
             set
             {
-                SetProperty(ref _selectedMode, value, "Selected Mode");
+                SetProperty(ref _selectedMode, value, "SelectedMode");
 
                 if (_selectedMode == null) return;
 

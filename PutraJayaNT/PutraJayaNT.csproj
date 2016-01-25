@@ -87,13 +87,8 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
@@ -113,6 +108,14 @@
     <Compile Include="Migrations\201601200148101_Update3.cs" />
     <Compile Include="Migrations\201601200148101_Update3.Designer.cs">
       <DependentUpon>201601200148101_Update3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601210340519_Update4.cs" />
+    <Compile Include="Migrations\201601210340519_Update4.Designer.cs">
+      <DependentUpon>201601210340519_Update4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201601220115450_Update5.cs" />
+    <Compile Include="Migrations\201601220115450_Update5.Designer.cs">
+      <DependentUpon>201601220115450_Update5.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
@@ -198,10 +201,10 @@
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
     <Compile Include="ViewModels\Customers\BrowseSalesTransactionsVM.cs" />
-    <Compile Include="ViewModels\Customers\PaymentListLineVM.cs" />
-    <Compile Include="ViewModels\Customers\PaymentListVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesCollectionListLineVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesCollectionListVM.cs" />
     <Compile Include="ViewModels\Customers\PrintListVM.cs" />
-    <Compile Include="ViewModels\Customers\SalesPaymentVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesCollectVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturnTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturnTransactionVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionLineVM.cs" />
@@ -267,11 +270,11 @@
     <Compile Include="Views\Customers\BrowseSalesTransactionsView.xaml.cs">
       <DependentUpon>BrowseSalesTransactionsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Customers\PaymentListView.xaml.cs">
-      <DependentUpon>PaymentListView.xaml</DependentUpon>
+    <Compile Include="Views\Customers\SalesCollectionListView.xaml.cs">
+      <DependentUpon>SalesCollectionListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Customers\PaymentView.xaml.cs">
-      <DependentUpon>PaymentView.xaml</DependentUpon>
+    <Compile Include="Views\Customers\SalesCollectView.xaml.cs">
+      <DependentUpon>SalesCollectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Customers\SalesReturnView.xaml.cs">
       <DependentUpon>SalesReturnView.xaml</DependentUpon>
@@ -342,6 +345,10 @@
     <Compile Include="Views\Test\TestView.xaml.cs">
       <DependentUpon>TestView.xaml</DependentUpon>
     </Compile>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -423,11 +430,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Customers\PaymentListView.xaml">
+    <Page Include="Views\Customers\SalesCollectionListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Customers\PaymentView.xaml">
+    <Page Include="Views\Customers\SalesCollectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -554,6 +561,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601200148101_Update3.resx">
       <DependentUpon>201601200148101_Update3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601210340519_Update4.resx">
+      <DependentUpon>201601210340519_Update4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601220115450_Update5.resx">
+      <DependentUpon>201601220115450_Update5.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\CollectionReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

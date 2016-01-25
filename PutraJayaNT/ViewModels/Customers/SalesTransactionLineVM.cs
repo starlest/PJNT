@@ -198,5 +198,21 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             return base.GetHashCode();
         }
+
+        public SalesTransactionLineVM Clone()
+        {
+            var cloneLine = new SalesTransactionLine
+            {
+                SalesTransaction = Model.SalesTransaction,
+                Item = Model.Item,
+                Warehouse = Model.Warehouse,
+                SalesPrice = Model.SalesPrice,
+                Discount = Model.Discount,
+                Quantity = Model.Quantity,
+                Total = Model.Total,
+                Salesman = Model.Salesman
+            };
+            return new SalesTransactionLineVM { Model = cloneLine };
+        }
     }
 }

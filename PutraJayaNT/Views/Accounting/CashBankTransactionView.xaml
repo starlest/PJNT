@@ -69,7 +69,7 @@
                 <DataGridTextColumn Header="Account" Width="1*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
                 <DataGridTextColumn Header="Description" Width="2*" IsReadOnly="True" Binding="{Binding LedgerTransaction.Description}" />
                 <DataGridTextColumn Header="Sequence" Width="2*" IsReadOnly="True" Binding="{Binding Seq}" />
-                <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount, StringFormat=N2}" />
+                <DataGridTextColumn Header="Amount" Width="1*" IsReadOnly="True" Binding="{Binding Amount, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
         <Button Grid.Row="2" Content="Delete" Command="{Binding DeleteLineCommand}"/>
