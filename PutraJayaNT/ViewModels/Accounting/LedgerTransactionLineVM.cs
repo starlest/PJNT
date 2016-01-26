@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace PutraJayaNT.ViewModels.Accounting
 {
-    class LedgerTransactionLineVM : ViewModelBase<LedgerTransactionLine>
+    public class LedgerTransactionLineVM : ViewModelBase<LedgerTransactionLine>
     {
         List<LedgerTransactionLineVM> _opposingLines;
 

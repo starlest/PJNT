@@ -627,7 +627,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             NewTransactionNote = transaction.Note;
 
             _lines.Clear();
-            foreach (var line in transaction.PurchaseTransactionLines)
+            foreach (var line in transaction.PurchaseTransactionLines.OrderBy(e => e.Item.Name).ThenBy(e => e.Warehouse.Name).ThenBy(e => e.PurchasePrice).ThenBy(e => e.Discount).ToList())
                 _lines.Add(new PurchaseTransactionLineVM { Model = line });
 
             _newTransactionDiscount = transaction.Discount;
@@ -794,6 +794,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     .Where(e => e.PurchaseID.Equals(Model.PurchaseID))
                     .FirstOrDefault();
 
+                var originalLines = transaction.PurchaseTransactionLines.OrderBy(e => e.Item.Name).ThenBy(e => e.Warehouse.Name).ThenBy(e => e.PurchasePrice).ThenBy(e => e.Discount).ToList();
+
                 // Ledger adjustments when the purchase total is changed
                 if (transaction.Total != _newTransactionNetTotal)
                 {
@@ -824,7 +826,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     for (int i = 0; i < _lines.Count; i++)
                     {
                         var line = _lines[i];
-                        var originalLine = transaction.PurchaseTransactionLines[i];
+                        var originalLine = originalLines[i];
 
                         if (originalLine.SoldOrReturned > 0)
                         {
@@ -854,16 +856,18 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             || originalLine.Discount != (line.Discount / line.Item.PiecesPerUnit))
                         {
                             linesChanged.Add(i);
-                            line.PurchaseTransaction = transaction;
-                            line.Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
-                            line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
-                            context.PurchaseTransactionLines.Add(line.Model); // Add the modified line
                         }
                     }
 
                     foreach (var index in linesChanged)
                     {
-                        context.PurchaseTransactionLines.Remove(transaction.PurchaseTransactionLines[index]);
+                        var line = _lines[index];
+                        var originalLine = originalLines[index];
+                        line.PurchaseTransaction = transaction;
+                        line.Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
+                        line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                        context.PurchaseTransactionLines.Remove(originalLine); 
+                        context.PurchaseTransactionLines.Add(line.Model); // Add the modified line
                     }
 
                     if (changesMade)

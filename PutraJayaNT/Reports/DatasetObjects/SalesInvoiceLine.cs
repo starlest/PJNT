@@ -1,6 +1,6 @@
-﻿namespace PutraJayaNT.Reports
+﻿namespace PutraJayaNT.Reports.DatasetObjects
 {
-    public class SalesReturnInvoiceLine
+    public class SalesInvoiceLine
     {
         public int LineNumber { get; set; }
 
@@ -14,7 +14,9 @@
 
         public int Pieces { get; set; }
 
-        public decimal ReturnPrice { get; set; }
+        public decimal SalesPrice { get; set; }
+
+        public decimal Discount { get; set; }
 
         public decimal Total { get; set; }
     }

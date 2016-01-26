@@ -9,10 +9,18 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.125*" />
+            <RowDefinition Height="0.125*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
-        <Border BorderBrush="Blue" BorderThickness="2">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.2*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Content="Print" Command="{Binding PrintCommand}"/>
+        </Grid>
+        <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -33,18 +41,19 @@
                      IsReadOnly="True" Text="{Binding BeginningBalance, Mode=OneWay, StringFormat=N2}" Margin="10, 10, 10, 0"  Foreground="Red" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Account" Width="1*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
                 <DataGridTextColumn Header="Documentation" Width="1*" IsReadOnly="True" Binding="{Binding Documentation}" />
                 <DataGridTextColumn Header="Description" Width="1*" IsReadOnly="True" Binding="{Binding Description}" />
                 <DataGridTextColumn Header="Amount" Width="1*" IsReadOnly="True" Binding="{Binding Amount, StringFormat=N2}" />
                 <DataGridTextColumn Header="Balance" Width="1*" IsReadOnly="True" Binding="{Binding Balance, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.4*" />
@@ -52,7 +61,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Ending Balance:" FontSize="28" />
             <TextBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
+                         Text="{Binding EndingBalance, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
         </Grid>
     </Grid>
 </UserControl>

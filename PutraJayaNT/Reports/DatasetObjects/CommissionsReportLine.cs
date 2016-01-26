@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Reports.Dataset_Objects
+﻿namespace PutraJayaNT.Reports.DatasetObjects
 {
     class CommissionsReportLine
     {

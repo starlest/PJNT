@@ -170,5 +170,20 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
             return s;
         }
+
+        public PurchaseTransactionLineVM Clone()
+        {
+            var newLine = new PurchaseTransactionLine
+            {
+                Item = Model.Item,
+                Warehouse = Model.Warehouse,
+                PurchasePrice = Model.PurchasePrice * Model.Item.PiecesPerUnit,
+                Discount = Model.Discount * Model.Item.PiecesPerUnit,
+                SoldOrReturned = Model.SoldOrReturned,
+                Total = Model.Total
+            };
+
+            return new PurchaseTransactionLineVM { Model = newLine };
+        }
     }
 }

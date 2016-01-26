@@ -20,7 +20,8 @@
                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
-            <Style TargetType="{x:Type DataGrid}" />
+            <Style TargetType="{x:Type DataGrid}">
+            </Style>
             <Style TargetType="{x:Type DataGridCell}">
                 <Setter Property="Template">
                     <Setter.Value>

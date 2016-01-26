@@ -123,15 +123,17 @@
     <Compile Include="Models\StockCorrection\AdjustStockTransaction.cs" />
     <Compile Include="Models\StockCorrection\MoveStockTransaction.cs" />
     <Compile Include="Models\StockCorrection\MoveStockTransactionLine.cs" />
-    <Compile Include="Reports\Dataset Objects\CommissionReport.cs" />
-    <Compile Include="Reports\Dataset Objects\CommissionsReportLine.cs" />
-    <Compile Include="Reports\Dataset Objects\StockCard.cs" />
-    <Compile Include="Reports\Dataset Objects\StockCardLine.cs" />
-    <Compile Include="Reports\Dataset Objects\StockMovement.cs" />
-    <Compile Include="Reports\Dataset Objects\StockMovementLine.cs" />
-    <Compile Include="Reports\SalesInvoice.cs" />
-    <Compile Include="Reports\SalesReturnInvoiceLine.cs" />
-    <Compile Include="Reports\SalesInvoiceLine.cs" />
+    <Compile Include="Reports\DatasetObjects\DailyCashFlowReport.cs" />
+    <Compile Include="Reports\DatasetObjects\DailyCashFlowReportLine.cs" />
+    <Compile Include="Reports\DatasetObjects\CommissionReport.cs" />
+    <Compile Include="Reports\DatasetObjects\CommissionsReportLine.cs" />
+    <Compile Include="Reports\DatasetObjects\StockCard.cs" />
+    <Compile Include="Reports\DatasetObjects\StockCardLine.cs" />
+    <Compile Include="Reports\DatasetObjects\StockMovement.cs" />
+    <Compile Include="Reports\DatasetObjects\StockMovementLine.cs" />
+    <Compile Include="Reports\DatasetObjects\SalesInvoice.cs" />
+    <Compile Include="Reports\DatasetObjects\SalesReturnInvoiceLine.cs" />
+    <Compile Include="Reports\DatasetObjects\SalesInvoiceLine.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccount.cs" />
     <Compile Include="Models\Accounting\LedgerAccountBalance.cs" />
@@ -156,6 +158,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Windows\DailyCashFlowReportWindow.xaml.cs">
+      <DependentUpon>DailyCashFlowReportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Reports\Windows\CommissionsReportWindow.xaml.cs">
       <DependentUpon>CommissionsReportWindow.xaml</DependentUpon>
     </Compile>
@@ -177,7 +182,7 @@
     <Compile Include="Reports\Windows\SalesInvoiceWindow.xaml.cs">
       <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\SalesReturnInvoice.cs" />
+    <Compile Include="Reports\DatasetObjects\SalesReturnInvoice.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
     <Compile Include="Models\Inventory\Stock.cs" />
     <Compile Include="Models\Sales\SalesTransaction.cs" />
@@ -362,6 +367,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Reports\Windows\DailyCashFlowReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Reports\Windows\CommissionsReportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -567,6 +576,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601220115450_Update5.resx">
       <DependentUpon>201601220115450_Update5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\DailyCashFlowReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\CollectionReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

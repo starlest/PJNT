@@ -1,18 +1,23 @@
 ﻿using MVVMFramework;
+using PutraJayaNT.Reports.Windows;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Accounting
 {
-    class DailyCashFlowVM : ViewModelBase
+    public class DailyCashFlowVM : ViewModelBase
     {
         ObservableCollection<LedgerTransactionLineVM> _lines;
 
         DateTime _date;
         decimal _beginningBalance;
-        decimal _total;
+        decimal _endingBalance;
+
+        ICommand _printCommand;
 
         public DailyCashFlowVM()
         {
@@ -42,10 +47,26 @@ namespace PutraJayaNT.ViewModels.Accounting
             set { SetProperty(ref _beginningBalance, value, "BeginningBalance"); }
         }
 
-        public decimal Total
+        public decimal EndingBalance
         {
-            get { return _total; }
-            set { SetProperty(ref _total, value, "Total"); }
+            get { return _endingBalance; }
+            set { SetProperty(ref _endingBalance, value, "EndingBalance"); }
+        }
+
+        public ICommand PrintCommand
+        {
+            get
+            {
+                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                {
+                    if (_lines.Count == 0) return;
+
+                    var dailyCashFlowReportWindow = new DailyCashFlowReportWindow(this);
+                    dailyCashFlowReportWindow.Owner = App.Current.MainWindow;
+                    dailyCashFlowReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    dailyCashFlowReportWindow.Show();
+                }));
+            }
         }
 
         #region Helper Methods
@@ -53,23 +74,31 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             _lines.Clear();
             SetBeginningBalance();
-            _total = _beginningBalance;
+            _endingBalance = _beginningBalance;
             using (var context = new ERPContext())
             {
-                var lines = context.Ledger_Transaction_Lines.Include("LedgerTransaction")
+                var lines = context.Ledger_Transaction_Lines
+                    .Include("LedgerAccount")
+                    .Include("LedgerTransaction")
                     .Where(e => e.LedgerAccount.Name.Equals("Cash") &&
                     e.LedgerTransaction.Date.Equals(_date))
                     .ToList();
 
+
                 foreach (var line in lines)
                 {
-                    if (line.Seq == "Credit") line.Amount = -line.Amount;
-                    _lines.Add(new LedgerTransactionLineVM { Model = line, Balance = _total + line.Amount });
-                    _total += line.Amount;
+                    var lineVM = new LedgerTransactionLineVM { Model = line };
+                    foreach (var l in lineVM.OpposingLines)
+                    {
+                        if (line.Seq == "Credit") l.Amount = -l.Amount;
+                        _endingBalance += l.Amount;
+                        l.Balance = _endingBalance;
+                        _lines.Add(new LedgerTransactionLineVM { Model = l.Model });
+                    }
                 }
             }
 
-            OnPropertyChanged("Total");
+            OnPropertyChanged("EndingBalance");
         }
 
         private void SetBeginningBalance()

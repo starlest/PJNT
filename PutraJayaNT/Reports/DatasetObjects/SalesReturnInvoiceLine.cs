@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PutraJayaNT.Reports
+﻿namespace PutraJayaNT.Reports.DatasetObjects
 {
-    public class SalesInvoiceLine
+    public class SalesReturnInvoiceLine
     {
         public int LineNumber { get; set; }
 
@@ -20,9 +14,7 @@ namespace PutraJayaNT.Reports
 
         public int Pieces { get; set; }
 
-        public decimal SalesPrice { get; set; }
-
-        public decimal Discount { get; set; }
+        public decimal ReturnPrice { get; set; }
 
         public decimal Total { get; set; }
     }

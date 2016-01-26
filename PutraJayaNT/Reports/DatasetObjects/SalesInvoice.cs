@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Reports
+﻿namespace PutraJayaNT.Reports.DatasetObjects
 {
     class SalesInvoice
     {

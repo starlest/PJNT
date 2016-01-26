@@ -271,6 +271,7 @@ namespace PutraJayaNT.ViewModels.Customers
                         SelectedCustomer = null;
                         SelectedPaymentMode = null;
                         SelectedSalesTransaction = null;
+                        SalesReturnCredits = 0;
                         UseCredits = 0;
                         Remaining = 0;
                         _selectedSalesTransactionLines.Clear();
