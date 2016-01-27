@@ -29,8 +29,6 @@
         ObservableCollection<Warehouse> _warehouses;
         ObservableCollection<Salesman> _salesmans;
 
-        bool _invoiceNotIssued;
-
         #region Transaction Backing Fields
         string _newTransactionID;
         DateTime _newTransactionDate;
@@ -87,6 +85,8 @@
         #endregion
 
         bool _editMode = false;
+        bool _invoiceNotIssued = true;
+        bool _invoiceNotPaid = true;
         CustomerVM _editCustomer;
 
         public SalesTransactionVM()
@@ -122,6 +122,12 @@
         {
             get { return _invoiceNotIssued; }
             set { SetProperty(ref _invoiceNotIssued, value, "InvoiceNotIssued"); }
+        }
+
+        public bool InvoiceNotPaid
+        {
+            get { return _invoiceNotPaid; }
+            set { SetProperty(ref _invoiceNotPaid, value, "InvoiceNotPaid"); }
         }
 
         #region Collections
@@ -354,9 +360,6 @@
                         return;
                     }
 
-                    if (transaction.InvoiceIssued != null) InvoiceNotIssued = false;
-                    else InvoiceNotIssued = true;
-
                     SetProperty(ref _newTransactionID, value, "NewTransactionID");
 
                     Model = transaction;
@@ -573,27 +576,11 @@
 
                     var context = new ERPContext();
 
-                    #region Edit Mode
                     if (EditMode)
                     {
-                        try
-                        {
-                            SaveTransactionEditMode(context);
-                        }
-                        catch (Exception e)
-                        {
-                            MessageBox.Show(e.InnerException.ToString(), "Error", MessageBoxButton.OK);
-                            return;
-                        }
-
-                        finally
-                        {
-                            context.Dispose();
-                        }
+                        SaveTransactionEditMode();
                     }
-                    #endregion
 
-                    #region New Transaction
                     else
                     {
                         try
@@ -612,7 +599,6 @@
                             context.Dispose();
                         }
                     }
-                    #endregion
 
                     SetEditMode();
                 }));
@@ -1252,6 +1238,7 @@
         {
             _editCustomer = null;
             InvoiceNotIssued = true;
+            InvoiceNotPaid = true;
             Model = new SalesTransaction();
             _salesTransactionLines.Clear();
             _deletedLines.Clear();
@@ -1279,6 +1266,11 @@
         private void SetEditMode()
         {
             EditMode = true;
+
+            InvoiceNotIssued = Model.InvoiceIssued != null ? false : true;
+
+            InvoiceNotPaid = Model.Paid > 0 ? false : true;
+
             _editCustomer = new CustomerVM { Model = Model.Customer };
             _salesTransactionLines.Clear();
             _deletedLines.Clear();
@@ -1346,169 +1338,300 @@
             return false;
         }
 
-        private void SaveTransactionEditMode(ERPContext context)
+        private void SaveTransactionEditMode()
         {
-            var transaction = context.SalesTransactions
-                .Include("TransactionLines.Salesman")
-                .Where(e => e.SalesTransactionID.Equals(_newTransactionID))
-                .FirstOrDefault();
-            var originalTransactionLines = transaction.TransactionLines.ToList();
-
-            foreach (var line in _salesTransactionLines)
+            #region Invoice Issued
+            if (Model.InvoiceIssued == null)
             {
-                var item = context.Inventory
-                .Include("SalesTransactionLines")
-                .Include("SalesTransactionLines.Item")
-                .Include("Category")
-                .Where(e => e.ItemID.Equals(line.Item.ItemID))
-                .FirstOrDefault();
-
-                line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
-                line.Item = item;
-                line.Salesman = context.Salesmans.Where(e => e.ID.Equals(line.Salesman.ID)).FirstOrDefault();
-
-                // Retrieve the item's current stock from the database
-                var stock = context
-                .Stocks.Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID))
-                .FirstOrDefault();
-
-                var found = false;
-                foreach (var l in originalTransactionLines)
+                using (var context = new ERPContext())
                 {
-                    // Check if the line exists in the original transaction
-                    if (line.Item.ItemID.Equals(l.Item.ItemID)
-                     && line.Warehouse.ID.Equals(l.Warehouse.ID)
-                     && line.SalesPrice.Equals(l.SalesPrice * l.Item.PiecesPerUnit)
-                     && line.Discount.Equals(l.Discount * l.Item.PiecesPerUnit))
-                    {
-                        found = true;
-                        var originalQuantity = l.Quantity;
 
-                        // If there are more quantity than the original, minus the additional quantity from stock
-                        if (line.Quantity > originalQuantity)
+                    var transaction = context.SalesTransactions
+                        .Include("Customer")
+                        .Include("TransactionLines")
+                        .Include("TransactionLines.Salesman")
+                        .Include("TransactionLines.Warehouse")
+                        .Include("TransactionLines.Item")
+                        .Where(e => e.SalesTransactionID.Equals(_newTransactionID))
+                        .FirstOrDefault();
+
+                    var originalTransactionLines = transaction.TransactionLines.ToList();
+
+                    foreach (var line in _salesTransactionLines)
+                    {
+                        var item = context.Inventory
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Item")
+                        .Include("Category")
+                        .Where(e => e.ItemID.Equals(line.Item.ItemID))
+                        .FirstOrDefault();
+
+                        line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                        line.Item = item;
+                        line.Salesman = context.Salesmans.Where(e => e.ID.Equals(line.Salesman.ID)).FirstOrDefault();
+
+                        // Retrieve the item's current stock from the database
+                        var stock = context
+                        .Stocks.Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID))
+                        .FirstOrDefault();
+
+                        var found = false;
+                        foreach (var l in originalTransactionLines)
                         {
-                            stock.Pieces -= (line.Quantity - originalQuantity);
-                            if (stock.Pieces == 0) context.Stocks.Remove(stock);
+                            // Check if the line exists in the original transaction
+                            if (line.Item.ItemID.Equals(l.Item.ItemID)
+                             && line.Warehouse.ID.Equals(l.Warehouse.ID)
+                             && line.SalesPrice.Equals(l.SalesPrice * l.Item.PiecesPerUnit)
+                             && line.Discount.Equals(l.Discount * l.Item.PiecesPerUnit))
+                            {
+                                found = true;
+                                var originalQuantity = l.Quantity;
+
+                                // If there are more quantity than the original, minus the additional quantity from stock
+                                if (line.Quantity > originalQuantity)
+                                {
+                                    stock.Pieces -= (line.Quantity - originalQuantity);
+                                    if (stock.Pieces == 0) context.Stocks.Remove(stock);
+                                }
+
+                                // If there are lesser quantity than the original, add the additional quantity to stock
+                                else if (line.Quantity < originalQuantity)
+                                {
+                                    if (stock != null) stock.Pieces += (originalQuantity - line.Quantity);
+                                    else
+                                    {
+                                        var s = new Stock
+                                        {
+                                            Item = line.Item,
+                                            Warehouse = line.Warehouse,
+                                            Pieces = (originalQuantity - line.Quantity)
+                                        };
+                                        context.Stocks.Add(s);
+                                    }
+                                }
+
+                                l.Quantity = line.Quantity;
+                                l.SalesPrice = line.SalesPrice / line.Item.PiecesPerUnit;
+                                l.Discount = line.Discount / line.Item.PiecesPerUnit;
+                                l.Total = l.Quantity * (l.SalesPrice - l.Discount);
+                                break;
+                            }
                         }
 
-                        // If there are lesser quantity than the original, add the additional quantity to stock
-                        else if (line.Quantity < originalQuantity)
+                        // If not found, minus stock and add the line to the transaction
+                        if (!found)
                         {
-                            if (stock != null) stock.Pieces += (originalQuantity - line.Quantity);
+                            if (stock.Pieces - line.Quantity < 0)
+                            {
+                                MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
+                                    item.Name, (stock.Pieces / item.PiecesPerUnit), (stock.Pieces % item.PiecesPerUnit)),
+                                    "Insufficient Stock", MessageBoxButton.OK);
+                                return;
+                            }
+
+                            stock.Pieces -= line.Quantity;
+                            line.SalesTransaction = transaction;
+                            context.SalesTransactionLines.Add(line.Model);
+                        }
+
+                        // Remove the stock entry if it is 0
+                        if (stock != null && stock.Pieces == 0) context.Stocks.Remove(stock);
+                    }
+
+                    // Check if there are items deleted
+                    foreach (var line in _deletedLines)
+                    {
+                        var item = context.Inventory
+                        .Include("SalesTransactionLines")
+                        .Where(e => e.ItemID.Equals(line.Item.ItemID))
+                        .FirstOrDefault();
+
+                        var stock = context
+                        .Stocks.Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID))
+                        .FirstOrDefault();
+
+                        var deleted = true;
+                        foreach (var l in _salesTransactionLines)
+                        {
+                            if (line.Item.ItemID.Equals(l.Model.Item.ItemID)
+                            && line.Warehouse.ID.Equals(l.Model.Warehouse.ID)
+                            && line.SalesPrice.Equals(l.SalesPrice)
+                            && line.Discount.Equals(l.Discount))
+                            {
+                                deleted = false;
+                                break;
+                            }
+                        }
+
+                        // If item has been deleted, delete transaction line as well as increasing the item's stock
+                        if (deleted)
+                        {
+                            if (stock != null) stock.Pieces += line.Quantity;
                             else
                             {
+                                line.Item = item;
+                                line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
                                 var s = new Stock
                                 {
                                     Item = line.Item,
                                     Warehouse = line.Warehouse,
-                                    Pieces = (originalQuantity - line.Quantity)
+                                    Pieces = line.Quantity
                                 };
                                 context.Stocks.Add(s);
                             }
+
+                            foreach (var l in originalTransactionLines)
+                            {
+                                if (line.Item.ItemID.Equals(l.Item.ItemID)
+                                    && line.Warehouse.ID.Equals(l.Warehouse.ID)
+                                    && line.SalesPrice.Equals(l.SalesPrice * l.Item.PiecesPerUnit)
+                                    && line.Discount.Equals(l.Discount * l.Item.PiecesPerUnit))
+                                {
+                                    transaction.TransactionLines.Remove(l);
+                                    break;
+                                }
+                            }
                         }
-
-                        l.Quantity = line.Quantity;
-                        l.SalesPrice = line.SalesPrice / line.Item.PiecesPerUnit;
-                        l.Discount = line.Discount / line.Item.PiecesPerUnit;
-                        l.Total = l.Quantity * (l.SalesPrice - l.Discount);
-                        break;
-                    }
-                }
-
-                // If not found, minus stock and add the line to the transaction
-                if (!found)
-                {
-                    if (stock.Pieces - line.Quantity < 0)
-                    {
-                        MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
-                            item.Name, (stock.Pieces / item.PiecesPerUnit), (stock.Pieces % item.PiecesPerUnit)),
-                            "Insufficient Stock", MessageBoxButton.OK);
-                        return;
                     }
 
-                    stock.Pieces -= line.Quantity;
-                    line.SalesTransaction = transaction;
-                    context.SalesTransactionLines.Add(line.Model);
-                }
+                    transaction.When = _newTransactionDate;
+                    transaction.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
+                    transaction.Customer = context.Customers.Where(e => e.ID.Equals(_newTransactionCustomer.Model.ID)).FirstOrDefault();
+                    transaction.Notes = _newTransactionNotes;
+                    transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
+                    transaction.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal)_newTransactionSalesExpense;
+                    transaction.GrossTotal = _newTransactionGrossTotal;
+                    transaction.Total = _netTotal;
+                    transaction.When = _newTransactionDate;
+                    transaction.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
+                    transaction.InvoiceIssued = Model.InvoiceIssued;
+                    var user = App.Current.FindResource("CurrentUser") as User;
+                    transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
 
-                // Remove the stock entry if it is 0
-                if (stock != null && stock.Pieces == 0) context.Stocks.Remove(stock);
+                    Model = transaction;
+
+                    context.SaveChanges();
+                    MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
+                }
             }
+            #endregion
 
-            // Check if there are items deleted
-            foreach (var line in _deletedLines)
+            else
             {
-                var item = context.Inventory
-                .Include("SalesTransactionLines")
-                .Where(e => e.ItemID.Equals(line.Item.ItemID))
-                .FirstOrDefault();
-
-                var stock = context
-                .Stocks.Where(e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID))
-                .FirstOrDefault();
-
-                var deleted = true;
-                foreach (var l in _salesTransactionLines)
+                using (var ts = new TransactionScope())
                 {
-                    if (line.Item.ItemID.Equals(l.Model.Item.ItemID)
-                    && line.Warehouse.ID.Equals(l.Model.Warehouse.ID)
-                    && line.SalesPrice.Equals(l.SalesPrice)
-                    && line.Discount.Equals(l.Discount))
-                    {
-                        deleted = false;
-                        break;
-                    }
-                }
+                    var context = new ERPContext();
 
-                // If item has been deleted, delete transaction line as well as increasing the item's stock
-                if (deleted)
-                {
-                    if (stock != null) stock.Pieces += line.Quantity;
-                    else
-                    {
-                        line.Item = item;
-                        line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
-                        var s = new Stock
-                        {
-                            Item = line.Item,
-                            Warehouse = line.Warehouse,
-                            Pieces = line.Quantity
-                        };
-                        context.Stocks.Add(s);
-                    }
+                    var transaction = context.SalesTransactions
+                        .Include("Customer")
+                        .Include("TransactionLines")
+                        .Include("TransactionLines.Salesman")
+                        .Include("TransactionLines.Warehouse")
+                        .Include("TransactionLines.Item")
+                        .Where(e => e.SalesTransactionID.Equals(_newTransactionID))
+                        .FirstOrDefault();
 
-                    foreach (var l in originalTransactionLines)
+                    var originalTransactionLines = transaction.TransactionLines.ToList();
+
+                    if (transaction.Total != _netTotal)
                     {
-                        if (line.Item.ItemID.Equals(l.Item.ItemID)
-                            && line.Warehouse.ID.Equals(l.Warehouse.ID)
-                            && line.SalesPrice.Equals(l.SalesPrice * l.Item.PiecesPerUnit)
-                            && line.Discount.Equals(l.Discount * l.Item.PiecesPerUnit))
+                        // Adjust the Sales Revenue, AR, COGS for this transaction due to the price changes 
+                        var transactionTotalDifference = _netTotal - transaction.Total;
+
+                        var adjustmentLedgerTransaction1 = new LedgerTransaction();
+                        LedgerDBHelper.AddTransaction(context, adjustmentLedgerTransaction1, DateTime.Now.Date, _newTransactionID, "Sales Revenue Adjustment");
+                        context.SaveChanges();
+                        if (transactionTotalDifference > 0)
                         {
-                            transaction.TransactionLines.Remove(l);
-                            break;
+                            LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", transactionTotalDifference);
+                            LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, "Sales Revenue", "Credit", transactionTotalDifference);
                         }
+
+                        else
+                        {
+                            LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, "Sales Revenue", "Debit", -transactionTotalDifference);
+                            LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Credit", -transactionTotalDifference);
+                        }
+
+                        //List<SalesTransactionLine> editedLines = new List<SalesTransactionLine>();
+                        //foreach (var line in _salesTransactionLines)
+                        //    editedLines.Add(line.Model);
+
+                        //var COGSDifference = CalculateCOGS(editedLines) - CalculateCOGS(transaction.TransactionLines.ToList());
+
+                        //var adjustmentLedgerTransaction2 = new LedgerTransaction();
+                        //LedgerDBHelper.AddTransaction(context, adjustmentLedgerTransaction2, DateTime.Now.Date, _newTransactionID, "Sales Revenue Adjustment");
+                        //context.SaveChanges();
+                        //if (COGSDifference > 0)
+                        //{
+                        //    LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction2, "Cost of Goods Sold", "Debit", COGSDifference);
+                        //    LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction2, "Inventory", "Credit", COGSDifference);
+                        //}
+                        //else
+                        //{
+                        //    LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction2, "Inventory", "Debit", -COGSDifference);
+                        //    LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction2, "Cost of Goods Sold", "Credit", -COGSDifference);
+                        //}
+
+                        foreach (var line in originalTransactionLines)
+                        {
+                            var found = false;
+                            foreach (var l in _salesTransactionLines)
+                            {
+                                if (line.Item.ItemID.Equals(l.Item.ItemID)
+                                    && line.Warehouse.ID.Equals(l.Warehouse.ID)
+                                    && line.SalesPrice.Equals(l.SalesPrice / l.Item.PiecesPerUnit)
+                                    && line.Discount.Equals(l.Discount / l.Item.PiecesPerUnit))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            // If not found, it means the line has been edited
+                            if (!found)
+                            {
+                                context.SalesTransactionLines.Remove(line);
+                            }
+                        }
+
+                        foreach (var line in _salesTransactionLines)
+                        {
+                            var found = false;
+                            foreach (var l in originalTransactionLines)
+                            {
+                                if (line.Item.ItemID.Equals(l.ItemID)
+                                    && line.Warehouse.ID.Equals(l.WarehouseID)
+                                    && line.SalesPrice.Equals(l.SalesPrice * line.Item.PiecesPerUnit)
+                                    && line.Discount.Equals(l.Discount * line.Item.PiecesPerUnit))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            // If not found, add the edited line to the transaction
+                            if (!found)
+                            {
+                                line.SalesTransaction = transaction;
+                                line.Salesman = context.Salesmans.Where(e => e.ID.Equals(line.Salesman.ID)).FirstOrDefault();
+                                line.Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
+                                line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                                context.SalesTransactionLines.Add(line.Model);
+                            }
+                        }
+
+                        transaction.GrossTotal = _newTransactionGrossTotal;
+                        transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
+                        transaction.Total = _netTotal;
+
+                        context.SaveChanges();
+                        ts.Complete();
                     }
                 }
+
+                MessageBox.Show("Invoice successfully edited.", "Success", MessageBoxButton.OK);
             }
-
-            transaction.When = _newTransactionDate;
-            transaction.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
-            transaction.Customer = context.Customers.Where(e => e.ID.Equals(_newTransactionCustomer.Model.ID)).FirstOrDefault();
-            transaction.Notes = _newTransactionNotes;
-            transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
-            transaction.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal)_newTransactionSalesExpense;
-            transaction.GrossTotal = _newTransactionGrossTotal;
-            transaction.Total = _netTotal;
-            transaction.When = _newTransactionDate;
-            transaction.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
-            transaction.InvoiceIssued = Model.InvoiceIssued;
-            var user = App.Current.FindResource("CurrentUser") as User;
-            transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
-
-            Model = transaction;
-
-            context.SaveChanges();
-            MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
         }
 
         private void SaveNewTransaction(ERPContext context)
@@ -1548,6 +1671,56 @@
             context.SalesTransactions.Add(Model);
             context.SaveChanges();
             MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
+        }
+
+        private decimal CalculateCOGS(List<SalesTransactionLine> lines)
+        {
+            var costOfGoodsSoldAmount = 0m;
+
+            // Determine the COGS for each line
+            foreach (var line in lines)
+            {
+                var itemID = line.Item.ItemID;
+                var quantity = line.Quantity;
+
+                using (var context = new ERPContext())
+                {
+                    var purchases = context.PurchaseTransactionLines
+                    .Include("PurchaseTransaction")
+                    .Where(e => e.ItemID == itemID && e.SoldOrReturned < e.Quantity)
+                    .OrderBy(e => e.PurchaseTransaction.PurchaseID)
+                    .ToList();
+
+                    var tracker = line.Quantity;
+
+                    foreach (var purchase in purchases)
+                    {
+                        var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
+                        var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
+
+                        if (tracker <= availableQuantity)
+                        {
+                            purchase.SoldOrReturned += tracker;
+                            if (purchaseLineNetTotal == 0) break;
+                            var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                            var fractionOfTransactionTax = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                            costOfGoodsSoldAmount += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
+                            break;
+                        }
+                        else if (tracker > availableQuantity)
+                        {
+                            purchase.SoldOrReturned += availableQuantity;
+                            tracker -= availableQuantity;
+                            if (purchaseLineNetTotal == 0) continue;
+                            var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                            var fractionOfTransactionTax = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                            costOfGoodsSoldAmount += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
+                        }
+                    }
+                }
+            } 
+
+            return costOfGoodsSoldAmount;
         }
 
         #region Reports Creation Methods

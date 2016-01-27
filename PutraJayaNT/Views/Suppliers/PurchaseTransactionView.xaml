@@ -140,6 +140,7 @@
             </Grid>
         </Border>
         <DataGrid LoadingRow="DataGrid_LoadingRow" Grid.Row="3" ItemsSource="{Binding Lines}" SelectedItem="{Binding SelectedLine}"
+                  CanUserSortColumns="False"
                           CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                           ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                           AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsEnabled="{Binding IsTransactionNotPaid}">

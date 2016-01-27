@@ -148,7 +148,7 @@ namespace PutraJayaNT.ViewModels.Customers
                 }
                 else
                 {
-                    MessageBox.Show("Please check if the transaction exists or if invoice has been issued.", "Invalid Sales Transaction", MessageBoxButton.OK);
+                    MessageBox.Show("Please check if the transaction exists or if invoice has been paid.", "Invalid Sales Transaction", MessageBoxButton.OK);
                 }
             }
         }
@@ -453,7 +453,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     .Include("TransactionLines.Item")
                     .Include("TransactionLines.Warehouse")
                     .Include("Customer")
-                    .Where(e => e.SalesTransactionID.Equals(salesTransactionID) && e.InvoiceIssued != null)
+                    .Where(e => e.SalesTransactionID.Equals(salesTransactionID) && e.InvoiceIssued != null && e.Paid > 0)
                     .FirstOrDefault();
 
                 if (transaction == null) return false;

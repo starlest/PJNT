@@ -28,7 +28,7 @@
                 <Button Content="New" Command="{Binding NewTransactionCommand}" Foreground="Red" />
                 <Button Grid.Column="1" Content="Browse" Command="{Binding BrowseCommand}" />
                 <Button Grid.Column="2" Content="Issue Invoice" Command="{Binding IssueInvoiceCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
-                <Button Grid.Column="3" Content="Save" Command="{Binding SaveTransactionCommand}"  IsEnabled="{Binding InvoiceNotIssued}" Foreground="Red" />
+                <Button Grid.Column="3" Content="Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding InvoiceNotPaid}" Foreground="Red" />
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -162,6 +162,7 @@
                 </Grid>
             </Border>
             <DataGrid Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" Grid.Row="4" ItemsSource="{Binding SalesTransactionLines}" 
+                      CanUserSortColumns="False"
                   CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"  AutoGenerateColumns="False" 
                       CanUserResizeColumns="False" CanUserResizeRows="False" SelectedItem="{Binding SelectedLine}" SelectedIndex="{Binding SelectedIndex}" >
@@ -183,10 +184,10 @@
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <Button Content="Edit" Command="{Binding EditLineCommand}" />
+                <Button Content="Edit" Command="{Binding EditLineCommand}" IsEnabled="{Binding InvoiceNotPaid}" />
                 <Button Grid.Column="1" Content="Delete" Command="{Binding DeleteLineCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
             </Grid>
-            <Grid Grid.Row="6"  IsEnabled="{Binding InvoiceNotIssued}">
+            <Grid Grid.Row="6"  IsEnabled="{Binding InvoiceNotPaid}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
@@ -272,10 +273,10 @@
                          Text="{Binding EditLinePieces, Mode=TwoWay}" IsEnabled="{Binding InvoiceNotIssued}" />
             <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Sales Price:" />
             <TextBox Grid.Row="6" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding EditLineSalesPrice, Mode=TwoWay, StringFormat=N2}" />
+                         Text="{Binding EditLineSalesPrice, Mode=TwoWay, StringFormat=N2}" IsEnabled="{Binding InvoiceNotPaid}" />
             <TextBlock Grid.Row="6" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Black" Text="Discount:" />
             <TextBox Grid.Row="6" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding EditLineDiscount, Mode=TwoWay, StringFormat=N2}" />
+                         Text="{Binding EditLineDiscount, Mode=TwoWay, StringFormat=N2}" IsEnabled="{Binding InvoiceNotPaid}"  />
             <Button Grid.Row="7" Grid.Column="3" Content="Confirm" Command="{Binding EditConfirmCommand}" Margin="10" />
             <Button Grid.Row="7" Grid.Column="4"  Content="Cancel" Command="{Binding EditCancelCommand}" Margin="10" />
         </Grid>
