@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PutraJayaNT.ViewModels.Reports
 {
-    class InventoryReportLineVM : ViewModelBase
+    public class InventoryReportLineVM : ViewModelBase
     {
         Item _item;
         int _quantity;

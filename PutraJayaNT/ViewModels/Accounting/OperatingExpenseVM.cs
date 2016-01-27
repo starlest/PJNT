@@ -218,7 +218,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                         return;
                     }
 
-                    if (_selectedLine.Description.Equals("Purchase Payment") || _selectedLine.Description.Equals("Sales Transaction Payment"))
+                    if (_selectedLine.Description.Equals("Purchase Payment") || _selectedLine.Description.Equals("Sales Transaction Receipt"))
                     {
                         MessageBox.Show("Cannot delete this line.", "Invalid Command", MessageBoxButton.OK);
                         return;

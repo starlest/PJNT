@@ -1,16 +1,17 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Reports.Windows;
 using PutraJayaNT.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Reports
 {
-    class InventoryReportVM : ViewModelBase
+    public class InventoryReportVM : ViewModelBase
     {
         ObservableCollection<ItemVM> _items;
         ObservableCollection<Category> _categories;
@@ -23,6 +24,8 @@ namespace PutraJayaNT.ViewModels.Reports
         Category _selectedCategory;
         SupplierVM _selectedSupplier;
         WarehouseVM _selectedWarehouse;
+
+        ICommand _printCommand;
 
         decimal _total;
 
@@ -148,6 +151,23 @@ namespace PutraJayaNT.ViewModels.Reports
             set { SetProperty(ref _total, value, "Total"); }
         }
 
+
+        public ICommand PrintCommand
+        {
+            get
+            {
+                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                {
+                    if (_lines.Count == 0) return;
+
+                    var inventoryReportWindow = new InventoryReportWindow(this);
+                    inventoryReportWindow.Owner = App.Current.MainWindow;
+                    inventoryReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    inventoryReportWindow.Show();
+                }));
+            }
+        }
+
         #region Helper Methods
         private void UpdateWarehouses()
         {
@@ -210,6 +230,7 @@ namespace PutraJayaNT.ViewModels.Reports
                             .Include("Category")
                             .Include("Stocks")
                             .Include("Stocks.Warehouse")
+                            .Where(e => e.Active.Equals(true))
                             .OrderBy(e => e.ItemID)
                             .ToList();
                     }
@@ -221,7 +242,7 @@ namespace PutraJayaNT.ViewModels.Reports
                             .Include("Category")
                             .Include("Stocks")
                             .Include("Stocks.Warehouse")
-                            .Where(e => e.Category.ID.Equals(_selectedCategory.ID))
+                            .Where(e => e.Category.ID.Equals(_selectedCategory.ID) && e.Active.Equals(true))
                             .OrderBy(e => e.ItemID)
                             .ToList();
                     }
@@ -234,6 +255,7 @@ namespace PutraJayaNT.ViewModels.Reports
                         .Include("Category")
                         .Include("Stocks")
                         .Include("Stocks.Warehouse")
+                        .Where(e => e.Active.Equals(true))
                         .OrderBy(e => e.ItemID)
                         .ToList();
 

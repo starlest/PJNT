@@ -24,7 +24,11 @@ namespace PutraJayaNT.ViewModels.Customers
         string _selectedPaymentMode;
         decimal _salesReturnCredits;
 
+        decimal _grossTotal;
+        decimal _discount;
+        decimal _salesExpense;
         decimal _total;
+
         decimal _useCredits;
         decimal _remaining;
         decimal? _collect;
@@ -92,6 +96,9 @@ namespace PutraJayaNT.ViewModels.Customers
                 if (_selectedSalesTransaction == null) return;
 
                 UpdateSelectedSalesTransactionLines();
+                GrossTotal = _selectedSalesTransaction.GrossTotal;
+                Discount = _selectedSalesTransaction.Discount;
+                SalesExpense = _selectedSalesTransaction.SalesExpense;
                 Total = _selectedSalesTransaction.Total;
                 Remaining = _selectedSalesTransaction.Total - _selectedSalesTransaction.Paid;
             }
@@ -165,7 +172,25 @@ namespace PutraJayaNT.ViewModels.Customers
                 _selectedSalesTransactionLines.Add(new SalesTransactionLineVM { Model = line });
         }
 
-        #region Payment Properties
+        #region Sales Transaction Properties
+        public decimal GrossTotal
+        {
+            get { return _grossTotal; }
+            set { SetProperty(ref _grossTotal, value, "GrossTotal"); }
+        }
+
+        public decimal Discount
+        {
+            get { return _discount; }
+            set { SetProperty(ref _discount, value, "Discount"); }
+        }
+
+        public decimal SalesExpense
+        {
+            get { return _salesExpense; }
+            set { SetProperty(ref _salesExpense, value, "SalesExpense"); }
+        }
+
         public decimal Total
         {
             get { return _total; }
@@ -177,7 +202,9 @@ namespace PutraJayaNT.ViewModels.Customers
                 Remaining = _total - _selectedSalesTransaction.Paid - _useCredits;
             }
         }
+        #endregion
 
+        #region Payment Properties
         public decimal UseCredits
         {
             get { return _useCredits; }
@@ -254,13 +281,17 @@ namespace PutraJayaNT.ViewModels.Customers
                             _selectedSalesTransaction.Customer.SalesReturnCredits -= _useCredits;
 
                             var accountsReceivableName = _selectedCustomer.Name + " Accounts Receivable";
-                            var transaction = new LedgerTransaction();
 
-                            LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedSalesTransaction.SalesTransactionID, "Sales Transaction Receipt");
-                            context.SaveChanges();
+                            if (_collect > 0)
+                            {
+                                var transaction = new LedgerTransaction();
 
-                            LedgerDBHelper.AddTransactionLine(context, transaction, _selectedPaymentMode, "Debit", (decimal)_collect);
-                            LedgerDBHelper.AddTransactionLine(context, transaction, accountsReceivableName, "Credit", (decimal)_collect);
+                                LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedSalesTransaction.SalesTransactionID, "Sales Transaction Receipt");
+                                context.SaveChanges();
+
+                                LedgerDBHelper.AddTransactionLine(context, transaction, _selectedPaymentMode, "Debit", (decimal)_collect);
+                                LedgerDBHelper.AddTransactionLine(context, transaction, accountsReceivableName, "Credit", (decimal)_collect);
+                            }
                             context.SaveChanges();
 
                             ts.Complete();
@@ -291,6 +322,9 @@ namespace PutraJayaNT.ViewModels.Customers
             _customerUnpaidSalesTransactions.Clear();
             _selectedSalesTransactionLines.Clear();
 
+            GrossTotal = 0;
+            Discount = 0;
+            SalesExpense = 0;
             Total = 0;
             UseCredits = 0;
             Remaining = 0;

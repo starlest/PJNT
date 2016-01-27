@@ -10,7 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="0.125*" />
+            <RowDefinition Height="0.25*" />
         </Grid.RowDefinitions>
         <Border BorderBrush="Blue" BorderThickness="2">
             <Grid>
@@ -61,6 +61,10 @@
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -68,22 +72,30 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="0.5*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Total: " />
+            <TextBlock Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Gross Total: " />
             <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
-                     IsReadOnly="True" FontWeight="ExtraBlack" Foreground="Black" Text="{Binding Total, Mode=OneWay, StringFormat=N2}" Margin="10, 10, 0, 0"  />
-            <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Use Credits: " />
+                     IsReadOnly="True" Text="{Binding GrossTotal, Mode=OneWay, StringFormat=N2}" Margin="10, 10, 0, 0"  />
+            <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Discount: " />
             <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
-                     Text="{Binding UseCredits, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, StringFormat=N2}" Margin="10, 10, 10, 0" />
-            <TextBlock Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Remaining: " />
+                     IsReadOnly="True" Text="{Binding Discount, Mode=OneWay, StringFormat=N2}" Margin="10, 10, 0, 0"  />
+            <TextBlock Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Sales Expense: " />
             <TextBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+                     IsReadOnly="True" Text="{Binding SalesExpense, Mode=OneWay, StringFormat=N2}" Margin="10, 10, 0, 0"  />
+            <TextBlock Grid.Column="6" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Total: " />
+            <TextBox Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+                     IsReadOnly="True" FontWeight="ExtraBlack" Foreground="Black" Text="{Binding Total, Mode=OneWay, StringFormat=N2}" Margin="10, 10, 0, 0"  />
+            <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Use Credits: " />
+            <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" FontWeight="ExtraBlack"
+                     Text="{Binding UseCredits, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, StringFormat=N2}" Margin="10, 10, 10, 0" />
+            <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Remaining: " />
+            <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
                      IsReadOnly="True" FontWeight="ExtraBlack" Foreground="Black" Text="{Binding Remaining, Mode=OneWay, StringFormat=N2}" Margin="10, 10, 0, 0" />
-            <TextBlock Grid.Column="6" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Collect: " Foreground="Red" />
-            <TextBox Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Text="{Binding Collect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Margin="10, 10, 10, 0"/>
-            <Button Grid.Column="8" Content="Confirm" Command="{Binding ConfirmPaymentCommand}" Margin="10" />
+            <TextBlock Grid.Row="1" Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Collect: " Foreground="Red" />
+            <TextBox Grid.Row="1" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Text="{Binding Collect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" Margin="10, 10, 10, 0"/>
+            <Button Grid.Row="1" Grid.Column="7" Content="Confirm" Command="{Binding ConfirmPaymentCommand}" Margin="10" />
         </Grid>
     </Grid>
 </UserControl>

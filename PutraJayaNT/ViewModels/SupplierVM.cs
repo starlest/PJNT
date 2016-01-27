@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace PutraJayaNT.ViewModels
 {
-    class SupplierVM : ViewModelBase<Supplier>
+    public class SupplierVM : ViewModelBase<Supplier>
     {
         public int ID
         {

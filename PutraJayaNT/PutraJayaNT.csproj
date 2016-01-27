@@ -127,6 +127,8 @@
     <Compile Include="Reports\DatasetObjects\DailyCashFlowReportLine.cs" />
     <Compile Include="Reports\DatasetObjects\CommissionReport.cs" />
     <Compile Include="Reports\DatasetObjects\CommissionsReportLine.cs" />
+    <Compile Include="Reports\DatasetObjects\InventoryReport.cs" />
+    <Compile Include="Reports\DatasetObjects\InventoryReportLine.cs" />
     <Compile Include="Reports\DatasetObjects\StockCard.cs" />
     <Compile Include="Reports\DatasetObjects\StockCardLine.cs" />
     <Compile Include="Reports\DatasetObjects\StockMovement.cs" />
@@ -157,6 +159,9 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\InventoryReportWindow.xaml.cs">
+      <DependentUpon>InventoryReportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Windows\DailyCashFlowReportWindow.xaml.cs">
       <DependentUpon>DailyCashFlowReportWindow.xaml</DependentUpon>
@@ -367,6 +372,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Reports\Windows\InventoryReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Reports\Windows\DailyCashFlowReportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -576,6 +585,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601220115450_Update5.resx">
       <DependentUpon>201601220115450_Update5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\InventoryReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\DailyCashFlowReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
