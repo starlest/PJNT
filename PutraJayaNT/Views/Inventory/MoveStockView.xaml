@@ -28,7 +28,7 @@
         <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2" IsEnabled="{Binding IsNotEditMode}" >
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="0.25*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />

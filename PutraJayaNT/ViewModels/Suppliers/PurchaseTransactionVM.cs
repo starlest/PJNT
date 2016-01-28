@@ -590,6 +590,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             }
         }
 
+        #region Helper Methods
         private void UpdateSuppliers()
         {
             _suppliers.Clear();
@@ -916,5 +917,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
             SetTransactionID();
             Model.Total = 0;
         }
+        #endregion
     }
 }

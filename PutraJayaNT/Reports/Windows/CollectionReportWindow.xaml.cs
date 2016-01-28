@@ -42,15 +42,18 @@ namespace PutraJayaNT.Reports.Windows
 
             foreach (var t in _salesTransactions)
             {
-                DataRow dr = dt.NewRow();
-                dr["ID"] = t.SalesTransactionID;
-                dr["Customer"] = t.Customer.Name;
-                dr["InvoiceNetTotal"] = t.Total;
-                dr["InvoicePaid"] = t.Paid;
-                dr["InvoiceRemaining"] = t.Total - t.Paid;
-                dr["DueDate"] = t.DueDate.ToShortDateString();
-                dr["CollectionSalesman"] = t.CollectionSalesman != null ? t.CollectionSalesman.Name : "";
-                dt.Rows.Add(dr);
+                if (t.IsSelected)
+                {
+                    DataRow dr = dt.NewRow();
+                    dr["ID"] = t.SalesTransactionID;
+                    dr["Customer"] = t.Customer.Name;
+                    dr["InvoiceNetTotal"] = t.Total;
+                    dr["InvoicePaid"] = t.Paid;
+                    dr["InvoiceRemaining"] = t.Total - t.Paid;
+                    dr["DueDate"] = t.DueDate.ToShortDateString();
+                    dr["CollectionSalesman"] = t.CollectionSalesman != null ? t.CollectionSalesman.Name : "";
+                    dt.Rows.Add(dr);
+                }
             }
 
             ReportDataSource reportDataSource = new ReportDataSource("InvoiceDataSet", dt);

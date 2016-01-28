@@ -593,9 +593,10 @@
                         }
                     }
 
-                    using (context)
+                    using (var c = new ERPContext())
                     {
-                        Model = context.SalesTransactions
+                        Model = c.SalesTransactions
+                        .Include("Customer")
                         .Include("TransactionLines")
                         .Include("TransactionLines.Salesman")
                         .Include("TransactionLines.Item")
@@ -1279,10 +1280,6 @@
             NewTransactionCustomer = new CustomerVM { Model = Model.Customer };
             NewTransactionNotes = Model.Notes;
 
-            NewTransactionSalesExpense = Model.SalesExpense;
-            NewTransactionDiscount = Model.Discount;
-            OnPropertyChanged("NewTransactionGrossTotal");
-
             _salesTransactionLines.Clear();
             _deletedLines.Clear();
             foreach (var line in Model.TransactionLines)
@@ -1290,6 +1287,60 @@
                 var vm = new SalesTransactionLineVM { Model = line, StockDeducted = line.Quantity };
                 _salesTransactionLines.Add(vm);
             }
+
+            NewTransactionSalesExpense = Model.SalesExpense;
+            NewTransactionDiscount = Model.Discount;
+            OnPropertyChanged("NewTransactionGrossTotal");
+        }
+
+        private decimal CalculateCOGS(List<SalesTransactionLine> lines)
+        {
+            var costOfGoodsSoldAmount = 0m;
+
+            // Determine the COGS for each line
+            foreach (var line in lines)
+            {
+                var itemID = line.Item.ItemID;
+                var quantity = line.Quantity;
+
+                using (var context = new ERPContext())
+                {
+                    var purchases = context.PurchaseTransactionLines
+                    .Include("PurchaseTransaction")
+                    .Where(e => e.ItemID == itemID && e.SoldOrReturned < e.Quantity)
+                    .OrderBy(e => e.PurchaseTransaction.PurchaseID)
+                    .ToList();
+
+                    var tracker = line.Quantity;
+
+                    foreach (var purchase in purchases)
+                    {
+                        var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
+                        var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
+
+                        if (tracker <= availableQuantity)
+                        {
+                            purchase.SoldOrReturned += tracker;
+                            if (purchaseLineNetTotal == 0) break;
+                            var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                            var fractionOfTransactionTax = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                            costOfGoodsSoldAmount += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
+                            break;
+                        }
+                        else if (tracker > availableQuantity)
+                        {
+                            purchase.SoldOrReturned += availableQuantity;
+                            tracker -= availableQuantity;
+                            if (purchaseLineNetTotal == 0) continue;
+                            var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                            var fractionOfTransactionTax = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                            costOfGoodsSoldAmount += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
+                        }
+                    }
+                }
+            }
+
+            return costOfGoodsSoldAmount;
         }
 
         private int GetRemainingStock(Item item, Warehouse warehouse)
@@ -1633,7 +1684,6 @@
                         }
 
                         transaction.Notes = _newTransactionNotes;
-
                         transaction.GrossTotal = _newTransactionGrossTotal;
                         transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
                         transaction.Total = _netTotal;
@@ -1684,56 +1734,6 @@
             context.SalesTransactions.Add(Model);
             context.SaveChanges();
             MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
-        }
-
-        private decimal CalculateCOGS(List<SalesTransactionLine> lines)
-        {
-            var costOfGoodsSoldAmount = 0m;
-
-            // Determine the COGS for each line
-            foreach (var line in lines)
-            {
-                var itemID = line.Item.ItemID;
-                var quantity = line.Quantity;
-
-                using (var context = new ERPContext())
-                {
-                    var purchases = context.PurchaseTransactionLines
-                    .Include("PurchaseTransaction")
-                    .Where(e => e.ItemID == itemID && e.SoldOrReturned < e.Quantity)
-                    .OrderBy(e => e.PurchaseTransaction.PurchaseID)
-                    .ToList();
-
-                    var tracker = line.Quantity;
-
-                    foreach (var purchase in purchases)
-                    {
-                        var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
-                        var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
-
-                        if (tracker <= availableQuantity)
-                        {
-                            purchase.SoldOrReturned += tracker;
-                            if (purchaseLineNetTotal == 0) break;
-                            var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                            var fractionOfTransactionTax = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
-                            costOfGoodsSoldAmount += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
-                            break;
-                        }
-                        else if (tracker > availableQuantity)
-                        {
-                            purchase.SoldOrReturned += availableQuantity;
-                            tracker -= availableQuantity;
-                            if (purchaseLineNetTotal == 0) continue;
-                            var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                            var fractionOfTransactionTax = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
-                            costOfGoodsSoldAmount += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
-                        }
-                    }
-                }
-            } 
-
-            return costOfGoodsSoldAmount;
         }
 
         #region Reports Creation Methods

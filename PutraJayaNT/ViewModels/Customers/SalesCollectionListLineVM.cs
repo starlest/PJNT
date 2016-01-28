@@ -12,9 +12,11 @@
     public class SalesCollectionListLineVM : ViewModelBase<SalesTransaction>
     {
         ObservableCollection<Salesman> _salesmen;
+        bool _isSelected;
 
         public SalesCollectionListLineVM()
         {
+            _isSelected = true;
             _salesmen = new ObservableCollection<Salesman>();
 
             using (var context = new ERPContext())
@@ -82,6 +84,12 @@
         public ObservableCollection<Salesman> Salesmen
         {
             get { return _salesmen; }
+        }
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { SetProperty(ref _isSelected, value, "IsSelected"); }
         }
     }
 }
