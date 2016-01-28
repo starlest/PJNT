@@ -364,13 +364,6 @@
 
                     Model = transaction;
                     SetEditMode();
-                    NewTransactionDate = transaction.When;
-                    NewTransactionCustomer = new CustomerVM { Model = transaction.Customer };
-                    NewTransactionNotes = transaction.Notes;
-
-                    NewTransactionSalesExpense = transaction.SalesExpense;
-                    NewTransactionDiscount = transaction.Discount;
-                    OnPropertyChanged("NewTransactionGrossTotal");
                 }
             }
         }
@@ -598,6 +591,18 @@
                         {
                             context.Dispose();
                         }
+                    }
+
+                    using (context)
+                    {
+                        Model = context.SalesTransactions
+                        .Include("TransactionLines")
+                        .Include("TransactionLines.Salesman")
+                        .Include("TransactionLines.Item")
+                        .Include("TransactionLines.Warehouse")
+                        .Include("TransactionLines.Item.Stocks")
+                        .Where(e => e.SalesTransactionID.Equals(_newTransactionID))
+                        .FirstOrDefault();
                     }
 
                     SetEditMode();
@@ -1266,12 +1271,18 @@
         private void SetEditMode()
         {
             EditMode = true;
-
-            InvoiceNotIssued = Model.InvoiceIssued != null ? false : true;
-
-            InvoiceNotPaid = Model.Paid > 0 ? false : true;
-
             _editCustomer = new CustomerVM { Model = Model.Customer };
+
+            InvoiceNotIssued = Model.InvoiceIssued == null ? true : false;
+            InvoiceNotPaid = Model.Paid == 0 ? true : false;
+            NewTransactionDate = Model.When;
+            NewTransactionCustomer = new CustomerVM { Model = Model.Customer };
+            NewTransactionNotes = Model.Notes;
+
+            NewTransactionSalesExpense = Model.SalesExpense;
+            NewTransactionDiscount = Model.Discount;
+            OnPropertyChanged("NewTransactionGrossTotal");
+
             _salesTransactionLines.Clear();
             _deletedLines.Clear();
             foreach (var line in Model.TransactionLines)
@@ -1620,6 +1631,8 @@
                                 context.SalesTransactionLines.Add(line.Model);
                             }
                         }
+
+                        transaction.Notes = _newTransactionNotes;
 
                         transaction.GrossTotal = _newTransactionGrossTotal;
                         transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
