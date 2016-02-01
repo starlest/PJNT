@@ -21,10 +21,9 @@ namespace PutraJayaNT
             window.ShowDialog();
             var user = App.Current.TryFindResource("CurrentUser") as User;
             if (user != null) this.IsEnabled = true;
-            else App.Current.MainWindow.Close();
+            else App.Current.Shutdown();
 
-            string constring = ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString;
-            this.Title = "Putra Jaya " + constring.Substring(7, 13);
+            this.Title = "Putra Jaya - " + user.Username;
 
             if (user.IsAdmin)
             {

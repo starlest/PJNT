@@ -45,9 +45,14 @@ namespace PutraJayaNT.ViewModels.Inventory
 
                 foreach (var item in items)
                 {
-                    var beginningBalance = GetBeginningBalance(context, item);
-                    var endingBalance = GetEndingBalance(context, item, beginningBalance);
-                    SetEndingBalance(context, item, endingBalance);
+                    var stocks = context.Stocks.Include("Item").Include("Warehouse").Where(e => e.ItemID.Equals(item.ItemID)).ToList();
+
+                    foreach (var stock in stocks)
+                    {
+                        var beginningBalance = GetBeginningBalance(context, stock.Warehouse, item);
+                        var endingBalance = stock.Pieces;
+                        SetEndingBalance(context, stock.Warehouse, item, endingBalance);
+                    }
                 }
 
                 context.SaveChanges();
@@ -55,9 +60,11 @@ namespace PutraJayaNT.ViewModels.Inventory
         }
 
         #region Helper Methods
-        private int GetBeginningBalance(ERPContext context, Item item)
+        private int GetBeginningBalance(ERPContext context, Warehouse warehouse, Item item)
         {
-            var periodYearBalances = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.Year == _periodYear).FirstOrDefault();
+            var periodYearBalances = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == _periodYear).FirstOrDefault();
+
+            if (periodYearBalances == null) return 0;
 
             switch (_period)
             {
@@ -88,100 +95,67 @@ namespace PutraJayaNT.ViewModels.Inventory
             }
         }
 
-        private int GetEndingBalance(ERPContext context, Item item, int beginningBalance)
-        {
-            var balance = beginningBalance;
-
-            var purchaseLines = context.PurchaseTransactionLines
-                .Include("PurchaseTransaction")
-                .Include("PurchaseTransaction.Supplier")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.PurchaseTransaction.Date >= _beginningDate && e.PurchaseTransaction.Date <= _endingDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
-                .ToList();
-
-            var purchaseReturnLines = context.PurchaseReturnTransactionLines
-                .Include("PurchaseReturnTransaction")
-                .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.PurchaseReturnTransaction.Date >= _beginningDate && e.PurchaseReturnTransaction.Date <= _endingDate)
-                .ToList();
-
-            var salesLines = context.SalesTransactionLines
-                .Include("SalesTransaction")
-                .Include("SalesTransaction.Customer")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.SalesTransaction.When >= _beginningDate && e.SalesTransaction.When <= _endingDate)
-                .ToList();
-
-            var salesReturnLines = context.SalesReturnTransactionLines
-                .Include("SalesReturnTransaction")
-                .Include("SalesReturnTransaction.SalesTransaction.Customer")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.SalesReturnTransaction.Date >= _beginningDate && e.SalesReturnTransaction.Date <= _endingDate)
-                .ToList();
-
-            var stockAdjustmentLines = context.AdjustStockTransactionLines
-                .Include("AdjustStockTransaction")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.AdjustStockTransaction.Date >= _beginningDate && e.AdjustStockTransaction.Date <= _endingDate)
-                .ToList();
-
-            foreach (var line in purchaseLines)
-                balance += line.Quantity;
-
-            foreach (var line in purchaseReturnLines)
-                balance -= line.Quantity;
-
-            foreach (var line in salesLines)
-                balance -= line.Quantity;
-
-            foreach (var line in salesReturnLines)
-                balance -= line.Quantity;
-
-            foreach (var line in stockAdjustmentLines)
-                balance += line.Quantity;
-
-            return balance;
-        }
-
-        private void SetEndingBalance(ERPContext context, Item item, int endingBalance)
+        private void SetEndingBalance(ERPContext context, Warehouse warehouse, Item item, int endingBalance)
         {
 
-            var periodYearBalances = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.Year == _periodYear).FirstOrDefault();
+            var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == _periodYear).FirstOrDefault();
+
+            var flag = true;
+
+            if (stockBalance == null)
+            {
+                flag = false;
+                stockBalance = new StockBalance
+                {
+                    Item = context.Inventory.Where(e => e.ItemID.Equals(item.ItemID)).FirstOrDefault(),
+                    Warehouse = context.Warehouses.Where(e => e.ID.Equals(warehouse.ID)).FirstOrDefault(),
+                    Year = _periodYear
+                };
+            }
 
             switch (_period)
             {
                 case 1:
-                    periodYearBalances.Balance1 = endingBalance;
+                    stockBalance.Balance1 = endingBalance;
                     break;
                 case 2:
-                    periodYearBalances.Balance2 = endingBalance;
+                    stockBalance.Balance2 = endingBalance;
                     break;
                 case 3:
-                    periodYearBalances.Balance3 = endingBalance;
+                    stockBalance.Balance3 = endingBalance;
                     break;
                 case 4:
-                    periodYearBalances.Balance4 = endingBalance;
+                    stockBalance.Balance4 = endingBalance;
                     break;
                 case 5:
-                    periodYearBalances.Balance5 = endingBalance;
+                    stockBalance.Balance5 = endingBalance;
                     break;
                 case 6:
-                    periodYearBalances.Balance6 = endingBalance;
+                    stockBalance.Balance6 = endingBalance;
                     break;
                 case 7:
-                    periodYearBalances.Balance7 = endingBalance;
+                    stockBalance.Balance7 = endingBalance;
                     break;
                 case 8:
-                    periodYearBalances.Balance8 = endingBalance;
+                    stockBalance.Balance8 = endingBalance;
                     break;
                 case 9:
-                    periodYearBalances.Balance9 = endingBalance;
+                    stockBalance.Balance9 = endingBalance;
                     break;
                 case 10:
-                    periodYearBalances.Balance10 = endingBalance;
+                    stockBalance.Balance10 = endingBalance;
                     break;
                 case 11:
-                    periodYearBalances.Balance11 = endingBalance;
+                    stockBalance.Balance11 = endingBalance;
                     break;
                 default:
-                    periodYearBalances.Balance12 = endingBalance;
+                    stockBalance.Balance12 = endingBalance;
                     break;
+            }
+
+            if (!flag)
+            {
+                context.StockBalances.Add(stockBalance);
             }
         }
         #endregion

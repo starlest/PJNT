@@ -12,6 +12,11 @@ namespace PutraJayaNT.Models.Inventory
 
         [Key]
         [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int WarehouseID { get; set; }
+
+        [Key]
+        [Column(Order = 2)]
         public int Year { get; set; }
 
         [Required]
@@ -55,5 +60,8 @@ namespace PutraJayaNT.Models.Inventory
 
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }
+
+        [ForeignKey("WarehouseID")]
+        public virtual Warehouse Warehouse { get; set; }
     }
 }

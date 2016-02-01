@@ -746,6 +746,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     Model.PurchaseTransactionLines.Add(line.Model);
                 }
 
+                SetTransactionID();
                 Model.DOID = _newTransactionDOID;
                 Model.Date = _newTransactionDate;
                 Model.DueDate = _newTransactionDueDate;

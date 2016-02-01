@@ -29,11 +29,11 @@ namespace PutraJayaNT.Views.Inventory
             // Verification
             if (!UtilityMethods.GetVerification()) return;
 
-            if (DateTime.Now.AddDays(1).Day != 1 && DateTime.Now.Hour < 5)
-            {
-                MessageBox.Show("Unable to close books at this time.", "Failed to Close Stock", MessageBoxButton.OK);
-                return;
-            }
+            //if (DateTime.Now.Date.AddDays(1).Day != 1 && DateTime.Now.Hour < 17)
+            //{
+            //    MessageBox.Show("Unable to close books at this time.", "Failed to Close Stock", MessageBoxButton.OK);
+            //    return;
+            //}
 
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;

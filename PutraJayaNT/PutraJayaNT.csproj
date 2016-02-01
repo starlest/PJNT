@@ -93,29 +93,9 @@
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601150916355_Update.cs" />
-    <Compile Include="Migrations\201601150916355_Update.Designer.cs">
-      <DependentUpon>201601150916355_Update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601160448217_Update1.cs" />
-    <Compile Include="Migrations\201601160448217_Update1.Designer.cs">
-      <DependentUpon>201601160448217_Update1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601180920541_Update2.cs" />
-    <Compile Include="Migrations\201601180920541_Update2.Designer.cs">
-      <DependentUpon>201601180920541_Update2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601200148101_Update3.cs" />
-    <Compile Include="Migrations\201601200148101_Update3.Designer.cs">
-      <DependentUpon>201601200148101_Update3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601210340519_Update4.cs" />
-    <Compile Include="Migrations\201601210340519_Update4.Designer.cs">
-      <DependentUpon>201601210340519_Update4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201601220115450_Update5.cs" />
-    <Compile Include="Migrations\201601220115450_Update5.Designer.cs">
-      <DependentUpon>201601220115450_Update5.cs</DependentUpon>
+    <Compile Include="Migrations\201601300731507_Update1.cs" />
+    <Compile Include="Migrations\201601300731507_Update1.Designer.cs">
+      <DependentUpon>201601300731507_Update1.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
@@ -568,23 +548,8 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601150916355_Update.resx">
-      <DependentUpon>201601150916355_Update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601160448217_Update1.resx">
-      <DependentUpon>201601160448217_Update1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601180920541_Update2.resx">
-      <DependentUpon>201601180920541_Update2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601200148101_Update3.resx">
-      <DependentUpon>201601200148101_Update3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601210340519_Update4.resx">
-      <DependentUpon>201601210340519_Update4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601220115450_Update5.resx">
-      <DependentUpon>201601220115450_Update5.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601300731507_Update1.resx">
+      <DependentUpon>201601300731507_Update1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\InventoryReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -10,7 +10,9 @@
             <TextRuns>
               <TextRun>
                 <Value>=First(Fields!EndingBalance.Value, "StockCardDataSet")</Value>
-                <Style />
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -67,25 +69,25 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>2.46484cm</Width>
+              <Width>2.42704cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.46484cm</Width>
+              <Width>2.69162cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.46484cm</Width>
+              <Width>2.42704cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.0868cm</Width>
+              <Width>4.049cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.46484cm</Width>
+              <Width>2.42704cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.46484cm</Width>
+              <Width>2.42704cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.46484cm</Width>
+              <Width>2.42704cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -331,7 +333,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Date.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -363,7 +367,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Documentation.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -395,7 +401,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Description.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -427,7 +435,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!CustomerSupplier.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -459,7 +469,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!InQuantity.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -491,7 +503,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!OutQuantity.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -523,7 +537,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Balance.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -620,7 +636,9 @@
             <TextRuns>
               <TextRun>
                 <Value>=First(Fields!BeginningBalance.Value, "StockCardDataSet")</Value>
-                <Style />
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -682,7 +700,9 @@
             <TextRuns>
               <TextRun>
                 <Value>=First(Fields!Item.Value, "StockCardDataSet")</Value>
-                <Style />
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -694,7 +714,7 @@
         <Top>0.41438cm</Top>
         <Left>5.85413cm</Left>
         <Height>0.6cm</Height>
-        <Width>3.17261cm</Width>
+        <Width>4.01928cm</Width>
         <ZIndex>6</ZIndex>
         <Style>
           <Border>
@@ -714,7 +734,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=First(Fields!TotalIn.Value, "StockCardDataSet")</Value>
-                <Style />
+                <Style>
+                  <FontSize>9pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -746,7 +769,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=First(Fields!TotalOut.Value, "StockCardDataSet")</Value>
-                <Style />
+                <Style>
+                  <FontSize>9pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -758,7 +784,7 @@
         <Top>2.96361cm</Top>
         <Left>14.94032cm</Left>
         <Height>0.6cm</Height>
-        <Width>2.5cm</Width>
+        <Width>2.50001cm</Width>
         <ZIndex>8</ZIndex>
         <Style>
           <Border>
@@ -774,7 +800,7 @@
     <Height>5.13292cm</Height>
     <Style />
   </Body>
-  <Width>20.57462cm</Width>
+  <Width>20.2042cm</Width>
   <Page>
     <PageHeader>
       <Height>2.80458cm</Height>

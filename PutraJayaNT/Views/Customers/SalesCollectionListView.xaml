@@ -32,7 +32,7 @@
                       ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedCity, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" />
                 <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Salesman:" />
                 <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                      ItemsSource="{Binding Salesmen}" SelectedItem="{Binding SelectedSalesman, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" DisplayMemberPath="Name" />
+                      ItemsSource="{Binding Salesmen}" SelectedItem="{Binding SelectedSalesman, UpdateSourceTrigger=Explicit}" IsEditable="True" DisplayMemberPath="Name" />
                 <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Date:" FontSize="28" />
                 <DatePicker Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                             SelectedDateFormat="Long" SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -44,7 +44,7 @@
         </Border>
         <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding SalesTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransactionID}" />
                 <DataGridTextColumn Header="Customer" Width="1*" IsReadOnly="True" Binding="{Binding Customer.Name}" />
@@ -53,17 +53,22 @@
                 <DataGridTextColumn Header="Remaining" Width="1*" IsReadOnly="True" Binding="{Binding Remaining, StringFormat=N2}" />
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding When, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTemplateColumn Header="Salesman" Width="1*">
+                <DataGridTemplateColumn x:Name="salesmanColumn" Header="Salesman" Width="0.8*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox DisplayMemberPath="Name"
                                       SelectedItem="{Binding Path=CollectionSalesman, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      ItemsSource="{Binding Path=Salesmen}"
-                                      Width="200" IsEditable="True" />
+                                      ItemsSource="{Binding Path=Salesmen}" Width="{Binding ActualWidth, ElementName=salesmanColumn}" IsEditable="True" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridCheckBoxColumn Binding="{Binding IsSelected}" Width="0.5*" />
+                <DataGridCheckBoxColumn Binding="{Binding IsSelected}" Width="0.5*" >
+                    <DataGridCheckBoxColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <CheckBox Margin="0, 0, -17, 0" HorizontalAlignment="Stretch" IsChecked="{Binding Path=DataContext.AllSelected,RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                        </DataTemplate>
+                    </DataGridCheckBoxColumn.HeaderTemplate>
+                </DataGridCheckBoxColumn>
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="2">

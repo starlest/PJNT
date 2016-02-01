@@ -41,6 +41,7 @@
         decimal _newTransactionGrossTotal;
         decimal _netTotal;
         ICommand _newTransactionCommand;
+        ICommand _deleteTransactionCommand;
         ICommand _saveTransactionCommand;
         #endregion
 
@@ -531,6 +532,59 @@
             {
                 return _newTransactionCommand ?? (_newTransactionCommand = new RelayCommand(() =>
                 {
+                    ResetTransaction();
+                }));
+            }
+        }
+
+        public ICommand DeleteTransactionCommand
+        {
+            get
+            {
+                return _deleteTransactionCommand ?? (_deleteTransactionCommand = new RelayCommand(() =>
+                {
+                    if (MessageBox.Show("Confirm deleting this transaction?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
+                    if (!UtilityMethods.GetVerification()) return;
+
+                    using (var context = new ERPContext())
+                    {
+                        var transaction = context.SalesTransactions
+                        .Include("TransactionLines")
+                        .Include("TransactionLines.Item")
+                        .Include("TransactionLines.Warehouse")
+                        .Where(e => e.SalesTransactionID.Equals(_newTransactionID)).FirstOrDefault();
+
+                        // Increase the stock for each line's item
+                        foreach (var line in transaction.TransactionLines.ToList())
+                        {
+                            var stock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID)).FirstOrDefault();
+
+                            if (stock != null)
+                            {
+                                stock.Pieces += line.Quantity;
+                            }
+
+                            else
+                            {
+                                var newStock = new Stock
+                                {
+                                    Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault(),
+                                    Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault(),
+                                    Pieces = line.Quantity
+                                };
+
+                                context.Stocks.Add(newStock);
+                            }
+                        }
+
+                        // Remove the transaction
+                        context.SalesTransactions.Remove(transaction);
+
+                        context.SaveChanges();
+                    }
+
+                    MessageBox.Show("Successfully deleted transaction!", "Success", MessageBoxButton.OK);
                     ResetTransaction();
                 }));
             }
@@ -1719,6 +1773,7 @@
                 if (stock.Pieces == 0) context.Stocks.Remove(stock);
             }
 
+            SetTransactionID();
             Model.SalesTransactionID = _newTransactionID;
             Model.Customer = context.Customers.Where(e => e.ID.Equals(_newTransactionCustomer.Model.ID)).FirstOrDefault();
             Model.Notes = _newTransactionNotes;

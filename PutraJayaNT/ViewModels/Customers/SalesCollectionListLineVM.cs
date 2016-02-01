@@ -16,7 +16,6 @@
 
         public SalesCollectionListLineVM()
         {
-            _isSelected = true;
             _salesmen = new ObservableCollection<Salesman>();
 
             using (var context = new ERPContext())

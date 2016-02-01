@@ -57,7 +57,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.4*" />
-                <ColumnDefinition Width="0.4*" />
+                <ColumnDefinition Width="0.2*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Ending Balance:" FontSize="28" />
             <TextBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"

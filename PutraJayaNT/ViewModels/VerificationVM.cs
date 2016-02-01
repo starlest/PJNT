@@ -49,7 +49,7 @@ namespace PutraJayaNT.ViewModels
 
                         if (user == null)
                         {
-                            MessageBox.Show("Wrong Username or Password", "Login Failed", MessageBoxButton.OK);
+                            MessageBox.Show("Wrong Username or Password", "Verification Failed", MessageBoxButton.OK);
                             return;
                         }
 

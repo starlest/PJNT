@@ -14,6 +14,7 @@ namespace PutraJayaNT.ViewModels.Reports
     public class StockBalancesReportVM : ViewModelBase
     {
         ObservableCollection<ItemVM> _products;
+        ObservableCollection<WarehouseVM> _warehouses;
         ObservableCollection<StockBalanceLineVM> _lines;
 
         ItemVM _selectedProduct;
@@ -32,15 +33,22 @@ namespace PutraJayaNT.ViewModels.Reports
         public StockBalancesReportVM()
         {
             _products = new ObservableCollection<ItemVM>();
+            _warehouses = new ObservableCollection<WarehouseVM>();
             _lines = new ObservableCollection<StockBalanceLineVM>();
             _fromDate = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
             _toDate = DateTime.Now.Date;
             UpdateProducts();
+            UpdateWarehouses();
         }
 
         public ObservableCollection<ItemVM> Products
         {
             get { return _products; }
+        }
+
+        public ObservableCollection<WarehouseVM> Warehouses
+        {
+            get { return _warehouses; }
         }
 
         public ObservableCollection<StockBalanceLineVM> Lines
@@ -162,143 +170,181 @@ namespace PutraJayaNT.ViewModels.Reports
             }
         }
 
+        private void UpdateWarehouses()
+        {
+            using (var context = new ERPContext())
+            {
+                _warehouses.Clear();
+
+                var warehouses = context.Warehouses.ToList();
+
+                foreach (var warehouse in warehouses)
+                    _warehouses.Add(new WarehouseVM { Model = warehouse });
+            }
+        }
+
         private void UpdateLines()
         {
             _lines.Clear();
             var lines = new List<StockBalanceLineVM>();
             using (var context = new ERPContext())
             {
-                var purchaseLines = context.PurchaseTransactionLines
-                    .Include("PurchaseTransaction")
-                    .Include("PurchaseTransaction.Supplier")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.PurchaseTransaction.Date >= _fromDate && e.PurchaseTransaction.Date <= _toDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
-                    .ToList();
-
-                var purchaseReturnLines = context.PurchaseReturnTransactionLines
-                    .Include("PurchaseReturnTransaction")
-                    .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.PurchaseReturnTransaction.Date >= _fromDate && e.PurchaseReturnTransaction.Date <= _toDate)
-                    .ToList();
-
-                var salesLines = context.SalesTransactionLines
-                    .Include("SalesTransaction")
-                    .Include("SalesTransaction.Customer")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
-                    .ToList();
-
-                var salesReturnLines = context.SalesReturnTransactionLines
-                    .Include("SalesReturnTransaction")
-                    .Include("SalesReturnTransaction.SalesTransaction.Customer")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.SalesReturnTransaction.Date >= _fromDate && e.SalesReturnTransaction.Date <= _toDate)
-                    .ToList();
-
-                var stockAdjustmentLines = context.AdjustStockTransactionLines
-                    .Include("AdjustStockTransaction")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.AdjustStockTransaction.Date >= _fromDate && e.AdjustStockTransaction.Date <= _toDate)
-                    .ToList();
-
-                var stockMovementLines = context.MoveStockTransactionLines
-                    .Include("MoveStockTransaction")
-                    .Include("MoveStockTransaction.FromWarehouse")
-                    .Include("MoveStockTransaction.ToWarehouse")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.MoveStockTransaction.Date >= _fromDate && e.MoveStockTransaction.Date <= _toDate)
-                    .ToList();
-
-                foreach (var line in purchaseLines)
+                foreach (var warehouse in _warehouses)
                 {
-                    var vm = new StockBalanceLineVM
+                    if (!warehouse.IsSelected) continue;
+
+                    var purchaseLines = context.PurchaseTransactionLines
+                        .Include("PurchaseTransaction")
+                        .Include("PurchaseTransaction.Supplier")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                        e.PurchaseTransaction.Date >= _fromDate && e.PurchaseTransaction.Date <= _toDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
+                        .ToList();
+
+                    var purchaseReturnLines = context.PurchaseReturnTransactionLines
+                        .Include("PurchaseReturnTransaction")
+                        .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID)
+                        && e.PurchaseReturnTransaction.Date >= _fromDate && e.PurchaseReturnTransaction.Date <= _toDate)
+                        .ToList();
+
+                    var salesLines = context.SalesTransactionLines
+                        .Include("SalesTransaction")
+                        .Include("SalesTransaction.Customer")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) 
+                        && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
+                        .ToList();
+
+                    var salesReturnLines = context.SalesReturnTransactionLines
+                        .Include("SalesReturnTransaction")
+                        .Include("SalesReturnTransaction.SalesTransaction.Customer")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) 
+                        && e.SalesReturnTransaction.Date >= _fromDate && e.SalesReturnTransaction.Date <= _toDate)
+                        .ToList();
+
+                    var stockAdjustmentLines = context.AdjustStockTransactionLines
+                        .Include("AdjustStockTransaction")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) 
+                        && e.AdjustStockTransaction.Date >= _fromDate && e.AdjustStockTransaction.Date <= _toDate)
+                        .ToList();
+
+                    var moveStockTransactions = context.MoveStockTransactions
+                        .Include("FromWarehouse")
+                        .Include("ToWarehouse")
+                        .Include("MoveStockTransactionLines")
+                        .Include("MoveStockTransactionLines.Item")
+                        .Where(e => e.Date >= _fromDate && e.Date <= _toDate 
+                        && (e.FromWarehouse.ID.Equals(warehouse.ID) || e.ToWarehouse.ID.Equals(warehouse.ID)))
+                        .ToList();
+
+                    foreach (var line in purchaseLines)
                     {
-                        Item = line.Item,
-                        Date = line.PurchaseTransaction.Date,
-                        Documentation = line.PurchaseTransaction.PurchaseID,
-                        Description = "Purchase",
-                        CustomerSupplier = line.PurchaseTransaction.Supplier.Name,
-                        Amount = line.Quantity,
-                    };
-                    lines.Add(vm);
-                }
+                        var vm = new StockBalanceLineVM
+                        {
+                            Item = line.Item,
+                            Date = line.PurchaseTransaction.Date,
+                            Documentation = line.PurchaseTransaction.PurchaseID,
+                            Description = "Purchase",
+                            CustomerSupplier = line.PurchaseTransaction.Supplier.Name,
+                            Amount = line.Quantity,
+                        };
+                        lines.Add(vm);
+                    }
 
-                foreach (var line in purchaseReturnLines)
-                {
-                    var vm = new StockBalanceLineVM
+                    foreach (var line in purchaseReturnLines)
                     {
-                        Item = line.Item,
-                        Date = line.PurchaseReturnTransaction.Date,
-                        Documentation = line.PurchaseReturnTransaction.PurchaseReturnTransactionID,
-                        Description = "Purchase Return",
-                        CustomerSupplier = line.PurchaseReturnTransaction.PurchaseTransaction.Supplier.Name,
-                        Amount = -line.Quantity,
-                    };
-                    lines.Add(vm);
-                }
+                        var vm = new StockBalanceLineVM
+                        {
+                            Item = line.Item,
+                            Date = line.PurchaseReturnTransaction.Date,
+                            Documentation = line.PurchaseReturnTransaction.PurchaseReturnTransactionID,
+                            Description = "Purchase Return",
+                            CustomerSupplier = line.PurchaseReturnTransaction.PurchaseTransaction.Supplier.Name,
+                            Amount = -line.Quantity,
+                        };
+                        lines.Add(vm);
+                    }
 
-                foreach (var line in salesLines)
-                {
-                    var vm = new StockBalanceLineVM
+                    foreach (var line in salesLines)
                     {
-                        Item = line.Item,
-                        Date = line.SalesTransaction.When,
-                        Documentation = line.SalesTransaction.SalesTransactionID,
-                        Description = "Sales",
-                        CustomerSupplier = line.SalesTransaction.Customer.Name,
-                        Amount = -line.Quantity,
-                    };
-                    lines.Add(vm);
-                }
+                        var vm = new StockBalanceLineVM
+                        {
+                            Item = line.Item,
+                            Date = line.SalesTransaction.When,
+                            Documentation = line.SalesTransaction.SalesTransactionID,
+                            Description = "Sales",
+                            CustomerSupplier = line.SalesTransaction.Customer.Name,
+                            Amount = -line.Quantity,
+                        };
+                        lines.Add(vm);
+                    }
 
-                foreach (var line in salesReturnLines)
-                {
-                    var vm = new StockBalanceLineVM
+                    foreach (var line in salesReturnLines)
                     {
-                        Item = line.Item,
-                        Date = line.SalesReturnTransaction.Date,
-                        Documentation = line.SalesReturnTransaction.SalesReturnTransactionID,
-                        Description = "Sales Return",
-                        CustomerSupplier = line.SalesReturnTransaction.SalesTransaction.Customer.Name,
-                        Amount = +line.Quantity,
-                    };
-                    lines.Add(vm);
-                }
+                        var vm = new StockBalanceLineVM
+                        {
+                            Item = line.Item,
+                            Date = line.SalesReturnTransaction.Date,
+                            Documentation = line.SalesReturnTransaction.SalesReturnTransactionID,
+                            Description = "Sales Return",
+                            CustomerSupplier = line.SalesReturnTransaction.SalesTransaction.Customer.Name,
+                            Amount = +line.Quantity,
+                        };
+                        lines.Add(vm);
+                    }
 
-                foreach (var line in stockAdjustmentLines)
-                {
-                    var vm = new StockBalanceLineVM
+                    foreach (var line in stockAdjustmentLines)
                     {
-                        Item = line.Item,
-                        Date = line.AdjustStockTransaction.Date,
-                        Documentation = line.AdjustStockTransaction.AdjustStrockTransactionID,
-                        Description = "Stock Adjustment",
-                        CustomerSupplier = "",
-                        Amount = line.Quantity,
-                    };
+                        var vm = new StockBalanceLineVM
+                        {
+                            Item = line.Item,
+                            Date = line.AdjustStockTransaction.Date,
+                            Documentation = line.AdjustStockTransaction.AdjustStrockTransactionID,
+                            Description = "Stock Adjustment",
+                            CustomerSupplier = "",
+                            Amount = line.Quantity,
+                        };
 
-                    lines.Add(vm);
-                }
+                        lines.Add(vm);
+                    }
 
-                foreach (var line in stockMovementLines)
-                {
-                    var vm1 = new StockBalanceLineVM
+                    foreach (var transaction in moveStockTransactions)
                     {
-                        Item = line.Item,
-                        Date = line.MoveStockTransaction.Date,
-                        Documentation = line.MoveStockTransaction.MoveStrockTransactionID,
-                        Description = line.MoveStockTransaction.FromWarehouse.Name + " Stock Movement",
-                        CustomerSupplier = "",
-                        Amount = -line.Quantity,
-                    };
+                        foreach (var line in transaction.MoveStockTransactionLines)
+                        {
+                            if (line.ItemID.Equals(_selectedProduct.ID))
+                            {
+                                if (transaction.FromWarehouse.ID.Equals(warehouse.ID))
+                                {
+                                    var vm = new StockBalanceLineVM
+                                    {
+                                        Item = line.Item,
+                                        Date = line.MoveStockTransaction.Date,
+                                        Documentation = transaction.MoveStrockTransactionID,
+                                        Description = transaction.FromWarehouse.Name + " => " + transaction.ToWarehouse.Name,
+                                        CustomerSupplier = "",
+                                        Amount = -line.Quantity,
+                                    };
 
-                    var vm2 = new StockBalanceLineVM
-                    {
-                        Item = line.Item,
-                        Date = line.MoveStockTransaction.Date,
-                        Documentation = line.MoveStockTransaction.MoveStrockTransactionID,
-                        Description = line.MoveStockTransaction.ToWarehouse.Name + " Stock Movement",
-                        CustomerSupplier = "",
-                        Amount = line.Quantity,
-                    };
+                                    lines.Add(vm);
+                                }
 
-                    lines.Add(vm1);
-                    lines.Add(vm2);
+                                else if (transaction.ToWarehouse.ID.Equals(warehouse.ID))
+                                {
+                                    var vm = new StockBalanceLineVM
+                                    {
+                                        Item = line.Item,
+                                        Date = line.MoveStockTransaction.Date,
+                                        Documentation = transaction.MoveStrockTransactionID,
+                                        Description = transaction.FromWarehouse.Name + " => " + transaction.ToWarehouse.Name,
+                                        CustomerSupplier = "",
+                                        Amount = line.Quantity,
+                                    };
+
+                                    lines.Add(vm);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 var balance = _beginningBalance;
@@ -332,56 +378,59 @@ namespace PutraJayaNT.ViewModels.Reports
         private int GetPeriodBeginningBalance(int year, int month)
         {
             var beginningBalance = 0;
-            using (var context = new ERPContext())
+
+            foreach (var warehouse in _warehouses)
             {
-                var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.Year == year).FirstOrDefault();
-
-                if (stockBalance == null)
+                using (var context = new ERPContext())
                 {
-                    _lines.Clear();
-                    return beginningBalance;
-                }
+                    var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == year).FirstOrDefault();
 
-                switch (month)
-                {
-                    case 1:
-                        beginningBalance = stockBalance.BeginningBalance;
-                        break;
-                    case 2:
-                        beginningBalance = stockBalance.Balance1;
-                        break;
-                    case 3:
-                        beginningBalance = stockBalance.Balance2;
-                        break;
-                    case 4:
-                        beginningBalance = stockBalance.Balance3;
-                        break;
-                    case 5:
-                        beginningBalance = stockBalance.Balance4;
-                        break;
-                    case 6:
-                        beginningBalance = stockBalance.Balance5;
-                        break;
-                    case 7:
-                        beginningBalance = stockBalance.Balance6;
-                        break;
-                    case 8:
-                        beginningBalance = stockBalance.Balance7;
-                        break;
-                    case 9:
-                        beginningBalance = stockBalance.Balance8;
-                        break;
-                    case 10:
-                        beginningBalance = stockBalance.Balance9;
-                        break;
-                    case 11:
-                        beginningBalance = stockBalance.Balance10;
-                        break;
-                    case 12:
-                        beginningBalance = stockBalance.Balance11;
-                        break;
-                    default:
-                        break;
+                    if (stockBalance == null)
+                    {
+                        continue;
+                    }
+
+                    switch (month)
+                    {
+                        case 1:
+                            beginningBalance += stockBalance.BeginningBalance;
+                            break;
+                        case 2:
+                            beginningBalance += stockBalance.Balance1;
+                            break;
+                        case 3:
+                            beginningBalance += stockBalance.Balance2;
+                            break;
+                        case 4:
+                            beginningBalance += stockBalance.Balance3;
+                            break;
+                        case 5:
+                            beginningBalance += stockBalance.Balance4;
+                            break;
+                        case 6:
+                            beginningBalance += stockBalance.Balance5;
+                            break;
+                        case 7:
+                            beginningBalance += stockBalance.Balance6;
+                            break;
+                        case 8:
+                            beginningBalance += stockBalance.Balance7;
+                            break;
+                        case 9:
+                            beginningBalance += stockBalance.Balance8;
+                            break;
+                        case 10:
+                            beginningBalance += stockBalance.Balance9;
+                            break;
+                        case 11:
+                            beginningBalance += stockBalance.Balance10;
+                            break;
+                        case 12:
+                            beginningBalance += stockBalance.Balance11;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
@@ -395,49 +444,57 @@ namespace PutraJayaNT.ViewModels.Reports
 
             using (var context = new ERPContext())
             {
-                var purchaseLines = context.PurchaseTransactionLines
-                    .Include("PurchaseTransaction")
-                    .Include("PurchaseTransaction.Supplier")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date < fromDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
-                    .ToList();
+                foreach (var warehouse in _warehouses)
+                {
+                    var purchaseLines = context.PurchaseTransactionLines
+                        .Include("PurchaseTransaction")
+                        .Include("PurchaseTransaction.Supplier")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                        e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date < fromDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
+                        .ToList();
 
-                var purchaseReturnLines = context.PurchaseReturnTransactionLines
-                    .Include("PurchaseReturnTransaction")
-                    .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.PurchaseReturnTransaction.Date >= monthDate && e.PurchaseReturnTransaction.Date < fromDate)
-                    .ToList();
+                    var purchaseReturnLines = context.PurchaseReturnTransactionLines
+                        .Include("PurchaseReturnTransaction")
+                        .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                        e.PurchaseReturnTransaction.Date >= monthDate && e.PurchaseReturnTransaction.Date < fromDate)
+                        .ToList();
 
-                var salesLines = context.SalesTransactionLines
-                    .Include("SalesTransaction")
-                    .Include("SalesTransaction.Customer")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.SalesTransaction.When >= monthDate && e.SalesTransaction.When < fromDate)
-                    .ToList();
+                    var salesLines = context.SalesTransactionLines
+                        .Include("SalesTransaction")
+                        .Include("SalesTransaction.Customer")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                        e.SalesTransaction.When >= monthDate && e.SalesTransaction.When < fromDate)
+                        .ToList();
 
-                var salesReturnLines = context.SalesReturnTransactionLines
-                    .Include("SalesReturnTransaction")
-                    .Include("SalesReturnTransaction.SalesTransaction.Customer")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.SalesReturnTransaction.Date >= monthDate && e.SalesReturnTransaction.Date < fromDate)
-                    .ToList();
+                    var salesReturnLines = context.SalesReturnTransactionLines
+                        .Include("SalesReturnTransaction")
+                        .Include("SalesReturnTransaction.SalesTransaction.Customer")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                        e.SalesReturnTransaction.Date >= monthDate && e.SalesReturnTransaction.Date < fromDate)
+                        .ToList();
 
-                var stockAdjustmentLines = context.AdjustStockTransactionLines
-                    .Include("AdjustStockTransaction")
-                    .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date < fromDate)
-                    .ToList();
+                    var stockAdjustmentLines = context.AdjustStockTransactionLines
+                        .Include("AdjustStockTransaction")
+                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                        e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date < fromDate)
+                        .ToList();
 
-                foreach (var line in purchaseLines)
-                    balance += line.Quantity;
+                    foreach (var line in purchaseLines)
+                        balance += line.Quantity;
 
-                foreach (var line in purchaseReturnLines)
-                    balance -= line.Quantity;
+                    foreach (var line in purchaseReturnLines)
+                        balance -= line.Quantity;
 
-                foreach (var line in salesLines)
-                    balance -= line.Quantity;
+                    foreach (var line in salesLines)
+                        balance -= line.Quantity;
 
-                foreach (var line in salesReturnLines)
-                    balance += line.Quantity;
+                    foreach (var line in salesReturnLines)
+                        balance += line.Quantity;
 
-                foreach (var line in stockAdjustmentLines)
-                    balance += line.Quantity;
+                    foreach (var line in stockAdjustmentLines)
+                        balance += line.Quantity;
+                }
             }
 
             return balance;

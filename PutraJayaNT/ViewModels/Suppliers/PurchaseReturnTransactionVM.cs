@@ -270,6 +270,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             .Where(e => e.PurchaseID.Equals(Model.PurchaseTransaction.PurchaseID))
                             .FirstOrDefault();
 
+                            SetPurchaseReturnTransactionID();
                             Model.PurchaseTransaction = purchaseTransaction;
                             Model.NetTotal = _purchaseReturnTransactionNetTotal;
                             var user = App.Current.FindResource("CurrentUser") as User;

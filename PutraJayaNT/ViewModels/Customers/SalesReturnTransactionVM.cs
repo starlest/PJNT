@@ -302,6 +302,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             decimal totalCOGS = 0;
                             // Calcculate the total amount of Sales Return, total amount of Cost of Goods Sold
                             // ,record the transaction and increase the item's quantity in the database
+                            SetSalesReturnTransactionID();
                             Model.Date = _salesReturnTransactionDate;
                             Model.NetTotal = _salesReturnTransactionNetTotal;
                             var user = App.Current.FindResource("CurrentUser") as User;

@@ -25,6 +25,8 @@
         Customer _selectedCustomer;
         DateTime _date;
         decimal _total;
+        bool _allSelected;
+
         ICommand _printCommand;
 
         public SalesCollectionListVM()
@@ -120,6 +122,27 @@
             set { SetProperty(ref _total, value, "Total"); }
         }
 
+        public bool AllSelected
+        {
+            get { return _allSelected; }
+            set
+            {
+                SetProperty(ref _allSelected, value, "AllSelected");
+
+                if (_allSelected)
+                {
+                    foreach (var line in _salesTransactions)
+                        line.IsSelected = true;
+                }
+                
+                else
+                {
+                    foreach (var line in _salesTransactions)
+                        line.IsSelected = false;
+                }
+            }
+        }
+
         public ICommand PrintCommand
         {
             get
@@ -194,7 +217,8 @@
                         .Include("Customer.Group")
                         .Include("CollectionSalesman")
                         .Where(e => e.Paid < e.Total && e.DueDate <= _date)
-                        .OrderBy(e => e.DueDate)
+                        .OrderBy(e => e.CollectionSalesman.Name)
+                        .ThenBy(e => e.DueDate)
                         .ThenBy(e => e.Customer.Name)
                         .ToList();
                 }
@@ -207,7 +231,8 @@
                         .Include("CollectionSalesman")
                         .Where(e => e.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
                         && e.Paid < e.Total && e.DueDate <= _date)
-                        .OrderBy(e => e.DueDate)
+                        .OrderBy(e => e.CollectionSalesman.Name)
+                        .ThenBy(e => e.DueDate)
                         .ThenBy(e => e.Customer.Name)
                         .ToList();
                 }
@@ -219,7 +244,8 @@
                         .Include("Customer.Group")
                         .Include("CollectionSalesman")
                         .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid < e.Total && e.DueDate <= _date)
-                        .OrderBy(e => e.DueDate)
+                        .OrderBy(e => e.CollectionSalesman.Name)
+                        .ThenBy(e => e.DueDate)
                         .ThenBy(e => e.Customer.Name)
                         .ToList();
                 }
@@ -232,8 +258,8 @@
                         .Include("CollectionSalesman")
                         .Where(e => e.Customer.City.Equals(_selectedCity) && e.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
                         && e.Paid < e.Total && e.DueDate <= _date)
-                        .OrderBy(e => e.DueDate)
-                        .ThenBy(e => e.Customer.Name)
+                        .OrderBy(e => e.CollectionSalesman.Name)
+                        .ThenBy(e => e.DueDate)
                         .ToList();
                 }
 

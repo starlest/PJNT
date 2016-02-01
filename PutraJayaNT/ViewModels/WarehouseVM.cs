@@ -5,6 +5,8 @@ namespace PutraJayaNT.ViewModels
 {
     public class WarehouseVM : ViewModelBase<Warehouse>
     {
+        bool _isSelected;
+
         public int ID
         {
             get { return Model.ID; }
@@ -26,6 +28,12 @@ namespace PutraJayaNT.ViewModels
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { SetProperty(ref _isSelected, value, "IsSelected"); }
         }
     }
 }

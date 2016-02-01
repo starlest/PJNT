@@ -125,7 +125,7 @@ namespace PutraJayaNT.ViewModels.Customers
             using (var context = new ERPContext())
             {
                 var banks = context.Ledger_Accounts
-                    .Where(e => e.Name.Contains("Bank"))
+                    .Where(e => e.Name.Contains("Bank") && !e.Name.Contains("Expense"))
                     .ToList();
 
                 foreach (var bank in banks)

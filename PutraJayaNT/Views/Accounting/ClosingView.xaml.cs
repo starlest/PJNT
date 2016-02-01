@@ -29,11 +29,11 @@ namespace PutraJayaNT.Views.Accounting
             // Verification
             if (!UtilityMethods.GetVerification()) return;
 
-            if (DateTime.Now.AddDays(1).Day != 1 && DateTime.Now.Hour < 5)
-            {
-                MessageBox.Show("Unable to close books at this time.", "Failed to Close Books", MessageBoxButton.OK);
-                return;
-            }
+            //if (DateTime.Now.AddDays(1).Day != 1 && DateTime.Now.Hour < 5)
+            //{
+            //    MessageBox.Show("Unable to close books at this time.", "Failed to Close Books", MessageBoxButton.OK);
+            //    return;
+            //}
 
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;

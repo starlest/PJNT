@@ -46,7 +46,7 @@
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
                 <DataGridTextColumn Header="Paid" Width="1*" IsReadOnly="True" Binding="{Binding Paid, StringFormat=N2}" />
                 <DataGridTextColumn Header="Remaining" Width="1*" IsReadOnly="True" Binding="{Binding Remaining, StringFormat=N2}" />
-                <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
             </DataGrid.Columns>
         </DataGrid>
