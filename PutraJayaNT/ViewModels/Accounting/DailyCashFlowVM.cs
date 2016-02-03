@@ -1,4 +1,5 @@
 ﻿using MVVMFramework;
+using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Reports.Windows;
 using PutraJayaNT.Utilities;
 using System;
@@ -84,18 +85,29 @@ namespace PutraJayaNT.ViewModels.Accounting
                     e.LedgerTransaction.Date.Equals(_date))
                     .ToList();
 
-
+                var account = new LedgerAccount { ID = -1, Name = "Sales Receipt", Class = "Asset" };
+                var transaction = new LedgerTransaction { ID = -1, Date = _date, Description = "Sales Receipt", Documentation = "Sales Receipt" };
+                var srLine = new LedgerTransactionLine { LedgerTransaction = transaction, LedgerAccount = account, Seq = "Debit" };
                 foreach (var line in lines)
                 {
                     var lineVM = new LedgerTransactionLineVM { Model = line };
                     foreach (var l in lineVM.OpposingLines)
                     {
-                        if (line.Seq == "Credit") l.Amount = -l.Amount;
+                        if (!l.Description.Equals("Sales Transaction Receipt"))
+                        {
+                            if (line.Seq == "Credit") l.Amount = -l.Amount;
+                            _lines.Add(new LedgerTransactionLineVM { Model = l.Model });
+                        }
+
+                        else
+                        {
+                            srLine.Amount += l.Amount;
+                        }
                         _endingBalance += l.Amount;
                         l.Balance = _endingBalance;
-                        _lines.Add(new LedgerTransactionLineVM { Model = l.Model });
                     }
                 }
+                _lines.Add(new LedgerTransactionLineVM { Model = srLine, Balance = _endingBalance });
             }
 
             OnPropertyChanged("EndingBalance");

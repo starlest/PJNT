@@ -18,7 +18,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             using (var context = new ERPContext())
             {
                 _periodYear = context.Ledger_General.FirstOrDefault().PeriodYear;
-                _period = context.Ledger_General.FirstOrDefault().Period;
+                _period = 1;
             }
         }
 

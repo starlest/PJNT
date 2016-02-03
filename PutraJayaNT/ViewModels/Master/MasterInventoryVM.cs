@@ -1,6 +1,7 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
@@ -45,12 +46,22 @@ namespace PutraJayaNT.ViewModels.Master
         ObservableCollection<Supplier> _editAddSuppliers;
         Supplier _editAddSelectedSupplier;
         ICommand _editAddSupplierCommand;
+        ICommand _editDeleteSupplierCommand;
         ICommand _editAddSupplierConfirmCommand;
         ICommand _editAddSupplierCancelCommand;
         Visibility _editAddSupplierWindowVisibility;
         bool _isEditAddSupplierWindowNotOpen;
 
-        ICommand _editDeleteSupplierCommand;
+        Visibility _editAddAlternativeSalesPriceWindowVisibility;
+        ObservableCollection<AlternativeSalesPrice> _editAlternativeSalesPrices;
+        AlternativeSalesPrice _editSelectedAlternativeSalesPrice;
+        string _editAddAlternativeSalesPriceName;
+        decimal? _editAddAlternativeSalesPriceSalesPrice;
+        ICommand _editAddAlternativeSalesPriceCommand;
+        ICommand _editDeleteAlternativeSalesPriceCommand;
+        ICommand _editAddAlternativeSalesPriceCancelCommand;
+        ICommand _editAddAlternativeSalesPriceConfirmCommand;
+
         ICommand _cancelEditCommand;
         ICommand _confirmEditCommand;
 
@@ -67,7 +78,7 @@ namespace PutraJayaNT.ViewModels.Master
 
         bool _isEditWindowNotOpen;
         Visibility _editWindowVisibility;
-       
+
         public MasterInventoryVM()
         {
             _items = new ObservableCollection<ItemVM>();
@@ -83,9 +94,13 @@ namespace PutraJayaNT.ViewModels.Master
             _editWindowVisibility = Visibility.Collapsed;
             _isEditWindowNotOpen = true;
 
+            _editAddAlternativeSalesPriceWindowVisibility = Visibility.Collapsed;
+
             _editAddSuppliers = new ObservableCollection<Supplier>();
             _editAddSupplierWindowVisibility = Visibility.Collapsed;
             _isEditAddSupplierWindowNotOpen = true;
+
+            _editAlternativeSalesPrices = new ObservableCollection<AlternativeSalesPrice>();
 
             _newEntryPiecesPerUnit = 1;
         }
@@ -350,7 +365,7 @@ namespace PutraJayaNT.ViewModels.Master
                             ((IObjectContextAdapter)context).ObjectContext
                             .ObjectStateManager.ChangeObjectState(_newEntryCategory, EntityState.Detached);
                         }
-                    
+
                         catch (Exception e)
                         {
                             MessageBox.Show(string.Format("There was an error while trying to add the product. {0}", e), "Error Encountered", MessageBoxButton.OK);
@@ -392,6 +407,7 @@ namespace PutraJayaNT.ViewModels.Master
                     EditSelectedSupplier = _selectedLine.SelectedSupplier;
                     EditWindowVisibility = Visibility.Visible;
                     IsEditWindowNotOpen = false;
+                    UpdateEditAlternativeSalesPrices();
                 }));
             }
         }
@@ -467,25 +483,6 @@ namespace PutraJayaNT.ViewModels.Master
             set { SetProperty(ref _editAddSelectedSupplier, value, () => EditAddSelectedSupplier); }
         }
 
-        public ICommand EditAddSupplierCommand
-        {
-            get
-            {
-                return _editAddSupplierCommand ?? (_editAddSupplierCommand = new RelayCommand(() =>
-                {
-                    _editAddSuppliers.Clear();
-                    foreach (var supplier in _suppliers)
-                    {
-                        if (!_editSuppliers.Contains(supplier))
-                            _editAddSuppliers.Add(supplier);
-                    }
-                    EditAddSelectedSupplier = _editAddSuppliers.FirstOrDefault();
-                    EditAddSupplierWindowVisibility = Visibility.Visible;
-                    IsEditAddSupplierWindowNotOpen = false;
-                }));
-            }
-        }
-
         public Visibility EditAddSupplierWindowVisibility
         {
             get { return _editAddSupplierWindowVisibility; }
@@ -524,6 +521,104 @@ namespace PutraJayaNT.ViewModels.Master
         }
         #endregion
 
+        public ObservableCollection<AlternativeSalesPrice> EditAlternativeSalesPrices
+        {
+            get { return _editAlternativeSalesPrices; }
+        }
+
+        public AlternativeSalesPrice EditSelectedAlternativeSalesPrice
+        {
+            get { return _editSelectedAlternativeSalesPrice; }
+            set { SetProperty(ref _editSelectedAlternativeSalesPrice, value, "EditSelectedAlternativeSalesPrice"); }
+        }
+
+        #region Edit Add Alternative Sales Price Properties
+        public Visibility EditAddAlternativeSalesPriceWindowVisibility
+        {
+            get { return _editAddAlternativeSalesPriceWindowVisibility; }
+            set { SetProperty(ref _editAddAlternativeSalesPriceWindowVisibility, value, "EditAddAlternativeSalesPriceWindowVisibility"); }
+        }
+
+        public string EditAddAlternativeSalesPriceName
+        {
+            get { return _editAddAlternativeSalesPriceName; }
+            set { SetProperty(ref _editAddAlternativeSalesPriceName, value, "EditAddAlternativeSalesPriceName"); }
+        }
+
+        public decimal? EditAddAlternativeSalesPriceSalesPrice
+        {
+            get { return _editAddAlternativeSalesPriceSalesPrice; }
+            set { SetProperty(ref _editAddAlternativeSalesPriceSalesPrice, value, "EditAddAlternativeSalesPriceSalesPrice"); }
+        }
+
+        public ICommand EditAddAlternativeSalesPriceConfirmCommand
+        {
+            get
+            {
+                return _editAddAlternativeSalesPriceConfirmCommand ?? (_editAddAlternativeSalesPriceConfirmCommand = new RelayCommand(() =>
+                {
+                    if (_editAddAlternativeSalesPriceName == null || _editAddAlternativeSalesPriceSalesPrice == null)
+                    {
+                        MessageBox.Show("Please enter all fields.", "Missing Field(s)", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    if (_editAddAlternativeSalesPriceSalesPrice < 0)
+                    {
+                        MessageBox.Show("Please enter a valid price.", "Invalid Value", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    using (var context = new ERPContext())
+                    {
+                        var newAlternativeSalesPrice = new AlternativeSalesPrice
+                        {
+                            Name = _editAddAlternativeSalesPriceName,
+                            Item = context.Inventory.Where(e => e.ItemID.Equals(_selectedLine.ID)).FirstOrDefault(),
+                            SalesPrice = (decimal) _editAddAlternativeSalesPriceSalesPrice
+                        };
+
+                        _editAlternativeSalesPrices.Add(newAlternativeSalesPrice);
+                    }
+
+                    EditAddAlternativeSalesPriceName = null;
+                    EditAddAlternativeSalesPriceSalesPrice = null;
+                    EditAddAlternativeSalesPriceWindowVisibility = Visibility.Collapsed;
+                }));
+            }
+        }
+
+        public ICommand EditAddAlternativeSalesPriceCancelCommand
+        {
+            get
+            {
+                return _editAddAlternativeSalesPriceCancelCommand ?? (_editAddAlternativeSalesPriceCancelCommand = new RelayCommand(() =>
+                {
+                    EditAddAlternativeSalesPriceWindowVisibility = Visibility.Collapsed;
+                }));
+            }
+        }
+        #endregion
+
+        public ICommand EditAddSupplierCommand
+        {
+            get
+            {
+                return _editAddSupplierCommand ?? (_editAddSupplierCommand = new RelayCommand(() =>
+                {
+                    _editAddSuppliers.Clear();
+                    foreach (var supplier in _suppliers)
+                    {
+                        if (!_editSuppliers.Contains(supplier))
+                            _editAddSuppliers.Add(supplier);
+                    }
+                    EditAddSelectedSupplier = _editAddSuppliers.FirstOrDefault();
+                    EditAddSupplierWindowVisibility = Visibility.Visible;
+                    IsEditAddSupplierWindowNotOpen = false;
+                }));
+            }
+        }
+
         public ICommand EditDeleteSupplierCommand
         {
             get
@@ -531,6 +626,34 @@ namespace PutraJayaNT.ViewModels.Master
                 return _editDeleteSupplierCommand ?? (_editDeleteSupplierCommand = new RelayCommand(() =>
                 {
                     _editSuppliers.Remove(_editSelectedSupplier);
+                }));
+            }
+        }
+
+        public ICommand EditAddAlternativeSalesPriceCommand
+        {
+            get
+            {
+                return _editAddAlternativeSalesPriceCommand ?? (_editAddAlternativeSalesPriceCommand = new RelayCommand(() =>
+                {
+                    EditAddAlternativeSalesPriceWindowVisibility = Visibility.Visible;
+                }));
+            }
+        }
+
+        public ICommand EditDeleteAlternativeSalesPriceCommand
+        {
+            get
+            {
+                return _editDeleteAlternativeSalesPriceCommand ?? (_editDeleteAlternativeSalesPriceCommand = new RelayCommand(() =>
+                {
+                    if (_editSelectedAlternativeSalesPrice == null)
+                    {
+                        MessageBox.Show("Please select an alternative sales price first.", "Invalid Command", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    EditAlternativeSalesPrices.Remove(_editSelectedAlternativeSalesPrice);
                 }));
             }
         }
@@ -548,6 +671,7 @@ namespace PutraJayaNT.ViewModels.Master
                         {
                             var item = context.Inventory
                             .Where(e => e.ItemID.Equals(_selectedLine.ID))
+                            .Include("AlternativeSalesPrices")
                             .Include("Category")
                             .Include("Suppliers")
                             .FirstOrDefault<Item>();
@@ -569,6 +693,14 @@ namespace PutraJayaNT.ViewModels.Master
                             {
                                 var s = context.Suppliers.Where(e => e.ID == supplier.ID).FirstOrDefault();
                                 item.Suppliers.Add(s);
+                            }
+
+                            // Adjust the item's alt sales prices to the edited list
+                            item.AlternativeSalesPrices.ToList().ForEach(e => item.AlternativeSalesPrices.Remove(e));
+                            foreach (var altSalesPrice in _editAlternativeSalesPrices)
+                            {
+                                altSalesPrice.Item = item;
+                                context.AlternativeSalesPrices.Add(altSalesPrice);
                             }
 
                             context.SaveChanges();
@@ -620,6 +752,7 @@ namespace PutraJayaNT.ViewModels.Master
         }
         #endregion
 
+        #region Helper Methods
         public ICommand ActivateCommand
         {
             get
@@ -632,7 +765,7 @@ namespace PutraJayaNT.ViewModels.Master
                         using (var context = new ERPContext())
                         {
                             var item = context.Inventory
-                            .Where(e => e.ItemID.Equals( _selectedLine.ID))
+                            .Where(e => e.ItemID.Equals(_selectedLine.ID))
                             .FirstOrDefault<Item>();
 
                             if (_selectedLine.Active == true)
@@ -686,6 +819,7 @@ namespace PutraJayaNT.ViewModels.Master
             using (var context = new ERPContext())
             {
                 var items = context.Inventory
+                    .Include("AlternativeSalesPrices")
                     .Include("Category")
                     .Include("Suppliers")
                     .OrderBy(e => e.Category.Name)
@@ -717,6 +851,19 @@ namespace PutraJayaNT.ViewModels.Master
             }
         }
 
+        private void UpdateEditAlternativeSalesPrices()
+        {
+            _editAlternativeSalesPrices.Clear();
+
+            using (var context = new ERPContext())
+            {
+                var alternativeSalesPrices = context.AlternativeSalesPrices.Include("Item").Where(e => e.ItemID.Equals(_selectedLine.ID)).ToList();
+
+                foreach (var alt in alternativeSalesPrices)
+                    _editAlternativeSalesPrices.Add(alt);
+            }
+        }
+
         private void ResetEntryFields()
         {
             NewEntryID = null;
@@ -728,5 +875,6 @@ namespace PutraJayaNT.ViewModels.Master
             NewEntrySalesPrice = null;
             NewEntryPurchasePrice = null;
         }
+        #endregion
     }
 }

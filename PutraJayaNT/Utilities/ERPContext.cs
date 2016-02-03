@@ -36,6 +36,7 @@ namespace PutraJayaNT.Utilities
         public virtual DbSet<SalesTransaction> SalesTransactions { get; set; }
         public virtual DbSet<SalesReturnTransaction> SalesReturnTransactions { get; set; }
         public virtual DbSet<SalesReturnTransactionLine> SalesReturnTransactionLines { get; set; }
+        public virtual DbSet<AlternativeSalesPrice> AlternativeSalesPrices { get; set; }
 
         public virtual DbSet<PurchaseReturnTransaction> PurchaseReturnTransactions { get; set; }
         public virtual DbSet<PurchaseReturnTransactionLine> PurchaseReturnTransactionLines { get; set; }

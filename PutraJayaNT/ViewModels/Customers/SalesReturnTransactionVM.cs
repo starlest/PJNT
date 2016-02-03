@@ -650,7 +650,6 @@ namespace PutraJayaNT.ViewModels.Customers
 
             return localReport;
         }
-
         #endregion
     }
 }

@@ -145,7 +145,7 @@ namespace PutraJayaNT.ViewModels.Test
                     {
                         var context = new ERPContext();
 
-                        var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().BeginningBalance +
+                        var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance1 +
                         context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit - 
                         context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Credit; // changge beginningbalaance
 
@@ -386,7 +386,7 @@ namespace PutraJayaNT.ViewModels.Test
                         {
                             decimal totalDebit = 0;
                             decimal totalCredit = 0;
-                            foreach (var line in a.TransactionLines)
+                            foreach (var line in a.TransactionLines.Where(e => e.LedgerTransaction.Date.Month == 2))
                             {
                                 count++;
                                 if (line.Amount < 0) MessageBox.Show(string.Format("Check {0} - {1}", line.LedgerTransactionID, line.Seq), "Error", MessageBoxButton.OK);
@@ -422,7 +422,7 @@ namespace PutraJayaNT.ViewModels.Test
                             totalC += l.Credit;
                         }
 
-                        if (accounts.Count == ledgerGenerals.Count)
+                        if (accounts.Count != ledgerGenerals.Count)
                         {
                             MessageBox.Show(string.Format("Th {0}/{1}", accounts.Count, ledgerGenerals.Count), "Error", MessageBoxButton.OK);
                         }
@@ -443,54 +443,58 @@ namespace PutraJayaNT.ViewModels.Test
             var beginningBalance = 0;
             using (var context = new ERPContext())
             {
-                var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.Year == year).FirstOrDefault();
+                var stockBalances = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.Year == year).ToList();
 
-                if (stockBalance == null)
+                if (stockBalances.Count == 0)
                 {
                     return beginningBalance;
                 }
 
-                switch (month)
+                foreach (var stockBalance in stockBalances)
                 {
-                    case 1:
-                        beginningBalance = stockBalance.BeginningBalance;
-                        break;
-                    case 2:
-                        beginningBalance = stockBalance.Balance1;
-                        break;
-                    case 3:
-                        beginningBalance = stockBalance.Balance2;
-                        break;
-                    case 4:
-                        beginningBalance = stockBalance.Balance3;
-                        break;
-                    case 5:
-                        beginningBalance = stockBalance.Balance4;
-                        break;
-                    case 6:
-                        beginningBalance = stockBalance.Balance5;
-                        break;
-                    case 7:
-                        beginningBalance = stockBalance.Balance6;
-                        break;
-                    case 8:
-                        beginningBalance = stockBalance.Balance7;
-                        break;
-                    case 9:
-                        beginningBalance = stockBalance.Balance8;
-                        break;
-                    case 10:
-                        beginningBalance = stockBalance.Balance9;
-                        break;
-                    case 11:
-                        beginningBalance = stockBalance.Balance10;
-                        break;
-                    case 12:
-                        beginningBalance = stockBalance.Balance11;
-                        break;
-                    default:
-                        break;
+                    switch (month)
+                    {
+                        case 1:
+                            beginningBalance += stockBalance.BeginningBalance;
+                            break;
+                        case 2:
+                            beginningBalance += stockBalance.Balance1;
+                            break;
+                        case 3:
+                            beginningBalance += stockBalance.Balance2;
+                            break;
+                        case 4:
+                            beginningBalance += stockBalance.Balance3;
+                            break;
+                        case 5:
+                            beginningBalance += stockBalance.Balance4;
+                            break;
+                        case 6:
+                            beginningBalance += stockBalance.Balance5;
+                            break;
+                        case 7:
+                            beginningBalance += stockBalance.Balance6;
+                            break;
+                        case 8:
+                            beginningBalance += stockBalance.Balance7;
+                            break;
+                        case 9:
+                            beginningBalance += stockBalance.Balance8;
+                            break;
+                        case 10:
+                            beginningBalance += stockBalance.Balance9;
+                            break;
+                        case 11:
+                            beginningBalance += stockBalance.Balance10;
+                            break;
+                        case 12:
+                            beginningBalance += stockBalance.Balance11;
+                            break;
+                        default:
+                            break;
+                    }
                 }
+
             }
 
             return beginningBalance;

@@ -97,8 +97,13 @@
     <Compile Include="Migrations\201601300731507_Update1.Designer.cs">
       <DependentUpon>201601300731507_Update1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602010442394_Update2.cs" />
+    <Compile Include="Migrations\201602010442394_Update2.Designer.cs">
+      <DependentUpon>201602010442394_Update2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
+    <Compile Include="Models\Sales\AlternativeSalesPrice.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransactionLine.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransaction.cs" />
     <Compile Include="Models\StockCorrection\MoveStockTransaction.cs" />
@@ -550,6 +555,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201601300731507_Update1.resx">
       <DependentUpon>201601300731507_Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602010442394_Update2.resx">
+      <DependentUpon>201602010442394_Update2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\InventoryReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

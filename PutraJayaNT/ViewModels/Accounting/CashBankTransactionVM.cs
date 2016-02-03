@@ -250,7 +250,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var accounts = context.Ledger_Accounts
                     .Where(e => !e.Name.Equals("Cost of Goods Sold") && !e.Name.Equals("- Accounts Payable")
                     && !e.Name.Equals("Inventory") && !e.Class.Equals("Equity")
-                    && !e.Notes.Equals("Operating Expense") && !e.Name.Contains("Revenue"))
+                    && !e.Name.Contains("Revenue"))
                     .ToList();
 
                 foreach (var account in accounts)
@@ -278,7 +278,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             using (var context = new ERPContext())
             {
                 var banks = context.Ledger_Accounts
-                    .Where(e => e.Name.Contains("Bank") || e.Name.Equals("Cash"))
+                    .Where(e => e.Name.Contains("Bank") && !e.Name.Contains("Expense") || e.Name.Equals("Cash"))
                     .Include("TransactionLines");
 
                 foreach (var bank in banks)

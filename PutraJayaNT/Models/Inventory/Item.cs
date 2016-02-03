@@ -54,5 +54,7 @@ namespace PutraJayaNT.Models.Inventory
         public virtual ICollection<SalesTransactionLine> SalesTransactionLines { get; set; }
 
         public virtual ICollection<SalesReturnTransactionLine> SalesReturnTransactionLines { get; set; }
+
+        public virtual ObservableCollection<AlternativeSalesPrice> AlternativeSalesPrices { get; set; }
     }
 }

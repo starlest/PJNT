@@ -18,6 +18,15 @@ namespace PutraJayaNT.Utilities
                     MessageBox.Show("Wrong period.", "Invalid Transaction", MessageBoxButton.OK);
                     return false;
                 }
+
+                if ((date.Date.Day != DateTime.Now.Date.Day))
+                {
+                    if (!(date.AddDays(2).Day <= DateTime.Now.Day && date.AddDays(2).Day >= date.Day))
+                    {
+                        MessageBox.Show("Wrong period.", "Invalid Transaction", MessageBoxButton.OK);
+                        return false;
+                    }
+                }
             }
 
             transaction.Documentation = documentation;

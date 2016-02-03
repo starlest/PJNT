@@ -57,6 +57,8 @@
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
+                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseTransaction.Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding PurchaseTransaction.DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="2">

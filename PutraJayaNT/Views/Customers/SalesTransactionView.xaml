@@ -140,8 +140,17 @@
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" Text="{Binding RemainingStock}" Foreground="Red" />
                     </Grid>
                     <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Price:" />
-                    <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
+                    <Grid Grid.Row="1" Grid.Column="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
+                                  ItemsSource="{Binding NewEntryAlternativeSalesPrices, Mode=OneWay}" SelectedItem="{Binding NewEntrySelectedAlternativeSalesPrice}" 
+                                  DisplayMemberPath="Name" IsEditable="True" />
+                        <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
                      Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
+                    </Grid>
                     <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Discount:" />
                     <Grid Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>

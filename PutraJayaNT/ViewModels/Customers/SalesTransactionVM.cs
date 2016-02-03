@@ -49,6 +49,8 @@
         string _remainingStock;
         ItemVM _newEntryProduct;
         Warehouse _newEntryWarehouse;
+        ObservableCollection<AlternativeSalesPrice> _newEntryAlternativeSalesPrices;
+        AlternativeSalesPrice _newEntrySelectedAlternativeSalesPrice;
         decimal? _newEntryPrice;
         decimal? _newEntryDiscountPercent;
         decimal? _newEntryDiscount;
@@ -101,6 +103,7 @@
             _deletedLines = new ObservableCollection<SalesTransactionLineVM>();
             _warehouses = new ObservableCollection<Warehouse>();
             _salesmans = new ObservableCollection<Salesman>();
+            _newEntryAlternativeSalesPrices = new ObservableCollection<AlternativeSalesPrice>();
 
             Model = new SalesTransaction();
             _newTransactionDate = DateTime.Now.Date;
@@ -681,6 +684,8 @@
                 NewEntryPiecesPerUnit = _newEntryProduct.PiecesPerUnit;
                 var remainingStock = GetAvailableQuantity(_newEntryProduct.Model, _newEntryWarehouse);
                 RemainingStock = string.Format("{0}/{1}", remainingStock / _newEntryProduct.PiecesPerUnit, remainingStock % _newEntryProduct.PiecesPerUnit);
+
+                UpdateNewEntryAlternativeSalesPrices();
             }
         }
 
@@ -698,6 +703,24 @@
                 }
 
                 UpdateProducts();
+            }
+        }
+
+        public ObservableCollection<AlternativeSalesPrice> NewEntryAlternativeSalesPrices
+        {
+            get { return _newEntryAlternativeSalesPrices; }
+        }
+
+        public AlternativeSalesPrice NewEntrySelectedAlternativeSalesPrice
+        {
+            get { return _newEntrySelectedAlternativeSalesPrice; }
+            set
+            {
+                SetProperty(ref _newEntrySelectedAlternativeSalesPrice, value, "NewEntrySelectedAlternativeSalesPrice");
+
+                if (_newEntrySelectedAlternativeSalesPrice == null) return;
+
+                NewEntryPrice = _newEntrySelectedAlternativeSalesPrice.SalesPrice;
             }
         }
 
@@ -1254,6 +1277,19 @@
                     _salesmans.Add(salesman);
             }
         }
+
+        private void UpdateNewEntryAlternativeSalesPrices()
+        {
+            _newEntryAlternativeSalesPrices.Clear();
+
+            using (var context = new ERPContext())
+            {
+                var alternativeSalesPrices = context.AlternativeSalesPrices.Where(e => e.ItemID.Equals(_newEntryProduct.ID)).ToList();
+
+                foreach (var alt in alternativeSalesPrices)
+                    _newEntryAlternativeSalesPrices.Add(alt);
+            }
+        }
         #endregion
 
         private void SetTransactionID()
@@ -1292,6 +1328,8 @@
             RemainingStock = null;
             NewEntrySalesman = null;
             RemainingStock = null;
+            NewEntrySelectedAlternativeSalesPrice = null;
+            _newEntryAlternativeSalesPrices.Clear();
         }
 
         private void ResetTransaction()

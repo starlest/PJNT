@@ -251,6 +251,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             OnPropertyChanged("AsOfDate");
             OnPropertyChanged("CashAndCashEquivalents");
             OnPropertyChanged("Inventory");
+            OnPropertyChanged("AccountsReceivable");
             OnPropertyChanged("TotalCurrentAssets");
             OnPropertyChanged("TotalAssets");
             OnPropertyChanged("Capital");

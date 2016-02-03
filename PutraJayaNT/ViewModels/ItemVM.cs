@@ -1,6 +1,7 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Sales;
 using System.Collections.ObjectModel;
 
 namespace PutraJayaNT.ViewModels
@@ -84,44 +85,9 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
-        public int Quantity
-        {
-            get
-            {
-                if (_quantity == 0)
-                {
-                    foreach (var stock in Model.Stocks)
-                        _quantity += stock.Pieces;
-                }
-                return _quantity;
-            }
-            set
-            {
-                _quantity = value;
-                OnPropertyChanged("Quantity");
-                OnPropertyChanged("Units");
-                OnPropertyChanged("Pieces");
-            }
-        }
-
         public string Unit
         {
             get { return Model.UnitName + "/" + Model.PiecesPerUnit; }
-        }
-
-        public int Units
-        {
-            get { return Quantity / Model.PiecesPerUnit; }
-        }
-
-        public int Pieces
-        {
-            get { return Quantity % Model.PiecesPerUnit; }
-        }
-
-        public decimal InventoryValue
-        {
-            get { return Quantity * Model.PurchasePrice; }
         }
 
         public decimal SalesExpense
@@ -152,6 +118,11 @@ namespace PutraJayaNT.ViewModels
                 Model.Stocks = value;
                 OnPropertyChanged("Stocks");
             }
+        }
+
+        public ObservableCollection<AlternativeSalesPrice> AlternativeSalesPrices
+        {
+            get { return Model.AlternativeSalesPrices; }
         }
 
         public bool Active
