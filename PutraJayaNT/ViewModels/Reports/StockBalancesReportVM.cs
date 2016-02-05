@@ -197,7 +197,8 @@ namespace PutraJayaNT.ViewModels.Reports
                         .Include("PurchaseTransaction")
                         .Include("PurchaseTransaction.Supplier")
                         .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
-                        e.PurchaseTransaction.Date >= _fromDate && e.PurchaseTransaction.Date <= _toDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
+                        e.PurchaseTransaction.Date >= _fromDate && e.PurchaseTransaction.Date <= _toDate &&
+                         !e.PurchaseTransactionID.Substring(0, 2).Equals("SA") && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
                         .ToList();
 
                     var purchaseReturnLines = context.PurchaseReturnTransactionLines
@@ -379,57 +380,61 @@ namespace PutraJayaNT.ViewModels.Reports
         {
             var beginningBalance = 0;
 
-            foreach (var warehouse in _warehouses)
+            using (var context = new ERPContext())
             {
-                using (var context = new ERPContext())
+                foreach (var warehouse in _warehouses)
                 {
-                    var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == year).FirstOrDefault();
-
-                    if (stockBalance == null)
+                    if (warehouse.IsSelected)
                     {
-                        continue;
-                    }
 
-                    switch (month)
-                    {
-                        case 1:
-                            beginningBalance += stockBalance.BeginningBalance;
-                            break;
-                        case 2:
-                            beginningBalance += stockBalance.Balance1;
-                            break;
-                        case 3:
-                            beginningBalance += stockBalance.Balance2;
-                            break;
-                        case 4:
-                            beginningBalance += stockBalance.Balance3;
-                            break;
-                        case 5:
-                            beginningBalance += stockBalance.Balance4;
-                            break;
-                        case 6:
-                            beginningBalance += stockBalance.Balance5;
-                            break;
-                        case 7:
-                            beginningBalance += stockBalance.Balance6;
-                            break;
-                        case 8:
-                            beginningBalance += stockBalance.Balance7;
-                            break;
-                        case 9:
-                            beginningBalance += stockBalance.Balance8;
-                            break;
-                        case 10:
-                            beginningBalance += stockBalance.Balance9;
-                            break;
-                        case 11:
-                            beginningBalance += stockBalance.Balance10;
-                            break;
-                        case 12:
-                            beginningBalance += stockBalance.Balance11;
-                            break;
-                        default:
-                            break;
+                        var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == year).FirstOrDefault();
+
+                        if (stockBalance == null)
+                        {
+                            continue;
+                        }
+
+                        switch (month)
+                        {
+                            case 1:
+                                beginningBalance += stockBalance.BeginningBalance;
+                                break;
+                            case 2:
+                                beginningBalance += stockBalance.Balance1;
+                                break;
+                            case 3:
+                                beginningBalance += stockBalance.Balance2;
+                                break;
+                            case 4:
+                                beginningBalance += stockBalance.Balance3;
+                                break;
+                            case 5:
+                                beginningBalance += stockBalance.Balance4;
+                                break;
+                            case 6:
+                                beginningBalance += stockBalance.Balance5;
+                                break;
+                            case 7:
+                                beginningBalance += stockBalance.Balance6;
+                                break;
+                            case 8:
+                                beginningBalance += stockBalance.Balance7;
+                                break;
+                            case 9:
+                                beginningBalance += stockBalance.Balance8;
+                                break;
+                            case 10:
+                                beginningBalance += stockBalance.Balance9;
+                                break;
+                            case 11:
+                                beginningBalance += stockBalance.Balance10;
+                                break;
+                            case 12:
+                                beginningBalance += stockBalance.Balance11;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -446,54 +451,58 @@ namespace PutraJayaNT.ViewModels.Reports
             {
                 foreach (var warehouse in _warehouses)
                 {
-                    var purchaseLines = context.PurchaseTransactionLines
-                        .Include("PurchaseTransaction")
-                        .Include("PurchaseTransaction.Supplier")
-                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
-                        e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date < fromDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
-                        .ToList();
+                    if (warehouse.IsSelected)
+                    {
+                        var purchaseLines = context.PurchaseTransactionLines
+                            .Include("PurchaseTransaction")
+                            .Include("PurchaseTransaction.Supplier")
+                            .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                            e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date < fromDate &&
+                            !e.PurchaseTransaction.Supplier.Name.Equals("-") && !e.PurchaseTransactionID.Substring(0, 2).Equals("SA"))
+                            .ToList();
 
-                    var purchaseReturnLines = context.PurchaseReturnTransactionLines
-                        .Include("PurchaseReturnTransaction")
-                        .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
-                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
-                        e.PurchaseReturnTransaction.Date >= monthDate && e.PurchaseReturnTransaction.Date < fromDate)
-                        .ToList();
+                        var purchaseReturnLines = context.PurchaseReturnTransactionLines
+                            .Include("PurchaseReturnTransaction")
+                            .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
+                            .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                            e.PurchaseReturnTransaction.Date >= monthDate && e.PurchaseReturnTransaction.Date < fromDate)
+                            .ToList();
 
-                    var salesLines = context.SalesTransactionLines
-                        .Include("SalesTransaction")
-                        .Include("SalesTransaction.Customer")
-                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
-                        e.SalesTransaction.When >= monthDate && e.SalesTransaction.When < fromDate)
-                        .ToList();
+                        var salesLines = context.SalesTransactionLines
+                            .Include("SalesTransaction")
+                            .Include("SalesTransaction.Customer")
+                            .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                            e.SalesTransaction.When >= monthDate && e.SalesTransaction.When < fromDate)
+                            .ToList();
 
-                    var salesReturnLines = context.SalesReturnTransactionLines
-                        .Include("SalesReturnTransaction")
-                        .Include("SalesReturnTransaction.SalesTransaction.Customer")
-                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
-                        e.SalesReturnTransaction.Date >= monthDate && e.SalesReturnTransaction.Date < fromDate)
-                        .ToList();
+                        var salesReturnLines = context.SalesReturnTransactionLines
+                            .Include("SalesReturnTransaction")
+                            .Include("SalesReturnTransaction.SalesTransaction.Customer")
+                            .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                            e.SalesReturnTransaction.Date >= monthDate && e.SalesReturnTransaction.Date < fromDate)
+                            .ToList();
 
-                    var stockAdjustmentLines = context.AdjustStockTransactionLines
-                        .Include("AdjustStockTransaction")
-                        .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
-                        e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date < fromDate)
-                        .ToList();
+                        var stockAdjustmentLines = context.AdjustStockTransactionLines
+                            .Include("AdjustStockTransaction")
+                            .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
+                            e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date < fromDate)
+                            .ToList();
 
-                    foreach (var line in purchaseLines)
-                        balance += line.Quantity;
+                        foreach (var line in purchaseLines)
+                            balance += line.Quantity;
 
-                    foreach (var line in purchaseReturnLines)
-                        balance -= line.Quantity;
+                        foreach (var line in purchaseReturnLines)
+                            balance -= line.Quantity;
 
-                    foreach (var line in salesLines)
-                        balance -= line.Quantity;
+                        foreach (var line in salesLines)
+                            balance -= line.Quantity;
 
-                    foreach (var line in salesReturnLines)
-                        balance += line.Quantity;
+                        foreach (var line in salesReturnLines)
+                            balance += line.Quantity;
 
-                    foreach (var line in stockAdjustmentLines)
-                        balance += line.Quantity;
+                        foreach (var line in stockAdjustmentLines)
+                            balance += line.Quantity;
+                    }
                 }
             }
 

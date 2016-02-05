@@ -510,7 +510,8 @@ namespace PutraJayaNT.ViewModels.Test
                 var purchaseLines = context.PurchaseTransactionLines
                     .Include("PurchaseTransaction")
                     .Include("PurchaseTransaction.Supplier")
-                    .Where(e => e.ItemID.Equals(item.ItemID) && e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date <= fromDate && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
+                    .Where(e => e.ItemID.Equals(item.ItemID) && e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date <= fromDate &&
+                    !e.PurchaseTransactionID.Substring(0, 2).Equals("SA") && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
                     .ToList();
 
                 var purchaseReturnLines = context.PurchaseReturnTransactionLines

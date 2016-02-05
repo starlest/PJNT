@@ -25,6 +25,7 @@
         Customer _selectedCustomer;
         DateTime _date;
         decimal _total;
+        bool _isPaidChecked;
         bool _allSelected;
 
         ICommand _printCommand;
@@ -122,6 +123,17 @@
             set { SetProperty(ref _total, value, "Total"); }
         }
 
+        public bool IsPaidChecked
+        {
+            get { return _isPaidChecked; }
+            set
+            {
+                SetProperty(ref _isPaidChecked, value, "IsPaidChecked");
+
+                if (_selectedCity != null && _selectedSalesman != null) UpdateSalesTransactions();
+            }
+        }
+
         public bool AllSelected
         {
             get { return _allSelected; }
@@ -210,57 +222,131 @@
 
             using (var context = new ERPContext())
             {
-                if (_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
+                if (!_isPaidChecked)
                 {
-                    salesTransactions = context.SalesTransactions
-                        .Include("Customer")
-                        .Include("Customer.Group")
-                        .Include("CollectionSalesman")
-                        .Where(e => e.Paid < e.Total && e.DueDate <= _date)
-                        .OrderBy(e => e.CollectionSalesman.Name)
-                        .ThenBy(e => e.DueDate)
-                        .ThenBy(e => e.Customer.Name)
-                        .ToList();
-                }
+                    if (_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
+                    {
+                        salesTransactions = context.SalesTransactions
+                            .Include("Customer")
+                            .Include("Customer.Group")
+                            .Include("CollectionSalesman")
+                            .Where(e => e.Paid < e.Total && e.DueDate <= _date)
+                            .OrderBy(e => e.CollectionSalesman.Name)
+                            .ThenBy(e => e.DueDate)
+                            .ThenBy(e => e.Customer.Name)
+                            .ToList();
+                    }
 
-                else if (_selectedCity.Equals("All") && !_selectedSalesman.Name.Equals("All"))
-                {
-                    salesTransactions = context.SalesTransactions
-                        .Include("Customer")
-                        .Include("Customer.Group")
-                        .Include("CollectionSalesman")
-                        .Where(e => e.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
-                        && e.Paid < e.Total && e.DueDate <= _date)
-                        .OrderBy(e => e.CollectionSalesman.Name)
-                        .ThenBy(e => e.DueDate)
-                        .ThenBy(e => e.Customer.Name)
-                        .ToList();
-                }
+                    else if (_selectedCity.Equals("All") && !_selectedSalesman.Name.Equals("All"))
+                    {
+                        salesTransactions = context.SalesTransactions
+                            .Include("Customer")
+                            .Include("Customer.Group")
+                            .Include("CollectionSalesman")
+                            .Where(e => e.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
+                            && e.Paid < e.Total && e.DueDate <= _date)
+                            .OrderBy(e => e.CollectionSalesman.Name)
+                            .ThenBy(e => e.DueDate)
+                            .ThenBy(e => e.Customer.Name)
+                            .ToList();
+                    }
 
-                else if (!_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
-                {
-                    salesTransactions = context.SalesTransactions
-                        .Include("Customer")
-                        .Include("Customer.Group")
-                        .Include("CollectionSalesman")
-                        .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid < e.Total && e.DueDate <= _date)
-                        .OrderBy(e => e.CollectionSalesman.Name)
-                        .ThenBy(e => e.DueDate)
-                        .ThenBy(e => e.Customer.Name)
-                        .ToList();
+                    else if (!_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
+                    {
+                        salesTransactions = context.SalesTransactions
+                            .Include("Customer")
+                            .Include("Customer.Group")
+                            .Include("CollectionSalesman")
+                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid < e.Total && e.DueDate <= _date)
+                            .OrderBy(e => e.CollectionSalesman.Name)
+                            .ThenBy(e => e.DueDate)
+                            .ThenBy(e => e.Customer.Name)
+                            .ToList();
+                    }
+
+                    else
+                    {
+                        salesTransactions = context.SalesTransactions
+                            .Include("Customer")
+                            .Include("Customer.Group")
+                            .Include("CollectionSalesman")
+                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
+                            && e.Paid < e.Total && e.DueDate <= _date)
+                            .OrderBy(e => e.CollectionSalesman.Name)
+                            .ThenBy(e => e.DueDate)
+                            .ToList();
+                    }
                 }
 
                 else
                 {
-                    salesTransactions = context.SalesTransactions
-                        .Include("Customer")
-                        .Include("Customer.Group")
-                        .Include("CollectionSalesman")
-                        .Where(e => e.Customer.City.Equals(_selectedCity) && e.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
-                        && e.Paid < e.Total && e.DueDate <= _date)
-                        .OrderBy(e => e.CollectionSalesman.Name)
-                        .ThenBy(e => e.DueDate)
-                        .ToList();
+                    if (_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
+                    {
+                        salesTransactions = context.SalesTransactions
+                            .Include("Customer")
+                            .Include("Customer.Group")
+                            .Include("CollectionSalesman")
+                            .Where(e => e.Paid > 0)
+                            .OrderBy(e => e.CollectionSalesman.Name)
+                            .ThenBy(e => e.DueDate)
+                            .ThenBy(e => e.Customer.Name)
+                            .ToList();
+                    }
+
+                    else if (_selectedCity.Equals("All") && !_selectedSalesman.Name.Equals("All"))
+                    {
+                        salesTransactions = context.SalesTransactions
+                            .Include("Customer")
+                            .Include("Customer.Group")
+                            .Include("CollectionSalesman")
+                            .Where(e => e.CollectionSalesman.ID.Equals(_selectedSalesman.ID) && e.Paid > 0)
+                            .OrderBy(e => e.CollectionSalesman.Name)
+                            .ThenBy(e => e.DueDate)
+                            .ThenBy(e => e.Customer.Name)
+                            .ToList();
+                    }
+
+                    else if (!_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
+                    {
+                        salesTransactions = context.SalesTransactions
+                            .Include("Customer")
+                            .Include("Customer.Group")
+                            .Include("CollectionSalesman")
+                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid > 0)
+                            .OrderBy(e => e.CollectionSalesman.Name)
+                            .ThenBy(e => e.DueDate)
+                            .ThenBy(e => e.Customer.Name)
+                            .ToList();
+                    }
+
+                    else
+                    {
+                        salesTransactions = context.SalesTransactions
+                            .Include("Customer")
+                            .Include("Customer.Group")
+                            .Include("CollectionSalesman")
+                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.CollectionSalesman.ID.Equals(_selectedSalesman.ID) && e.Paid > 0)
+                            .OrderBy(e => e.CollectionSalesman.Name)
+                            .ThenBy(e => e.DueDate)
+                            .ToList();
+                    }
+
+                    var ledgerTransactions = context.Ledger_Transactions.Where(e => e.Date.Equals(_date) && e.Description.Equals("Sales Transaction Receipt")).ToList();
+
+                    var temp = new List<SalesTransaction>();
+                    foreach (var st in salesTransactions)
+                    {
+                        foreach (var lt in ledgerTransactions)
+                        {
+                            if (st.SalesTransactionID.Equals(lt.Documentation))
+                            {
+                                temp.Add(st);
+                                break;
+                            }
+
+                        }
+                    }
+                    salesTransactions = temp;
                 }
 
                 foreach (var t in salesTransactions)

@@ -2,12 +2,15 @@
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace PutraJayaNT.ViewModels.Inventory
 {
     class CloseStockVM : ViewModelBase
     {
+        List<Warehouse> _warehouses;
         int _periodYear;
         int _period;
         DateTime _beginningDate;
@@ -19,6 +22,8 @@ namespace PutraJayaNT.ViewModels.Inventory
             {
                 _periodYear = context.Ledger_General.FirstOrDefault().PeriodYear;
                 _period = 1;
+
+                _warehouses = context.Warehouses.ToList();
             }
         }
 
@@ -47,16 +52,18 @@ namespace PutraJayaNT.ViewModels.Inventory
                 {
                     var stocks = context.Stocks.Include("Item").Include("Warehouse").Where(e => e.ItemID.Equals(item.ItemID)).ToList();
 
-                    foreach (var stock in stocks)
+                    foreach (var warehouse in _warehouses)
                     {
-                        var beginningBalance = GetBeginningBalance(context, stock.Warehouse, item);
-                        var endingBalance = stock.Pieces;
-                        SetEndingBalance(context, stock.Warehouse, item, endingBalance);
+                        var beginningBalance = GetBeginningBalance(context, warehouse, item);
+                        var endingBalance = GetEndingBalance(context, warehouse, item, beginningBalance);
+                        SetEndingBalance(context, warehouse, item, endingBalance);
                     }
                 }
 
                 context.SaveChanges();
             }
+
+            MessageBox.Show("Successfully closed stock!", "Succecss", MessageBoxButton.OK);
         }
 
         #region Helper Methods
@@ -93,6 +100,112 @@ namespace PutraJayaNT.ViewModels.Inventory
                 default:
                     return periodYearBalances.Balance11;
             }
+        }
+
+        private int GetEndingBalance(ERPContext context, Warehouse warehouse, Item item, int beginningBalance)
+        {
+            var balance = beginningBalance;
+
+            var purchaseLines = context.PurchaseTransactionLines
+                .Include("PurchaseTransaction")
+                .Include("PurchaseTransaction.Supplier")
+                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
+                e.PurchaseTransaction.Date.Month == _period && e.PurchaseTransaction.Date.Year == _periodYear &&
+                !e.PurchaseTransaction.Supplier.Name.Equals("-") && !e.PurchaseTransactionID.Substring(0, 2).Equals("SA"))
+                .ToList();
+
+            var purchaseReturnLines = context.PurchaseReturnTransactionLines
+                .Include("PurchaseReturnTransaction")
+                .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
+                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
+                e.PurchaseReturnTransaction.Date.Month == _period && e.PurchaseReturnTransaction.Date.Year == _periodYear)
+                .ToList();
+
+            var salesLines = context.SalesTransactionLines
+                .Include("SalesTransaction")
+                .Include("SalesTransaction.Customer")
+                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
+                e.SalesTransaction.When.Month == _period && e.SalesTransaction.When.Year == _periodYear)
+                .ToList();
+
+            var salesReturnLines = context.SalesReturnTransactionLines
+                .Include("SalesReturnTransaction")
+                .Include("SalesReturnTransaction.SalesTransaction.Customer")
+                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
+                e.SalesReturnTransaction.Date.Month == _period && e.SalesReturnTransaction.Date.Year == _periodYear)
+                .ToList();
+
+            var stockAdjustmentLines = context.AdjustStockTransactionLines
+                .Include("AdjustStockTransaction")
+                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
+                e.AdjustStockTransaction.Date.Month == _period && e.AdjustStockTransaction.Date.Year == _periodYear)
+                .ToList();
+
+            var stockMovementLines = context.MoveStockTransactionLines
+                .Include("MoveStockTransaction")
+                .Include("MoveStockTransaction.FromWarehouse")
+                .Include("MoveStockTransaction.ToWarehouse")
+                .Where(e => e.ItemID.Equals(item.ItemID) &&
+                (e.MoveStockTransaction.FromWarehouse.ID.Equals(warehouse.ID) || e.MoveStockTransaction.ToWarehouse.ID.Equals(warehouse.ID))
+                && e.MoveStockTransaction.Date.Month == _period && e.MoveStockTransaction.Date.Year == _periodYear)
+                .ToList();
+
+            var moveStockTransactions = context.MoveStockTransactions
+    .Include("FromWarehouse")
+    .Include("ToWarehouse")
+    .Include("MoveStockTransactionLines")
+    .Include("MoveStockTransactionLines.Item")
+    .Where(e => e.Date.Month == _period && e.Date.Year == _periodYear
+    && (e.FromWarehouse.ID.Equals(warehouse.ID) || e.ToWarehouse.ID.Equals(warehouse.ID)))
+    .ToList();
+
+            if (item.Name=="Tep Ketan Rose")
+            {
+
+            }
+
+            foreach (var line in purchaseLines)
+                balance += line.Quantity;
+
+            foreach (var line in purchaseReturnLines)
+                balance -= line.Quantity;
+
+            foreach (var line in salesLines)
+                balance -= line.Quantity;
+
+            foreach (var line in salesReturnLines)
+                balance += line.Quantity;
+
+            foreach (var line in stockAdjustmentLines)
+                balance += line.Quantity;
+
+            //foreach (var line in stockMovementLines)
+            //{
+            //    if (line.MoveStockTransaction.FromWarehouse.Equals(warehouse.ID))
+            //        balance -= line.Quantity;
+            //    else
+            //        balance += line.Quantity;
+            //}
+
+            foreach (var transaction in moveStockTransactions)
+            {
+                foreach (var line in transaction.MoveStockTransactionLines)
+                {
+                    if (line.ItemID.Equals(item.ItemID))
+                    {
+                        if (transaction.FromWarehouse.ID.Equals(warehouse.ID))
+                        {
+                            balance -= line.Quantity;
+                        }
+
+                        else if (transaction.ToWarehouse.ID.Equals(warehouse.ID))
+                        {
+                            balance += line.Quantity;
+                        }
+                    }
+                }
+            }
+            return balance;
         }
 
         private void SetEndingBalance(ERPContext context, Warehouse warehouse, Item item, int endingBalance)
