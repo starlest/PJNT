@@ -2,6 +2,7 @@
 using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Utilities;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Transactions;
 
@@ -33,7 +34,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             set { SetProperty(ref _period, value, "Period"); }
         }
 
-        public void Close()
+        public void Close(BackgroundWorker worker)
         {
             using (var ts = new TransactionScope())
             {
@@ -57,11 +58,15 @@ namespace PutraJayaNT.ViewModels.Accounting
                     .Where(e => e.Class.Equals("Expense") || e.Class.Equals("Revenue"))
                     .ToList();
 
+                var index = 1;
+                var totalAccounts = accounts.Count + revenueAndExpenseAccounts.Count;
                 // Close the Revenue and Expense Accounts to Retained Earnings
                 foreach (var account in revenueAndExpenseAccounts)
                 {
                     if (account.LedgerGeneral.Debit != 0 || account.LedgerGeneral.Credit != 0)
                         CloseRevenueOrExpenseAccountToRetainedEarnings(account, context);
+
+                    worker.ReportProgress(index++ * (totalAccounts / 100));
                 }
 
                 foreach (var account in accounts)
@@ -86,7 +91,8 @@ namespace PutraJayaNT.ViewModels.Accounting
                         CloseAssetOrExpenseAccount(account, context);                     
                     else
                         CloseLiabilityOrRevenueAccount(account, context);
-                    
+
+                    worker.ReportProgress(index++ * (totalAccounts / 100));
                 }
 
                 context.SaveChanges();

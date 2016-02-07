@@ -14,6 +14,7 @@ namespace PutraJayaNT.Views.Inventory
     public partial class CloseStockView : UserControl
     {
         CloseStockVM vm;
+        bool _isRunning = false;
 
         public CloseStockView()
         {
@@ -22,13 +23,9 @@ namespace PutraJayaNT.Views.Inventory
             DataContext = vm;
         }
 
-        bool isRunning = false;
 
         private void OnClick(object sender, EventArgs e)
         {
-            // Verification
-            if (!UtilityMethods.GetVerification()) return;
-
             //if (DateTime.Now.Date.AddDays(1).Day != 1 && DateTime.Now.Hour < 17)
             //{
             //    MessageBox.Show("Unable to close books at this time.", "Failed to Close Stock", MessageBoxButton.OK);
@@ -36,16 +33,29 @@ namespace PutraJayaNT.Views.Inventory
             //}
 
             BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
             worker.DoWork += worker_DoWork;
+            worker.ProgressChanged += worker_ProgressChanged;
 
-            pbStatus.IsIndeterminate = true;
-            worker.RunWorkerAsync();
-            pbStatus.IsIndeterminate = false;
+            if (!_isRunning)
+            {
+                // Verification
+                if (!UtilityMethods.GetVerification()) return;
+
+                _isRunning = true;
+                worker.RunWorkerAsync();
+            }
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            vm.Close();
+            vm.Close((BackgroundWorker)sender);
+            _isRunning = false;
+        }
+
+        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            pbStatus.Value = e.ProgressPercentage;
         }
     }
 }

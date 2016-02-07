@@ -29,6 +29,7 @@
             <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Text="{Binding Period}"/>
         </Grid>
         <ProgressBar Grid.Row="2" Name="pbStatus" Minimum="0" Maximum="100" BorderBrush="Blue" BorderThickness="2" Height="50" Width="800" />
+        <TextBlock Grid.Row="2" Text="{Binding ElementName=pbStatus, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />
         <Button Grid.Row="3" Content="Close" Margin="480, 0, 480, 100" Click="OnClick"/>
     </Grid>
 </UserControl>

@@ -14,6 +14,7 @@ namespace PutraJayaNT
     {
         public MainWindow()
         {
+            //AppearanceManager.Current.AccentColor = Colors.Black;
             ModernUIHelper.TrySetPerMonitorDpiAware();
             InitializeComponent();
             this.IsEnabled = false;
@@ -23,7 +24,8 @@ namespace PutraJayaNT
             if (user != null) this.IsEnabled = true;
             else App.Current.Shutdown();
 
-            this.Title = "Putra Jaya - " + user.Username;
+            var connectionString = ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString.Substring(7).Split(';')[0];
+            this.Title = "Putra Jaya - User: " + user.Username + ", Server: " + connectionString;
 
             if (user.IsAdmin)
             {

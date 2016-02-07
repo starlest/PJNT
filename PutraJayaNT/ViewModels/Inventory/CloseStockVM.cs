@@ -3,8 +3,10 @@ using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace PutraJayaNT.ViewModels.Inventory
 {
@@ -39,7 +41,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             set { SetProperty(ref _period, value, "Period"); }
         }
 
-        public void Close()
+        public void Close(BackgroundWorker worker)
         {
             _beginningDate = new DateTime(_periodYear, _period, 1, 0, 0, 0);
             _endingDate = _beginningDate.AddMonths(1).AddDays(-1);
@@ -48,6 +50,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             {
                 var items = context.Inventory.ToList();
 
+                var index = 1;
                 foreach (var item in items)
                 {
                     var stocks = context.Stocks.Include("Item").Include("Warehouse").Where(e => e.ItemID.Equals(item.ItemID)).ToList();
@@ -58,6 +61,8 @@ namespace PutraJayaNT.ViewModels.Inventory
                         var endingBalance = GetEndingBalance(context, warehouse, item, beginningBalance);
                         SetEndingBalance(context, warehouse, item, endingBalance);
                     }
+
+                    worker.ReportProgress(index++ * (items.Count / 100));
                 }
 
                 context.SaveChanges();
@@ -151,13 +156,13 @@ namespace PutraJayaNT.ViewModels.Inventory
                 .ToList();
 
             var moveStockTransactions = context.MoveStockTransactions
-    .Include("FromWarehouse")
-    .Include("ToWarehouse")
-    .Include("MoveStockTransactionLines")
-    .Include("MoveStockTransactionLines.Item")
-    .Where(e => e.Date.Month == _period && e.Date.Year == _periodYear
-    && (e.FromWarehouse.ID.Equals(warehouse.ID) || e.ToWarehouse.ID.Equals(warehouse.ID)))
-    .ToList();
+                .Include("FromWarehouse")
+                .Include("ToWarehouse")
+                .Include("MoveStockTransactionLines")
+                .Include("MoveStockTransactionLines.Item")
+                .Where(e => e.Date.Month == _period && e.Date.Year == _periodYear
+                && (e.FromWarehouse.ID.Equals(warehouse.ID) || e.ToWarehouse.ID.Equals(warehouse.ID)))
+                .ToList();
 
             if (item.Name=="Tep Ketan Rose")
             {

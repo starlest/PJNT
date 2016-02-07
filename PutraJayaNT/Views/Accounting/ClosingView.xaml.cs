@@ -26,9 +26,6 @@ namespace PutraJayaNT.Views.Accounting
 
         private void OnClick(object sender, EventArgs e)
         {
-            // Verification
-            if (!UtilityMethods.GetVerification()) return;
-
             if (DateTime.Now.AddDays(1).Day != 1 && DateTime.Now.Hour < 5)
             {
                 MessageBox.Show("Unable to close books at this time.", "Failed to Close Books", MessageBoxButton.OK);
@@ -42,27 +39,23 @@ namespace PutraJayaNT.Views.Accounting
 
             if (!isRunning)
             {
+                // Verification
+                if (!UtilityMethods.GetVerification()) return;
+
                 isRunning = true;
-                pbStatus.IsIndeterminate = true;
                 worker.RunWorkerAsync();
-                pbStatus.IsIndeterminate = false;
             }
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            for (int i = 0; i <= 50; i++)
-            {
-                (sender as BackgroundWorker).ReportProgress(i);
-                Thread.Sleep(100);
-                if (i == 50) vm.Close();
-            }
+            vm.Close((BackgroundWorker)sender);
             isRunning = false;
         }
 
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            pbStatus.Value = e.ProgressPercentage * 2;
+            pbStatus.Value = e.ProgressPercentage;
         }
     }
 }
