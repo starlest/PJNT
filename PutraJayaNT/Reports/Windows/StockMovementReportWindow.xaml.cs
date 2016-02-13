@@ -56,7 +56,7 @@ namespace PutraJayaNT.Reports.Windows
 
             DataRow dr2 = dt2.NewRow();
             dr2["ID"] = _transaction.NewTransactionID;
-            dr2["Date"] = _transaction.NewTransactionDate.ToShortDateString();
+            dr2["Date"] = _transaction.NewTransactionDate.ToString("dd-MM-yyyy");
             dr2["FromWarehouse"] = _transaction.NewTransactionFromWarehouse.Name;
             dr2["ToWarehouse"] = _transaction.NewTransactionToWarehouse.Name;
             dt2.Rows.Add(dr2);

@@ -236,7 +236,7 @@ namespace PutraJayaNT.ViewModels.Customers
                            line.Warehouse.ID.Equals(_selectedSalesTransactionLine.Warehouse.ID) &&
                            line.SalesPrice.Equals(_selectedSalesTransactionLine.SalesPrice) &&
                            line.Discount.Equals(_selectedSalesTransactionLine.Discount) &&
-                           line.ReturnPrice.Equals(_salesReturnEntryPrice))
+                           Math.Round(line.ReturnPrice, 2).Equals(Math.Round((decimal)_salesReturnEntryPrice, 2)))
                         {
                             if ((line.Quantity + quantity) > availableReturnQuantity ||
                             (line.Quantity + quantity) <= 0)
@@ -635,7 +635,7 @@ namespace PutraJayaNT.ViewModels.Customers
             dr2["Address"] = transaction.SalesTransaction.Customer.City;
             dr2["SalesInvoiceNumber"] = transaction.SalesTransaction.SalesTransactionID;
             dr2["SalesReturnInvoiceNumber"] = transaction.SalesReturnTransactionID;
-            dr2["Date"] = transaction.Date.ToShortDateString();
+            dr2["Date"] = transaction.Date.ToString("dd-MM-yyyy");
 
             dt2.Rows.Add(dr2);
 

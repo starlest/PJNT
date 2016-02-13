@@ -34,8 +34,8 @@
         <mui:LinkGroup DisplayName="Suppliers">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Purchase Transaction" Source="/Views/Suppliers/PurchaseTransactionView.xaml" />
-                <mui:Link DisplayName="Payment" Source="/Views/Suppliers/PaymentView.xaml" />
                 <mui:Link DisplayName="Payment List" Source="/Views/Suppliers/PaymentListView.xaml" />
+                <mui:Link DisplayName="Payment" Source="/Views/Suppliers/PaymentView.xaml" />
                 <mui:Link DisplayName="Purchase Return" Source="/Views/Suppliers/PurchaseReturnView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>

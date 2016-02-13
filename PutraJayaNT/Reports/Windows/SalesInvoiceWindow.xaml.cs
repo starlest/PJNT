@@ -67,6 +67,7 @@ namespace PutraJayaNT.Reports.Windows
             dt2.Columns.Add(new DataColumn("Date", typeof(string)));
             dt2.Columns.Add(new DataColumn("DueDate", typeof(string)));
             dt2.Columns.Add(new DataColumn("Notes", typeof(string)));
+            dt2.Columns.Add(new DataColumn("Copy", typeof(string)));
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
@@ -74,9 +75,10 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
-            dr2["Date"] = _salesTransaction.When.ToShortDateString();
-            dr2["DueDate"] = _salesTransaction.DueDate.ToShortDateString();
+            dr2["Date"] = _salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
+            dr2["Copy"] = _salesTransaction.InvoicePrinted == true ? "Copy" : "";
 
             dt2.Rows.Add(dr2);
 

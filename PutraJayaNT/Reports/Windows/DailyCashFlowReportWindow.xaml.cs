@@ -51,7 +51,7 @@ namespace PutraJayaNT.Reports.Windows
             dt2.Columns.Add(new DataColumn("BeginningBalance", typeof(string)));
             dt2.Columns.Add(new DataColumn("EndingBalance", typeof(string)));
             var dr2 = dt2.NewRow();
-            dr2["Date"] = _vm.Date.ToShortDateString();
+            dr2["Date"] = _vm.Date.ToString("dd-MM-yyyy");
             dr2["BeginningBalance"] = string.Format("{0:N2}",  _vm.BeginningBalance);
             dr2["EndingBalance"] = string.Format("{0:N2}", _vm.EndingBalance);
             dt2.Rows.Add(dr2);

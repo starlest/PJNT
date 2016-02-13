@@ -75,7 +75,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     _cashAndCashEquivalents = 0;
 
                     var equivalents = context.Ledger_Accounts
-                        .Where(e => e.Name == "Cash" || e.Name.Contains("Bank"))
+                        .Where(e => e.Name == "Cash" || e.Name.Equals("Bank BNI"))
                         .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .ToList();
@@ -118,7 +118,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     _accountsReceivable = 0;
 
                     var accountsReceivable = context.Ledger_Accounts
-                        .Where(e => e.Name.Contains("Accounts Receivable"))
+                        .Where(e => e.Name.Contains("Accounts Receivable") || e.Notes.Contains("Accounts Receivable"))
                         .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .ToList();
@@ -220,7 +220,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     _accountsPayable = 0;
 
                     var accountsPayable = context.Ledger_Accounts
-                        .Where(e => e.Name.Contains("Accounts Payable"))
+                        .Where(e => e.Name.Contains("Accounts Payable") || e.Notes.Contains("Accounts Payable"))
                         .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .ToList();

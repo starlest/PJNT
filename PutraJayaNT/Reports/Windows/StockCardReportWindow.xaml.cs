@@ -52,7 +52,7 @@ namespace PutraJayaNT.Reports.Windows
             foreach (var line in _stockReport.Lines)
             {
                 DataRow dr1 = dt1.NewRow();
-                dr1["Date"] = line.Date.ToShortDateString();
+                dr1["Date"] = line.Date.ToString("dd-MM-yyyy");
                 dr1["Documentation"] = line.Documentation;
                 dr1["Description"] = line.Description;
                 dr1["CustomerSupplier"] = line.CustomerSupplier;

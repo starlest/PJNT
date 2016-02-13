@@ -174,6 +174,27 @@
             set { SetProperty(ref _selectedIndex, value, "SelectedIndex"); }
         }
 
+        public ICommand EditLineCommand
+        {
+            get
+            {
+                return _editLineCommand ?? (_editLineCommand = new RelayCommand(() =>
+                {
+                    if (_selectedLine != null)
+                    {
+                        IsEditWindowNotOpen = false;
+                        EditWindowVisibility = Visibility.Visible;
+
+                        EditLineUnits = _selectedLine.Units;
+                        EditLinePieces = _selectedLine.Pieces;
+                        EditLineDiscount = _selectedLine.Discount;
+                        EditLineSalesPrice = _selectedLine.SalesPrice;
+                        EditLineSalesman = _selectedLine.Salesman;
+                    }
+                }));
+            }
+        }
+
         #region Edit Properties
         public int EditLineUnits
         {
@@ -259,7 +280,7 @@
                     for (int i = 0; i < _salesTransactionLines.Count; i++)
                     {
                         var line = _salesTransactionLines[i];
-                        if (line.Equals(_selectedLine) && i != _selectedIndex)
+                        if (CompareLines(line.Model, _selectedLine.Model) && i != _selectedIndex)
                         {
                             line.Quantity += _selectedLine.Quantity;
                             line.StockDeducted += _selectedLine.StockDeducted;
@@ -269,7 +290,6 @@
                             _selectedLine.SalesPrice = oldSalesPrice;
                             _selectedLine.Salesman = oldSalesman;
                             _salesTransactionLines.Remove(_selectedLine);
-
                             break;
                         }
                     }
@@ -289,27 +309,6 @@
                 {
                     IsEditWindowNotOpen = true;
                     EditWindowVisibility = Visibility.Hidden;
-                }));
-            }
-        }
-
-        public ICommand EditLineCommand
-        {
-            get
-            {
-                return _editLineCommand ?? (_editLineCommand = new RelayCommand(() =>
-                {
-                    if (_selectedLine != null)
-                    {
-                        IsEditWindowNotOpen = false;
-                        EditWindowVisibility = Visibility.Visible;
-
-                        EditLineUnits = _selectedLine.Units;
-                        EditLinePieces = _selectedLine.Pieces;
-                        EditLineDiscount = _selectedLine.Discount;
-                        EditLineSalesPrice = _selectedLine.SalesPrice;
-                        EditLineSalesman = _selectedLine.Salesman;
-                    }
                 }));
             }
         }
@@ -847,8 +846,8 @@
                     {
                         if (line.Item.ItemID.Equals(_newEntryProduct.Model.ItemID) 
                         && line.Warehouse.ID.Equals(_newEntryWarehouse.ID) 
-                        && _newEntryPrice.Equals(line.SalesPrice)
-                        && (_newEntryDiscount == null ? 0 : (decimal) _newEntryDiscount).Equals(line.Discount))
+                        && Math.Round((double)_newEntryPrice, 2).Equals(Math.Round(line.SalesPrice, 2))
+                        && (_newEntryDiscount == null ? 0 : Math.Round((decimal) _newEntryDiscount, 2)).Equals(Math.Round(line.Discount, 2)))
                         {
                             if (availableQuantity < quantity)
                             {
@@ -888,7 +887,7 @@
         }
         #endregion
 
-        #region Commands
+        #region Other Commands
         public ICommand BrowseCommand
         {
             get
@@ -1492,13 +1491,22 @@
             return false;
         }
 
+        private bool CompareLines(SalesTransactionLine l1, SalesTransactionLine l2)
+        {
+            return l1.Item.ItemID.Equals(l2.Item.ItemID) && l1.Warehouse.ID.Equals(l2.Warehouse.ID)
+                && Math.Round(l1.SalesPrice, 2).Equals(Math.Round(l2.SalesPrice, 2))
+                && Math.Round(l1.Discount, 2).Equals(Math.Round(l2.Discount, 2));
+        }
+
+        #region Save Transaction Methods
         private void SaveTransactionEditMode()
         {
-            #region Invoice Issued
+            #region Invoice Not Issued
             if (Model.InvoiceIssued == null)
             {
-                using (var context = new ERPContext())
+                using (var ts = new TransactionScope())
                 {
+                    var context = new ERPContext();
 
                     var transaction = context.SalesTransactions
                         .Include("Customer")
@@ -1533,10 +1541,7 @@
                         foreach (var l in originalTransactionLines)
                         {
                             // Check if the line exists in the original transaction
-                            if (line.Item.ItemID.Equals(l.Item.ItemID)
-                             && line.Warehouse.ID.Equals(l.Warehouse.ID)
-                             && line.SalesPrice.Equals(l.SalesPrice * l.Item.PiecesPerUnit)
-                             && line.Discount.Equals(l.Discount * l.Item.PiecesPerUnit))
+                            if (CompareLines(line.Model, l))
                             {
                                 found = true;
                                 var originalQuantity = l.Quantity;
@@ -1575,21 +1580,39 @@
                         // If not found, minus stock and add the line to the transaction
                         if (!found)
                         {
-                            if (stock.Pieces - line.Quantity < 0)
+                            if (stock != null)
                             {
-                                MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
-                                    item.Name, (stock.Pieces / item.PiecesPerUnit), (stock.Pieces % item.PiecesPerUnit)),
-                                    "Insufficient Stock", MessageBoxButton.OK);
-                                return;
+                                if (stock.Pieces - line.Quantity < 0)
+                                {
+                                    MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
+                                        item.Name, (stock.Pieces / item.PiecesPerUnit), (stock.Pieces % item.PiecesPerUnit)),
+                                        "Insufficient Stock", MessageBoxButton.OK);
+                                    return;
+                                }
+
+                                stock.Pieces -= line.Quantity;
+                                line.SalesTransaction = transaction;
+                                context.SalesTransactionLines.Add(line.Model);
                             }
 
-                            stock.Pieces -= line.Quantity;
-                            line.SalesTransaction = transaction;
-                            context.SalesTransactionLines.Add(line.Model);
+                            else
+                            {
+                                var s = new Stock
+                                {
+                                    Item = line.Item,
+                                    Warehouse = line.Warehouse,
+                                    Pieces = -line.Quantity
+                                };
+                                context.Stocks.Add(s);
+                                line.SalesTransaction = transaction;
+                                context.SalesTransactionLines.Add(line.Model);
+                            }
                         }
 
                         // Remove the stock entry if it is 0
                         if (stock != null && stock.Pieces == 0) context.Stocks.Remove(stock);
+
+                        context.SaveChanges();
                     }
 
                     // Check if there are items deleted
@@ -1607,10 +1630,7 @@
                         var deleted = true;
                         foreach (var l in _salesTransactionLines)
                         {
-                            if (line.Item.ItemID.Equals(l.Model.Item.ItemID)
-                            && line.Warehouse.ID.Equals(l.Model.Warehouse.ID)
-                            && line.SalesPrice.Equals(l.SalesPrice)
-                            && line.Discount.Equals(l.Discount))
+                            if (CompareLines(line.Model, l.Model))
                             {
                                 deleted = false;
                                 break;
@@ -1636,15 +1656,15 @@
 
                             foreach (var l in originalTransactionLines)
                             {
-                                if (line.Item.ItemID.Equals(l.Item.ItemID)
-                                    && line.Warehouse.ID.Equals(l.Warehouse.ID)
-                                    && line.SalesPrice.Equals(l.SalesPrice * l.Item.PiecesPerUnit)
-                                    && line.Discount.Equals(l.Discount * l.Item.PiecesPerUnit))
+                                if (CompareLines(line.Model, l))
                                 {
                                     transaction.TransactionLines.Remove(l);
                                     break;
                                 }
                             }
+
+                            // Remove the stock entry if it is 0
+                            if (stock != null && stock.Pieces == 0) context.Stocks.Remove(stock);
                         }
                     }
 
@@ -1665,11 +1685,14 @@
                     Model = transaction;
 
                     context.SaveChanges();
+
+                    ts.Complete();
                     MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
                 }
             }
             #endregion
 
+            #region Invoice Issued
             else
             {
                 using (var ts = new TransactionScope())
@@ -1707,35 +1730,12 @@
                             LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Credit", -transactionTotalDifference);
                         }
 
-                        //List<SalesTransactionLine> editedLines = new List<SalesTransactionLine>();
-                        //foreach (var line in _salesTransactionLines)
-                        //    editedLines.Add(line.Model);
-
-                        //var COGSDifference = CalculateCOGS(editedLines) - CalculateCOGS(transaction.TransactionLines.ToList());
-
-                        //var adjustmentLedgerTransaction2 = new LedgerTransaction();
-                        //LedgerDBHelper.AddTransaction(context, adjustmentLedgerTransaction2, DateTime.Now.Date, _newTransactionID, "Sales Revenue Adjustment");
-                        //context.SaveChanges();
-                        //if (COGSDifference > 0)
-                        //{
-                        //    LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction2, "Cost of Goods Sold", "Debit", COGSDifference);
-                        //    LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction2, "Inventory", "Credit", COGSDifference);
-                        //}
-                        //else
-                        //{
-                        //    LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction2, "Inventory", "Debit", -COGSDifference);
-                        //    LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction2, "Cost of Goods Sold", "Credit", -COGSDifference);
-                        //}
-
                         foreach (var line in originalTransactionLines)
                         {
                             var found = false;
                             foreach (var l in _salesTransactionLines)
                             {
-                                if (line.Item.ItemID.Equals(l.Item.ItemID)
-                                    && line.Warehouse.ID.Equals(l.Warehouse.ID)
-                                    && line.SalesPrice.Equals(l.SalesPrice / l.Item.PiecesPerUnit)
-                                    && line.Discount.Equals(l.Discount / l.Item.PiecesPerUnit))
+                                if (CompareLines(line, l.Model))
                                 {
                                     found = true;
                                     break;
@@ -1754,10 +1754,7 @@
                             var found = false;
                             foreach (var l in originalTransactionLines)
                             {
-                                if (line.Item.ItemID.Equals(l.ItemID)
-                                    && line.Warehouse.ID.Equals(l.WarehouseID)
-                                    && line.SalesPrice.Equals(l.SalesPrice * line.Item.PiecesPerUnit)
-                                    && line.Discount.Equals(l.Discount * line.Item.PiecesPerUnit))
+                                if (CompareLines(line.Model, l))
                                 {
                                     found = true;
                                     break;
@@ -1787,6 +1784,7 @@
 
                 MessageBox.Show("Invoice successfully edited.", "Success", MessageBoxButton.OK);
             }
+            #endregion
         }
 
         private void SaveNewTransaction(ERPContext context)
@@ -1828,6 +1826,7 @@
             context.SaveChanges();
             MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
         }
+        #endregion
 
         #region Reports Creation Methods
         private LocalReport CreateInvoiceLocalReport()
@@ -1884,6 +1883,7 @@
             dt2.Columns.Add(new DataColumn("Date", typeof(string)));
             dt2.Columns.Add(new DataColumn("DueDate", typeof(string)));
             dt2.Columns.Add(new DataColumn("Notes", typeof(string)));
+            dt2.Columns.Add(new DataColumn("Copy", typeof(string)));
             dr2["InvoiceGrossTotal"] = salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = salesTransaction.SalesExpense;
@@ -1891,9 +1891,10 @@
             dr2["Customer"] = salesTransaction.Customer.Name;
             dr2["Address"] = salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = salesTransaction.SalesTransactionID;
-            dr2["Date"] = salesTransaction.When.ToShortDateString();
-            dr2["DueDate"] = salesTransaction.DueDate.ToShortDateString();
+            dr2["Date"] = salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = salesTransaction.Notes;
+            dr2["Copy"] = salesTransaction.InvoicePrinted == true ? "Copy" : "";
 
             dt2.Rows.Add(dr2);
 
@@ -1987,8 +1988,8 @@
             dr2["Customer"] = salesTransaction.Customer.Name;
             dr2["Address"] = salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = salesTransaction.SalesTransactionID;
-            dr2["Date"] = salesTransaction.When.ToShortDateString();
-            dr2["DueDate"] = salesTransaction.DueDate.ToShortDateString();
+            dr2["Date"] = salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = salesTransaction.Notes;
             using (var context = new ERPContext())
             {

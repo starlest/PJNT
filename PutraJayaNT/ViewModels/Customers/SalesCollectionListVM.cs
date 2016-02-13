@@ -163,7 +163,7 @@
                 {
                     if (_salesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportWindow(_salesTransactions);
+                    var collectionReportWindow = new CollectionReportWindow(_salesTransactions, _date);
                     collectionReportWindow.Owner = App.Current.MainWindow;
                     collectionReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     collectionReportWindow.Show();

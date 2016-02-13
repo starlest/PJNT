@@ -66,6 +66,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         ICommand _editLineCommand;
         ICommand _editLineConfirmCommand;
         ICommand _editLineCancelCommand;
+        ICommand _deleteLineCommand;
 
         public PurchaseTransactionVM()
         {
@@ -436,8 +437,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
                         var discount = _newEntryDiscount == null ? 0 : (decimal) _newEntryDiscount;
                         if (_newEntryItem.ItemID.Equals(l.Item.ItemID) 
                         && _newEntryWarehouse.ID.Equals(l.Warehouse.ID) 
-                        && _newEntryPrice.Equals(l.PurchasePrice)
-                        && discount.Equals(l.Discount))
+                        && Math.Round((double)_newEntryPrice, 2).Equals(Math.Round(l.PurchasePrice, 2))
+                        && Math.Round(discount, 2).Equals(Math.Round(l.Discount, 2)))
                         {
                             l.Quantity += _newEntryQuantity;
                             ResetEntryFields();
@@ -546,6 +547,21 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     EditWindowVisibility = Visibility.Hidden;
 
                     OnPropertyChanged("NewTransactionGrossTotal");
+                }));
+            }
+        }
+
+        public ICommand DeleteLineCommand
+        {
+            get
+            {
+                return _deleteLineCommand ?? (_deleteLineCommand = new RelayCommand(() =>
+                {
+                    if (_selectedLine != null)
+                    {
+                        _lines.Remove(_selectedLine);
+                        OnPropertyChanged("NewTransactionGrossTotal");
+                    }
                 }));
             }
         }
@@ -686,6 +702,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         private void ResetFields()
         {
             ResetEntryFields();
+            NewEntryWarehouse = null;
 
             IsTransactionNotPaid = true;
             NotEditMode = true;
@@ -854,8 +871,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             totalValueChanged += (lineCOGS - originalLineCOGS);
                         }
 
-                        if (originalLine.PurchasePrice != (line.PurchasePrice / line.Item.PiecesPerUnit) 
-                            || originalLine.Discount != (line.Discount / line.Item.PiecesPerUnit))
+                        if (Math.Round(originalLine.PurchasePrice, 2) != Math.Round((line.PurchasePrice / line.Item.PiecesPerUnit), 2) 
+                            || Math.Round(originalLine.Discount, 2) != Math.Round((line.Discount / line.Item.PiecesPerUnit), 2))
                         {
                             linesChanged.Add(i);
                         }

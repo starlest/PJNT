@@ -10,7 +10,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.375*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="0.1*" />
             <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
         <Grid>
@@ -57,9 +56,14 @@
             <Button Grid.Row="1" Grid.Column="8" Content="Confirm" Command="{Binding NewEntryConfirmCommand}" Margin="10" />
             <Button Grid.Row="2" Grid.Column="8"  Content="Cancel" Command="{Binding NewEntryCancelCommand}" Margin="10" />
         </Grid>
-            <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayTransactions}" SelectedItem="{Binding SelectedLine}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayTransactions}" SelectedItem="{Binding SelectedLine}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                       CanUserDeleteRows="False" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                       AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" PreviewKeyDown="DataGrid_PreviewKeyDown">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete" Command="{Binding DeleteLineCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Account" Width="1*" IsReadOnly="True" Binding="{Binding LedgerAccount.Name}" />
@@ -67,7 +71,6 @@
                 <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button Grid.Row="2" Content="Delete" Command="{Binding DeleteLineCommand}"/>
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />

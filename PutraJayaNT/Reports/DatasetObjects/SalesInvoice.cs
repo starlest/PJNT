@@ -33,5 +33,9 @@
         public string Notes { get; set; }
 
         public decimal CollectionTotal { get; set; }
+
+        public decimal PaidToday { get; set; }
+
+        public string Copy { get; set; }
     }
 }

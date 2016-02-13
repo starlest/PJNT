@@ -91,8 +91,8 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
-            dr2["Date"] = _salesTransaction.When.ToShortDateString();
-            dr2["DueDate"] = _salesTransaction.DueDate.ToShortDateString();
+            dr2["Date"] = _salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
             using (var context = new ERPContext())
             {
@@ -137,8 +137,8 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
-            dr2["Date"] = _salesTransaction.When.ToShortDateString();
-            dr2["DueDate"] = _salesTransaction.DueDate.ToShortDateString();
+            dr2["Date"] = _salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
             using (var context = new ERPContext())
             {
@@ -183,8 +183,8 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
-            dr2["Date"] = _salesTransaction.When.ToShortDateString();
-            dr2["DueDate"] = _salesTransaction.DueDate.ToShortDateString();
+            dr2["Date"] = _salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
             using (var context = new ERPContext())
             {
@@ -229,8 +229,8 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
-            dr2["Date"] = _salesTransaction.When.ToShortDateString();
-            dr2["DueDate"] = _salesTransaction.DueDate.ToShortDateString();
+            dr2["Date"] = _salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
             using (var context = new ERPContext())
             {

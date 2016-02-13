@@ -12,7 +12,6 @@
             <RowDefinition Height="0.25*" />
             <RowDefinition Height="0.25*" />
             <RowDefinition Height="0.5*" />
-            <RowDefinition Height="0.05*" />
             <RowDefinition Height="0.375*" />
         </Grid.RowDefinitions>
         <Grid>
@@ -141,9 +140,15 @@
         </Border>
         <DataGrid LoadingRow="DataGrid_LoadingRow" Grid.Row="3" ItemsSource="{Binding Lines}" SelectedItem="{Binding SelectedLine}"
                   CanUserSortColumns="False"
-                          CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
+                          CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False" 
                           ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                           AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsEnabled="{Binding IsTransactionNotPaid}">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Edit" Command="{Binding EditLineCommand}" IsEnabled="{Binding IsTransactionNotPaid}" />
+                    <MenuItem Header="Delete" Command="{Binding DeleteLineCommand}" IsEnabled="{Binding NotEditMode}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
@@ -156,13 +161,7 @@
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="4" IsEnabled="{Binding IsTransactionNotPaid}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <Button Content="Edit" Command="{Binding EditLineCommand}" />
-        </Grid>
-        <Grid Grid.Row="5">
+        <Grid Grid.Row="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />

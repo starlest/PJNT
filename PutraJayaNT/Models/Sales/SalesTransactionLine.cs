@@ -2,6 +2,7 @@ namespace PutraJayaNT.Models.Sales
 {
     using Inventory;
     using PutraJayaNT.Models.Salesman;
+    using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -59,5 +60,14 @@ namespace PutraJayaNT.Models.Sales
         public int Salesman_ID { get; set; }
 
         public virtual Salesman Salesman { get; set; }
+
+        public bool Equals2(object obj)
+        {
+            var line = obj as SalesTransactionLine;
+            if (line == null) return false;
+            else return line.Item.ItemID.Equals(this.Item.ItemID) && line.Warehouse.ID.Equals(this.Warehouse.ID)
+                && Math.Round(line.SalesPrice, 2).Equals(Math.Round(this.SalesPrice, 2))
+                && Math.Round(line.Discount, 2).Equals(Math.Round(this.Discount, 2));
+        }
     }
 }

@@ -203,7 +203,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                         line.ReturnWarehouse.ID.Equals(_purchaseReturnEntryWarehouse.ID) &&
                         line.PurchasePrice.Equals(_selectedPurchaseTransactionLine.PurchasePrice) &&
                         line.Discount.Equals(_selectedPurchaseTransactionLine.Discount) &&
-                        line.ReturnPrice.Equals(_purchaseReturnEntryPrice))
+                        Math.Round(line.ReturnPrice, 2).Equals(Math.Round((decimal)_purchaseReturnEntryPrice, 2)))
                         {
                             line.Quantity += (int)_purchaseReturnEntryQuantity;
                             line.UpdateTotal();

@@ -372,7 +372,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -1294,7 +1293,7 @@
           <Top>1.11153cm</Top>
           <Left>16.86711cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.0452cm</Width>
+          <Width>3.09435cm</Width>
           <ZIndex>7</ZIndex>
           <Style>
             <Border>
@@ -1362,7 +1361,7 @@
           <Top>1.74681cm</Top>
           <Left>16.86393cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.04519cm</Width>
+          <Width>3.09755cm</Width>
           <ZIndex>9</ZIndex>
           <Style>
             <Border>
@@ -1407,6 +1406,41 @@
           <Left>17.46148cm</Left>
           <Height>0.6cm</Height>
           <Width>2.2477cm</Width>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox4">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=First(Fields!Copy.Value, "SalesInvoiceDataSet")</Value>
+                  <Style>
+                    <FontWeight>Bold</FontWeight>
+                    <Color>Red</Color>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox4</rd:DefaultName>
+          <Top>0.35278cm</Top>
+          <Left>0.97916cm</Left>
+          <Height>0.6cm</Height>
+          <Width>2.5cm</Width>
+          <ZIndex>1</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1514,6 +1548,18 @@
           <DataField>Address</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="CollectionSalesman">
+          <DataField>CollectionSalesman</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CollectionTotal">
+          <DataField>CollectionTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Copy">
+          <DataField>Copy</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Customer">
           <DataField>Customer</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1526,6 +1572,10 @@
           <DataField>DueDate</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="ID">
+          <DataField>ID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="InvoiceDiscount">
           <DataField>InvoiceDiscount</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
@@ -1536,10 +1586,18 @@
         </Field>
         <Field Name="InvoiceNetTotal">
           <DataField>InvoiceNetTotal</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="InvoiceNumber">
           <DataField>InvoiceNumber</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="InvoicePaid">
+          <DataField>InvoicePaid</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="InvoiceRemaining">
+          <DataField>InvoiceRemaining</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="InvoiceSalesExpense">
@@ -1550,11 +1608,19 @@
           <DataField>Notes</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="PaidToday">
+          <DataField>PaidToday</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Warehouse">
+          <DataField>Warehouse</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
-        <rd:DataSetName>PutraJayaNT.Reports</rd:DataSetName>
+        <rd:DataSetName>PutraJayaNT.Reports.DatasetObjects</rd:DataSetName>
         <rd:TableName>SalesInvoice</rd:TableName>
-        <rd:ObjectDataSourceType>PutraJayaNT.Reports.SalesInvoice, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:ObjectDataSourceType>PutraJayaNT.Reports.DatasetObjects.SalesInvoice, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>

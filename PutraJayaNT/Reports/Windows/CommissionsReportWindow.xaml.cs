@@ -57,8 +57,8 @@ namespace PutraJayaNT.Reports.Windows
             }
 
             DataRow dr2 = dt2.NewRow();
-            dr2["FromDate"] = _commissionsReport.ToDate.ToShortDateString();
-            dr2["ToDate"] = _commissionsReport.FromDate.ToShortDateString();
+            dr2["FromDate"] = _commissionsReport.ToDate.ToString("dd-MM-yyyy");
+            dr2["ToDate"] = _commissionsReport.FromDate.ToString("dd-MM-yyyy");
             dr2["Total"] = Math.Round(_commissionsReport.Total, 2);
             dt2.Rows.Add(dr2);
 

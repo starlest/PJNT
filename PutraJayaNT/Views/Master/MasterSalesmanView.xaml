@@ -28,7 +28,6 @@
             <ComboBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30"
                       ItemsSource="{Binding Salesmen}" SelectedItem="{Binding SelectedSalesman, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
                       IsEditable="True" DisplayMemberPath="Name" Margin="10, 0, 10, 0" />
-            <Button Grid.Column="2" Content="Edit" Command="{Binding EditCommand}" Margin="20" />
         </Grid>
         <Border Grid.Column="1" BorderBrush="Blue" BorderThickness="2">
             <DataGrid Grid.Column="1" Grid.RowSpan="2" ItemsSource="{Binding SalesCommissions}" SelectedItem="{Binding SelectedLine}" 
@@ -36,6 +35,11 @@
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   IsEnabled="{Binding IsEditWindowNotOpen}">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Edit" Command="{Binding EditCommand}" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Category" Width="1*" IsReadOnly="True" Binding="{Binding Category.Name}" />
                     <DataGridTextColumn Header="Commission Percentage" Width="1*" IsReadOnly="True" Binding="{Binding Percentage}" />

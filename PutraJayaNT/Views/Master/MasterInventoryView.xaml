@@ -11,7 +11,6 @@
             <RowDefinition Height="0.40*" />
             <RowDefinition Height="0.125*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
         <Border BorderBrush="Blue" BorderThickness="2">
             <Grid IsEnabled="{Binding IsEditWindowNotOpen}">
@@ -98,6 +97,12 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   SelectedItem="{Binding SelectedLine}" IsEnabled="{Binding IsEditWindowNotOpen}">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Edit" Command="{Binding EditCommand}" />
+                    <MenuItem Header="Activate/Deactivate" Command="{Binding ActivateCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding ID}" />
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Name}" />
@@ -120,14 +125,6 @@
                 <DataGridTextColumn Header="Active" Width="1*" IsReadOnly="True" Binding="{Binding Active}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-            <Button Content="Edit" Command="{Binding EditCommand}" />
-            <Button Grid.Column="1" Content="Activate/Deactivate" Command="{Binding ActivateCommand}" />
-        </Grid>
         <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="100" 
               Visibility="{Binding EditWindowVisibility}" IsEnabled="{Binding IsEditAddSupplierWindowNotOpen}">
             <Grid.RowDefinitions>

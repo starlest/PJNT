@@ -96,7 +96,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                         if (!l.Description.Equals("Sales Transaction Receipt"))
                         {
                             if (line.Seq == "Credit") l.Amount = -l.Amount;
-                            _lines.Add(new LedgerTransactionLineVM { Model = l.Model });
+                            _lines.Add(new LedgerTransactionLineVM { Model = l.Model, Balance = _endingBalance + l.Amount });
                         }
 
                         else

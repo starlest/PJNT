@@ -10,7 +10,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.375*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="0.1*" />
         </Grid.RowDefinitions>
         <Grid>
             <Grid.RowDefinitions>
@@ -63,6 +62,11 @@
         <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   SelectedItem="{Binding SelectedLine}" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete" Command="{Binding DeleteLineCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding LedgerTransaction.ID}" />
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding LedgerTransaction.Date, StringFormat={}{0:dd/MM/yyyy}}" />
@@ -72,6 +76,5 @@
                 <DataGridTextColumn Header="Amount" Width="1*" IsReadOnly="True" Binding="{Binding Amount, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button Grid.Row="2" Content="Delete" Command="{Binding DeleteLineCommand}"/>
     </Grid>
 </UserControl>

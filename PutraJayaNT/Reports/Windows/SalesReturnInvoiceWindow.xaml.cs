@@ -64,7 +64,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Address"] = _salesReturnTransaction.SelectedSalesTransactionCustomer.City;
             dr2["SalesInvoiceNumber"] = _salesReturnTransaction.SelectedSalesTransactionID;
             dr2["SalesReturnInvoiceNumber"] = _salesReturnTransaction.SalesReturnTransactionID;
-            dr2["Date"] = _salesReturnTransaction.SalesReturnTransactionDate.ToShortDateString();
+            dr2["Date"] = _salesReturnTransaction.SalesReturnTransactionDate.ToString("dd-MM-yyyy");
 
             dt2.Rows.Add(dr2);
 

@@ -15,7 +15,6 @@
                 <RowDefinition Height="0.125*" />
                 <RowDefinition Height="0.375*" />
                 <RowDefinition Height="0.5*" />
-                <RowDefinition Height="0.0625*" />
                 <RowDefinition Height="0.375*" />
             </Grid.RowDefinitions>
             <Grid>
@@ -177,6 +176,12 @@
                   CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"  AutoGenerateColumns="False" 
                       CanUserResizeColumns="False" CanUserResizeRows="False" SelectedItem="{Binding SelectedLine}" SelectedIndex="{Binding SelectedIndex}" >
+                <DataGrid.ContextMenu>
+                    <ContextMenu >
+                        <MenuItem Header="Edit" Command="{Binding EditLineCommand}" IsEnabled="{Binding InvoiceNotPaid}" />
+                        <MenuItem Header="Delete" Command="{Binding DeleteLineCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Warehouse" Width="1*" IsReadOnly="True" Binding="{Binding Warehouse.Name}" />
                     <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
@@ -190,14 +195,6 @@
                     <DataGridTextColumn Header="Salesman" Width="1*" IsReadOnly="True" Binding="{Binding Salesman.Name}" />
                 </DataGrid.Columns>
             </DataGrid>
-            <Grid Grid.Row="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Button Content="Edit" Command="{Binding EditLineCommand}" IsEnabled="{Binding InvoiceNotPaid}" />
-                <Button Grid.Column="1" Content="Delete" Command="{Binding DeleteLineCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
-            </Grid>
             <Grid Grid.Row="6"  IsEnabled="{Binding InvoiceNotPaid}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />

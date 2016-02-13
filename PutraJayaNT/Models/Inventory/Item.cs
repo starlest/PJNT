@@ -37,6 +37,14 @@ namespace PutraJayaNT.Models.Inventory
 
         public bool Active { get; set; }
 
+        public virtual ObservableCollection<Stock> Stocks { get; set; }
+
+        public virtual ICollection<SalesTransactionLine> SalesTransactionLines { get; set; }
+
+        public virtual ICollection<SalesReturnTransactionLine> SalesReturnTransactionLines { get; set; }
+
+        public virtual ObservableCollection<AlternativeSalesPrice> AlternativeSalesPrices { get; set; }
+
         public override bool Equals(object obj)
         {
             var item = obj as Item;
@@ -49,12 +57,5 @@ namespace PutraJayaNT.Models.Inventory
             return base.GetHashCode();
         }
 
-        public virtual ObservableCollection<Stock> Stocks { get; set; }
-
-        public virtual ICollection<SalesTransactionLine> SalesTransactionLines { get; set; }
-
-        public virtual ICollection<SalesReturnTransactionLine> SalesReturnTransactionLines { get; set; }
-
-        public virtual ObservableCollection<AlternativeSalesPrice> AlternativeSalesPrices { get; set; }
     }
 }

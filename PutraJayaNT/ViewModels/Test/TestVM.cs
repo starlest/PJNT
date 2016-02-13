@@ -16,8 +16,10 @@ namespace PutraJayaNT.ViewModels.Test
         ICommand _checkPurchaseTransactionsCommand;
         ICommand _checkInventoryCommand;
         ICommand _checkStockCommand;
+        ICommand _checkSoldOrReturnedCommand;
         ICommand _checkLedgerTransactionsCommand;
         ICommand _checkLedgerGeneralCommand;
+        ICommand _checkPastCommand;
 
         public ICommand CheckSalesTransactionsCommand
         {
@@ -238,6 +240,62 @@ namespace PutraJayaNT.ViewModels.Test
             }
         }
 
+        public ICommand CheckSoldOrReturnedCommand
+        {
+            get
+            {
+                return _checkSoldOrReturnedCommand ?? (_checkSoldOrReturnedCommand = new RelayCommand(() =>
+                {
+                    using (var context = new ERPContext())
+                    {
+                        
+                        var items = context.Inventory.ToList();
+                        foreach (var item in items)
+                        {
+                            var purchaseLines = context.PurchaseTransactionLines.Where(e => e.ItemID.Equals(item.ItemID)).ToList();
+                            var soldOrReturned = 0;
+                            foreach (var line in purchaseLines)
+                            {
+                                soldOrReturned += line.SoldOrReturned;
+                            }
+
+                            var salesLines = context.SalesTransactionLines.Where(e => e.SalesTransaction.InvoiceIssued != null && e.ItemID.Equals(item.ItemID)).ToList();
+                            var salesReturnLines = context.SalesReturnTransactionLines.Where(e => e.ItemID.Equals(item.ItemID)).ToList();
+                            var purchaseReturnLines = context.PurchaseReturnTransactionLines.Where(e => e.ItemID.Equals(item.ItemID)).ToList();
+                            var adjustmentLines = context.AdjustStockTransactionLines.Where(e => e.AdjustStockTransactionID.Substring(0, 2).Equals("SA") && e.ItemID.Equals(item.ItemID) && e.Quantity < 0).ToList();
+                            var soldOrReturnedQuantity = 0;
+
+                            foreach (var line in salesLines)
+                            {
+                                soldOrReturnedQuantity += line.Quantity;
+                            }
+
+                            foreach (var line in salesReturnLines)
+                            {
+                                soldOrReturnedQuantity -= line.Quantity;
+                            }
+
+                            foreach (var line in purchaseReturnLines)
+                            {
+                                soldOrReturnedQuantity += line.Quantity;
+                            }
+                 
+                            foreach (var line in adjustmentLines)
+                            {
+                                soldOrReturnedQuantity += (-line.Quantity);
+                            }
+
+                            if (soldOrReturned != soldOrReturnedQuantity)
+                            {
+                                MessageBox.Show(string.Format("{0} \n Actual: {1} \n Calculated: {2}", item.ItemID, soldOrReturned, soldOrReturnedQuantity), "Error", MessageBoxButton.OK);
+                            }
+                        }
+
+                        MessageBox.Show("Check done.", "Successful", MessageBoxButton.OK);
+                    }
+                }));
+            }
+        }
         public ICommand CheckLedgerTransactionsCommand
         {
             get
@@ -433,6 +491,29 @@ namespace PutraJayaNT.ViewModels.Test
                         }
 
                         MessageBox.Show(string.Format("Check done. \n Total Lines: {0}", count), "Successful", MessageBoxButton.OK);
+                    }
+                }));
+            }
+        }
+
+        public ICommand CheckPastCommand
+        {
+            get
+            {
+                return _checkPastCommand ?? (_checkPastCommand = new RelayCommand(() =>
+                {
+                    using (var context = new ERPContext())
+                    {
+                        var transactions = context.SalesTransactions.Where(e => e.InvoiceIssued == null && e.Paid > 0).ToList();
+
+                        foreach (var t in transactions)
+                        {
+                 
+                                MessageBox.Show(string.Format("{0}", t.SalesTransactionID), "Error", MessageBoxButton.OK);
+                            
+                        }
+
+                        MessageBox.Show("Check done.", "Successful", MessageBoxButton.OK);
                     }
                 }));
             }
