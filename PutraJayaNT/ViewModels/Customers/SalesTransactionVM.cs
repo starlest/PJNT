@@ -1081,29 +1081,29 @@
                             return;
                         }
 
+                        LocalReport localReport = CreateInvoiceLocalReport();
+                        PrintHelper printHelper = new PrintHelper();
+                        try
+                        {
+                            printHelper.Run(localReport);
+                        }
+
+                        catch (Exception e)
+                        {
+                            MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK);
+                        }
+
+                        finally
+                        {
+                            printHelper.Dispose();
+                        }
+
                         if (transaction.InvoicePrinted == false)
                         {
                             transaction.InvoicePrinted = true;
                             Model.InvoicePrinted = true;
                             context.SaveChanges();
                         }
-                    }
-
-                    LocalReport localReport = CreateInvoiceLocalReport();
-                    PrintHelper printHelper = new PrintHelper();
-                    try
-                    {
-                        printHelper.Run(localReport);
-                    }
-
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK);
-                    }
-
-                    finally
-                    {
-                        printHelper.Dispose();
                     }
                 }));
             }

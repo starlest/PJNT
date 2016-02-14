@@ -36,6 +36,9 @@ namespace PutraJayaNT.ViewModels.Inventory
         ICommand _newTransactionCommand;
         ICommand _saveTransactionCommand;
 
+        MoveStockTransactionLineVM _selectedLine;
+        ICommand _deleteLineCommand;
+
         ICommand _printCommand;
 
         public MoveStockVM()
@@ -314,6 +317,32 @@ namespace PutraJayaNT.ViewModels.Inventory
 
                     MessageBox.Show("Transaction is saved.", "Success", MessageBoxButton.OK);
                     ResetTransaction();
+                }));
+            }
+        }
+        #endregion
+
+        #region Line Properties
+        public MoveStockTransactionLineVM SelectedLine
+        {
+            get { return _selectedLine; }
+            set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
+        }
+
+        public ICommand DeleteLineCommand
+        {
+            get
+            {
+                return _deleteLineCommand ?? (_deleteLineCommand = new RelayCommand(() =>
+                {
+                    if (_selectedLine == null)
+                    {
+                        MessageBox.Show("Please select a line.", "Invalid Command", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    if (MessageBox.Show("Confirm deletion?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        _lines.Remove(_selectedLine);
                 }));
             }
         }

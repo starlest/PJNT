@@ -45,7 +45,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             using (var context = new ERPContext())
             {
                 var bankAccounts = context.Ledger_Accounts
-                    .Where(e => e.Name.Contains("Bank"));
+                    .Where(e => e.Name.Contains("Bank") && e.Notes.Equals("Current Asset"));
                 foreach (var bank in bankAccounts)
                     _paymentModes.Add(bank.Name);
             }

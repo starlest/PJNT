@@ -87,10 +87,15 @@
             </Grid>
         </Border>
         <DataGrid Grid.Row="3" Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" 
-                  CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
+                  SelectedItem="{Binding SelectedLine}" CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   IsEnabled="{Binding IsNotEditMode}" >
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete" Command="{Binding DeleteLineCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
