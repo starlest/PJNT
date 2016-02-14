@@ -211,26 +211,26 @@ namespace PutraJayaNT.ViewModels.Test
                     using (var context = new ERPContext())
                     {
                         var items = context.Inventory.ToList();
+                        var warehouses = context.Warehouses.ToList();
 
                         foreach (var item in items)
-                        {
-                            var stocks = context.Stocks
-                            .Include("Item")
-                            .Include("Warehouse")
-                            .Where(e => e.ItemID.Equals(item.ItemID))
-                            .ToList();
-
-                            var actualBalance = 0;
-                            foreach (var stock in stocks)
+                        { 
+                            foreach (var warehouse in warehouses)
                             {
-                                actualBalance += stock.Pieces;
-                            }
+                                var stock = context.Stocks
+                                .Include("Item")
+                                .Include("Warehouse")
+                                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID))
+                                .FirstOrDefault();
 
-                            var calculatedBalance = GetBeginningBalance(item, DateTime.Now.Date);
-                            var difference = actualBalance - calculatedBalance;
-                            if (difference != 0)
-                            {
-                                MessageBox.Show(string.Format("{0}-{1} \n Actual: {2} \n Calculated: {3}", item.ItemID, item.Name, actualBalance, calculatedBalance), "Error", MessageBoxButton.YesNo);
+                                var actualBalance = stock == null ? 0 : stock.Pieces;
+                                var calculatedBalance = GetBeginningBalance(item, warehouse, DateTime.Now.Date);
+                                var difference = actualBalance - calculatedBalance;
+                                if (difference != 0)
+                                {
+                                    if (MessageBox.Show(string.Format("{0}-{1} {2} \n Actual: {3} \n Calculated: {4}", item.ItemID, warehouse.ID, item.Name, actualBalance, calculatedBalance), "Error", MessageBoxButton.YesNo)
+                                        == MessageBoxResult.No) return;
+                                }
                             }
                         }
 
@@ -296,6 +296,7 @@ namespace PutraJayaNT.ViewModels.Test
                 }));
             }
         }
+
         public ICommand CheckLedgerTransactionsCommand
         {
             get
@@ -519,103 +520,108 @@ namespace PutraJayaNT.ViewModels.Test
             }
         }
 
-        private int GetPeriodBeginningBalance(Item item, int year, int month)
+        private int GetPeriodBeginningBalance(Item item, Warehouse warehouse, int year, int month)
         {
             var beginningBalance = 0;
             using (var context = new ERPContext())
             {
-                var stockBalances = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.Year == year).ToList();
+                var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == year).FirstOrDefault();
 
-                if (stockBalances.Count == 0)
+                if (stockBalance == null)
                 {
                     return beginningBalance;
                 }
 
-                foreach (var stockBalance in stockBalances)
+                switch (month)
                 {
-                    switch (month)
-                    {
-                        case 1:
-                            beginningBalance += stockBalance.BeginningBalance;
-                            break;
-                        case 2:
-                            beginningBalance += stockBalance.Balance1;
-                            break;
-                        case 3:
-                            beginningBalance += stockBalance.Balance2;
-                            break;
-                        case 4:
-                            beginningBalance += stockBalance.Balance3;
-                            break;
-                        case 5:
-                            beginningBalance += stockBalance.Balance4;
-                            break;
-                        case 6:
-                            beginningBalance += stockBalance.Balance5;
-                            break;
-                        case 7:
-                            beginningBalance += stockBalance.Balance6;
-                            break;
-                        case 8:
-                            beginningBalance += stockBalance.Balance7;
-                            break;
-                        case 9:
-                            beginningBalance += stockBalance.Balance8;
-                            break;
-                        case 10:
-                            beginningBalance += stockBalance.Balance9;
-                            break;
-                        case 11:
-                            beginningBalance += stockBalance.Balance10;
-                            break;
-                        case 12:
-                            beginningBalance += stockBalance.Balance11;
-                            break;
-                        default:
-                            break;
-                    }
+                    case 1:
+                        beginningBalance += stockBalance.BeginningBalance;
+                        break;
+                    case 2:
+                        beginningBalance += stockBalance.Balance1;
+                        break;
+                    case 3:
+                        beginningBalance += stockBalance.Balance2;
+                        break;
+                    case 4:
+                        beginningBalance += stockBalance.Balance3;
+                        break;
+                    case 5:
+                        beginningBalance += stockBalance.Balance4;
+                        break;
+                    case 6:
+                        beginningBalance += stockBalance.Balance5;
+                        break;
+                    case 7:
+                        beginningBalance += stockBalance.Balance6;
+                        break;
+                    case 8:
+                        beginningBalance += stockBalance.Balance7;
+                        break;
+                    case 9:
+                        beginningBalance += stockBalance.Balance8;
+                        break;
+                    case 10:
+                        beginningBalance += stockBalance.Balance9;
+                        break;
+                    case 11:
+                        beginningBalance += stockBalance.Balance10;
+                        break;
+                    case 12:
+                        beginningBalance += stockBalance.Balance11;
+                        break;
+                    default:
+                        break;
                 }
-
             }
 
             return beginningBalance;
         }
 
-        private int GetBeginningBalance(Item item, DateTime fromDate)
+        private int GetBeginningBalance(Item item, Warehouse warehouse, DateTime fromDate)
         {
             var monthDate = fromDate.AddDays(-fromDate.Date.Day + 1);
-            var balance = GetPeriodBeginningBalance(item, fromDate.Year, fromDate.Month);
+            var balance = GetPeriodBeginningBalance(item, warehouse, fromDate.Year, fromDate.Month);
 
             using (var context = new ERPContext())
             {
                 var purchaseLines = context.PurchaseTransactionLines
                     .Include("PurchaseTransaction")
                     .Include("PurchaseTransaction.Supplier")
-                    .Where(e => e.ItemID.Equals(item.ItemID) && e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date <= fromDate &&
+                    .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.PurchaseTransaction.Date >= monthDate && e.PurchaseTransaction.Date <= fromDate &&
                     !e.PurchaseTransactionID.Substring(0, 2).Equals("SA") && !e.PurchaseTransaction.Supplier.Name.Equals("-"))
                     .ToList();
 
                 var purchaseReturnLines = context.PurchaseReturnTransactionLines
                     .Include("PurchaseReturnTransaction")
                     .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
-                    .Where(e => e.ItemID.Equals(item.ItemID) && e.PurchaseReturnTransaction.Date >= monthDate && e.PurchaseReturnTransaction.Date <= fromDate)
+                    .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.PurchaseReturnTransaction.Date >= monthDate && e.PurchaseReturnTransaction.Date <= fromDate)
                     .ToList();
 
                 var salesLines = context.SalesTransactionLines
                     .Include("SalesTransaction")
                     .Include("SalesTransaction.Customer")
-                    .Where(e => e.ItemID.Equals(item.ItemID) && e.SalesTransaction.When >= monthDate && e.SalesTransaction.When <= fromDate)
+                    .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.SalesTransaction.When >= monthDate && e.SalesTransaction.When <= fromDate)
                     .ToList();
 
                 var salesReturnLines = context.SalesReturnTransactionLines
                     .Include("SalesReturnTransaction")
                     .Include("SalesReturnTransaction.SalesTransaction.Customer")
-                    .Where(e => e.ItemID.Equals(item.ItemID) && e.SalesReturnTransaction.Date >= monthDate && e.SalesReturnTransaction.Date <= fromDate)
+                    .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.SalesReturnTransaction.Date >= monthDate && e.SalesReturnTransaction.Date <= fromDate)
                     .ToList();
 
                 var stockAdjustmentLines = context.AdjustStockTransactionLines
                     .Include("AdjustStockTransaction")
-                    .Where(e => e.ItemID.Equals(item.ItemID) && e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date <= fromDate)
+                    .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date <= fromDate)
+                    .ToList();
+
+                var moveStockTransactions = context.MoveStockTransactions
+                    .Include("FromWarehouse")
+                    .Include("ToWarehouse")
+                    .Include("MoveStockTransactionLines")
+                    .Include("MoveStockTransactionLines.Item")
+                    .Where(e => e.Date >= monthDate && e.Date <= fromDate
+                    && (e.FromWarehouse.ID.Equals(warehouse.ID) || e.ToWarehouse.ID.Equals(warehouse.ID)))
                     .ToList();
 
                 foreach (var line in purchaseLines)
@@ -632,6 +638,25 @@ namespace PutraJayaNT.ViewModels.Test
 
                 foreach (var line in stockAdjustmentLines)
                     balance += line.Quantity;
+
+                foreach (var transaction in moveStockTransactions)
+                {
+                    foreach (var line in transaction.MoveStockTransactionLines)
+                    {
+                        if (line.ItemID.Equals(item.ItemID))
+                        {
+                            if (transaction.FromWarehouse.ID.Equals(warehouse.ID))
+                            {
+                                balance -= line.Quantity;
+                            }
+
+                            else if (transaction.ToWarehouse.ID.Equals(warehouse.ID))
+                            {
+                                balance += line.Quantity;
+                            }
+                        }
+                    }
+                }
             }
 
             return balance;
