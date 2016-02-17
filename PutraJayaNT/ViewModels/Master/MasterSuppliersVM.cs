@@ -285,15 +285,15 @@ namespace PutraJayaNT.ViewModels.Master
                             uow.LedgerGeneralRepository.Add(new LedgerGeneral
                             {
                                 LedgerAccount = account,
-                                PeriodYear = DateTime.Now.Year,
-                                Period = DateTime.Now.Month,
+                                PeriodYear = UtilityMethods.GetCurrentDate().Year,
+                                Period = UtilityMethods.GetCurrentDate().Month,
                             });
 
                             // Add an account Balance for this supplier in the database
                             uow.LedgerAccountBalanceRepository.Add(new LedgerAccountBalance
                             {
                                 LedgerAccount = account,
-                                PeriodYear = DateTime.Now.Year,
+                                PeriodYear = UtilityMethods.GetCurrentDate().Year,
                             });
 
                             uow.SaveChanges();

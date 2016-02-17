@@ -138,8 +138,8 @@ namespace PutraJayaNT.ViewModels.Inventory
                         {
                             PurchaseID = _newTransactionID,
                             Supplier = context.Suppliers.Where(e => e.Name.Equals("-")).FirstOrDefault(),
-                            Date = DateTime.Now.Date,
-                            DueDate = DateTime.Now.Date,
+                            Date = UtilityMethods.GetCurrentDate().Date,
+                            DueDate = UtilityMethods.GetCurrentDate().Date,
                             Discount = 0,
                             GrossTotal = 0,
                             Total = 0,
@@ -241,7 +241,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                         }
 
                         // Add the transaction to the database
-                        Model.Date = DateTime.Now.Date;
+                        Model.Date = UtilityMethods.GetCurrentDate().Date;
                         Model.User = _user;
                         context.AdjustStockTransactions.Add(Model);
 
@@ -249,7 +249,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                         if (decreaseAdjustment)
                         {
                             var transaction = new LedgerTransaction();
-                            if (!LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, _newTransactionID, "Stock Adjustment (Decrement)")) return;
+                            if (!LedgerDBHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Stock Adjustment (Decrement)")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
                             LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);
@@ -467,8 +467,8 @@ namespace PutraJayaNT.ViewModels.Inventory
 
         private void SetTransactionID()
         {
-            var month = DateTime.Now.Month;
-            var year = DateTime.Now.Year;
+            var month = UtilityMethods.GetCurrentDate().Month;
+            var year = UtilityMethods.GetCurrentDate().Year;
             _newTransactionID = "SA" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
 
             string lastTransactionID = null;

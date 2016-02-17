@@ -50,10 +50,10 @@ namespace PutraJayaNT.ViewModels.Accounting
                     _paymentModes.Add(bank.Name);
             }
 
-            _fromDate = DateTime.Now.Date;
-            _toDate = DateTime.Now.Date;
+            _fromDate = UtilityMethods.GetCurrentDate().Date;
+            _toDate = UtilityMethods.GetCurrentDate().Date;
 
-            _newEntryDate = DateTime.Now.Date;
+            _newEntryDate = UtilityMethods.GetCurrentDate().Date;
         }
 
         public ObservableCollection<LedgerAccountVM> Accounts
@@ -249,7 +249,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         private void ResetEntryFields()
         {
             UpdateAccounts();
-            NewEntryDate = DateTime.Now.Date;
+            NewEntryDate = UtilityMethods.GetCurrentDate().Date;
             NewEntryAccount = null;
             NewEntryDescription = null;
             NewEntryAmount = null;

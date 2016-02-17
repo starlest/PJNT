@@ -26,7 +26,7 @@ namespace PutraJayaNT.Views.Inventory
 
         private void OnClick(object sender, EventArgs e)
         {
-            //if (DateTime.Now.Date.AddDays(1).Day != 1 && DateTime.Now.Hour < 17)
+            //if (UtilityMethods.GetCurrentDate().Date.AddDays(1).Day != 1 && UtilityMethods.GetCurrentDate().Hour < 17)
             //{
             //    MessageBox.Show("Unable to close books at this time.", "Failed to Close Stock", MessageBoxButton.OK);
             //    return;

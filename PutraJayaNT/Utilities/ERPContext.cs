@@ -54,6 +54,8 @@ namespace PutraJayaNT.Utilities
         public virtual DbSet<LedgerGeneral> Ledger_General { get; set; }
         public virtual DbSet<LedgerAccountBalance> Ledger_Account_Balances { get; set; }
 
+        public virtual DbSet<Date> Dates { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<DecimalPropertyConvention>();

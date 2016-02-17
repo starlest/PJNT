@@ -22,8 +22,8 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             _salesTransactions = new ObservableCollection<SalesTransaction>();
             _modes = new ObservableCollection<string> { "Printed", "Not Printed" };
-            _fromDate = DateTime.Now.Date;
-            _toDate = DateTime.Now.Date;
+            _fromDate = UtilityMethods.GetCurrentDate().Date;
+            _toDate = UtilityMethods.GetCurrentDate().Date;
 
             SelectedMode = _modes.FirstOrDefault();
         }

@@ -12,5 +12,12 @@ namespace PutraJayaNT.Models
 
         [Required]
         public bool IsAdmin { get; set; }
+
+        [Required]
+        public bool ViewOnly { get; set; }
+
+
+        [Required]
+        public bool CanDeleteInvoice { get; set; }
     }
 }

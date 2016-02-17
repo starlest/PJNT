@@ -50,7 +50,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             _warehouses = new ObservableCollection<WarehouseVM>();
             _lines = new ObservableCollection<MoveStockTransactionLineVM>();
 
-            _newTransactionDate = DateTime.Now.Date;
+            _newTransactionDate = UtilityMethods.GetCurrentDate().Date;
 
             _isNotEditMode = true;
             _isFromWarehouseNotSelected = true;
@@ -202,7 +202,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             get { return _newTransactionDate; }
             set
             {
-                if (value > DateTime.Now.Date)
+                if (value > UtilityMethods.GetCurrentDate().Date)
                 {
                     MessageBox.Show("Cannot set to a future date.", "Invalid Date", MessageBoxButton.OK);
                     return;
@@ -404,8 +404,8 @@ namespace PutraJayaNT.ViewModels.Inventory
 
         private void SetTransactionID()
         {
-            var month = DateTime.Now.Month;
-            var year = DateTime.Now.Year;
+            var month = UtilityMethods.GetCurrentDate().Month;
+            var year = UtilityMethods.GetCurrentDate().Year;
             _newTransactionID = "MS" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
 
             string lastTransactionID = null;
@@ -443,7 +443,7 @@ namespace PutraJayaNT.ViewModels.Inventory
             IsNotEditMode = true;
             NewTransactionFromWarehouse = null;
             NewTransactionToWarehouse = null;
-            NewTransactionDate = DateTime.Now.Date;
+            NewTransactionDate = UtilityMethods.GetCurrentDate().Date;
             IsFromWarehouseNotSelected = true;
             IsToWarehouseNotSelected = true;
         }

@@ -173,7 +173,7 @@ namespace PutraJayaNT.ViewModels.Test
                                 MessageBoxResult.Yes)
                             {
                                 var newTransaction = new LedgerTransaction();
-                                LedgerDBHelper.AddTransaction(context, newTransaction, DateTime.Now.Date, "Inventory Adjustment", "Inventory Adjustment");
+                                LedgerDBHelper.AddTransaction(context, newTransaction, UtilityMethods.GetCurrentDate().Date, "Inventory Adjustment", "Inventory Adjustment");
                                 context.SaveChanges();
 
                                 if (actualCOGS < calculatedCOGS)
@@ -224,7 +224,7 @@ namespace PutraJayaNT.ViewModels.Test
                                 .FirstOrDefault();
 
                                 var actualBalance = stock == null ? 0 : stock.Pieces;
-                                var calculatedBalance = GetBeginningBalance(item, warehouse, DateTime.Now.Date);
+                                var calculatedBalance = GetBeginningBalance(item, warehouse, UtilityMethods.GetCurrentDate().Date);
                                 var difference = actualBalance - calculatedBalance;
                                 if (difference != 0)
                                 {

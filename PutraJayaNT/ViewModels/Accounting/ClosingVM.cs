@@ -71,9 +71,9 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                 foreach (var account in accounts)
                 {
-                    if (DateTime.Now.Month == 12)
+                    if (UtilityMethods.GetCurrentDate().Month == 12)
                     {
-                        var newBalance = new LedgerAccountBalance { LedgerAccount = account, PeriodYear = DateTime.Now.Year + 1 };
+                        var newBalance = new LedgerAccountBalance { LedgerAccount = account, PeriodYear = UtilityMethods.GetCurrentDate().Year + 1 };
                         context.Ledger_Account_Balances.Add(newBalance);
                     }
 
@@ -84,7 +84,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                         account.LedgerGeneral.Period = 1;
                     }
 
-                    var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(DateTime.Now.Year)).FirstOrDefault();
+                    var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year)).FirstOrDefault();
 
                     // Close the balances
                     if (account.Class.Equals("Asset") || account.Class.Equals("Expense"))
@@ -117,7 +117,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var amount = account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                 var transaction = new LedgerTransaction();
 
-                LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, "Closing Entry", account.Name);
+                LedgerDBHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name);
                 context.SaveChanges();
                 LedgerDBHelper.AddTransactionLine(context, transaction, account.Name, "Credit", amount);
                 LedgerDBHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Debit", amount);
@@ -130,7 +130,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var amount = account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                 var transaction = new LedgerTransaction();
 
-                if (!LedgerDBHelper.AddTransaction(context, transaction, DateTime.Now.Date, "Closing Entry", account.Name)) return;
+                if (!LedgerDBHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name)) return;
                 context.SaveChanges();
                 LedgerDBHelper.AddTransactionLine(context, transaction, account.Name, "Debit", amount);
                 LedgerDBHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Credit", amount);
@@ -141,7 +141,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         private void CloseAssetOrExpenseAccount(LedgerAccount account, ERPContext context)
         {
-            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(DateTime.Now.Year)).FirstOrDefault();
+            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year)).FirstOrDefault();
 
             switch (Period)
             {
@@ -248,7 +248,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         private void CloseLiabilityOrRevenueAccount(LedgerAccount account, ERPContext context)
         {
-            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(DateTime.Now.Year)).FirstOrDefault();
+            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year)).FirstOrDefault();
 
             switch (Period)
             {

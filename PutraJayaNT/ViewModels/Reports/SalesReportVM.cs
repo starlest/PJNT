@@ -48,8 +48,8 @@ namespace PutraJayaNT.ViewModels.Reports
             _modes.Add("Detailed");
             SelectedMode = Modes.First();
 
-            _fromDate = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
-            _toDate = DateTime.Now.Date;
+            _fromDate = UtilityMethods.GetCurrentDate().Date.AddDays(-UtilityMethods.GetCurrentDate().Day + 1);
+            _toDate = UtilityMethods.GetCurrentDate().Date;
 
             UpdateCategories();
             RefreshCustomers();
@@ -60,9 +60,6 @@ namespace PutraJayaNT.ViewModels.Reports
         }
 
         #region Collection
-        /// <summary>
-        /// Gets the list of Categories loaded.
-        /// </summary>
         public ObservableCollection<Category> Categories
         {
             get
@@ -71,44 +68,26 @@ namespace PutraJayaNT.ViewModels.Reports
             }
         }
 
-        /// <summary>
-        /// Gets the list of selected Category Items loaded.
-        /// </summary>
         public ObservableCollection<Item> CategoryItems
         {
             get { return _categoryItems; }
         }
 
-        /// <summary>
-        /// Gets the list of Customers loaded.
-        /// </summary>
         public ObservableCollection<CustomerVM> Customers
         {
             get { return _customers; }
         }
 
-        /// <summary>
-        /// Gets the list of detailed lines loaded.
-        /// </summary>
         public ObservableCollection<SalesTransactionLineVM> DetailedDisplayLines
         {
             get { return _detailedDisplayLines; }
         }
 
-        /// <summary>
-        /// Gets the list of lines loaded.
-        /// </summary>
         public ObservableCollection<SalesTransactionLineVM> GlobalDisplayLines
         {
             get { return _globalDisplayLines; }
         }
 
-        /// <summary>
-        /// Gets the list of view modes.
-        /// </summary>
-        /// <remark>
-        /// Available modes are Global and Detailed.
-        /// </remark>
         public ObservableCollection<string> Modes
         {
             get { return _modes; }

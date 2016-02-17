@@ -28,7 +28,8 @@
         bool _isPaidChecked;
         bool _allSelected;
 
-        ICommand _printCommand;
+        ICommand _printPerCityCommand;
+        ICommand _printPerSalesmanCommand;
 
         public SalesCollectionListVM()
         {
@@ -36,7 +37,7 @@
             _salesmen = new ObservableCollection<Salesman>();
             _customers = new ObservableCollection<Customer>();
             _salesTransactions = new ObservableCollection<SalesCollectionListLineVM>();
-            _date = DateTime.Now.Date;
+            _date = UtilityMethods.GetCurrentDate().Date;
             UpdateCities();
             UpdateSalesmen();
             UpdateCustomers();
@@ -155,15 +156,31 @@
             }
         }
 
-        public ICommand PrintCommand
+        public ICommand PrintPerCityCommand
         {
             get
             {
-                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                return _printPerCityCommand ?? (_printPerCityCommand = new RelayCommand(() =>
                 {
                     if (_salesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportWindow(_salesTransactions, _date);
+                    var collectionReportWindow = new CollectionReportPerCityWindow(_salesTransactions, _date);
+                    collectionReportWindow.Owner = App.Current.MainWindow;
+                    collectionReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    collectionReportWindow.Show();
+                }));
+            }
+        }
+
+        public ICommand PrintPerSalesmanCommand
+        {
+            get
+            {
+                return _printPerSalesmanCommand ?? (_printPerSalesmanCommand = new RelayCommand(() =>
+                {
+                    if (_salesTransactions.Count == 0) return;
+
+                    var collectionReportWindow = new CollectionReportPerSalesmanWindow(_salesTransactions, _date);
                     collectionReportWindow.Owner = App.Current.MainWindow;
                     collectionReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     collectionReportWindow.Show();

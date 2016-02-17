@@ -1,10 +1,12 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models.Sales;
+using PutraJayaNT.Reports.Windows;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
@@ -16,11 +18,13 @@ namespace PutraJayaNT.ViewModels.Customers
         DateTime _toDate;
         decimal _total;
 
+        ICommand _printCommand;
+
         public BrowseSalesTransactionsVM()
         {
             _salesTransactions = new ObservableCollection<SalesTransaction>();
-            _fromDate = DateTime.Now.Date;
-            _toDate = DateTime.Now.Date;
+            _fromDate = UtilityMethods.GetCurrentDate().Date;
+            _toDate = UtilityMethods.GetCurrentDate().Date;
 
             UpdateSalesTransactions();
         }
@@ -66,6 +70,22 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             get { return _total; }
             set { SetProperty(ref _total, value, "Total"); }
+        }
+
+        public ICommand PrintCommand
+        {
+            get
+            {
+                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                {
+                    if (_salesTransactions.Count == 0) return;
+
+                    var salesTransactionsReportWindow = new SalesTransactionsReportWindow(_salesTransactions);
+                    salesTransactionsReportWindow.Owner = App.Current.MainWindow;
+                    salesTransactionsReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    salesTransactionsReportWindow.Show();
+                }));
+            }
         }
 
         #region Helper methods

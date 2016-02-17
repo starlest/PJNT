@@ -1,6 +1,5 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using Microsoft.Reporting.WinForms;
-using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Utilities;
 using PutraJayaNT.ViewModels.Customers;
 using System;
@@ -14,12 +13,12 @@ namespace PutraJayaNT.Reports.Windows
     /// <summary>
     /// Interaction logic for SalesInvoiceWindow.xaml
     /// </summary>
-    public partial class CollectionReportWindow : ModernWindow
+    public partial class CollectionReportPerSalesmanWindow : ModernWindow
     {
         ObservableCollection<SalesCollectionListLineVM>  _salesTransactions;
         DateTime _dateSelected;
 
-        public CollectionReportWindow(ObservableCollection<SalesCollectionListLineVM> salesTransactions, DateTime date)
+        public CollectionReportPerSalesmanWindow(ObservableCollection<SalesCollectionListLineVM> salesTransactions, DateTime date)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
@@ -35,7 +34,9 @@ namespace PutraJayaNT.Reports.Windows
         {
             DataTable dt = new DataTable();
 
+            dt.Columns.Add(new DataColumn("Date", typeof(string)));
             dt.Columns.Add(new DataColumn("ID", typeof(string)));
+            dt.Columns.Add(new DataColumn("City", typeof(string)));
             dt.Columns.Add(new DataColumn("Customer", typeof(string)));
             dt.Columns.Add(new DataColumn("InvoiceNetTotal", typeof(decimal)));
             dt.Columns.Add(new DataColumn("InvoicePaid", typeof(decimal)));
@@ -50,8 +51,10 @@ namespace PutraJayaNT.Reports.Windows
                 if (t.IsSelected)
                 {
                     DataRow dr = dt.NewRow();
+                    dr["Date"] = t.When.ToShortDateString();
                     dr["ID"] = t.SalesTransactionID;
                     dr["Customer"] = t.Customer.Name;
+                    dr["City"] = t.Customer.City;
                     dr["InvoiceNetTotal"] = t.Total;
                     dr["InvoicePaid"] = t.Paid;
                     dr["PaidToday"] = GetPaidToday(t);
@@ -64,7 +67,7 @@ namespace PutraJayaNT.Reports.Windows
 
             ReportDataSource reportDataSource = new ReportDataSource("InvoiceDataSet", dt);
  
-            reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\CollectionReport.rdlc"); // Path of the rdlc file
+            reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\CollectionReportPerSalesman.rdlc"); // Path of the rdlc file
 
             reportViewer.LocalReport.DataSources.Add(reportDataSource);
             reportViewer.PageCountMode = PageCountMode.Actual;

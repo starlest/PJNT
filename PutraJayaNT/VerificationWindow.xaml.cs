@@ -3,6 +3,7 @@ using PutraJayaNT.ViewModels;
 
 namespace PutraJayaNT
 {
+    
     /// <summary>
     /// Interaction logic for VerificationWindow.xaml
     /// </summary>

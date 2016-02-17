@@ -41,7 +41,7 @@ namespace PutraJayaNT.ViewModels.Customers
             _customerUnpaidSalesTransactions = new ObservableCollection<SalesTransaction>();
             _selectedSalesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
             _collectmentModes = new ObservableCollection<string>();
-            _date = DateTime.Now.Date;
+            _date = UtilityMethods.GetCurrentDate().Date;
             UpdatePaymentModes();
             UpdateCustomers();
         }
@@ -220,7 +220,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                 if (_useCredits == 0) return;
 
-                Remaining = _total - _selectedSalesTransaction.Paid - UseCredits;
+                Remaining = _total - _selectedSalesTransaction.Paid - _useCredits;
             }
         }
 
@@ -286,7 +286,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             {
                                 var transaction = new LedgerTransaction();
 
-                                LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedSalesTransaction.SalesTransactionID, "Sales Transaction Receipt");
+                                if (!LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedSalesTransaction.SalesTransactionID, "Sales Transaction Receipt")) return;
                                 context.SaveChanges();
 
                                 LedgerDBHelper.AddTransactionLine(context, transaction, _selectedPaymentMode, "Debit", (decimal)_collect);

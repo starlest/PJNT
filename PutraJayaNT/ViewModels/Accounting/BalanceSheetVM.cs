@@ -33,8 +33,8 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             _months = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            _periodYear = DateTime.Now.Year;
-            _periodMonth = DateTime.Now.Month;
+            _periodYear = UtilityMethods.GetCurrentDate().Year;
+            _periodMonth = UtilityMethods.GetCurrentDate().Month;
         }
 
         public List<int> Months
@@ -265,7 +265,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         private decimal FindCurrentBalance(LedgerAccount account)
         {
             var period = _periodMonth;
-            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(DateTime.Now.Year)).FirstOrDefault();
+            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year)).FirstOrDefault();
 
             if (period == 1)
                 return periodYearBalances.Balance1;

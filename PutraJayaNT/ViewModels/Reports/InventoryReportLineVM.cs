@@ -1,7 +1,6 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Utilities;
 using System.Linq;
 
 namespace PutraJayaNT.ViewModels.Reports
@@ -10,9 +9,6 @@ namespace PutraJayaNT.ViewModels.Reports
     {
         Item _item;
         int _quantity;
-        int _units;
-        int _pieces;
-        Supplier _selectedSupplier;
 
         public InventoryReportLineVM(Item item)
         {

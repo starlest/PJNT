@@ -35,8 +35,8 @@ namespace PutraJayaNT.ViewModels.Reports
             _products = new ObservableCollection<ItemVM>();
             _warehouses = new ObservableCollection<WarehouseVM>();
             _lines = new ObservableCollection<StockBalanceLineVM>();
-            _fromDate = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
-            _toDate = DateTime.Now.Date;
+            _fromDate = UtilityMethods.GetCurrentDate().Date.AddDays(-UtilityMethods.GetCurrentDate().Day + 1);
+            _toDate = UtilityMethods.GetCurrentDate().Date;
             UpdateProducts();
             UpdateWarehouses();
         }

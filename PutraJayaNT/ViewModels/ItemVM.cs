@@ -8,8 +8,6 @@ namespace PutraJayaNT.ViewModels
 {
     public class ItemVM : ViewModelBase<Item>
     {
-        int _quantity;
-
         Supplier _selectedSupplier;
 
         public string ID

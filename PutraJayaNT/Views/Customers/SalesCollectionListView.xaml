@@ -17,8 +17,10 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.2*" />
+                <ColumnDefinition Width="0.2*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Print" Command="{Binding PrintCommand}" />
+            <Button Grid.Column="1" Content="Print Per Salesman" Command="{Binding PrintPerSalesmanCommand}" />
+            <Button Grid.Column="2" Content="Print Per City" Command="{Binding PrintPerCityCommand}" />
         </Grid>
         <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid>

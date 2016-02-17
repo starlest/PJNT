@@ -5,21 +5,25 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Configuration;
+using PutraJayaNT.Utilities;
+using System.Linq;
+using PutraJayaNT.Models;
 
 namespace PutraJayaNT.Views.Menu
 {
-    /// <summary>
-    /// Interaction logic for BackupRestoreView.xaml
-    /// </summary>
-    public partial class BackupRestoreView : UserControl
+    public partial class SettingsView : UserControl
     {
         bool isRunning = false;
         bool isDone = false;
         string filename = null;
+        string _connectionString;
+        User _user;
 
-        public BackupRestoreView()
+        public SettingsView()
         {
             InitializeComponent();
+            _user = App.Current.FindResource("CurrentUser") as User;
+            _connectionString = ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString.Substring(7).Split(';')[0];
         }
 
         private void Export()
@@ -110,6 +114,41 @@ namespace PutraJayaNT.Views.Menu
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbStatus.Value = e.ProgressPercentage * 2;
+        }
+
+        private void Decrease_Day_Button_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show(string.Format("The date now is: {0} \n Confirm decreasing day?", UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy")), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
+            if (!UtilityMethods.GetVerification()) return;
+
+            using (var context = new ERPContext())
+            {
+                var currentDate = context.Dates.Where(x => x.Name.Equals("Current")).FirstOrDefault();
+                currentDate.DateTime = currentDate.DateTime.AddDays(-1);
+                context.SaveChanges();
+            }
+
+            SetTitle();
+        }
+
+        private void Increase_Day_Button_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show(string.Format("The date now is: {0} \n Confirm increasing day?", UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy")), "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
+            using (var context = new ERPContext())
+            {
+                var currentDate = context.Dates.Where(x => x.Name.Equals("Current")).FirstOrDefault();
+                currentDate.DateTime = currentDate.DateTime.AddDays(1);
+                context.SaveChanges();
+            }
+
+            SetTitle();
+        }
+
+        private void SetTitle()
+        {
+            App.Current.MainWindow.Title = "Putra Jaya - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
         }
     }
 }

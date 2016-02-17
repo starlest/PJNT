@@ -10,6 +10,8 @@
 
         public string Address { get; set; }
 
+        public string City { get; set; }
+
         public string CollectionSalesman { get; set; }
 
         public decimal InvoiceNumber { get; set; }

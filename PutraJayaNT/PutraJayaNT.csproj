@@ -21,7 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\PutraJayaNT.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -101,6 +102,27 @@
     <Compile Include="Migrations\201602010442394_Update2.Designer.cs">
       <DependentUpon>201602010442394_Update2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602141031105_Update3.cs" />
+    <Compile Include="Migrations\201602141031105_Update3.Designer.cs">
+      <DependentUpon>201602141031105_Update3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602141033097_Update4.cs" />
+    <Compile Include="Migrations\201602141033097_Update4.Designer.cs">
+      <DependentUpon>201602141033097_Update4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602150139258_Update5.cs" />
+    <Compile Include="Migrations\201602150139258_Update5.Designer.cs">
+      <DependentUpon>201602150139258_Update5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602150706265_Update6.cs" />
+    <Compile Include="Migrations\201602150706265_Update6.Designer.cs">
+      <DependentUpon>201602150706265_Update6.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602161045145_Update7.cs" />
+    <Compile Include="Migrations\201602161045145_Update7.Designer.cs">
+      <DependentUpon>201602161045145_Update7.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Date.cs" />
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
     <Compile Include="Models\Sales\AlternativeSalesPrice.cs" />
@@ -145,6 +167,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Windows\CollectionReportPerSalesman - Copy.xaml.cs">
+      <DependentUpon>CollectionReportPerSalesman - Copy.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\SalesTransactionsReportWindow.xaml.cs">
+      <DependentUpon>SalesTransactionsReportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Reports\Windows\InventoryReportWindow.xaml.cs">
       <DependentUpon>InventoryReportWindow.xaml</DependentUpon>
     </Compile>
@@ -163,8 +191,8 @@
     <Compile Include="Reports\Windows\SalesDOWindow.xaml.cs">
       <DependentUpon>SalesDOWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\Windows\CollectionReportWindow.xaml.cs">
-      <DependentUpon>CollectionReportWindow.xaml</DependentUpon>
+    <Compile Include="Reports\Windows\CollectionReportPerCityWindow.xaml.cs">
+      <DependentUpon>CollectionReportPerCityWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Windows\SalesReturnInvoiceWindow.xaml.cs">
       <DependentUpon>SalesReturnInvoiceWindow.xaml</DependentUpon>
@@ -298,8 +326,8 @@
     <Compile Include="Views\Master\MasterInventoryView.xaml.cs">
       <DependentUpon>MasterInventoryView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Menu\BackupRestoreView.xaml.cs">
-      <DependentUpon>BackupRestoreView.xaml</DependentUpon>
+    <Compile Include="Views\Menu\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reports\InventoryReportView.xaml.cs">
       <DependentUpon>InventoryReportView.xaml</DependentUpon>
@@ -309,6 +337,9 @@
     </Compile>
     <Compile Include="Views\Master\MasterSuppliersView.xaml.cs">
       <DependentUpon>MasterSuppliersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\OverallSalesReportView.xaml.cs">
+      <DependentUpon>OverallSalesReportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reports\PurchasesReportView.xaml.cs">
       <DependentUpon>PurchasesReportView.xaml</DependentUpon>
@@ -357,6 +388,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Reports\Windows\CollectionReportPerSalesman - Copy.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\SalesTransactionsReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Reports\Windows\InventoryReportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -381,7 +420,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Reports\Windows\CollectionReportWindow.xaml">
+    <Page Include="Reports\Windows\CollectionReportPerCityWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -477,7 +516,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Menu\BackupRestoreView.xaml">
+    <Page Include="Views\Menu\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -490,6 +529,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Master\MasterSuppliersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\OverallSalesReportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -559,13 +602,34 @@
     <EmbeddedResource Include="Migrations\201602010442394_Update2.resx">
       <DependentUpon>201602010442394_Update2.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602141031105_Update3.resx">
+      <DependentUpon>201602141031105_Update3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602141033097_Update4.resx">
+      <DependentUpon>201602141033097_Update4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602150139258_Update5.resx">
+      <DependentUpon>201602150139258_Update5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602150706265_Update6.resx">
+      <DependentUpon>201602150706265_Update6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602161045145_Update7.resx">
+      <DependentUpon>201602161045145_Update7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\SalesTransactionsReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\CollectionReportPerSalesman.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\InventoryReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\DailyCashFlowReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\RDLC\CollectionReport.rdlc">
+    <EmbeddedResource Include="Reports\RDLC\CollectionReportPerCity.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\CommissionsReport.rdlc">

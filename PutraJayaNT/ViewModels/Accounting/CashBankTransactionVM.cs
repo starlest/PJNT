@@ -38,15 +38,15 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         public CashBankTransactionVM()
         {
-            _fromDate = DateTime.Now.Date;
-            _toDate = DateTime.Now.Date;
+            _fromDate = UtilityMethods.GetCurrentDate().Date;
+            _toDate = UtilityMethods.GetCurrentDate().Date;
 
             _banks = new ObservableCollection<LedgerAccountVM>();
             _displayLines = new ObservableCollection<LedgerTransactionLineVM>();
             _displayLines.CollectionChanged += OnCollectionChanged;
             _sequences = new ObservableCollection<string> { "Debit", "Credit" };
 
-            _newEntryDate = DateTime.Now.Date;
+            _newEntryDate = UtilityMethods.GetCurrentDate().Date;
             _accounts = new ObservableCollection<LedgerAccountVM>();
 
             UpdateAccounts();
@@ -263,7 +263,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         private void ResetEntryFields()
         {
-            NewEntryDate = DateTime.Now.Date;
+            NewEntryDate = UtilityMethods.GetCurrentDate().Date;
             NewEntryAccount = null;
             NewEntryAmount = null;
             NewEntryDescription = null;

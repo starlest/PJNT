@@ -29,8 +29,8 @@
             _salesmen = new ObservableCollection<SalesmanVM>();
             _lines = new ObservableCollection<SalesCommissionVM>();
 
-            _fromDate = DateTime.Now.Date.AddDays(-DateTime.Now.Day + 1);
-            _toDate = DateTime.Now.Date;
+            _fromDate = UtilityMethods.GetCurrentDate().Date.AddDays(-UtilityMethods.GetCurrentDate().Day + 1);
+            _toDate = UtilityMethods.GetCurrentDate().Date;
 
             UpdateSalesmen();
         }

@@ -26,8 +26,8 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             _months = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            _month = DateTime.Now.Month;
-            _year = DateTime.Now.Year;
+            _month = UtilityMethods.GetCurrentDate().Month;
+            _year = UtilityMethods.GetCurrentDate().Year;
         }
 
         public string ForTheDate

@@ -20,6 +20,8 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Text="From:" FontSize="28" />
             <DatePicker Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
@@ -27,6 +29,7 @@
             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="To:" FontSize="28" />
             <DatePicker Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                             SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="Print" Grid.Column="5" Command="{Binding PrintCommand}" />
         </Grid>
         <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding SalesTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 

@@ -33,8 +33,8 @@ namespace PutraJayaNT.ViewModels.Accounting
             _displayTransactions = new ObservableCollection<LedgerTransactionLineVM>();
 
             _months = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-            _selectedMonth = DateTime.Now.Month;              
-            _selectedYear = DateTime.Now.Year;
+            _selectedMonth = UtilityMethods.GetCurrentDate().Month;              
+            _selectedYear = UtilityMethods.GetCurrentDate().Year;
 
             RefreshAccounts();
         }

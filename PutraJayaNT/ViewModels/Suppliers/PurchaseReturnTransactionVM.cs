@@ -49,7 +49,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
             UpdateWarehouses();
 
-            _purchaseReturnEntryDate = DateTime.Now.Date;
+            _purchaseReturnEntryDate = UtilityMethods.GetCurrentDate().Date;
 
             SetPurchaseReturnTransactionID();
         }
@@ -333,7 +333,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             // Record the corresponding ledger transactions in the database
                             var ledgerTransaction1 = new LedgerTransaction();
 
-                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now, _purchaseReturnEntryID, "Purchase Return")) return;
+                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, UtilityMethods.GetCurrentDate(), _purchaseReturnEntryID, "Purchase Return")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Debit", _purchaseReturnTransactionNetTotal);
                             if (cogs - PurchaseReturnTransactionNetTotal > 0)
@@ -346,7 +346,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                         ResetTransaction();
                         Model = new PurchaseReturnTransaction();
-                        Model.Date = DateTime.Now.Date;
+                        Model.Date = UtilityMethods.GetCurrentDate().Date;
                         SetPurchaseReturnTransactionID();
                     }
                 }));
@@ -437,7 +437,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             SelectedPurchaseTransactionID = null;
             SelectedPurchaseTransactionWhen = null;
             SelectedPurchaseTransactionLine = null;
-            PurchaseReturnEntryDate = DateTime.Now.Date;
+            PurchaseReturnEntryDate = UtilityMethods.GetCurrentDate().Date;
             PurchaseReturnEntryProduct = null;
             PurchaseReturnEntryUnits = null;
             PurchaseReturnEntryPieces = null;

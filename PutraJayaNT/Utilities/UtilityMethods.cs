@@ -1,8 +1,6 @@
 ﻿using PutraJayaNT.Models.Inventory;
 using System;
 using System.Linq;
-using System.Threading;
-using System.Windows;
 
 namespace PutraJayaNT.Utilities
 {
@@ -26,6 +24,14 @@ namespace PutraJayaNT.Utilities
 
                 if (stock == null) return 0;
                 else return stock.Pieces;
+            }
+        }
+
+        public static DateTime GetCurrentDate()
+        {
+            using (var context = new ERPContext())
+            {
+                return context.Dates.Where(e => e.Name.Equals("Current")).FirstOrDefault().DateTime;
             }
         }
     }

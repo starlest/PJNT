@@ -78,8 +78,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
             UpdateSuppliers();
 
-            NewTransactionDate = DateTime.Now.Date;
-            NewTransactionDueDate = DateTime.Now.Date;
+            NewTransactionDate = UtilityMethods.GetCurrentDate().Date;
+            NewTransactionDueDate = UtilityMethods.GetCurrentDate().Date;
 
             SetTransactionID();
             Model.DueDate = _newTransactionDueDate;
@@ -169,7 +169,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _newTransactionDate; }
             set
             {
-                if (value > DateTime.Now.Date)
+                if (value > UtilityMethods.GetCurrentDate().Date)
                 {
                     MessageBox.Show("Cannot set to a future date.", "Invalid Date", MessageBoxButton.OK);
                     return;
@@ -713,8 +713,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
             NewTransactionTax = null;
             NewTransactionDiscount = null;
             NewTransactionNote = null;
-            NewTransactionDate = DateTime.Now.Date;
-            NewTransactionDueDate = DateTime.Now.Date;
+            NewTransactionDate = UtilityMethods.GetCurrentDate().Date;
+            NewTransactionDueDate = UtilityMethods.GetCurrentDate().Date;
 
             _warehouses.Clear();
             _supplierItems.Clear();
@@ -820,7 +820,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 {
                     // Adjust Supplier's Accounts Payable and Inventory
                     var ledgerTransaction1 = new LedgerTransaction();
-                    LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now.Date, _newTransactionID, "Purchase Transaction Adjustment");
+                    LedgerDBHelper.AddTransaction(context, ledgerTransaction1, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Purchase Transaction Adjustment");
                     context.SaveChanges();
 
                     if (_newTransactionNetTotal > transaction.Total)
@@ -892,7 +892,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     if (changesMade)
                     {
                         var ledgerTransaction2 = new LedgerTransaction();
-                        LedgerDBHelper.AddTransaction(context, ledgerTransaction2, DateTime.Now.Date, _newTransactionID, "Purchase Transaction Adjustment (COGS)");
+                        LedgerDBHelper.AddTransaction(context, ledgerTransaction2, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Purchase Transaction Adjustment (COGS)");
                         context.SaveChanges();
 
                         // Indicates there is an increase in COGS

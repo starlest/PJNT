@@ -208,15 +208,15 @@ namespace PUJASM.ERP.ViewModels.Master
                             context.Ledger_General.Add(new LedgerGeneral
                             {
                                 LedgerAccount = account,
-                                PeriodYear = DateTime.Now.Year,
-                                Period = DateTime.Now.Month,
+                                PeriodYear = UtilityMethods.GetCurrentDate().Year,
+                                Period = UtilityMethods.GetCurrentDate().Month,
                             });
 
                             // Add an account Balance for this customer in the database
                             context.Ledger_Account_Balances.Add(new LedgerAccountBalance
                             {
                                 LedgerAccount = account,
-                                PeriodYear = DateTime.Now.Year,
+                                PeriodYear = UtilityMethods.GetCurrentDate().Year,
                             });
 
                             context.SaveChanges();

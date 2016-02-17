@@ -23,7 +23,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         public DailyCashFlowVM()
         {
             _lines = new ObservableCollection<LedgerTransactionLineVM>();
-            _date = DateTime.Now.Date;
+            _date = UtilityMethods.GetCurrentDate().Date;
             UpdateLines();
         }
 

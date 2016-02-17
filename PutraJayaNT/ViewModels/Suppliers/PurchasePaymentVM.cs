@@ -51,7 +51,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     _paymentModes.Add(bank.Name);
             }
 
-            _date = DateTime.Now.Date;
+            _date = UtilityMethods.GetCurrentDate().Date;
             RefreshSuppliers();
         }
 

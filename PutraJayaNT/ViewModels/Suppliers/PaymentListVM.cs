@@ -21,7 +21,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             _suppliers = new ObservableCollection<SupplierVM>();
             _purchaseTransactions = new ObservableCollection<PurchaseTransaction>();
-            _date = DateTime.Now.Date;
+            _date = UtilityMethods.GetCurrentDate().Date;
             UpdateSuppliers();
         }
 

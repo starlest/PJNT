@@ -51,7 +51,7 @@ namespace PutraJayaNT.ViewModels.Customers
             _salesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
             _salesReturnTransactionLines = new ObservableCollection<SalesReturnTransactionLineVM>();
 
-            _salesReturnTransactionDate = DateTime.Now.Date;
+            _salesReturnTransactionDate = UtilityMethods.GetCurrentDate().Date;
 
             SetSalesReturnTransactionID();
         }
@@ -369,12 +369,12 @@ namespace PutraJayaNT.ViewModels.Customers
                             var ledgerTransaction1 = new LedgerTransaction();
                             var ledgerTransaction2 = new LedgerTransaction();
 
-                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, DateTime.Now.Date, _salesReturnTransactionID, "Sales Return")) return;
+                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, UtilityMethods.GetCurrentDate().Date, _salesReturnTransactionID, "Sales Return")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Sales Returns and Allowances", "Debit", _salesReturnTransactionNetTotal);
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Receivable", Model.SalesTransaction.Customer.Name), "Credit", _salesReturnTransactionNetTotal);
 
-                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction2, DateTime.Now.Date, _salesReturnTransactionID, "Sales Return")) return;
+                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction2, UtilityMethods.GetCurrentDate().Date, _salesReturnTransactionID, "Sales Return")) return;
                             context.SaveChanges();
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Debit", totalCOGS);
                             LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Credit", totalCOGS);
@@ -583,7 +583,7 @@ namespace PutraJayaNT.ViewModels.Customers
             Model.SalesTransaction = null;
 
             SelectedSalesTransactionID = null;
-            SalesReturnTransactionDate = DateTime.Now.Date;
+            SalesReturnTransactionDate = UtilityMethods.GetCurrentDate().Date;
             SelectedSalesTransactionCustomer = null;
             SelectedSalesTransactionLine = null;
 

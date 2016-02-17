@@ -10,6 +10,7 @@ using System.Windows;
 
 namespace PutraJayaNT.Reports.Windows
 {
+    
     /// <summary>
     /// Interaction logic for StockCardReportWindow.xaml
     /// </summary>
