@@ -1783,7 +1783,7 @@
             Model.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
             var user = App.Current.FindResource("CurrentUser") as User;
             Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
-
+            Model.CollectionSalesman = context.Salesmans.Where(e => e.Name.Equals(" ")).FirstOrDefault();
             context.SalesTransactions.Add(Model);
             context.SaveChanges();
             MessageBox.Show("Successfully saved.", "Success", MessageBoxButton.OK);
