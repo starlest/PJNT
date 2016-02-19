@@ -132,7 +132,7 @@
                 var salesmen = context.Salesmans.ToList().OrderBy(e => e.Name);
 
                 foreach (var salesman in salesmen)
-                    _salesmen.Add(new SalesmanVM { Model = salesman });
+                    if (!salesman.Name.Equals(" ")) _salesmen.Add(new SalesmanVM { Model = salesman });
             }
         }
 

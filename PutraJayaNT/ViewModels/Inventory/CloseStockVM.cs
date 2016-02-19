@@ -62,7 +62,9 @@ namespace PutraJayaNT.ViewModels.Inventory
                         SetEndingBalance(context, warehouse, item, endingBalance);
                     }
 
-                    worker.ReportProgress(index++ * (items.Count / 100));
+                    var status = (index++ * (items.Count / 100)) - 1;
+                    if (status < 0) status = 0;
+                    worker.ReportProgress(status);
                 }
 
                 context.SaveChanges();

@@ -224,7 +224,7 @@
 
             using (var context = new ERPContext())
             {
-                var customers = context.Customers.ToList();
+                var customers = context.Customers.OrderBy(e => e.Name).ToList();
                 _customers.Add(new Customer { ID = -1, Name = "All" });
                 foreach (var customer in customers)
                     _customers.Add(customer);

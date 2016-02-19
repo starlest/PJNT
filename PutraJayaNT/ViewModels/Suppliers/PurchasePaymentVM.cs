@@ -46,7 +46,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             using (var context = new ERPContext())
             {
                 var bankAccounts = context.Ledger_Accounts
-                    .Where(e => e.Name.Contains("Bank"));
+                    .Where(e => e.Name.Contains("Bank") && !e.Name.Contains("Expense"));
                 foreach (var bank in bankAccounts)
                     _paymentModes.Add(bank.Name);
             }

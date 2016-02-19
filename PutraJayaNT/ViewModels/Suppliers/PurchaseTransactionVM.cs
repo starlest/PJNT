@@ -841,7 +841,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     var originalTransactionTax = transaction.Tax;
                     var totalValueChanged = 0m;
                     var changesMade = false; // Flag to indicate if the COGS and Inventory needs to be adjusted
-                    List<int> linesChanged = new List<int>(); // List of indexes of lines that have been changed (Price/Discount)
+                    List<int> linesChanged = new List<int>(); // List of indexes of lines that have been changed (Price or Discount)
                     for (int i = 0; i < _lines.Count; i++)
                     {
                         var line = _lines[i];
@@ -871,8 +871,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             totalValueChanged += (lineCOGS - originalLineCOGS);
                         }
 
-                        if (Math.Round(originalLine.PurchasePrice, 2) != Math.Round((line.PurchasePrice / line.Item.PiecesPerUnit), 2) 
-                            || Math.Round(originalLine.Discount, 2) != Math.Round((line.Discount / line.Item.PiecesPerUnit), 2))
+                        if (originalLine.PurchasePrice != line.Model.PurchasePrice || originalLine.Discount != line.Model.Discount)
                         {
                             linesChanged.Add(i);
                         }
@@ -885,7 +884,8 @@ namespace PutraJayaNT.ViewModels.Suppliers
                         line.PurchaseTransaction = transaction;
                         line.Item = context.Inventory.Where(e => e.ItemID.Equals(line.Item.ItemID)).FirstOrDefault();
                         line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
-                        context.PurchaseTransactionLines.Remove(originalLine); 
+                        context.PurchaseTransactionLines.Remove(originalLine);
+                        context.SaveChanges(); 
                         context.PurchaseTransactionLines.Add(line.Model); // Add the modified line
                     }
 

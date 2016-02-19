@@ -42,7 +42,7 @@
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Category" Width="1*" IsReadOnly="True" Binding="{Binding Category.Name}" />
-                    <DataGridTextColumn Header="Commission Percentage" Width="1*" IsReadOnly="True" Binding="{Binding Percentage}" />
+                    <DataGridTextColumn Header="Commission Percentage" Width="1*" IsReadOnly="True" Binding="{Binding Percentage, StringFormat=N2}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

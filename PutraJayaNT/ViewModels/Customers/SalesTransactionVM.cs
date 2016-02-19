@@ -1239,7 +1239,7 @@
                 var salesmans = context.Salesmans.ToList();
 
                 foreach (var salesman in salesmans)
-                    _salesmans.Add(salesman);
+                    if (!salesman.Name.Equals(" ")) _salesmans.Add(salesman);
             }
         }
 
@@ -1455,8 +1455,8 @@
 
             }
             return l1.Item.ItemID.Equals(l2.Item.ItemID) && l1.Warehouse.ID.Equals(l2.Warehouse.ID)
-                && Math.Round(l1.SalesPrice, 2).Equals(Math.Round(l2.SalesPrice, 2))
-                && Math.Round(l1.Discount, 2).Equals(Math.Round(l2.Discount, 2));
+                && l1.SalesPrice.Equals(l2.SalesPrice)
+                && l1.Discount.Equals(l2.Discount);
         }
 
         #region Save Transaction Methods

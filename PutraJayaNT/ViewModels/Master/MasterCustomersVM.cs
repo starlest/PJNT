@@ -17,10 +17,12 @@ namespace PUJASM.ERP.ViewModels.Master
     {
         ObservableCollection<CustomerGroup> _groups;
         ObservableCollection<CustomerVM> _customers;
+        ObservableCollection<string> _cities;
         ObservableCollection<CustomerVM> _displayedCustomers;
 
         CustomerGroup _selectedGroup;
         CustomerVM _selectedCustomer;
+        string _selectedCity;
 
         string _newEntryName;
         string _newEntryCity;
@@ -56,8 +58,10 @@ namespace PUJASM.ERP.ViewModels.Master
             _groups = new ObservableCollection<CustomerGroup>();
             _newEntryGroups = new ObservableCollection<CustomerGroup>();
             _customers = new ObservableCollection<CustomerVM>();
+            _cities = new ObservableCollection<string>();
             _displayedCustomers = new ObservableCollection<CustomerVM>();
 
+            UpdateCities();
             UpdateGroups();
 
             SelectedGroup = _groups.FirstOrDefault();
@@ -77,6 +81,11 @@ namespace PUJASM.ERP.ViewModels.Master
         public ObservableCollection<CustomerVM> Customers
         {
             get { return _customers; }
+        }
+
+        public ObservableCollection<string> Cities
+        {
+            get { return _cities; }
         }
 
         public ObservableCollection<CustomerVM> DisplayedCustomers
@@ -108,6 +117,20 @@ namespace PUJASM.ERP.ViewModels.Master
                 if (_selectedCustomer == null) return;
 
                 UpdateDisplayedCustomers();
+            }
+        }
+
+        public string SelectedCity
+        {
+            get { return _selectedCity; }
+            set
+            {
+                SetProperty(ref _selectedCity, value, "SelectedCity");
+
+                if (_selectedCity == null) return;
+
+                UpdateCities();
+                UpdateDisplayedCustomersByCity();
             }
         }
 
@@ -430,6 +453,24 @@ namespace PUJASM.ERP.ViewModels.Master
             }
         }
 
+        private void UpdateCities()
+        {
+            _cities.Clear();
+
+            using (var context = new ERPContext())
+            {
+                var customers = context.Customers.OrderBy(e => e.City).ToList();
+
+                foreach (var customer in customers)
+                {
+                    if (!_cities.Contains(customer.City))
+                    {
+                        _cities.Add(customer.City);
+                    }
+                }
+            }
+        }
+
         private void UpdateListedCustomers()
         {
             _customers.Clear();
@@ -507,6 +548,20 @@ namespace PUJASM.ERP.ViewModels.Master
             }
         }
 
+        private void UpdateDisplayedCustomersByCity()
+        {
+            _displayedCustomers.Clear();
+
+            using (var context = new ERPContext())
+            {
+                var customers = context.Customers.Include("Group").Where(e => e.City.Equals(_selectedCity)).ToList();
+
+                foreach (var customer in customers)
+                {
+                    _displayedCustomers.Add(new CustomerVM { Model = customer });
+                }
+            }
+        }
         #endregion
     }
 }
