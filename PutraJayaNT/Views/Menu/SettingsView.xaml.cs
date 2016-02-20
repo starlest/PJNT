@@ -128,7 +128,6 @@ namespace PutraJayaNT.Views.Menu
                 currentDate.DateTime = currentDate.DateTime.AddDays(-1);
                 context.SaveChanges();
             }
-
             SetTitle();
         }
 
@@ -140,9 +139,10 @@ namespace PutraJayaNT.Views.Menu
             {
                 var currentDate = context.Dates.Where(x => x.Name.Equals("Current")).FirstOrDefault();
                 currentDate.DateTime = currentDate.DateTime.AddDays(1);
+                var newDate = new Date { DateTime = currentDate.DateTime, Name = "Current2" };
+                context.Dates.Add(newDate);
                 context.SaveChanges();
             }
-
             SetTitle();
         }
 

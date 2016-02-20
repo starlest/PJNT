@@ -83,6 +83,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                 SalesReturnCredits = _selectedCustomer.SalesReturnCredits;
                 UpdateCustomerUnpaidSalesTransactions();
+                _selectedSalesTransactionLines.Clear();
             }
         }
 

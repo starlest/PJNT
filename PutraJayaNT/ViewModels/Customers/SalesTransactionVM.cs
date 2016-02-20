@@ -523,7 +523,7 @@
         {
             get
             {
-                _netTotal = _newTransactionGrossTotal + (_newTransactionSalesExpense == null ? 0 : (decimal) _newTransactionSalesExpense) - (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount);
+                _netTotal = Math.Round(_newTransactionGrossTotal + (_newTransactionSalesExpense == null ? 0 : (decimal) _newTransactionSalesExpense) - (_newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount), 2);
                 return _netTotal;
             }
         }
@@ -613,20 +613,19 @@
                         return;
                     }
 
-                    if (MessageBox.Show("Confirm saving transaction?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    {
-                        // Check if there are enough stock for each line
-                        foreach (var line in _salesTransactionLines)
-                        {
-                            var availableQuantity = GetAvailableQuantity(line.Item, line.Warehouse);
+                    if (MessageBox.Show("Confirm saving transaction?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
 
-                            if (availableQuantity < 0)
-                            {
-                                MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces available.",
-                                    line.Item.Name, (availableQuantity / line.Item.PiecesPerUnit) + line.Units, (availableQuantity % line.Item.PiecesPerUnit) + line.Pieces),
-                                    "Insufficient Stock", MessageBoxButton.OK);
-                                return;
-                            }
+                    // Check if there are enough stock for each line
+                    foreach (var line in _salesTransactionLines)
+                    {
+                        var availableQuantity = GetAvailableQuantity(line.Item, line.Warehouse);
+
+                        if (availableQuantity < 0)
+                        {
+                            MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces available.",
+                                line.Item.Name, (availableQuantity / line.Item.PiecesPerUnit) + line.Units, (availableQuantity % line.Item.PiecesPerUnit) + line.Pieces),
+                                "Insufficient Stock", MessageBoxButton.OK);
+                            return;
                         }
                     }
                     #endregion
@@ -854,8 +853,8 @@
                     {
                         if (line.Item.ItemID.Equals(_newEntryProduct.Model.ItemID) 
                         && line.Warehouse.ID.Equals(_newEntryWarehouse.ID) 
-                        && Math.Round((double)_newEntryPrice, 2).Equals(Math.Round(line.SalesPrice, 2))
-                        && (_newEntryDiscount == null ? 0 : Math.Round((decimal) _newEntryDiscount, 2)).Equals(Math.Round(line.Discount, 2)))
+                        && ((decimal)_newEntryPrice).Equals(line.SalesPrice)
+                        && (_newEntryDiscount == null ? 0 : (decimal) _newEntryDiscount).Equals(line.Discount))
                         {
                             if (availableQuantity < quantity)
                             {
@@ -1499,9 +1498,9 @@
                         .FirstOrDefault();
 
                         var found = false;
+                        // Check if the line exists in the original transaction
                         foreach (var l in originalTransactionLines)
                         {
-                            // Check if the line exists in the original transaction
                             if (CompareLines(line.Model, l))
                             {
                                 found = true;
@@ -1534,6 +1533,9 @@
                                 l.SalesPrice = line.SalesPrice / line.Item.PiecesPerUnit;
                                 l.Discount = line.Discount / line.Item.PiecesPerUnit;
                                 l.Total = l.Quantity * (l.SalesPrice - l.Discount);
+                                l.Salesman = context.Salesmans.Where(e => e.ID.Equals(line.Salesman.ID)).FirstOrDefault();
+
+                                context.SaveChanges();
                                 break;
                             }
                         }
@@ -1543,7 +1545,7 @@
                         {
                             if (stock != null)
                             {
-                                if (stock.Pieces - line.Quantity < 0)
+                                if (GetAvailableQuantity(line.Item, line.Warehouse) < 0)
                                 {
                                     MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
                                         item.Name, (stock.Pieces / item.PiecesPerUnit), (stock.Pieces % item.PiecesPerUnit)),
@@ -1568,12 +1570,15 @@
                                 line.SalesTransaction = transaction;
                                 context.SalesTransactionLines.Add(line.Model);
                             }
+                            context.SaveChanges();
                         }
 
                         // Remove the stock entry if it is 0
-                        if (stock != null && stock.Pieces == 0) context.Stocks.Remove(stock);
-
-                        context.SaveChanges();
+                        if (stock != null && stock.Pieces == 0)
+                        {
+                            context.Stocks.Remove(stock);
+                            context.SaveChanges();
+                        }
                     }
 
                     // Check if there are items deleted
@@ -1615,17 +1620,24 @@
                                 context.Stocks.Add(s);
                             }
 
+                            context.SaveChanges();
+
                             foreach (var l in originalTransactionLines)
                             {
                                 if (CompareLines(line.Model, l))
                                 {
                                     transaction.TransactionLines.Remove(l);
+                                    context.SaveChanges();
                                     break;
                                 }
                             }
 
                             // Remove the stock entry if it is 0
-                            if (stock != null && stock.Pieces == 0) context.Stocks.Remove(stock);
+                            if (stock != null && stock.Pieces == 0)
+                            {
+                                context.Stocks.Remove(stock);
+                                context.SaveChanges();
+                            }
                         }
                     }
 

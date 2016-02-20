@@ -4,8 +4,11 @@ using FirstFloor.ModernUI.Windows.Controls;
 using PutraJayaNT.Models;
 using PutraJayaNT.Utilities;
 using System;
+using System.ComponentModel;
 using System.Configuration;
-
+using System.Linq;
+using System.Threading;
+using System.Windows.Forms;
 namespace PutraJayaNT
 {
     /// <summary>
@@ -55,6 +58,36 @@ namespace PutraJayaNT
                 linkGroup.Links.Add(link1);
                 linkGroup.Links.Add(link2);
                 this.MenuLinkGroups.Add(linkGroup);
+            }
+
+            // Set up database listener for changes in the program's date
+      
+                //using (var context = new ERPContext())
+                //{
+                //    var iquery = from x in context.Dates
+                //                 where x.Name.Equals("Current")
+                //                 select x;
+
+                //    var listener = new DatabaseListener<Date>(context, iquery, 5000);
+                //    listener.OnChanged += NotificationOnChanged;
+                //}
+
+
+            //var worker = new BackgroundWorker();
+            //worker.DoWork += worker_DoWork;
+            //worker.RunWorkerAsync();
+        }
+
+
+        void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while (true)
+            {
+                Thread.Sleep(1000);
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    SetTitle();
+                }));
             }
         }
 

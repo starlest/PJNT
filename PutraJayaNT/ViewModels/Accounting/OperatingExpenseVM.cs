@@ -224,6 +224,12 @@ namespace PutraJayaNT.ViewModels.Accounting
                         return;
                     }
 
+                    if (!_selectedLine.Date.Equals(UtilityMethods.GetCurrentDate()))
+                    {
+                        MessageBox.Show("Cannot delete a line from another date.", "Invalid Command", MessageBoxButton.OK);
+                        return;
+                    }
+ 
                     if (MessageBox.Show("Confirm deletion?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                        _displayTransactions.Remove(_selectedLine);
                 }));

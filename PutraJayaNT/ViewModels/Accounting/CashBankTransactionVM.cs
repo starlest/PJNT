@@ -134,6 +134,12 @@ namespace PutraJayaNT.ViewModels.Accounting
                         return;
                     }
 
+                    if (!_selectedLine.Date.Equals(UtilityMethods.GetCurrentDate()))
+                    {
+                        MessageBox.Show("Cannot delete a line from another date.", "Invalid Command", MessageBoxButton.OK);
+                        return;
+                    }
+
                     if (MessageBox.Show("Confirm deletion?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                         _displayLines.Remove(_selectedLine);                  
                 }));
@@ -251,6 +257,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     .Where(e => !e.Name.Equals("Cost of Goods Sold") && !e.Name.Equals("- Accounts Payable")
                     && !e.Name.Equals("Inventory") && !e.Class.Equals("Equity")
                     && !e.Name.Contains("Revenue"))
+                    .OrderBy(e => e.Name)
                     .ToList();
 
                 foreach (var account in accounts)
@@ -309,7 +316,8 @@ namespace PutraJayaNT.ViewModels.Accounting
                     foreach (var l in line.LedgerTransaction.LedgerTransactionLines)
                     {
                         if (l.LedgerAccountID != _selectedBankID)
-                        { 
+                        {
+                            l.Seq = l.Seq == "Debit" ? "Credit" : "Debit";
                             _displayLines.Add(new LedgerTransactionLineVM { Model = l });
                         }
                     }
