@@ -128,7 +128,7 @@ namespace PutraJayaNT.Views.Menu
                 currentDate.DateTime = currentDate.DateTime.AddDays(-1);
                 context.SaveChanges();
             }
-            SetTitle();
+            //SetTitle();
         }
 
         private void Increase_Day_Button_Clicked(object sender, RoutedEventArgs e)
@@ -143,7 +143,7 @@ namespace PutraJayaNT.Views.Menu
                 context.Dates.Add(newDate);
                 context.SaveChanges();
             }
-            SetTitle();
+            //SetTitle();
         }
 
         private void SetTitle()

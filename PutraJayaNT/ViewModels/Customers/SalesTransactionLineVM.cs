@@ -212,7 +212,7 @@ namespace PutraJayaNT.ViewModels.Customers
                 Total = Model.Total,
                 Salesman = Model.Salesman
             };
-            return new SalesTransactionLineVM { Model = cloneLine };
+            return new SalesTransactionLineVM { Model = cloneLine, StockDeducted = this.StockDeducted };
         }
     }
 }

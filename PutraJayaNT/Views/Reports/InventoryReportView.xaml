@@ -61,14 +61,14 @@
                           AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
-                <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Unit" Width="1*" IsReadOnly="True" Binding="{Binding Unit}" />
-                <DataGridTextColumn Header="Units" Width="1*" IsReadOnly="True" Binding="{Binding Units}" />
-                <DataGridTextColumn Header="Pieces" Width="1*" IsReadOnly="True" Binding="{Binding Pieces}" />
+                <DataGridTextColumn Header="Name" Width="1.5*" IsReadOnly="True" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Unit" Width="0.8*" IsReadOnly="True" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Units" Width="0.8*" IsReadOnly="True" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="0.8*" IsReadOnly="True" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Value" Width="1*" IsReadOnly="True" Binding="{Binding InventoryValue, StringFormat=N2}" />
-                <DataGridTemplateColumn Header="Suppliers">
+                <DataGridTemplateColumn Header="Suppliers" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox DisplayMemberPath="Name"

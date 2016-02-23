@@ -45,7 +45,7 @@
                 <Button Grid.Column="3" Content="Print DO" Command="{Binding PrintDOCommand}" />
                 <Button Grid.Column="4" Content="Print Invoice" Command="{Binding PrintInvoiceCommand}" />
             </Grid>
-            <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2">
+            <Border Grid.Row="2" BorderBrush="Red" BorderThickness="2">
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />

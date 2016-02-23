@@ -221,12 +221,14 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 _suppliers.Clear();
                 _suppliers.Add(value);
 
+
                 // Display Supplier's Items and IDs
                 _supplierItems.Clear();
                 using (var context = new ERPContext())
                 {
                     var items = context.Inventory
                         .Include("Suppliers")
+                        .OrderBy(e => e.Name)
                         .ToList();
 
                     foreach (var item in items)

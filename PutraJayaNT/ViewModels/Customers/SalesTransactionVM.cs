@@ -1426,7 +1426,10 @@
 
             foreach (var line in _deletedLines)
             {
-                availableQuantity += line.StockDeducted;
+                if (line.Item.ItemID.Equals(item.ItemID) && line.Warehouse.ID.Equals(warehouse.ID))
+                {
+                    availableQuantity += line.StockDeducted;
+                }
             }
 
             return availableQuantity;
@@ -1510,7 +1513,6 @@
                                 if (line.Quantity > originalQuantity)
                                 {
                                     stock.Pieces -= (line.Quantity - originalQuantity);
-                                    if (stock.Pieces == 0) context.Stocks.Remove(stock);
                                 }
 
                                 // If there are lesser quantity than the original, add the additional quantity to stock
@@ -1606,37 +1608,34 @@
                         // If item has been deleted, delete transaction line as well as increasing the item's stock
                         if (deleted)
                         {
-                            if (stock != null) stock.Pieces += line.Quantity;
-                            else
+                            // Make sure we delete the original line only
+                            foreach (var li in originalTransactionLines)
                             {
-                                line.Item = item;
-                                line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
-                                var s = new Stock
-                                {
-                                    Item = line.Item,
-                                    Warehouse = line.Warehouse,
-                                    Pieces = line.Quantity
-                                };
-                                context.Stocks.Add(s);
-                            }
+                                if (line.StockDeducted == 0) continue;
 
-                            context.SaveChanges();
-
-                            foreach (var l in originalTransactionLines)
-                            {
-                                if (CompareLines(line.Model, l))
+                                if (CompareLines(line.Model, li))
                                 {
-                                    transaction.TransactionLines.Remove(l);
+                                    if (stock != null) stock.Pieces += line.StockDeducted;
+                                    else
+                                    {
+                                        line.Item = item;
+                                        line.Warehouse = context.Warehouses.Where(e => e.ID.Equals(line.Warehouse.ID)).FirstOrDefault();
+                                        var s = new Stock
+                                        {
+                                            Item = line.Item,
+                                            Warehouse = line.Warehouse,
+                                            Pieces = line.StockDeducted
+                                        };
+                                        context.Stocks.Add(s);
+                                    }
+
                                     context.SaveChanges();
+
+                                    transaction.TransactionLines.Remove(li);
+                                    context.SaveChanges();
+
                                     break;
                                 }
-                            }
-
-                            // Remove the stock entry if it is 0
-                            if (stock != null && stock.Pieces == 0)
-                            {
-                                context.Stocks.Remove(stock);
-                                context.SaveChanges();
                             }
                         }
                     }

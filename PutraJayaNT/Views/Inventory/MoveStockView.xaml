@@ -25,7 +25,7 @@
             <Button  Grid.Column="3" Grid.RowSpan="2" Content="Print" Command="{Binding PrintCommand}"  />
             <Button  Grid.Column="4" Grid.RowSpan="2" Content="Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding IsNotEditMode}" />
         </Grid>
-        <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2" IsEnabled="{Binding IsNotEditMode}" >
+        <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.25*" />

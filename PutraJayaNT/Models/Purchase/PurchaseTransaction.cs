@@ -15,7 +15,7 @@ namespace PutraJayaNT.Models.Purchase
             Paid = 0;
         }
 
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 0)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 0), StringLength(128)]
         public string PurchaseID { get; set; }
 
         public string DOID { get; set; }

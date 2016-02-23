@@ -202,7 +202,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Storan Hari</Value>
+                              <Value>Storan Hari (Kas)</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1643,7 +1643,7 @@
         <Top>0.79292cm</Top>
         <Left>0.75068cm</Left>
         <Height>3cm</Height>
-        <Width>19.15448cm</Width>
+        <Width>19.15445cm</Width>
         <Style>
           <Border>
             <Style>None</Style>

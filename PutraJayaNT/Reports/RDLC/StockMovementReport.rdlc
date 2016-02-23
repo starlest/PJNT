@@ -309,7 +309,7 @@
         <Top>1.83417cm</Top>
         <Left>1.0258cm</Left>
         <Height>1.2cm</Height>
-        <Width>18.87936cm</Width>
+        <Width>18.87937cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -557,7 +557,7 @@
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>4.86834cm</Height>
+    <Height>4.33917cm</Height>
     <Style />
   </Body>
   <Width>20.68121cm</Width>
@@ -661,8 +661,8 @@
         </Border>
       </Style>
     </PageFooter>
-    <PageHeight>29.7cm</PageHeight>
-    <PageWidth>21cm</PageWidth>
+    <PageHeight>21cm</PageHeight>
+    <PageWidth>14.8cm</PageWidth>
     <LeftMargin>0cm</LeftMargin>
     <RightMargin>0cm</RightMargin>
     <TopMargin>0cm</TopMargin>

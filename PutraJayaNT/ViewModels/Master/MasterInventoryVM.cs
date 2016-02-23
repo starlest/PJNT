@@ -3,7 +3,6 @@ using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Utilities;
-using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -341,36 +340,26 @@ namespace PutraJayaNT.ViewModels.Master
 
                     if (MessageBox.Show("Confirm adding this product?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        var newItem = new Item
+                        using (var context = new ERPContext())
                         {
-                            ItemID = _newEntryID,
-                            Name = _newEntryName,
-                            Category = _newEntryCategory,
-                            UnitName = _newEntryUnitName,
-                            PiecesPerUnit = _newEntryPiecesPerUnit,
-                            PurchasePrice = (decimal)_newEntryPurchasePrice / _newEntryPiecesPerUnit,
-                            SalesPrice = (decimal)_newEntrySalesPrice / _newEntryPiecesPerUnit
-                        };
-                        newItem.Suppliers.Add(_newEntrySupplier);
+                            var newItem = new Item
+                            {
+                                ItemID = _newEntryID,
+                                Name = _newEntryName,
+                                Category = context.Categories.Where(e => e.ID.Equals(_newEntryCategory.ID)).FirstOrDefault(),
+                                UnitName = _newEntryUnitName,
+                                PiecesPerUnit = _newEntryPiecesPerUnit,
+                                PurchasePrice = (decimal)_newEntryPurchasePrice / _newEntryPiecesPerUnit,
+                                SalesPrice = (decimal)_newEntrySalesPrice / _newEntryPiecesPerUnit
+                            };
 
-                        var context = new ERPContext();
-                        try
-                        {
-                            context.Suppliers.Attach(_newEntrySupplier);
-                            context.Categories.Attach(_newEntryCategory);
-                            context.StockBalances.Add(new StockBalance { Item = newItem });
+                            var newSupplier = context.Suppliers.Where(e => e.ID.Equals(_newEntrySupplier.ID)).FirstOrDefault();
+                            newItem.Suppliers.Add(newSupplier);
+
+                            context.Inventory.Add(newItem);
+
                             context.SaveChanges();
-                            ((IObjectContextAdapter)context).ObjectContext.
-                            ObjectStateManager.ChangeObjectState(_newEntrySupplier, EntityState.Detached);
-                            ((IObjectContextAdapter)context).ObjectContext
-                            .ObjectStateManager.ChangeObjectState(_newEntryCategory, EntityState.Detached);
                         }
-
-                        catch (Exception e)
-                        {
-                            MessageBox.Show(string.Format("There was an error while trying to add the product. {0}", e), "Error Encountered", MessageBoxButton.OK);
-                        }
-
                         UpdateItems();
                         SelectedCategory = _selectedCategory;
                         ResetEntryFields();

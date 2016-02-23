@@ -208,7 +208,7 @@
                      IsEnabled="{Binding IsTransactionNotPaid}" />
             <TextBlock Grid.Row="3" Grid.Column="7" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Net Total: " />
             <TextBox Grid.Row="3" Grid.Column="8" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                     IsReadOnly="True" Text="{Binding NewTransactionNetTotal, Mode=OneWay, StringFormat=N2}" />
+                     IsReadOnly="True" Text="{Binding NewTransactionNetTotal, Mode=OneWay, StringFormat=N2}" Foreground="Red" />
         </Grid>
         <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="100" 
               Visibility="{Binding EditWindowVisibility}">
