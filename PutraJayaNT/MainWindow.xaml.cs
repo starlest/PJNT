@@ -45,24 +45,10 @@ namespace PutraJayaNT
 
             if (!_user.IsAdmin)
             {
-                MenuLinkGroups[1].Links.RemoveAt(1);
-                MenuLinkGroups[1].Links.RemoveAt(2);
-                MenuLinkGroups[1].Links.RemoveAt(3);
-                MenuLinkGroups[1].Links.RemoveAt(4);
+                MenuLinkGroups[1].Links.Clear();
+                var link = new Link { DisplayName = "Inventory", Source = new Uri("/Views/Master/MasterInventoryView.xaml", UriKind.Relative) };
+                MenuLinkGroups[1].Links.Add(link);
             }
-
-            // Set up database listener for changes in the program's date
-
-            //using (var context = new ERPContext())
-            //{
-            //    var iquery = from x in context.Dates
-            //                 where x.Name.Equals("Current")
-            //                 select x;
-
-            //    var listener = new DatabaseListener<Date>(context, iquery, 5000);
-            //    listener.OnChanged += NotificationOnChanged;
-            //}
-
 
             var worker = new BackgroundWorker();
             worker.DoWork += worker_DoWork;

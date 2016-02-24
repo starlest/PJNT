@@ -41,22 +41,22 @@
             <Rectangle Stroke="Blue" IsHitTestVisible="False" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="2" />
             <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Date:" FontSize="28" />
             <DatePicker Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding NewEntryDate}" />
+                            SelectedDateFormat="Long" SelectedDate="{Binding NewEntryDate}" TabIndex="0" />
             <TextBlock Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Account:" />
             <ComboBox Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                           ItemsSource="{Binding Accounts}" SelectedItem="{Binding NewEntryAccount, UpdateSourceTrigger=PropertyChanged}" 
-                          IsEditable="True" DisplayMemberPath="Name" />
+                          IsEditable="True" DisplayMemberPath="Name" TabIndex="1" />
             <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Description:" />
             <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding NewEntryDescription, UpdateSourceTrigger=PropertyChanged}" />
+                         Text="{Binding NewEntryDescription, UpdateSourceTrigger=PropertyChanged}" TabIndex="3" />
             <TextBlock Grid.Row="1" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Amount:" />
             <TextBox Grid.Row="1" Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding NewEntryAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
+                         Text="{Binding NewEntryAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" TabIndex="2" />
             <TextBlock Grid.Row="2" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Sequence:" />
             <ComboBox Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                           ItemsSource="{Binding Sequences}" SelectedItem="{Binding NewEntrySequence, UpdateSourceTrigger=PropertyChanged}" 
-                          IsEditable="True" />
-            <Button Grid.Row="1" Grid.Column="8" Content="Confirm" Command="{Binding NewEntryConfirmCommand}" Margin="10" />
+                          IsEditable="True" TabIndex="4" />
+            <Button Grid.Row="1" Grid.Column="8" Content="Confirm" Command="{Binding NewEntryConfirmCommand}" Margin="10" TabIndex="5" />
             <Button Grid.Row="2" Grid.Column="8"  Content="Cancel" Command="{Binding NewEntryCancelCommand}" Margin="10" />
         </Grid>
         <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 

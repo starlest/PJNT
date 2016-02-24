@@ -357,7 +357,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                         context.Ledger_Transactions.Remove(transaction);
                         context.Ledger_Transaction_Lines.Remove(firstLine);
                         context.Ledger_Transaction_Lines.Remove(oppostieLine);
-                        if (line.Seq.Equals("Debit"))
+                        if (line.Seq.Equals("Credit"))
                         {
                             ledgerGeneral.Debit -= line.Amount;
                             oppositeLedgerGeneral.Credit -= line.Amount;
