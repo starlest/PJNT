@@ -46,12 +46,12 @@
             <ComboBox Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                           ItemsSource="{Binding Accounts}" SelectedItem="{Binding NewEntryAccount, UpdateSourceTrigger=PropertyChanged}" 
                           IsEditable="True" DisplayMemberPath="Name" TabIndex="1" />
-            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Description:" />
-            <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding NewEntryDescription, UpdateSourceTrigger=PropertyChanged}" TabIndex="3" />
             <TextBlock Grid.Row="1" Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Amount:" />
             <TextBox Grid.Row="1" Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding NewEntryAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" TabIndex="2" />
+            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Description:" />
+            <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntryDescription, UpdateSourceTrigger=PropertyChanged}" TabIndex="3" />
             <TextBlock Grid.Row="2" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Sequence:" />
             <ComboBox Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                           ItemsSource="{Binding Sequences}" SelectedItem="{Binding NewEntrySequence, UpdateSourceTrigger=PropertyChanged}" 

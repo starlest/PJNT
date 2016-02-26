@@ -2,7 +2,6 @@
 using PutraJayaNT.ViewModels.Accounting;
 using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -26,7 +25,7 @@ namespace PutraJayaNT.Views.Accounting
 
         private void OnClick(object sender, EventArgs e)
         {
-            if (UtilityMethods.GetCurrentDate().AddDays(1).Day != 1 && UtilityMethods.GetCurrentDate().Hour < 5)
+            if (UtilityMethods.GetCurrentDate().AddDays(1).Day != 1 && DateTime.Now.Hour < 5)
             {
                 MessageBox.Show("Unable to close books at this time.", "Failed to Close Books", MessageBoxButton.OK);
                 return;

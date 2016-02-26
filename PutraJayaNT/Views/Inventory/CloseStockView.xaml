@@ -24,9 +24,13 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="Period Year: "/>
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Text="{Binding PeriodYear}"/>
+            <ComboBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
+                          ItemsSource="{Binding PeriodYears}" SelectedItem="{Binding PeriodYear, UpdateSourceTrigger=PropertyChanged}" 
+                          IsEditable="True" />
             <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="Period: "/>
-            <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Text="{Binding Period}"/>
+            <ComboBox  Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
+                          ItemsSource="{Binding Periods}" SelectedItem="{Binding Period, UpdateSourceTrigger=PropertyChanged}" 
+                          IsEditable="True" />
         </Grid>
         <ProgressBar Grid.Row="2" Name="pbStatus" Minimum="0" Maximum="100" BorderBrush="Blue" BorderThickness="2" Height="50" Width="800" />
         <TextBlock Grid.Row="2" Text="{Binding ElementName=pbStatus, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />

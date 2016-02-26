@@ -5,6 +5,7 @@ using PutraJayaNT.Utilities;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 
 namespace PutraJayaNT.ViewModels.Suppliers
 {
@@ -14,14 +15,18 @@ namespace PutraJayaNT.ViewModels.Suppliers
         ObservableCollection<PurchaseTransaction> _purchaseTransactions;
 
         SupplierVM _selectedSupplier;
-        DateTime _date;
+        bool _isPaidChecked;
+        DateTime _dueFrom;
+        DateTime _dueTo;
         decimal _total;
 
         public PaymentListVM()
         {
             _suppliers = new ObservableCollection<SupplierVM>();
             _purchaseTransactions = new ObservableCollection<PurchaseTransaction>();
-            _date = UtilityMethods.GetCurrentDate().Date;
+            var currentDate = UtilityMethods.GetCurrentDate().Date;
+            _dueFrom = currentDate.AddDays(-currentDate.Day + 1);
+            _dueTo = currentDate;
             UpdateSuppliers();
         }
 
@@ -35,12 +40,45 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _purchaseTransactions; }
         }
 
-        public DateTime Date
+        public bool IsPaidChecked
         {
-            get { return _date; }
+            get { return _isPaidChecked; }
             set
             {
-                SetProperty(ref _date, value, "Date");
+                SetProperty(ref _isPaidChecked, value, "IsPaidChecked");
+
+                if (_selectedSupplier != null && _isPaidChecked) UpdatePurchaseTransactions();
+            }
+        }
+
+        public DateTime DueFrom
+        {
+            get { return _dueFrom; }
+            set
+            {
+                if (_dueTo < value)
+                {
+                    MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _dueFrom, value, "DueFrom");
+                if (_selectedSupplier != null) UpdatePurchaseTransactions();
+            }
+        }
+
+        public DateTime DueTo
+        {
+            get { return _dueTo; }
+            set
+            {
+                if (_dueFrom > value)
+                {
+                    MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _dueTo, value, "DueTo");
                 if (_selectedSupplier != null) UpdatePurchaseTransactions();
             }
         }
@@ -70,6 +108,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 return _total;
             }
         }
+
         #region Helper Methods 
         private void UpdateSuppliers()
         {
@@ -91,11 +130,17 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
             using (var context = new ERPContext())
             {
-                if (_selectedSupplier.Name.Equals("All"))
-                    query = e => !e.Supplier.Name.Equals("-") && e.Paid < e.Total && e.DueDate <= _date;
+                if (_selectedSupplier.Name.Equals("All") && !_isPaidChecked)
+                    query = e => !e.Supplier.Name.Equals("-") && e.Paid < e.Total && e.DueDate <= _dueTo;
 
+                else if (!_selectedSupplier.Name.Equals("All") && !_isPaidChecked)
+                    query = e => e.Supplier.Name.Equals(_selectedSupplier.Name) && e.Paid < e.Total && e.DueDate <= _dueTo;
+
+                else if (_selectedSupplier.Name.Equals("All") && _isPaidChecked)
+                    query = e => !e.Supplier.Name.Equals("-") && e.Paid >= e.Total && e.DueDate >= _dueFrom && e.DueDate <= _dueTo;
+                
                 else
-                    query = e => e.Supplier.Name.Equals(_selectedSupplier.Name) && e.Paid < e.Total && e.DueDate <= _date;
+                    query = e => e.Supplier.Name.Equals(_selectedSupplier.Name) && e.Paid >= e.Total && e.DueDate >= _dueFrom && e.DueDate <= _dueTo;
 
                 var purchaseTransactions = context.PurchaseTransactions
                     .Include("Supplier")

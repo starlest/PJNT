@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:PutraJayaNT.Views.Suppliers"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.InputBindings>
+        <KeyBinding  Key="F1"  Command="{Binding ConfirmPaymentCommand}"/>
+    </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*" />

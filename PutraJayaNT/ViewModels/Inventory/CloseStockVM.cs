@@ -3,6 +3,7 @@ using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -12,6 +13,9 @@ namespace PutraJayaNT.ViewModels.Inventory
 {
     class CloseStockVM : ViewModelBase
     {
+        ObservableCollection<int> _periodYears;
+        ObservableCollection<int> _periods;
+
         List<Warehouse> _warehouses;
         int _periodYear;
         int _period;
@@ -22,17 +26,32 @@ namespace PutraJayaNT.ViewModels.Inventory
         {
             using (var context = new ERPContext())
             {
+                _periodYears = new ObservableCollection<int> { DateTime.Now.Year - 1, DateTime.Now.Year };
                 _periodYear = context.Ledger_General.FirstOrDefault().PeriodYear;
-                _period = 1;
+                _periods = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+                _period = UtilityMethods.GetCurrentDate().Month;
 
                 _warehouses = context.Warehouses.ToList();
             }
         }
 
+        public ObservableCollection<int> PeriodYears
+        {
+            get { return _periodYears; }
+        }
+
+        public ObservableCollection<int> Periods
+        {
+            get { return _periods; }
+        }
+
         public int PeriodYear
         {
             get { return _periodYear; }
-            set { SetProperty(ref _periodYear, value, "PeriodYear"); }
+            set
+            {
+                SetProperty(ref _periodYear, value, "PeriodYear");
+            }
         }
 
         public int Period
@@ -166,11 +185,6 @@ namespace PutraJayaNT.ViewModels.Inventory
                 && (e.FromWarehouse.ID.Equals(warehouse.ID) || e.ToWarehouse.ID.Equals(warehouse.ID)))
                 .ToList();
 
-            if (item.Name=="Tep Ketan Rose")
-            {
-
-            }
-
             foreach (var line in purchaseLines)
                 balance += line.Quantity;
 
@@ -185,14 +199,6 @@ namespace PutraJayaNT.ViewModels.Inventory
 
             foreach (var line in stockAdjustmentLines)
                 balance += line.Quantity;
-
-            //foreach (var line in stockMovementLines)
-            //{
-            //    if (line.MoveStockTransaction.FromWarehouse.Equals(warehouse.ID))
-            //        balance -= line.Quantity;
-            //    else
-            //        balance += line.Quantity;
-            //}
 
             foreach (var transaction in moveStockTransactions)
             {

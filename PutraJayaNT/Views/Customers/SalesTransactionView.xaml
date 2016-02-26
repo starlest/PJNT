@@ -7,6 +7,15 @@
              xmlns:rv="clr-namespace:Microsoft.Reporting.WinForms;assembly=Microsoft.ReportViewer.WinForms"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.InputBindings>
+        <KeyBinding  Key="F1"  Command="{Binding SaveTransactionCommand}"/>
+        <KeyBinding  Key="F2"  Command="{Binding PrintDOCommand}"/>
+        <KeyBinding  Key="F3"  Command="{Binding PrintInvoiceCommand}"/>
+        <KeyBinding  Key="F4"  Command="{Binding IssueInvoiceCommand}"/>
+        <KeyBinding  Key="F5"  Command="{Binding NewTransactionCommand}"/>
+        <KeyBinding  Key="F6"  Command="{Binding PrintListCommand}"/>
+        <KeyBinding  Key="F7"  Command="{Binding BrowseCommand}"/>
+    </UserControl.InputBindings>
     <Grid>
         <Grid IsEnabled="{Binding IsEditWindowNotOpen}">
             <Grid.RowDefinitions>
@@ -25,11 +34,11 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <Button Content="New" Command="{Binding NewTransactionCommand}" Foreground="Red" />
-                <Button Grid.Column="1" Content="Browse" Command="{Binding BrowseCommand}" />
-                <Button Grid.Column="2" Content="Issue Invoice" Command="{Binding IssueInvoiceCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
+                <Button Content="(F5) New" Command="{Binding NewTransactionCommand}" Foreground="Red" />
+                <Button Grid.Column="1" Content="(F7) Browse" Command="{Binding BrowseCommand}" />
+                <Button Grid.Column="2" Content="(F4) Issue Invoice" Command="{Binding IssueInvoiceCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
                 <Button Grid.Column="3" Content="Delete" Command="{Binding DeleteTransactionCommand}" IsEnabled="{Binding InvoiceNotIssued}" Foreground="Red" />
-                <Button Grid.Column="4" Content="Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding InvoiceNotPaid}" Foreground="Red" />
+                <Button Grid.Column="4" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding InvoiceNotPaid}" Foreground="Red"  />
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -39,11 +48,11 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Print List" Command="{Binding PrintListCommand}" />
+                <Button Grid.Column="0" Content="(F6) Print List" Command="{Binding PrintListCommand}" />
                 <Button Grid.Column="1" Content="Preview DO" Command="{Binding PreviewDOCommand}" />
                 <Button Grid.Column="2" Content="Preview Invoice" Command="{Binding PreviewInvoiceCommand}" />
-                <Button Grid.Column="3" Content="Print DO" Command="{Binding PrintDOCommand}" />
-                <Button Grid.Column="4" Content="Print Invoice" Command="{Binding PrintInvoiceCommand}" />
+                <Button Grid.Column="3" Content="(F2) Print DO" Command="{Binding PrintDOCommand}" />
+                <Button Grid.Column="4" Content="(F3) Print Invoice" Command="{Binding PrintInvoiceCommand}" />
             </Grid>
             <Border Grid.Row="2" BorderBrush="Red" BorderThickness="2">
                 <Grid Grid.Row="1">

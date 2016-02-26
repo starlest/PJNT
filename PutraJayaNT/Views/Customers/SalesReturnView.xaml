@@ -6,6 +6,11 @@
              xmlns:local="clr-namespace:PutraJayaNT.Views.Customers"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.InputBindings>
+        <KeyBinding  Key="F1"  Command="{Binding ConfirmCommand}"/>
+        <KeyBinding  Key="F2"  Command="{Binding PrintCommand}"/>
+        <KeyBinding  Key="F5"  Command="{Binding NewCommand}"/>
+    </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*" />
@@ -23,9 +28,9 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Button Content="New" Command="{Binding NewCommand}" />
-            <Button Grid.Column="3"  Content="Print" Command="{Binding PrintCommand}" />
-            <Button Grid.Column="4" Content="Confirm" Command="{Binding ConfirmCommand}" IsEnabled="{Binding NotEditing}" />
+            <Button Content="(F5) New" Command="{Binding NewCommand}" />
+            <Button Grid.Column="3"  Content="(F2) Print" Command="{Binding PrintCommand}" />
+            <Button Grid.Column="4" Content="(F1) Confirm" Command="{Binding ConfirmCommand}" IsEnabled="{Binding NotEditing}" />
         </Grid>
         <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid>

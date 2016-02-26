@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:PutraJayaNT.Views.Reports"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.InputBindings>
+        <KeyBinding  Key="F1"  Command="{Binding PrintCommand}"/>
+    </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.125*" />
@@ -18,7 +21,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.2*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Print" Command="{Binding PrintCommand}"/>
+            <Button Grid.Column="1" Content="(F1) Print" Command="{Binding PrintCommand}"/>
         </Grid>
         <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid>

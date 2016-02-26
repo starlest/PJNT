@@ -57,6 +57,12 @@ namespace PutraJayaNT.ViewModels.Accounting
             get { return _fromDate; }
             set
             {
+                if (_toDate < value)
+                {
+                    MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
+                    return;
+                }
+
                 SetProperty(ref _fromDate, value, "FromDate");
 
                 if (_fromDate != null && _toDate != null && _selectedBank != null) UpdateDisplayLines();
@@ -68,6 +74,12 @@ namespace PutraJayaNT.ViewModels.Accounting
             get { return _toDate; }
             set
             {
+                if (_fromDate > value)
+                {
+                    MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
+                    return;
+                }
+
                 SetProperty(ref _toDate, value, "ToDate");
 
                 if (_fromDate != null && _toDate != null && _selectedBank != null) UpdateDisplayLines();

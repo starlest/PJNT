@@ -23,11 +23,14 @@
         string _selectedCity;
         Salesman _selectedSalesman;
         Customer _selectedCustomer;
-        DateTime _date;
+        DateTime _toDate;
+        DateTime _fromDate;
+        DateTime _collectionDate;
         decimal _total;
         bool _isPaidChecked;
         bool _allSelected;
 
+        ICommand _refreshCollectionDateSelectionCommand;
         ICommand _printPerCityCommand;
         ICommand _printPerSalesmanCommand;
 
@@ -37,7 +40,10 @@
             _salesmen = new ObservableCollection<Salesman>();
             _customers = new ObservableCollection<Customer>();
             _salesTransactions = new ObservableCollection<SalesCollectionListLineVM>();
-            _date = UtilityMethods.GetCurrentDate().Date;
+            var currentDate = UtilityMethods.GetCurrentDate().Date;
+            _fromDate = currentDate.AddDays(-currentDate.Day + 1);
+            _toDate = currentDate;
+            _collectionDate = currentDate;
             UpdateCities();
             UpdateSalesmen();
             UpdateCustomers();
@@ -63,15 +69,45 @@
             get { return _salesTransactions; }
         }
 
-        public DateTime Date
+        public DateTime FromDate
         {
-            get { return _date; }
+            get { return _fromDate; }
             set
             {
+                if (_toDate < value)
+                {
+                    MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
+                    return;
+                }
 
-                SetProperty(ref _date, value, "Date");
-                if (_selectedSalesman != null && _selectedCity != null) UpdateSalesTransactions();
+                SetProperty(ref _fromDate, value, "FromDate");
+
+                if (_toDate != null && _selectedCustomer != null && _isPaidChecked) UpdateCustomerSalesTransactions();
             }
+        }
+
+        public DateTime ToDate
+        {
+            get { return _toDate; }
+            set
+            {
+                if (_fromDate > value)
+                {
+                    MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _toDate, value, "ToDate");
+
+                if (_selectedSalesman != null && _selectedCity != null) UpdateSalesTransactions();
+                if (_fromDate != null && _selectedCustomer != null) UpdateCustomerSalesTransactions();
+            }
+        }
+
+        public DateTime CollectionDate
+        {
+            get { return _collectionDate; }
+            set { SetProperty(ref _collectionDate, value, "Collection Date"); }
         }
 
         public string SelectedCity
@@ -111,10 +147,16 @@
 
                 if (_selectedCustomer == null) return;
 
+                if (_fromDate == null || _toDate == null)
+                {
+                    MessageBox.Show("Please select a date range.", "Invalid Command", MessageBoxButton.OK);
+                    return;
+                }
+
                 SelectedCity = null;
                 SelectedSalesman = null;
 
-                UpdateCustomerSalesTransactionLines();
+                UpdateCustomerSalesTransactions();
             }
         }
 
@@ -132,6 +174,7 @@
                 SetProperty(ref _isPaidChecked, value, "IsPaidChecked");
 
                 if (_selectedCity != null && _selectedSalesman != null) UpdateSalesTransactions();
+                if (_fromDate != null && _toDate != null && _selectedCustomer != null) UpdateCustomerSalesTransactions();
             }
         }
 
@@ -156,6 +199,17 @@
             }
         }
 
+        public ICommand RefreshCollectionDateSelectionCommand
+        {
+            get
+            {
+                return _refreshCollectionDateSelectionCommand ?? (_refreshCollectionDateSelectionCommand = new RelayCommand(() =>
+                {
+                    UpdateCollectionDateSalesTransactions();
+                }));
+            }
+        }
+
         public ICommand PrintPerCityCommand
         {
             get
@@ -164,7 +218,7 @@
                 {
                     if (_salesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportPerCityWindow(_salesTransactions, _date);
+                    var collectionReportWindow = new CollectionReportPerCityWindow(_salesTransactions, _toDate);
                     collectionReportWindow.Owner = App.Current.MainWindow;
                     collectionReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     collectionReportWindow.Show();
@@ -180,7 +234,7 @@
                 {
                     if (_salesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportPerSalesmanWindow(_salesTransactions, _date);
+                    var collectionReportWindow = new CollectionReportPerSalesmanWindow(_salesTransactions, _toDate);
                     collectionReportWindow.Owner = App.Current.MainWindow;
                     collectionReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     collectionReportWindow.Show();
@@ -247,7 +301,7 @@
                             .Include("Customer")
                             .Include("Customer.Group")
                             .Include("CollectionSalesman")
-                            .Where(e => e.Paid < e.Total && e.DueDate <= _date)
+                            .Where(e => e.Paid < e.Total && e.DueDate <= _toDate)
                             .OrderBy(e => e.CollectionSalesman.Name)
                             .ThenBy(e => e.DueDate)
                             .ThenBy(e => e.Customer.Name)
@@ -261,7 +315,7 @@
                             .Include("Customer.Group")
                             .Include("CollectionSalesman")
                             .Where(e => e.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
-                            && e.Paid < e.Total && e.DueDate <= _date)
+                            && e.Paid < e.Total && e.DueDate <= _toDate)
                             .OrderBy(e => e.CollectionSalesman.Name)
                             .ThenBy(e => e.DueDate)
                             .ThenBy(e => e.Customer.Name)
@@ -274,7 +328,7 @@
                             .Include("Customer")
                             .Include("Customer.Group")
                             .Include("CollectionSalesman")
-                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid < e.Total && e.DueDate <= _date)
+                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid < e.Total && e.DueDate <= _toDate)
                             .OrderBy(e => e.CollectionSalesman.Name)
                             .ThenBy(e => e.DueDate)
                             .ThenBy(e => e.Customer.Name)
@@ -288,7 +342,7 @@
                             .Include("Customer.Group")
                             .Include("CollectionSalesman")
                             .Where(e => e.Customer.City.Equals(_selectedCity) && e.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
-                            && e.Paid < e.Total && e.DueDate <= _date)
+                            && e.Paid < e.Total && e.DueDate <= _toDate)
                             .OrderBy(e => e.CollectionSalesman.Name)
                             .ThenBy(e => e.DueDate)
                             .ToList();
@@ -303,7 +357,7 @@
                             .Include("Customer")
                             .Include("Customer.Group")
                             .Include("CollectionSalesman")
-                            .Where(e => e.Paid > 0)
+                            .Where(e => e.Paid >= e.Total && e.DueDate >= _fromDate && e.DueDate <= _toDate)
                             .OrderBy(e => e.CollectionSalesman.Name)
                             .ThenBy(e => e.DueDate)
                             .ThenBy(e => e.Customer.Name)
@@ -316,7 +370,7 @@
                             .Include("Customer")
                             .Include("Customer.Group")
                             .Include("CollectionSalesman")
-                            .Where(e => e.CollectionSalesman.ID.Equals(_selectedSalesman.ID) && e.Paid > 0)
+                            .Where(e => e.CollectionSalesman.ID.Equals(_selectedSalesman.ID) && e.Paid >= e.Total && e.DueDate >= _fromDate && e.DueDate <= _toDate)
                             .OrderBy(e => e.CollectionSalesman.Name)
                             .ThenBy(e => e.DueDate)
                             .ThenBy(e => e.Customer.Name)
@@ -329,7 +383,7 @@
                             .Include("Customer")
                             .Include("Customer.Group")
                             .Include("CollectionSalesman")
-                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid > 0)
+                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.Paid >= e.Total && e.DueDate >= _fromDate && e.DueDate <= _toDate)
                             .OrderBy(e => e.CollectionSalesman.Name)
                             .ThenBy(e => e.DueDate)
                             .ThenBy(e => e.Customer.Name)
@@ -342,28 +396,11 @@
                             .Include("Customer")
                             .Include("Customer.Group")
                             .Include("CollectionSalesman")
-                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.CollectionSalesman.ID.Equals(_selectedSalesman.ID) && e.Paid > 0)
+                            .Where(e => e.Customer.City.Equals(_selectedCity) && e.CollectionSalesman.ID.Equals(_selectedSalesman.ID) && e.Paid >= e.Total && e.DueDate >= _fromDate && e.DueDate <= _toDate)
                             .OrderBy(e => e.CollectionSalesman.Name)
                             .ThenBy(e => e.DueDate)
                             .ToList();
                     }
-
-                    var ledgerTransactions = context.Ledger_Transactions.Where(e => e.Date.Equals(_date) && e.Description.Equals("Sales Transaction Receipt")).ToList();
-
-                    var temp = new List<SalesTransaction>();
-                    foreach (var st in salesTransactions)
-                    {
-                        foreach (var lt in ledgerTransactions)
-                        {
-                            if (st.SalesTransactionID.Equals(lt.Documentation))
-                            {
-                                temp.Add(st);
-                                break;
-                            }
-
-                        }
-                    }
-                    salesTransactions = temp;
                 }
 
                 foreach (var t in salesTransactions)
@@ -377,7 +414,7 @@
             }
         }
 
-        private void UpdateCustomerSalesTransactionLines()
+        private void UpdateCustomerSalesTransactions()
         {
             _salesTransactions.Clear();
             _total = 0;
@@ -385,13 +422,38 @@
             {
                 List<SalesTransaction> transactions;
 
-                if (_selectedCustomer.Name.Equals("All"))
+                if (_selectedCustomer.Name.Equals("All") && !_isPaidChecked)
                 {
                     transactions = context.SalesTransactions                
                         .Include("Customer")
                         .Include("Customer.Group")
                         .Include("CollectionSalesman")
-                        .Where(e => e.Paid < e.Total)
+                        .Where(e => e.Paid < e.Total && (e.DueDate >= _fromDate && e.DueDate <= _toDate))
+                        .OrderBy(e => e.Customer.Name)
+                        .ThenBy(e => e.DueDate)
+                        .ToList();
+                }
+
+                else if (_selectedCustomer.Name.Equals("All") && _isPaidChecked)
+                {
+                    transactions = context.SalesTransactions
+                        .Include("Customer")
+                        .Include("Customer.Group")
+                        .Include("CollectionSalesman")
+                        .Where(e => e.Paid >= e.Total && e.DueDate <= _toDate && e.DueDate >= _fromDate)
+                        .OrderBy(e => e.Customer.Name)
+                        .ThenBy(e => e.DueDate)
+                        .ToList();
+                }
+
+                else if (!_selectedCustomer.Name.Equals("All") && !_isPaidChecked)
+                {
+                    transactions = context.SalesTransactions
+                        .Include("Customer")
+                        .Include("Customer.Group")
+                        .Include("CollectionSalesman")
+                        .Where(e => e.Customer.Name.Equals(_selectedCustomer.Name) &&
+                        e.Paid < e.Total && e.DueDate <= _toDate)
                         .OrderBy(e => e.Customer.Name)
                         .ThenBy(e => e.DueDate)
                         .ToList();
@@ -404,7 +466,7 @@
                         .Include("Customer.Group")
                         .Include("CollectionSalesman")
                         .Where(e => e.Customer.Name.Equals(_selectedCustomer.Name) &&
-                        e.Paid < e.Total)
+                        e.Paid >= e.Total && (e.DueDate >= _fromDate && e.DueDate >= _fromDate && e.DueDate <= _toDate))
                         .OrderBy(e => e.Customer.Name)
                         .ThenBy(e => e.DueDate)
                         .ToList();
@@ -417,6 +479,28 @@
                 }
 
                 OnPropertyChanged("Total");
+            }
+        }
+
+        private void UpdateCollectionDateSalesTransactions()
+        {
+            _salesTransactions.Clear();
+            using (var context = new ERPContext())
+            {
+                var ledgerTransactions = context.Ledger_Transactions.Where(e => e.Description.Equals("Sales Transaction Receipt") && e.Date.Equals(_collectionDate)).ToList();
+
+                foreach (var lt in ledgerTransactions)
+                {
+                    var transaction = context.SalesTransactions
+                        .Include("Customer")
+                        .Include("Customer.Group")
+                        .Include("CollectionSalesman")
+                        .Where(e => e.SalesTransactionID.Equals(lt.Documentation)).FirstOrDefault();
+
+                    var vm = new SalesCollectionListLineVM { Model = transaction };
+                    _salesTransactions.Add(vm);
+                    _total += vm.Remaining;
+                }
             }
         }
         #endregion

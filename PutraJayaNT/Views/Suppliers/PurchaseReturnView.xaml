@@ -6,15 +6,34 @@
              xmlns:local="clr-namespace:PutraJayaNT.Views.Suppliers"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.InputBindings>
+        <KeyBinding  Key="F1"  Command="{Binding ConfirmCommand}"/>
+        <KeyBinding  Key="F5"  Command="{Binding NewCommand}"/>
+    </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*" />
-            <RowDefinition Height="1*" />
             <RowDefinition Height="0.25*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.25*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" BorderBrush="Blue" BorderThickness="2">
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button Content="(F5) New" Command="{Binding NewCommand}" />
+            <Button Grid.Column="7" Content="(F1) Confirm" Command="{Binding ConfirmCommand}" />
+        </Grid>
+        <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -36,7 +55,7 @@
                             IsEnabled="False" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding PurchaseTransactionLines}" SelectedItem="{Binding SelectedPurchaseTransactionLine, UpdateSourceTrigger=PropertyChanged}" 
+        <DataGrid Grid.Row="2" ItemsSource="{Binding PurchaseTransactionLines}" SelectedItem="{Binding SelectedPurchaseTransactionLine, UpdateSourceTrigger=PropertyChanged}" 
                   CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False"
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
@@ -51,7 +70,7 @@
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2">
+        <Border Grid.Row="3" BorderBrush="Blue" BorderThickness="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
@@ -85,7 +104,7 @@
                 <Button Grid.Column="10" Content="Add" Command="{Binding PurchaseReturnEntryAddCommand}" Margin="30, 10, 30, 10" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="3" ItemsSource="{Binding PurchaseReturnTransactionLines}"
+        <DataGrid Grid.Row="4" ItemsSource="{Binding PurchaseReturnTransactionLines}"
                   CanUserDeleteRows="False" VerticalAlignment="Stretch" CanUserAddRows="False"
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
@@ -102,22 +121,15 @@
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.1*" />
+                <ColumnDefinition Width="0.1*" />
             </Grid.ColumnDefinitions>
-            <Button Content="New" Command="{Binding NewCommand}" />
-            <TextBlock Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" Text="Net Total:" />
-            <TextBox Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" Text="Net Total:" />
+            <TextBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding PurchaseReturnTransactionNetTotal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" />
-            <Button Grid.Column="7" Content="Confirm" Command="{Binding ConfirmCommand}" />
         </Grid>
     </Grid>
 </UserControl>

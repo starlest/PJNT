@@ -1171,6 +1171,7 @@
                             ts.Complete();
                         }
 
+                        MessageBox.Show("Invoice has been successfully issued.", "Success", MessageBoxButton.OK);
                         InvoiceNotIssued = false;
                     }
                 }));
