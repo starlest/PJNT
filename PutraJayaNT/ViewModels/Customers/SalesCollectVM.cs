@@ -77,6 +77,7 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return _selectedCustomer; }
             set
             {
+                UpdateCustomers();
                 SetProperty(ref _selectedCustomer, value, "SelectedCustomer");
 
                 if (_selectedCustomer == null) return;

@@ -399,7 +399,7 @@
                         var customerTransactions = context.SalesTransactions.Where(e => e.Customer.ID.Equals(value.ID) && e.Paid < e.Total).ToList();
 
                         var verified = false;
-                        if (customerTransactions.Count > 5)
+                        if (customerTransactions.Count > value.MaxInvoices)
                         {
                             MessageBox.Show("This customer has maximum number of invoice(s).", "Invalid Customer", MessageBoxButton.OK);
 

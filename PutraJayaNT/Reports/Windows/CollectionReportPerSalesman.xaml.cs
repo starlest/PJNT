@@ -11,14 +11,14 @@ using System.Windows;
 namespace PutraJayaNT.Reports.Windows
 {
     /// <summary>
-    /// Interaction logic for SalesInvoiceWindow.xaml
+    /// Interaction logic for CollectionReportPerSalesmanWindow.xaml
     /// </summary>
     public partial class CollectionReportPerSalesmanWindow : ModernWindow
     {
-        ObservableCollection<SalesCollectionListLineVM>  _salesTransactions;
+        ObservableCollection<SalesTransactionMultiPurposeVM>  _salesTransactions;
         DateTime _dateSelected;
 
-        public CollectionReportPerSalesmanWindow(ObservableCollection<SalesCollectionListLineVM> salesTransactions, DateTime date)
+        public CollectionReportPerSalesmanWindow(ObservableCollection<SalesTransactionMultiPurposeVM> salesTransactions, DateTime date)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
@@ -74,7 +74,7 @@ namespace PutraJayaNT.Reports.Windows
             reportViewer.RefreshReport();
         }
 
-        private decimal GetPaidToday(SalesCollectionListLineVM t)
+        private decimal GetPaidToday(SalesTransactionMultiPurposeVM t)
         {
             using (var context = new ERPContext())
             {

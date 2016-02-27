@@ -171,8 +171,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Reports\Windows\CollectionReportPerSalesman - Copy.xaml.cs">
-      <DependentUpon>CollectionReportPerSalesman - Copy.xaml</DependentUpon>
+    <Compile Include="Reports\Windows\OverallSalesReportWindow.xaml.cs">
+      <DependentUpon>OverallSalesReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\CollectionReportPerSalesman.xaml.cs">
+      <DependentUpon>CollectionReportPerSalesman.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Windows\SalesTransactionsReportWindow.xaml.cs">
       <DependentUpon>SalesTransactionsReportWindow.xaml</DependentUpon>
@@ -228,7 +231,7 @@
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
     <Compile Include="ViewModels\Customers\BrowseSalesTransactionsVM.cs" />
-    <Compile Include="ViewModels\Customers\SalesCollectionListLineVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesTransactionMultiPurposeVM.cs" />
     <Compile Include="ViewModels\Customers\SalesCollectionListVM.cs" />
     <Compile Include="ViewModels\Customers\PrintListVM.cs" />
     <Compile Include="ViewModels\Customers\SalesCollectVM.cs" />
@@ -254,6 +257,7 @@
     <Compile Include="ViewModels\Reports\CommissionsReportVM.cs" />
     <Compile Include="ViewModels\Reports\InventoryReportLineVM.cs" />
     <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
+    <Compile Include="ViewModels\Reports\OverallSalesReportVM.cs" />
     <Compile Include="ViewModels\Reports\PurchasesReportVM.cs" />
     <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
     <Compile Include="ViewModels\Reports\StockBalanceLineVM.cs" />
@@ -392,7 +396,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Page Include="Reports\Windows\CollectionReportPerSalesman - Copy.xaml">
+    <Page Include="Reports\Windows\OverallSalesReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\CollectionReportPerSalesman.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -623,6 +631,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201602201012257_Update8.resx">
       <DependentUpon>201602201012257_Update8.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\SalesTransactionsReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

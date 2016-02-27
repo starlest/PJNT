@@ -1,9 +1,9 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using Microsoft.Reporting.WinForms;
 using PutraJayaNT.ViewModels.Inventory;
-using PutraJayaNT.ViewModels.Reports;
 using System;
 using System.Data;
+using System.Drawing.Printing;
 using System.Windows;
 
 namespace PutraJayaNT.Reports.Windows
@@ -69,6 +69,16 @@ namespace PutraJayaNT.Reports.Windows
             reportViewer.LocalReport.DataSources.Add(reportDataSource1);
             reportViewer.LocalReport.DataSources.Add(reportDataSource2);
             reportViewer.PageCountMode = PageCountMode.Actual;
+
+            var pg = new PageSettings();
+            pg.Margins.Top = 0;
+            pg.Margins.Bottom = 0;
+            pg.Margins.Left = 0;
+            pg.Margins.Right = 0;
+            var size = new PaperSize("Custom", 827, 550);
+            pg.PaperSize = size;
+            pg.Landscape = false;
+            reportViewer.SetPageSettings(pg);
             reportViewer.RefreshReport();
         }
     }

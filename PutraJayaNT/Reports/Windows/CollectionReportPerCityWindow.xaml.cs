@@ -15,10 +15,10 @@ namespace PutraJayaNT.Reports.Windows
     /// </summary>
     public partial class CollectionReportPerCityWindow : ModernWindow
     {
-        ObservableCollection<SalesCollectionListLineVM>  _salesTransactions;
+        ObservableCollection<SalesTransactionMultiPurposeVM>  _salesTransactions;
         DateTime _dateSelected;
 
-        public CollectionReportPerCityWindow(ObservableCollection<SalesCollectionListLineVM> salesTransactions, DateTime date)
+        public CollectionReportPerCityWindow(ObservableCollection<SalesTransactionMultiPurposeVM> salesTransactions, DateTime date)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
@@ -74,7 +74,7 @@ namespace PutraJayaNT.Reports.Windows
             reportViewer.RefreshReport();
         }
 
-        private decimal GetPaidToday(SalesCollectionListLineVM t)
+        private decimal GetPaidToday(SalesTransactionMultiPurposeVM t)
         {
             using (var context = new ERPContext())
             {

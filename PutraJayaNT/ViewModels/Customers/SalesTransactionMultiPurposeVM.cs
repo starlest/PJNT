@@ -9,12 +9,12 @@
     using System.Linq;
     using Utilities;
 
-    public class SalesCollectionListLineVM : ViewModelBase<SalesTransaction>
+    public class SalesTransactionMultiPurposeVM : ViewModelBase<SalesTransaction>
     {
         ObservableCollection<Salesman> _salesmen;
         bool _isSelected;
 
-        public SalesCollectionListLineVM()
+        public SalesTransactionMultiPurposeVM()
         {
             _salesmen = new ObservableCollection<Salesman>();
 
@@ -62,6 +62,11 @@
             get { return Model.DueDate; }
         }
 
+        public User User
+        {
+            get { return Model.User; }
+        }
+
         public Salesman CollectionSalesman
         {
             get { return Model.CollectionSalesman; }
@@ -89,6 +94,19 @@
         {
             get { return _isSelected; }
             set { SetProperty(ref _isSelected, value, "IsSelected"); }
+        }
+
+        public override bool Equals(object obj)
+        {
+            var line = obj as SalesTransactionMultiPurposeVM;
+
+            if (line == null) return false;
+            else return this.SalesTransactionID.Equals(line.SalesTransactionID);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

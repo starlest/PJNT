@@ -1,4 +1,4 @@
-﻿using PutraJayaNT.ViewModels.Customers;
+﻿using PutraJayaNT.ViewModels.Reports;
 using System.Windows.Controls;
 
 namespace PutraJayaNT.Views.Reports
@@ -11,11 +11,11 @@ namespace PutraJayaNT.Views.Reports
         public OverallSalesReportView()
         {
             InitializeComponent();
-            var vm = new BrowseSalesTransactionsVM();
+            var vm = new OverallSalesReportVM();
             DataContext = vm;
         }
 
-        private void DataGrid_LoadingRow(object sender, System.Windows.Controls.DataGridRowEventArgs e)
+        private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             e.Row.Header = (e.Row.GetIndex() + 1).ToString();
         }

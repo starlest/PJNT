@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PutraJayaNT.Views.Customers"
+             xmlns:local="clr-namespace:PutraJayaNT.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
     <UserControl.InputBindings>
@@ -65,11 +65,11 @@
                             SelectedDateFormat="Long" SelectedDate="{Binding CollectionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="3" Grid.Column="2" Content="Refresh" Command="{Binding RefreshCollectionDateSelectionCommand}" Foreground="Green" Margin="15, 10, 15, 10"/>
         </Grid>
-        <DataGrid Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding SalesTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
+        <DataGrid Grid.Row="2" ItemsSource="{Binding SalesTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False">
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" Margin="-10,0,10,0">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransactionID}" />
+                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransactionID}"/>
                 <DataGridTextColumn Header="Customer" Width="1*" IsReadOnly="True" Binding="{Binding Customer.Name}" />
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
                 <DataGridTextColumn Header="Paid" Width="1*" IsReadOnly="True" Binding="{Binding Paid, StringFormat=N2}" />

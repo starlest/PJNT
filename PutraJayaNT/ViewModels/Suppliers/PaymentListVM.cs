@@ -102,7 +102,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
                 foreach (var line in _purchaseTransactions)
                 {
-                    _total += line.Total;
+                    _total += line.Remaining;
                 }
 
                 return _total;

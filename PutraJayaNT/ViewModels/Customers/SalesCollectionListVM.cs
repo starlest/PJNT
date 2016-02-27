@@ -18,7 +18,7 @@
         ObservableCollection<string> _cities;
         ObservableCollection<Salesman> _salesmen;
         ObservableCollection<Customer> _customers;
-        ObservableCollection<SalesCollectionListLineVM> _salesTransactions;
+        ObservableCollection<SalesTransactionMultiPurposeVM> _salesTransactions;
 
         string _selectedCity;
         Salesman _selectedSalesman;
@@ -39,7 +39,7 @@
             _cities = new ObservableCollection<string>();
             _salesmen = new ObservableCollection<Salesman>();
             _customers = new ObservableCollection<Customer>();
-            _salesTransactions = new ObservableCollection<SalesCollectionListLineVM>();
+            _salesTransactions = new ObservableCollection<SalesTransactionMultiPurposeVM>();
             var currentDate = UtilityMethods.GetCurrentDate().Date;
             _fromDate = currentDate.AddDays(-currentDate.Day + 1);
             _toDate = currentDate;
@@ -64,7 +64,7 @@
             get { return _customers; }
         }
 
-        public ObservableCollection<SalesCollectionListLineVM> SalesTransactions
+        public ObservableCollection<SalesTransactionMultiPurposeVM> SalesTransactions
         {
             get { return _salesTransactions; }
         }
@@ -107,7 +107,7 @@
         public DateTime CollectionDate
         {
             get { return _collectionDate; }
-            set { SetProperty(ref _collectionDate, value, "Collection Date"); }
+            set { SetProperty(ref _collectionDate, value, "CollectionDate"); }
         }
 
         public string SelectedCity
@@ -205,6 +205,9 @@
             {
                 return _refreshCollectionDateSelectionCommand ?? (_refreshCollectionDateSelectionCommand = new RelayCommand(() =>
                 {
+                    SelectedCustomer = null;
+                    SelectedCity = null;
+                    SelectedSalesman = null;
                     UpdateCollectionDateSalesTransactions();
                 }));
             }
@@ -405,7 +408,7 @@
 
                 foreach (var t in salesTransactions)
                 {
-                    var vm = new SalesCollectionListLineVM { Model = t };
+                    var vm = new SalesTransactionMultiPurposeVM { Model = t };
                     _salesTransactions.Add(vm);
                     _total += vm.Remaining;
                 }
@@ -474,7 +477,7 @@
 
                 foreach (var transaction in transactions)
                 {
-                    _salesTransactions.Add(new SalesCollectionListLineVM { Model = transaction });
+                    _salesTransactions.Add(new SalesTransactionMultiPurposeVM { Model = transaction });
                     _total += transaction.Total - transaction.Paid;
                 }
 
@@ -488,6 +491,7 @@
             using (var context = new ERPContext())
             {
                 var ledgerTransactions = context.Ledger_Transactions.Where(e => e.Description.Equals("Sales Transaction Receipt") && e.Date.Equals(_collectionDate)).ToList();
+                var temp = new List<SalesTransactionMultiPurposeVM>();
 
                 foreach (var lt in ledgerTransactions)
                 {
@@ -497,9 +501,21 @@
                         .Include("CollectionSalesman")
                         .Where(e => e.SalesTransactionID.Equals(lt.Documentation)).FirstOrDefault();
 
-                    var vm = new SalesCollectionListLineVM { Model = transaction };
-                    _salesTransactions.Add(vm);
-                    _total += vm.Remaining;
+                    var vm = new SalesTransactionMultiPurposeVM { Model = transaction };
+
+                    if (!temp.Contains(vm))
+                    {
+                        temp.Add(vm);
+                        _total += vm.Remaining;
+                    }
+                }
+
+
+                var sort = temp.OrderBy(e => e.CollectionSalesman.Name).ToList();
+
+                foreach (var line in sort)
+                {
+                    _salesTransactions.Add(line);
                 }
             }
         }
