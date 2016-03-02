@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace PutraJayaNT.Utilities
+namespace PutraJayaNT.Models
 {
     interface IRepository<T> where T : class
     {

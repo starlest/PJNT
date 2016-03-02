@@ -1,16 +1,15 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Suppliers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
+using MVVMFramework;
+using PutraJayaNT.Models;
+using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Utilities;
+using PutraJayaNT.ViewModels.Suppliers;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Reports
 {
     class PurchasesReportVM : ViewModelBase
     {

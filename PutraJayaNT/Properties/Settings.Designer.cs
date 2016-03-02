@@ -28,9 +28,9 @@ namespace PutraJayaNT.Properties {
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("server=localhost;user id=root;password=root;persistsecurityinfo=True;database=put" +
             "rajayant")]
-        public string putrajayantConnectionString {
+        public string PutraJayaNTConnectionString {
             get {
-                return ((string)(this["putrajayantConnectionString"]));
+                return ((string)(this["PutraJayaNTConnectionString"]));
             }
         }
         
@@ -38,10 +38,10 @@ namespace PutraJayaNT.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("server=192.168.1.108;user id=edwin;password=root;persistsecurityinfo=True;databas" +
-            "e=putrajayant")]
-        public string putrajayantConnectionString1 {
+            "e=PutraJayaNT")]
+        public string PutraJayaNTConnectionString1 {
             get {
-                return ((string)(this["putrajayantConnectionString1"]));
+                return ((string)(this["PutraJayaNTConnectionString1"]));
             }
         }
     }

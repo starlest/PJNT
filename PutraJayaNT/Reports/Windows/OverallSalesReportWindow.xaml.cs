@@ -16,7 +16,6 @@ namespace PutraJayaNT.Reports.Windows
     public partial class OverallSalesReportWindow : ModernWindow
     {
         ObservableCollection<SalesTransactionMultiPurposeVM>  _salesTransactions;
-        DateTime _dateSelected;
 
         public OverallSalesReportWindow(ObservableCollection<SalesTransactionMultiPurposeVM> salesTransactions)
         {

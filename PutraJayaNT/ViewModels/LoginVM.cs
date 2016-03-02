@@ -1,6 +1,5 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using MVVMFramework;
-using PutraJayaNT.Models;
 using PutraJayaNT.Utilities;
 using System.Linq;
 using System.Windows;

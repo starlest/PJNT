@@ -1,7 +1,7 @@
-﻿using PUJASM.ERP.ViewModels.Master;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PutraJayaNT.ViewModels.Master;
 
-namespace PUJASM.ERP.Views.Master
+namespace PutraJayaNT.Views.Master
 {
     /// <summary>
     /// Interaction logic for MasterCustomersView.xaml

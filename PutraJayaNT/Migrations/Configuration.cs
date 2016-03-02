@@ -1,10 +1,7 @@
-namespace PUJASM.ERP.Migrations
-{
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Migrations;
-    using System.Linq;
+using System.Data.Entity.Migrations;
 
+namespace PutraJayaNT.Migrations
+{
     internal sealed class Configuration : DbMigrationsConfiguration<PutraJayaNT.Utilities.ERPContext>
     {
         public Configuration()

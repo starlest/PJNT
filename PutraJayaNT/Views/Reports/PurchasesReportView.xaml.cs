@@ -1,5 +1,6 @@
 ﻿using PutraJayaNT.ViewModels;
 using System.Windows.Controls;
+using PutraJayaNT.ViewModels.Reports;
 
 namespace PutraJayaNT.Views.Reports
 {

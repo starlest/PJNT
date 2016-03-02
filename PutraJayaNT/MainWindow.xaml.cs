@@ -17,8 +17,8 @@ namespace PutraJayaNT
     /// </summary>
     public partial class MainWindow : ModernWindow
     {
-        string _connectionString;
-        User _user;
+        readonly string _connectionString;
+        readonly User _user;
 
         public MainWindow()
         {

@@ -1,8 +1,7 @@
-namespace PUJASM.ERP.Migrations
+using System.Data.Entity.Migrations;
+
+namespace PutraJayaNT.Migrations
 {
-    using System;
-    using System.Data.Entity.Migrations;
-    
     public partial class Update8 : DbMigration
     {
         public override void Up()
