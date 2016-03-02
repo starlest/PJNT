@@ -9,6 +9,10 @@ namespace PutraJayaNT.Models
 
         public string Name { get; set; }
 
+        public int CreditTerms { get; set; }
+
+        public int MaxInvoices { get; set; }
+
         public override bool Equals(object obj)
         {
             var customerGroup = obj as CustomerGroup;

@@ -791,9 +791,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
                 context.SaveChanges();
 
                 ts.Complete();
-
-                MessageBox.Show("Transaction saved!", "Success", MessageBoxButton.OK);
             }
+
+            MessageBox.Show("Transaction saved!", "Success", MessageBoxButton.OK);
 
             // Reset the fields for a new transaction
             Model = new PurchaseTransaction();

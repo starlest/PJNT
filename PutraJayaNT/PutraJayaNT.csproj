@@ -122,9 +122,9 @@
     <Compile Include="Migrations\201602161045145_Update7.Designer.cs">
       <DependentUpon>201602161045145_Update7.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201602201012257_Update8.cs" />
-    <Compile Include="Migrations\201602201012257_Update8.Designer.cs">
-      <DependentUpon>201602201012257_Update8.cs</DependentUpon>
+    <Compile Include="Migrations\201602290226524_Update8.cs" />
+    <Compile Include="Migrations\201602290226524_Update8.Designer.cs">
+      <DependentUpon>201602290226524_Update8.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Date.cs" />
     <Compile Include="Models\Inventory\StockBalance.cs" />
@@ -629,8 +629,8 @@
     <EmbeddedResource Include="Migrations\201602161045145_Update7.resx">
       <DependentUpon>201602161045145_Update7.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602201012257_Update8.resx">
-      <DependentUpon>201602201012257_Update8.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201602290226524_Update8.resx">
+      <DependentUpon>201602290226524_Update8.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -14,7 +14,6 @@ namespace PutraJayaNT.Views.Menu
     public partial class SettingsView : UserControl
     {
         bool isRunning = false;
-        bool isDone = false;
         string filename = null;
         string _connectionString;
         User _user;
@@ -44,7 +43,6 @@ namespace PutraJayaNT.Views.Menu
                     }
                     MessageBox.Show("Backup is successful", "Success", MessageBoxButton.OK);
                 }
-                isDone = true;
             }
         }
 
@@ -79,35 +77,24 @@ namespace PutraJayaNT.Views.Menu
 
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
-            worker.DoWork += worker_DoWork;
+            worker.DoWork += worker_BackupDatabase;
             worker.ProgressChanged += worker_ProgressChanged;
 
             if (!isRunning)
             {
                 isRunning = true;
-                isDone = false;
                 pbStatus.IsIndeterminate = true;
                 worker.RunWorkerAsync();
                 pbStatus.IsIndeterminate = false;
             }
         }
 
-        void worker_DoWork(object sender, DoWorkEventArgs e)
+        void worker_BackupDatabase(object sender, DoWorkEventArgs e)
         {
+            (sender as BackgroundWorker).ReportProgress(0);
+            (sender as BackgroundWorker).ReportProgress(50);
             Export();
-            for (int i = 0; i <= 50; i++)
-            {
-                if (isDone)
-                {
-                    (sender as BackgroundWorker).ReportProgress(100);
-                    isRunning = false;
-                    return;
-                }
-                (sender as BackgroundWorker).ReportProgress(i);
-                Thread.Sleep(100);
-            }
-            // Wait for backup to be done if it isn't yet
-            while (!isDone) { }
+            (sender as BackgroundWorker).ReportProgress(100);
             isRunning = false;
         }
 

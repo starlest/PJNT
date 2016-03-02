@@ -1358,7 +1358,6 @@
             foreach (var line in lines)
             {
                 var itemID = line.Item.ItemID;
-                var quantity = line.Quantity;
 
                 var purchases = context.PurchaseTransactionLines
                 .Include("PurchaseTransaction")

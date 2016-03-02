@@ -6,6 +6,7 @@ using PutraJayaNT.Utilities;
 using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Linq;
 using System.Threading;
 using System.Windows.Media;
 
@@ -32,7 +33,6 @@ namespace PutraJayaNT
             else App.Current.Shutdown();
 
             _connectionString = ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString.Substring(7).Split(';')[0];
-            SetTitle();
 
             if (_user.Username.Equals("edwin92"))
             {
@@ -63,14 +63,22 @@ namespace PutraJayaNT
                 Thread.Sleep(1000);
                 this.Dispatcher.Invoke((Action)(() =>
                 {
-                    SetTitle();
+                    var context = new ERPContext();
+                    try
+                    {
+                        SetTitle(context);
+                    }
+                    catch
+                    {
+
+                    }
                 }));
             }
         }
 
-        private void SetTitle()
+        private void SetTitle(ERPContext context)
         {
-            this.Title = "Putra Jaya - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
+            this.Title = "Putra Jaya - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + context.Dates.Where(e => e.Name.Equals("Current")).FirstOrDefault().DateTime.ToString("dd-MM-yyyy");
         }
     }
 }

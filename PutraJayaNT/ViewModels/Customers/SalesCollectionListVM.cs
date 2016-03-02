@@ -237,7 +237,7 @@
                 {
                     if (_salesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportPerSalesmanWindow(_salesTransactions, _toDate);
+                    var collectionReportWindow = new CollectionReportPerSalesmanWindow(_salesTransactions, _collectionDate);
                     collectionReportWindow.Owner = App.Current.MainWindow;
                     collectionReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     collectionReportWindow.Show();
@@ -431,7 +431,7 @@
                         .Include("Customer")
                         .Include("Customer.Group")
                         .Include("CollectionSalesman")
-                        .Where(e => e.Paid < e.Total && (e.DueDate >= _fromDate && e.DueDate <= _toDate))
+                        .Where(e => e.Paid < e.Total && e.DueDate <= _toDate)
                         .OrderBy(e => e.Customer.Name)
                         .ThenBy(e => e.DueDate)
                         .ToList();
@@ -492,7 +492,7 @@
             {
                 var ledgerTransactions = context.Ledger_Transactions.Where(e => e.Description.Equals("Sales Transaction Receipt") && e.Date.Equals(_collectionDate)).ToList();
                 var temp = new List<SalesTransactionMultiPurposeVM>();
-
+                var emptyCollectionSalesman = context.Salesmans.Where(e => e.Name.Equals(" ")).FirstOrDefault();
                 foreach (var lt in ledgerTransactions)
                 {
                     var transaction = context.SalesTransactions
@@ -505,6 +505,7 @@
 
                     if (!temp.Contains(vm))
                     {
+                        if (vm.CollectionSalesman == null) vm.CollectionSalesman = emptyCollectionSalesman;
                         temp.Add(vm);
                         _total += vm.Remaining;
                     }

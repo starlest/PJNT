@@ -147,7 +147,7 @@ namespace PutraJayaNT.ViewModels.Test
                     {
                         var context = new ERPContext();
 
-                        var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance1 +
+                        var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance2 +
                         context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit - 
                         context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Credit; // changge beginningbalaance
 
@@ -445,7 +445,7 @@ namespace PutraJayaNT.ViewModels.Test
                         {
                             decimal totalDebit = 0;
                             decimal totalCredit = 0;
-                            foreach (var line in a.TransactionLines.Where(e => e.LedgerTransaction.Date.Month == 2))
+                            foreach (var line in a.TransactionLines.Where(e => e.LedgerTransaction.Date.Month == 3))
                             {
                                 count++;
                                 if (line.Amount < 0) MessageBox.Show(string.Format("Check {0} - {1}", line.LedgerTransactionID, line.Seq), "Error", MessageBoxButton.OK);

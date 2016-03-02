@@ -209,7 +209,8 @@ namespace PUJASM.ERP.ViewModels.Master
                             Address = _newEntryAddress,
                             Telephone = _newEntryTelephone,
                             NPWP = _newEntryNPWP,
-                            CreditTerms = _newEntryCreditTerms,
+                            CreditTerms = _newEntryGroup.CreditTerms,
+                            MaxInvoices = _newEntryGroup.MaxInvoices,
                             Group = _newEntryGroup
                         };
 
