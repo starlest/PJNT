@@ -1,12 +1,12 @@
 ﻿using System.Windows.Controls;
-using PutraJayaNT.ViewModels.Master;
+using PutraJayaNT.ViewModels.Master.Customer;
 
 namespace PutraJayaNT.Views.Master
 {
     /// <summary>
     /// Interaction logic for MasterCustomersView.xaml
     /// </summary>
-    public partial class MasterCustomersView : UserControl
+    public partial class MasterCustomersView
     {
         public MasterCustomersView()
         {

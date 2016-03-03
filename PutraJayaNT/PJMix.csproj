@@ -249,8 +249,11 @@
     <Compile Include="ViewModels\Accounting\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\Accounting\LedgerTransactionLineVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
-    <Compile Include="ViewModels\Master\MasterCustomersVM.cs" />
-    <Compile Include="ViewModels\Master\MasterInventoryVM.cs" />
+    <Compile Include="ViewModels\Master\Customer\MasterCustomersEditCustomerVM.cs" />
+    <Compile Include="ViewModels\Master\Customer\MasterCustomersNewEntryVM.cs" />
+    <Compile Include="ViewModels\Master\Customer\MasterCustomersVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryNewEntryVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryVM.cs" />
     <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
     <Compile Include="ViewModels\Master\MasterSalesmanVM.cs" />
     <Compile Include="ViewModels\Master\MasterSuppliersVM.cs" />
@@ -321,9 +324,6 @@
     </Compile>
     <Compile Include="Views\Inventory\AdjustStockView.xaml.cs">
       <DependentUpon>AdjustStockView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Master\MasterCustomersNewEntryView.xaml.cs">
-      <DependentUpon>MasterCustomersNewEntryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Master\MasterCustomersView.xaml.cs">
       <DependentUpon>MasterCustomersView.xaml</DependentUpon>
@@ -512,10 +512,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Inventory\AdjustStockView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Master\MasterCustomersNewEntryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

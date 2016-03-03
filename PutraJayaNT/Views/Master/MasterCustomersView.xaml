@@ -3,23 +3,62 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:master="clr-namespace:PutraJayaNT.Views.Master"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.40*" />
+            <RowDefinition Height="0.25*" />
             <RowDefinition Height="0.125*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Grid>
-            <master:MasterCustomersNewEntryView/>
-        </Grid>
+        <Border BorderBrush="Blue" BorderThickness="2">
+            <Grid IsEnabled="{Binding IsEditWindowNotOpen}" DataContext="{Binding NewEntryVM}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Name:" />
+                <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntryName, Mode=TwoWay}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="City:" />
+                <TextBox Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntryCity, Mode=TwoWay}" />
+                <TextBlock Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Blue" Text="Address:" />
+                <TextBox Grid.Row="0" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntryAddress, Mode=TwoWay}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                           FontSize="28" Foreground="Blue" Text="Telephone:" />
+                <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntryTelephone, Mode=TwoWay}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                       FontSize="28" Foreground="Blue" Text="NPWP:" />
+                <TextBox Grid.Row="1"  Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                         Text="{Binding NewEntryNPWP, Mode=TwoWay}" />
+                <TextBlock Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                       FontSize="28" Foreground="Blue" Text="Group:" />
+                <ComboBox Grid.Row="1" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
+                      ItemsSource="{Binding NewEntryGroups}" SelectedItem="{Binding NewEntryGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                      IsEditable="True" DisplayMemberPath="Name" />
+                <Button Content="Add" Grid.Row="0" Grid.Column="6" Command="{Binding NewEntryCommand}" />
+                <Button Content="Cancel" Grid.Row="1" Grid.Column="6" Command="{Binding CancelEntryCommand}" />
+            </Grid>
+        </Border>
         <Grid Grid.Row="1" IsEnabled="{Binding IsEditWindowNotOpen}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="0.2*" />
                 <ColumnDefinition Width="0.5*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.5*" />
@@ -27,18 +66,19 @@
                 <ColumnDefinition Width="0.5*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Group:" />
-            <ComboBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Active:" />
+            <CheckBox Grid.Column="1" HorizontalAlignment="Center" IsChecked="{Binding IsActiveChecked}" />
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Group:" />
+            <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                       ItemsSource="{Binding Groups}" SelectedItem="{Binding SelectedGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                        DisplayMemberPath="Name" IsEditable="True" />
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Customer:" FontSize="28" />
-            <ComboBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
+            <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Customer:" FontSize="28" />
+            <ComboBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
                       ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                       DisplayMemberPath="Name" IsEditable="True" />
-            <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Red" Text="City:" />
-            <ComboBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                      ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedCity, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                       IsEditable="True" />
+            <TextBlock Grid.Column="6" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Foreground="Red" Text="City:" />
+            <ComboBox Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                      ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedCity, Mode=TwoWay, UpdateSourceTrigger=Explicit}" IsEditable="True" />
         </Grid>
         <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding DisplayedCustomers}" 
                   CanUserDeleteRows="True" VerticalAlignment="Stretch" CanUserAddRows="False" 
@@ -48,8 +88,8 @@
                   SelectedItem="{Binding SelectedLine}" IsEnabled="{Binding IsEditWindowNotOpen}">
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Edit" Command="{Binding EditCommand}" />
-                    <MenuItem Header="Activate/Deactivate" Command="{Binding ActivateCommand}" />
+                    <MenuItem Header="Edit" Command="{Binding EditCustomerVM.EditCommand}" />
+                    <MenuItem Header="Activate/Deactivate" Command="{Binding EditCustomerVM.ActivateCommand}" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
@@ -65,8 +105,8 @@
                 <DataGridTextColumn Header="Active" Width="1*" IsReadOnly="True" Binding="{Binding Active}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="100" 
-              Visibility="{Binding EditWindowVisibility}">
+        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="3" 
+              DataContext="{Binding EditCustomerVM}" Visibility="{Binding EditWindowVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height ="1*" />
                 <RowDefinition Height ="1*" />

@@ -1,5 +1,5 @@
-﻿using PutraJayaNT.ViewModels.Master;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PutraJayaNT.ViewModels.Master.Inventory;
 
 namespace PutraJayaNT.Views.Master
 {

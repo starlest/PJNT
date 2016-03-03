@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PutraJayaNT.Models;
 using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Master;
+using PutraJayaNT.ViewModels.Master.Customer;
 
 namespace PJMixTests.Master
 {
@@ -13,7 +13,7 @@ namespace PJMixTests.Master
         public void TestAddCustomer()
         {
             var customer = CreateTestCustomer();
-            MasterCustomersVM.AddCustomerAlongWithItsLedgerToDatabase(customer);
+            MasterCustomersNewEntryVM.AddCustomerAlongWithItsLedgerToDatabase(customer);
             var result = CheckIfCustomerAndItsLedgerExistsInDatabase(customer);
             Assert.AreEqual(true, result);
             RemoveCustomerAndItsLedgerFromDatabase(customer);

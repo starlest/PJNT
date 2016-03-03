@@ -5,44 +5,42 @@ using PutraJayaNT.Models.Sales;
 using PutraJayaNT.Utilities;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PutraJayaNT.ViewModels.Master
+namespace PutraJayaNT.ViewModels.Master.Inventory
 {
-    class MasterInventoryVM : ViewModelBase
+    public class MasterInventoryVM : ViewModelBase
     {
-        ObservableCollection<ItemVM> _items;
-        ObservableCollection<Category> _categories;
-        ObservableCollection<Category> _categoriesWithoutAll;
-        ObservableCollection<Supplier> _suppliers;
+        private readonly ObservableCollection<ItemVM> _items;
+        private readonly ObservableCollection<Category> _categories;
+        private readonly ObservableCollection<Category> _categoriesWithoutAll;
+        private readonly ObservableCollection<Supplier> _suppliers;
+        private readonly ObservableCollection<ItemVM> _displayedItems;
 
-        ObservableCollection<ItemVM> _displayedItems;
+        private ItemVM _selectedItem;
+        private Category _selectedCategory;
+        private Supplier _selectedSupplier;
+        private ItemVM _selectedLine;
 
-        ItemVM _selectedItem;
-        Category _selectedCategory;
-        Supplier _selectedSupplier;
-        ItemVM _selectedLine;
+        private string _newEntryID;
+        private string _newEntryName;
+        private Category _newEntryCategory;
+        private Supplier _newEntrySupplier;
+        private int _newEntryPiecesPerUnit;
+        private string _newEntryUnitName;
+        private decimal? _newEntryPurchasePrice;
+        private decimal? _newEntrySalesPrice;
+        private ICommand _newEntryCommand;
+        private ICommand _cancelEntryCommand;
 
-        string _newEntryID;
-        string _newEntryName;
-        Category _newEntryCategory;
-        Supplier _newEntrySupplier;
-        int _newEntryPiecesPerUnit;
-        string _newEntryUnitName;
-        decimal? _newEntryPurchasePrice;
-        decimal? _newEntrySalesPrice;
-        ICommand _newEntryCommand;
-        ICommand _cancelEntryCommand;
-
-        ICommand _activateCommand;
+        private ICommand _activateCommand;
 
         // Edit Window Properties
-        ICommand _editCommand;
+        private ICommand _editCommand;
 
-        ObservableCollection<Supplier> _editAddSuppliers;
+        readonly ObservableCollection<Supplier> _editAddSuppliers;
         Supplier _editAddSelectedSupplier;
         ICommand _editAddSupplierCommand;
         ICommand _editDeleteSupplierCommand;
@@ -64,7 +62,7 @@ namespace PutraJayaNT.ViewModels.Master
         ICommand _cancelEditCommand;
         ICommand _confirmEditCommand;
 
-        ObservableCollection<Supplier> _editSuppliers;
+        readonly ObservableCollection<Supplier> _editSuppliers;
         string _editID;
         string _editName;
         Category _editCategory;
@@ -663,13 +661,11 @@ namespace PutraJayaNT.ViewModels.Master
                             .Include("AlternativeSalesPrices")
                             .Include("Category")
                             .Include("Suppliers")
-                            .FirstOrDefault<Item>();
+                            .First();
 
                             item.ItemID = _editID;
                             item.Name = _editName;
-                            item.Category = context.Categories
-                            .Where(e => e.ID == _editCategory.ID)
-                            .FirstOrDefault();
+                            item.Category = context.Categories.FirstOrDefault(e => e.ID == _editCategory.ID);
                             item.PurchasePrice = _editPurchasePrice / _editPiecesPerUnit;
                             item.SalesPrice = _editSalesPrice / _editPiecesPerUnit;
                             item.SalesExpense = _editSalesExpense;
@@ -680,7 +676,7 @@ namespace PutraJayaNT.ViewModels.Master
                             item.Suppliers.ToList().ForEach(e => item.Suppliers.Remove(e));
                             foreach (var supplier in _editSuppliers.ToList())
                             {
-                                var s = context.Suppliers.Where(e => e.ID == supplier.ID).FirstOrDefault();
+                                var s = context.Suppliers.FirstOrDefault(e => e.ID == supplier.ID);
                                 item.Suppliers.Add(s);
                             }
 
@@ -754,8 +750,7 @@ namespace PutraJayaNT.ViewModels.Master
                         using (var context = new ERPContext())
                         {
                             var item = context.Inventory
-                            .Where(e => e.ItemID.Equals(_selectedLine.ID))
-                            .FirstOrDefault<Item>();
+                            .FirstOrDefault(e => e.ItemID.Equals(_selectedLine.ID));
 
                             if (_selectedLine.Active == true)
                             {

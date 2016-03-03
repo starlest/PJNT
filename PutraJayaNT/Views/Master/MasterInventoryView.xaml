@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PutraJayaNT.Views.Master"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
     <Grid>
@@ -30,15 +29,15 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" 
                            FontSize="28" Foreground="Blue" Text="ID:" />
-                <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
+                <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
                          Text="{Binding NewEntryID, Mode=TwoWay}" />
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" 
                            FontSize="28" Foreground="Blue" Text="Name:" />
-                <TextBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
+                <TextBox Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0"
                          Text="{Binding NewEntryName, Mode=TwoWay}" />
-                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                <TextBlock Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" 
                            FontSize="28" Foreground="Blue" Text="Category:" />
-                <ComboBox Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
+                <ComboBox Grid.Row="0" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                       ItemsSource="{Binding CategoriesWithoutAll}" SelectedItem="{Binding NewEntryCategory, Mode=TwoWay}"
                       DisplayMemberPath="Name" IsEditable="True" />
                 <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" 
@@ -62,7 +61,7 @@
                        FontSize="28" Foreground="Blue" Text="Pieces/Unit:" />
                 <TextBox Grid.Row="2"  Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
                          Text="{Binding NewEntryPiecesPerUnit, Mode=TwoWay}" />
-                <Button Content="Add" Grid.Column="6" Command="{Binding NewEntryCommand}" />
+                <Button Content="Add" Grid.Row="0" Grid.Column="6" Command="{Binding NewEntryCommand}" />
                 <Button Content="Cancel" Grid.Row="1" Grid.Column="6" Command="{Binding CancelEntryCommand}" />
             </Grid>
         </Border>
@@ -125,7 +124,7 @@
                 <DataGridTextColumn Header="Active" Width="1*" IsReadOnly="True" Binding="{Binding Active}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="100" 
+        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="3" 
               Visibility="{Binding EditWindowVisibility}" IsEnabled="{Binding IsEditAddSupplierWindowNotOpen}">
             <Grid.RowDefinitions>
                 <RowDefinition Height ="1*" />
@@ -191,7 +190,7 @@
             <Button Grid.Row="8" Grid.Column="3" Content="Confirm" Command="{Binding ConfirmEditCommand}" Margin="10" />
             <Button Grid.Row="8" Grid.Column="4"  Content="Cancel" Command="{Binding CancelEditCommand}" Margin="10" />
         </Grid>
-        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="100" Visibility="{Binding EditAddSupplierWindowVisibility}">
+        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="3" Visibility="{Binding EditAddSupplierWindowVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height ="1*" />
                 <RowDefinition Height ="1*" />
@@ -221,7 +220,7 @@
             <Button Grid.Row="5" Grid.Column="3"  Content="Confirm" Command="{Binding EditAddSupplierConfirmCommand}" Margin="10, 20, 10, 10" Foreground="Red" />
             <Button Grid.Row="5" Grid.Column="4"  Content="Cancel" Command="{Binding EditAddSupplierCancelCommand}" Margin="10, 20, 10, 10" Foreground="Red" />
         </Grid>
-        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="100" Visibility="{Binding EditAddAlternativeSalesPriceWindowVisibility}">
+        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="100" Grid.RowSpan="3" Visibility="{Binding EditAddAlternativeSalesPriceWindowVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height ="1*" />
                 <RowDefinition Height ="1*" />
