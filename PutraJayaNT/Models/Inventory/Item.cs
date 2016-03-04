@@ -12,7 +12,6 @@ namespace PutraJayaNT.Models.Inventory
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Item()
         {
-            Suppliers = new ObservableCollection<Supplier>();
             Active = true;
         }
 

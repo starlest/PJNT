@@ -1,12 +1,12 @@
 ﻿using System.Windows.Controls;
 using PutraJayaNT.ViewModels.Master.Inventory;
 
-namespace PutraJayaNT.Views.Master
+namespace PutraJayaNT.Views.Master.Inventory
 {
     /// <summary>
     /// Interaction logic for MasterInventoryView.xaml
     /// </summary>
-    public partial class MasterInventoryView : UserControl
+    public partial class MasterInventoryView
     {
         public MasterInventoryView()
         {

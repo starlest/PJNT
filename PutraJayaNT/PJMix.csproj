@@ -208,6 +208,7 @@
       <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\DatasetObjects\SalesReturnInvoice.cs" />
+    <Compile Include="Utilities\DatabaseHelper.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
     <Compile Include="Models\Inventory\Stock.cs" />
     <Compile Include="Models\Sales\SalesTransaction.cs" />
@@ -215,6 +216,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\IRepository.cs" />
     <Compile Include="Utilities\LedgerDBHelper.cs" />
+    <Compile Include="Utilities\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\PasswordHelper.cs" />
     <Compile Include="Utilities\PrintHelper.cs" />
     <Compile Include="Utilities\Repository.cs" />
@@ -230,6 +232,8 @@
     <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
+    <Compile Include="ViewModels\CategoryVM.cs" />
+    <Compile Include="ViewModels\CustomerGroupVM.cs" />
     <Compile Include="ViewModels\Customers\BrowseSalesTransactionsVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionMultiPurposeVM.cs" />
     <Compile Include="ViewModels\Customers\SalesCollectionListVM.cs" />
@@ -249,22 +253,24 @@
     <Compile Include="ViewModels\Accounting\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\Accounting\LedgerTransactionLineVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
-    <Compile Include="ViewModels\Master\Customer\MasterCustomersEditCustomerVM.cs" />
-    <Compile Include="ViewModels\Master\Customer\MasterCustomersNewEntryVM.cs" />
-    <Compile Include="ViewModels\Master\Customer\MasterCustomersVM.cs" />
+    <Compile Include="ViewModels\Master\Customers\MasterCustomersEditVM.cs" />
+    <Compile Include="ViewModels\Master\Customers\MasterCustomersNewEntryVM.cs" />
+    <Compile Include="ViewModels\Master\Customers\MasterCustomersVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryEditAddSupplierVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryEditVM.cs" />
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryNewEntryVM.cs" />
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryVM.cs" />
     <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
     <Compile Include="ViewModels\Master\MasterSalesmanVM.cs" />
     <Compile Include="ViewModels\Master\MasterSuppliersVM.cs" />
-    <Compile Include="ViewModels\Reports\CommissionsReportVM.cs" />
-    <Compile Include="ViewModels\Reports\InventoryReportLineVM.cs" />
-    <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
-    <Compile Include="ViewModels\Reports\OverallSalesReportVM.cs" />
-    <Compile Include="ViewModels\Reports\PurchasesReportVM.cs" />
-    <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
-    <Compile Include="ViewModels\Reports\StockBalanceLineVM.cs" />
-    <Compile Include="ViewModels\Reports\StockBalancesReportVM.cs" />
+    <Compile Include="ViewModels\Master\Reports\CommissionsReportVM.cs" />
+    <Compile Include="ViewModels\Master\Reports\InventoryReportLineVM.cs" />
+    <Compile Include="ViewModels\Master\Reports\InventoryReportVM.cs" />
+    <Compile Include="ViewModels\Master\Reports\OverallSalesReportVM.cs" />
+    <Compile Include="ViewModels\Master\Reports\PurchasesReportVM.cs" />
+    <Compile Include="ViewModels\Master\Reports\SalesReportVM.cs" />
+    <Compile Include="ViewModels\Master\Reports\StockBalanceLineVM.cs" />
+    <Compile Include="ViewModels\Master\Reports\StockBalancesReportVM.cs" />
     <Compile Include="ViewModels\Salesman\SalesCommissionVM.cs" />
     <Compile Include="ViewModels\Salesman\SalesmanVM.cs" />
     <Compile Include="ViewModels\Suppliers\PaymentListVM.cs" />
@@ -325,8 +331,17 @@
     <Compile Include="Views\Inventory\AdjustStockView.xaml.cs">
       <DependentUpon>AdjustStockView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Master\MasterCustomersView.xaml.cs">
+    <Compile Include="Views\Master\Customers\MasterCustomersEditView.xaml.cs">
+      <DependentUpon>MasterCustomersEditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Customers\MasterCustomersView.xaml.cs">
       <DependentUpon>MasterCustomersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Inventory\MasterInventoryEditAddSupplierView.xaml.cs">
+      <DependentUpon>MasterInventoryEditAddSupplierView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Inventory\MasterInventoryEditView.xaml.cs">
+      <DependentUpon>MasterInventoryEditView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Master\MasterSalesmanView.xaml.cs">
       <DependentUpon>MasterSalesmanView.xaml</DependentUpon>
@@ -334,7 +349,7 @@
     <Compile Include="Views\Menu\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Master\MasterInventoryView.xaml.cs">
+    <Compile Include="Views\Master\Inventory\MasterInventoryView.xaml.cs">
       <DependentUpon>MasterInventoryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Menu\SettingsView.xaml.cs">
@@ -515,7 +530,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Master\MasterCustomersView.xaml">
+    <Page Include="Views\Master\Customers\MasterCustomersEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Customers\MasterCustomersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Inventory\MasterInventoryEditAddSupplierView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Inventory\MasterInventoryEditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -527,7 +554,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Master\MasterInventoryView.xaml">
+    <Page Include="Views\Master\Inventory\MasterInventoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

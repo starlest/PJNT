@@ -47,7 +47,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 SetProperty(ref _isPaidChecked, value, "IsPaidChecked");
 
-                if (_selectedSupplier != null && _isPaidChecked) UpdatePurchaseTransactions();
+                if (_selectedSupplier != null) UpdatePurchaseTransactions();
             }
         }
 

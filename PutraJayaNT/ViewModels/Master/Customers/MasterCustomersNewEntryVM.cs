@@ -1,14 +1,13 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Customer
-{
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Windows;
-    using System.Windows.Input;
-    using MVVMFramework;
-    using Models;
-    using Models.Accounting;
-    using Utilities;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Input;
+using MVVMFramework;
+using PutraJayaNT.Models;
+using PutraJayaNT.Models.Accounting;
+using PutraJayaNT.Utilities;
 
+namespace PutraJayaNT.ViewModels.Master.Customers
+{
     public class MasterCustomersNewEntryVM : ViewModelBase
     {
         #region Backing Fields
@@ -17,7 +16,7 @@
         private string _newEntryAddress;
         private string _newEntryTelephone;
         private string _newEntryNPWP;
-        private CustomerGroup _newEntryGroup;
+        private CustomerGroupVM _newEntryGroup;
         private ICommand _newEntryCommand;
         private ICommand _cancelEntryCommand;
         #endregion
@@ -27,7 +26,8 @@
         public MasterCustomersNewEntryVM(MasterCustomersVM parentVM)
         {
             _parentVM = parentVM;
-            NewEntryGroups = new ObservableCollection<CustomerGroup>();
+            NewEntryGroups = new ObservableCollection<CustomerGroupVM>();
+            UpdateNewEntryGroups();
         }
 
         #region Properties
@@ -61,14 +61,16 @@
             set { SetProperty(ref _newEntryNPWP, value, "NewEntryNPWP"); }
         }
 
-        public ObservableCollection<CustomerGroup> NewEntryGroups { get; }
+        public ObservableCollection<CustomerGroupVM> NewEntryGroups { get; }
 
-        public CustomerGroup NewEntryGroup
+        public CustomerGroupVM NewEntryGroup
         {
             get { return _newEntryGroup; }
             set { SetProperty(ref _newEntryGroup, value, "NewEntryGroup"); }
         }
+        #endregion
 
+        #region Commands
         public ICommand NewEntryCommand
         {
             get
@@ -87,6 +89,14 @@
         #endregion
 
         #region Helper Methods
+        private void UpdateNewEntryGroups()
+        {
+            NewEntryGroups.Clear();
+            var groupsReturnedFromDatabase = DatabaseHelper.LoadAllCustomerGroupsFromDatabase();
+            foreach (var group in groupsReturnedFromDatabase)
+                NewEntryGroups.Add(new CustomerGroupVM { Model = group });
+        }
+
         private void UpdateDisplayedCustomers()
         {
             _parentVM.UpdateDisplayedCustomers();
@@ -103,9 +113,9 @@
             UpdateDisplayedCustomers();
         }
 
-        private bool IsAllNewEntryFieldsFilled()
+        private bool AreAllNewEntryFieldsFilled()
         {
-            if (_newEntryName != null && _newEntryGroup != null) return true;
+            if (_newEntryName != null && _newEntryCity != null && _newEntryAddress != null && _newEntryGroup != null) return true;
             MessageBox.Show("Please enter all fields", "Missing Fields", MessageBoxButton.OK);
             return false;
         }
@@ -117,7 +127,7 @@
 
         private bool IsNewEntryCommandChecksSuccessful()
         {
-            return IsAllNewEntryFieldsFilled() && IsNewEntryCommandConfirmationYes();
+            return AreAllNewEntryFieldsFilled() && IsNewEntryCommandConfirmationYes();
         }
 
         private Customer MakeNewEntryCustomer()
@@ -125,13 +135,13 @@
             return new Customer
             {
                 Name = _newEntryName,
-                City = _newEntryCity,
-                Address = _newEntryAddress,
-                Telephone = _newEntryTelephone,
-                NPWP = _newEntryNPWP,
+                City = _newEntryCity ?? "",
+                Address = _newEntryAddress ?? "",
+                Telephone = _newEntryTelephone ?? "",
+                NPWP = _newEntryNPWP ?? "",
                 CreditTerms = _newEntryGroup.CreditTerms,
                 MaxInvoices = _newEntryGroup.MaxInvoices,
-                Group = _newEntryGroup
+                Group = _newEntryGroup.Model
             };
         }
 
@@ -178,7 +188,9 @@
 
         private static void AddCustomerToDatabaseContext(ERPContext context, Customer customer)
         {
-            customer.Group = context.CustomerGroups.First(e => e.ID.Equals(customer.Group.ID));
+            var customerGroupToBeAttachedToDatabaseContext = customer.Group;
+            DatabaseHelper.AttachCustomerGroupToDatabaseContext(context, ref customerGroupToBeAttachedToDatabaseContext);
+            customer.Group = customerGroupToBeAttachedToDatabaseContext;
             context.Customers.Add(customer);
         }
 

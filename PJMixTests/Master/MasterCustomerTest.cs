@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PutraJayaNT.Models;
 using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Master.Customer;
+using PutraJayaNT.ViewModels.Master.Customers;
 
 namespace PJMixTests.Master
 {
@@ -19,12 +19,50 @@ namespace PJMixTests.Master
             RemoveCustomerAndItsLedgerFromDatabase(customer);
         }
 
-        public void TestRemoveCustomer()
+        [TestMethod]
+        public void TestEditCustomer()
         {
-            var customer = CreateTestCustomer();
-            RemoveCustomerAndItsLedgerFromDatabase(customer);
-            var result = CheckIfCustomerAndItsLedgerExistsInDatabase(customer);
-            Assert.AreEqual(false, result);
+            var originalCustomer = DatabaseHelper.LoadCustomerFromDatabase(customer => customer.ID == 1);
+            var editedCustomer = CreateTestCustomer();
+            editedCustomer.ID = originalCustomer.ID;
+
+            MasterCustomersEditVM.SaveCustomerEditsToDatabase(originalCustomer, editedCustomer);
+            var editedCustomerFromDatabase = DatabaseHelper.LoadCustomerFromDatabase(customer => customer.ID == 1);
+            var result1 = CompareCustomers(editedCustomerFromDatabase, editedCustomer);
+            var result2 = CheckIfCustomerAndItsLedgerExistsInDatabase(editedCustomerFromDatabase);
+            var result3 = CheckIfCustomerAndItsLedgerExistsInDatabase(originalCustomer);
+
+            // Revert editedCustomer back to original values
+            MasterCustomersEditVM.SaveCustomerEditsToDatabase(editedCustomer, originalCustomer);
+            editedCustomerFromDatabase = DatabaseHelper.LoadCustomerFromDatabase(customer => customer.ID == 1);
+            var result4 = CompareCustomers(editedCustomerFromDatabase, originalCustomer);
+            var result5 = CheckIfCustomerAndItsLedgerExistsInDatabase(editedCustomerFromDatabase);
+            var result6 = CheckIfCustomerAndItsLedgerExistsInDatabase(editedCustomer);
+
+            Assert.AreEqual(result1, result4);
+            Assert.AreNotEqual(result2, result3);
+            Assert.AreNotEqual(result5, result6);
+        }
+
+        [TestMethod]
+        public void TestActivateCustomer()
+        {
+            var testCustomer = DatabaseHelper.LoadCustomerFromDatabase(customer => customer.ID == 1);
+            MasterCustomersVM.DeactivateCustomerInDatabase(testCustomer);
+            testCustomer = DatabaseHelper.LoadCustomerFromDatabase(customer => customer.ID == 1);
+            Assert.AreEqual(testCustomer.Active, false);
+
+            MasterCustomersVM.ActivateCustomerInDatabase(testCustomer);
+            testCustomer = DatabaseHelper.LoadCustomerFromDatabase(customer => customer.ID == 1);
+            Assert.AreEqual(testCustomer.Active, true);
+        }
+
+        private static bool CompareCustomers(Customer customer1, Customer customer2)
+        {
+            return customer1.Name.Equals(customer2.Name) && customer1.Group.ID.Equals(customer2.Group.ID)
+                   && customer1.Address.Equals(customer2.Address) && customer1.City.Equals(customer2.City)
+                   && customer1.CreditTerms == customer2.CreditTerms && customer1.MaxInvoices == customer2.MaxInvoices
+                   && customer1.NPWP.Equals(customer2.NPWP) && customer1.Telephone.Equals(customer2.Telephone);
         }
 
         private static Customer CreateTestCustomer()
@@ -33,8 +71,16 @@ namespace PJMixTests.Master
             {
                 var customer = new Customer
                 {
+                    ID = -1000,
                     Name = "Test",
-                    Group = context.CustomerGroups.First()
+                    Group = context.CustomerGroups.First(),
+                    Active = true,
+                    Address = "lala land",
+                    City = "lala",
+                    CreditTerms = 7,
+                    MaxInvoices = 10,
+                    Telephone = "4242",
+                    NPWP = "23"   
                 };
                 return customer;
             }

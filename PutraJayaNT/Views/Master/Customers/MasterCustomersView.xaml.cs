@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
-using PutraJayaNT.ViewModels.Master.Customer;
+using PutraJayaNT.ViewModels.Master.Customers;
 
-namespace PutraJayaNT.Views.Master
+namespace PutraJayaNT.Views.Master.Customers
 {
     /// <summary>
     /// Interaction logic for MasterCustomersView.xaml

@@ -72,6 +72,8 @@
             get { return Model.CollectionSalesman; }
             set
             {
+                if (value == null) return;
+                
                 Model.CollectionSalesman = value;
 
                 using (var context = new ERPContext())

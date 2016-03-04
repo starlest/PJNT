@@ -1,6 +1,7 @@
 ﻿using PutraJayaNT.Models.Inventory;
 using System;
 using System.Linq;
+using System.Windows;
 
 namespace PutraJayaNT.Utilities
 {
@@ -30,9 +31,13 @@ namespace PutraJayaNT.Utilities
         public static DateTime GetCurrentDate()
         {
             using (var context = new ERPContext())
-            {
-                return context.Dates.Where(e => e.Name.Equals("Current")).FirstOrDefault().DateTime;
-            }
+                return context.Dates.First(e => e.Name.Equals("Current")).DateTime;          
+        }
+
+        public static void CloseForemostWindow()
+        {
+            var editWindow = Application.Current.Windows[Application.Current.Windows.Count - 1];
+            editWindow?.Close();
         }
     }
 }

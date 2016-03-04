@@ -65,9 +65,7 @@
                             SelectedDateFormat="Long" SelectedDate="{Binding CollectionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="3" Grid.Column="2" Content="Refresh" Command="{Binding RefreshCollectionDateSelectionCommand}" Foreground="Green" Margin="15, 10, 15, 10"/>
         </Grid>
-        <DataGrid Grid.Row="2" ItemsSource="{Binding SalesTransactions}" VerticalAlignment="Stretch" CanUserAddRows="False" 
-                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" Margin="-10,0,10,0">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding SalesTransactions}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransactionID}"/>
                 <DataGridTextColumn Header="Customer" Width="1*" IsReadOnly="True" Binding="{Binding Customer.Name}" />
@@ -76,12 +74,12 @@
                 <DataGridTextColumn Header="Remaining" Width="1*" IsReadOnly="True" Binding="{Binding Remaining, StringFormat=N2}" />
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding When, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTemplateColumn x:Name="salesmanColumn" Header="Salesman" Width="0.8*">
+                <DataGridTemplateColumn x:Name="collectorColumn" Header="Collector" Width="0.8*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox DisplayMemberPath="Name"
-                                      SelectedItem="{Binding Path=CollectionSalesman, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      ItemsSource="{Binding Path=Salesmen}" Width="{Binding ActualWidth, ElementName=salesmanColumn}" IsEditable="True" />
+                            <ComboBox Width="{Binding ActualWidth, ElementName=collectorColumn}" Margin="0"
+                                      ItemsSource="{Binding Path=Salesmen}"  DisplayMemberPath="Name"  
+                                      SelectedItem="{Binding Path=CollectionSalesman, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

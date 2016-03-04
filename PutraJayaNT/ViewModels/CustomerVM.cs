@@ -115,6 +115,20 @@ namespace PutraJayaNT.ViewModels
             }
         }
 
+        public void UpdatePropertiesToUI()
+        {
+            OnPropertyChanged("ID");
+            OnPropertyChanged("Name");
+            OnPropertyChanged("Group");
+            OnPropertyChanged("City");
+            OnPropertyChanged("Address");
+            OnPropertyChanged("NPWP");
+            OnPropertyChanged("CreditTerms");
+            OnPropertyChanged("MaxInvoices");
+            OnPropertyChanged("SalesReturnCredits");
+            OnPropertyChanged("Active");
+        }
+
         public override string ToString()
         {
             return Model.Name;
