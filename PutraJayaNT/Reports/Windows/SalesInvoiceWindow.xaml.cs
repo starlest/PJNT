@@ -75,7 +75,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
-            dr2["Date"] = _salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
             dr2["Copy"] = _salesTransaction.InvoicePrinted == true ? "Copy" : "";

@@ -16,7 +16,7 @@ namespace PutraJayaNT.Utilities.Database
         public static IEnumerable<Supplier> Get(Func<Supplier, bool> condition)
         {
             using (var context = new ERPContext())
-                return context.Suppliers.Include("Items").Where(condition).ToList();
+                return context.Suppliers.Include("Items").Where(condition).Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name).ToList();
         }
 
         public static Supplier FirstOrDefault(Func<Supplier, bool> condition)
@@ -27,12 +27,6 @@ namespace PutraJayaNT.Utilities.Database
 
 
         public static void AttachToDatabaseContext(ERPContext context, ref Supplier supplierToBeAttached)
-        {
-            var supplierID = supplierToBeAttached.ID;
-            supplierToBeAttached = context.Suppliers.First(supplier => supplier.ID.Equals(supplierID));
-        }
-
-        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref Supplier supplierToBeAttached)
         {
             var supplierID = supplierToBeAttached.ID;
             supplierToBeAttached = context.Suppliers.First(supplier => supplier.ID.Equals(supplierID));

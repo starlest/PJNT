@@ -29,6 +29,13 @@
                 <Setter Property="Foreground" Value="Blue" />
                 <Setter Property="Background" Value="White" />
             </Style>
+            <Style TargetType="{x:Type DatePicker}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Margin" Value="10, 10, 10, 0"/>
+            </Style>
             <Style TargetType="{x:Type ComboBox}">
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />

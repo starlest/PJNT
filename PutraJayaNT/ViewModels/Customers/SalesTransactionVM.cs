@@ -109,7 +109,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
             Model = new SalesTransaction();
             _newTransactionDate = UtilityMethods.GetCurrentDate().Date;
-            Model.When = _newTransactionDate;
+            Model.Date = _newTransactionDate;
             Model.InvoiceIssued = null;
             SetTransactionID();
 
@@ -1335,7 +1335,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
             InvoiceNotIssued = Model.InvoiceIssued == null ? true : false;
             InvoiceNotPaid = Model.Paid == 0 ? true : false;
-            NewTransactionDate = Model.When;
+            NewTransactionDate = Model.Date;
             NewTransactionCustomer = new CustomerVM { Model = Model.Customer };
             NewTransactionNotes = Model.Notes;
 
@@ -1642,7 +1642,7 @@ namespace PutraJayaNT.ViewModels.Customers
                         }
                     }
 
-                    transaction.When = _newTransactionDate;
+                    transaction.Date = _newTransactionDate;
                     transaction.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
                     transaction.Customer = context.Customers.Where(e => e.ID.Equals(_newTransactionCustomer.Model.ID)).FirstOrDefault();
                     transaction.Notes = _newTransactionNotes;
@@ -1650,7 +1650,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     transaction.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal)_newTransactionSalesExpense;
                     transaction.GrossTotal = _newTransactionGrossTotal;
                     transaction.Total = _netTotal;
-                    transaction.When = _newTransactionDate;
+                    transaction.Date = _newTransactionDate;
                     transaction.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
                     transaction.InvoiceIssued = Model.InvoiceIssued;
                     var user = App.Current.FindResource("CurrentUser") as User;
@@ -1792,7 +1792,7 @@ namespace PutraJayaNT.ViewModels.Customers
             Model.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal)_newTransactionSalesExpense;
             Model.GrossTotal = _newTransactionGrossTotal;
             Model.Total = _netTotal;
-            Model.When = _newTransactionDate;
+            Model.Date = _newTransactionDate;
             Model.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
             var user = App.Current.FindResource("CurrentUser") as User;
             Model.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
@@ -1866,7 +1866,7 @@ namespace PutraJayaNT.ViewModels.Customers
             dr2["Customer"] = salesTransaction.Customer.Name;
             dr2["Address"] = salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = salesTransaction.SalesTransactionID;
-            dr2["Date"] = salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["Date"] = salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = salesTransaction.Notes;
             dr2["Copy"] = salesTransaction.InvoicePrinted == true ? "Copy" : "";
@@ -1963,7 +1963,7 @@ namespace PutraJayaNT.ViewModels.Customers
             dr2["Customer"] = salesTransaction.Customer.Name;
             dr2["Address"] = salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = salesTransaction.SalesTransactionID;
-            dr2["Date"] = salesTransaction.When.ToString("dd-MM-yyyy");
+            dr2["Date"] = salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = salesTransaction.Notes;
             using (var context = new ERPContext())

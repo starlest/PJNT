@@ -94,6 +94,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             get { return _editCustomerGroup; }
             set { SetProperty(ref _editCustomerGroup, value, "EditCustomerGroup"); }
         }
+        #endregion
 
         public ICommand EditConfirmCommand
         {
@@ -110,7 +111,6 @@ namespace PutraJayaNT.ViewModels.Master.Customers
                 }));
             }
         }
-        #endregion
 
         #region Helper Methods
         private void SetDefaultEditProperties()

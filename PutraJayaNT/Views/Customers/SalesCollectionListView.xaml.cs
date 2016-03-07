@@ -1,6 +1,5 @@
-﻿using PutraJayaNT.ViewModels.Customers;
-using System.Data;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using PutraJayaNT.ViewModels.Sales;
 
 namespace PutraJayaNT.Views.Customers
 {

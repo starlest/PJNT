@@ -12,6 +12,7 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
 {
     public class MasterInventoryNewEntryVM : ViewModelBase
     {
+        private readonly MasterInventoryVM _parentVM;
 
         #region Backing Fields
         private string _newEntryID;
@@ -24,8 +25,6 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
         private decimal? _newEntrySalesPrice;
         private ICommand _newEntryCommand;
         private ICommand _cancelEntryCommand;
-
-        private MasterInventoryVM _parentVM;
         #endregion
 
         public MasterInventoryNewEntryVM(MasterInventoryVM parentVM)

@@ -1,72 +1,74 @@
-﻿namespace PutraJayaNT.ViewModels.Customers
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using PutraJayaNT.Utilities.Database.Salesman;
+using PutraJayaNT.ViewModels.Salesman;
+
+namespace PutraJayaNT.ViewModels.Sales
 {
-    using Models;
     using MVVMFramework;
+    using Models;
     using Models.Sales;
-    using Models.Salesman;
     using PutraJayaNT.Reports.Windows;
     using Utilities;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Windows;
-    using System.Windows.Input;
+    using Utilities.Database.Customer;
+    using Customers;
+    using Models.Salesman;
 
-    class SalesCollectionListVM : ViewModelBase
+    internal class SalesCollectionListVM : ViewModelBase
     {
-        ObservableCollection<string> _cities;
-        ObservableCollection<Salesman> _salesmen;
-        ObservableCollection<Customer> _customers;
-        ObservableCollection<SalesTransactionMultiPurposeVM> _salesTransactions;
+        #region Backing Fields
+        private string _selectedCity;
+        private SalesmanVM _selectedSalesman;
+        private CustomerVM _selectedCustomer;
+        private DateTime _toDate;
+        private DateTime _fromDate;
+        private DateTime _collectionDate;
+        private decimal _total;
+        private bool _isPaidChecked;
+        private bool _allSelected;
 
-        string _selectedCity;
-        Salesman _selectedSalesman;
-        Supplier _selectedCustomer;
-        DateTime _toDate;
-        DateTime _fromDate;
-        DateTime _collectionDate;
-        decimal _total;
-        bool _isPaidChecked;
-        bool _allSelected;
-
-        ICommand _refreshCollectionDateSelectionCommand;
-        ICommand _printPerCityCommand;
-        ICommand _printPerSalesmanCommand;
+        private ICommand _displayCommand;
+        private ICommand _displayCollectionDateSelectionCommand;
+        private ICommand _printPerCityCommand;
+        private ICommand _printPerSalesmanCommand;
+        #endregion
 
         public SalesCollectionListVM()
         {
-            _cities = new ObservableCollection<string>();
-            _salesmen = new ObservableCollection<Salesman>();
-            _customers = new ObservableCollection<Customer>();
-            _salesTransactions = new ObservableCollection<SalesTransactionMultiPurposeVM>();
+            Cities = new ObservableCollection<string>();
+            Salesmans = new ObservableCollection<SalesmanVM>();
+            Customers = new ObservableCollection<CustomerVM>();
+            DisplayedSalesTransactions = new ObservableCollection<SalesTransactionMultiPurposeVM>();
+
             var currentDate = UtilityMethods.GetCurrentDate().Date;
             _fromDate = currentDate.AddDays(-currentDate.Day + 1);
             _toDate = currentDate;
             _collectionDate = currentDate;
+
             UpdateCities();
             UpdateSalesmen();
             UpdateCustomers();
         }
 
-        public ObservableCollection<string> Cities
-        {
-            get { return _cities; }
-        }
+        #region Collections
+        public ObservableCollection<string> Cities { get; }
 
-        public ObservableCollection<Salesman> Salesmen
-        {
-            get { return _salesmen; }
-        }
+        public ObservableCollection<SalesmanVM> Salesmans { get; }
 
-        public ObservableCollection<Customer> Customers
-        {
-            get { return _customers; }
-        }
+        public ObservableCollection<CustomerVM> Customers { get; }
 
-        public ObservableCollection<SalesTransactionMultiPurposeVM> SalesTransactions
+        public ObservableCollection<SalesTransactionMultiPurposeVM> DisplayedSalesTransactions { get; }
+        #endregion
+
+        #region Properties
+        public bool IsPaidChecked
         {
-            get { return _salesTransactions; }
+            get { return _isPaidChecked; }
+            set { SetProperty(ref _isPaidChecked, value, "IsPaidChecked"); }
         }
 
         public DateTime FromDate
@@ -81,8 +83,6 @@
                 }
 
                 SetProperty(ref _fromDate, value, "FromDate");
-
-                if (_toDate != null && _selectedCustomer != null && _isPaidChecked) UpdateCustomerSalesTransactions();
             }
         }
 
@@ -98,9 +98,6 @@
                 }
 
                 SetProperty(ref _toDate, value, "ToDate");
-
-                if (_selectedSalesman != null && _selectedCity != null) UpdateSalesTransactions();
-                if (_fromDate != null && _selectedCustomer != null) UpdateCustomerSalesTransactions();
             }
         }
 
@@ -120,11 +117,10 @@
                 if (_selectedCity == null) return;
 
                 SelectedCustomer = null;
-                if (_selectedSalesman != null && _selectedCity != null) UpdateSalesTransactions();
             }
         }
 
-        public Salesman SelectedSalesman
+        public SalesmanVM SelectedSalesman
         {
             get { return _selectedSalesman; }
             set
@@ -134,11 +130,10 @@
                 if (_selectedSalesman == null) return;
 
                 SelectedCustomer = null;
-                if (_selectedSalesman != null && _selectedCity != null) UpdateSalesTransactions();
             }
         }
 
-        public Supplier SelectedCustomer
+        public CustomerVM SelectedCustomer
         {
             get { return _selectedCustomer; }
             set
@@ -147,34 +142,8 @@
 
                 if (_selectedCustomer == null) return;
 
-                if (_fromDate == null || _toDate == null)
-                {
-                    MessageBox.Show("Please select a date range.", "Invalid Command", MessageBoxButton.OK);
-                    return;
-                }
-
                 SelectedCity = null;
                 SelectedSalesman = null;
-
-                UpdateCustomerSalesTransactions();
-            }
-        }
-
-        public decimal Total
-        {
-            get { return _total; }
-            set { SetProperty(ref _total, value, "Total"); }
-        }
-
-        public bool IsPaidChecked
-        {
-            get { return _isPaidChecked; }
-            set
-            {
-                SetProperty(ref _isPaidChecked, value, "IsPaidChecked");
-
-                if (_selectedCity != null && _selectedSalesman != null) UpdateSalesTransactions();
-                if (_fromDate != null && _toDate != null && _selectedCustomer != null) UpdateCustomerSalesTransactions();
             }
         }
 
@@ -184,31 +153,46 @@
             set
             {
                 SetProperty(ref _allSelected, value, "AllSelected");
-
-                if (_allSelected)
-                {
-                    foreach (var line in _salesTransactions)
-                        line.IsSelected = true;
-                }
-                
-                else
-                {
-                    foreach (var line in _salesTransactions)
-                        line.IsSelected = false;
-                }
+                ChangeAllSelections();
             }
         }
 
-        public ICommand RefreshCollectionDateSelectionCommand
+        public decimal Total
+        {
+            get { return _total; }
+            set { SetProperty(ref _total, value, "Total"); }
+        }
+        #endregion
+
+        #region Commands
+
+        public ICommand DisplayCommand
         {
             get
             {
-                return _refreshCollectionDateSelectionCommand ?? (_refreshCollectionDateSelectionCommand = new RelayCommand(() =>
+                return _displayCommand ?? (_displayCommand = new RelayCommand(() =>
+                {
+                    UpdateDisplayedSalesTransactions();
+                    UpdateCities();
+                    UpdateSalesmen();
+                    UpdateCustomers();
+                }));
+            }
+        }
+
+        public ICommand DisplayCollectionDateSelectionCommand
+        {
+            get
+            {
+                return _displayCollectionDateSelectionCommand ?? (_displayCollectionDateSelectionCommand = new RelayCommand(() =>
                 {
                     SelectedCustomer = null;
                     SelectedCity = null;
                     SelectedSalesman = null;
-                    UpdateCollectionDateSalesTransactions();
+                    UpdateDisplayedSalesTransactions();
+                    UpdateCities();
+                    UpdateSalesmen();
+                    UpdateCustomers();
                 }));
             }
         }
@@ -219,11 +203,13 @@
             {
                 return _printPerCityCommand ?? (_printPerCityCommand = new RelayCommand(() =>
                 {
-                    if (_salesTransactions.Count == 0) return;
+                    if (DisplayedSalesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportPerCityWindow(_salesTransactions, _toDate);
-                    collectionReportWindow.Owner = App.Current.MainWindow;
-                    collectionReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    var collectionReportWindow = new CollectionReportPerCityWindow(DisplayedSalesTransactions, _toDate)
+                    {
+                        Owner = Application.Current.MainWindow,
+                        WindowStartupLocation = WindowStartupLocation.CenterOwner
+                    };
                     collectionReportWindow.Show();
                 }));
             }
@@ -235,62 +221,107 @@
             {
                 return _printPerSalesmanCommand ?? (_printPerSalesmanCommand = new RelayCommand(() =>
                 {
-                    if (_salesTransactions.Count == 0) return;
+                    if (DisplayedSalesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportPerSalesmanWindow(_salesTransactions, _collectionDate);
-                    collectionReportWindow.Owner = App.Current.MainWindow;
-                    collectionReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    var collectionReportWindow = new CollectionReportPerSalesmanWindow(DisplayedSalesTransactions,
+                        _collectionDate)
+                    {
+                        Owner = Application.Current.MainWindow,
+                        WindowStartupLocation = WindowStartupLocation.CenterOwner
+                    };
                     collectionReportWindow.Show();
                 }));
             }
         }
+        #endregion 
 
         #region Helper Methods 
         private void UpdateCities()
         {
-            _cities.Clear();
-            _cities.Add("All");
-            using (var context = new ERPContext())
-            {
-                var customers = context.Customers.ToList();
+            var oldSelectedCity = _selectedCity;
 
-                foreach (var customer in customers)
-                {
-                    if (!_cities.Contains(customer.City))
-                        _cities.Add(customer.City);  
-                }
-            }
+            Cities.Clear();
+            var customersReturnedFromDatabase = DatabaseCustomerHelper.GetAll();
+            foreach (var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
+                Cities.Add(customer.City);
+            ArrangeCitiesAlphabetically();
+
+            UpdateSelectedCity(oldSelectedCity);
+        }
+
+        private void ArrangeCitiesAlphabetically()
+        {
+            var arragedCities = Cities.OrderBy(city => city).ToList();
+            Cities.Clear();
+            Cities.Add("All");
+            foreach (var city in arragedCities)
+                Cities.Add(city);
+        }
+
+        private void UpdateSelectedCity(string oldSelectedCity)
+        {
+            if (oldSelectedCity == null) return;
+            SelectedCity = Cities.FirstOrDefault(city => city.Equals(oldSelectedCity));
         }
 
         private void UpdateSalesmen()
         {
-            _salesmen.Clear();
-            using (var context = new ERPContext())
-            {
-                var salesmen = context.Salesmans.ToList();
+            var oldSelectedSalesman = _selectedSalesman;
+            Salesmans.Clear();
 
-                _salesmen.Add(new Salesman { ID = -1, Name = "All" });
-                foreach (var salesman in salesmen)
-                    _salesmen.Add(salesman);
-            }
+            var salesmansFromDatabase = DatabaseSalesmanHelper.GetAll();
+            var allSalesman = new Salesman { ID = -1, Name = "All" };
+            Salesmans.Add(new SalesmanVM { Model = allSalesman });
+            foreach (var salesman in salesmansFromDatabase)
+                Salesmans.Add(new SalesmanVM { Model = salesman });
+
+            UpdateSelectedSalesman(oldSelectedSalesman);
+        }
+
+        private void UpdateSelectedSalesman(SalesmanVM oldSelectedSalesman)
+        {
+            if (oldSelectedSalesman == null) return;
+            SelectedSalesman = Salesmans.FirstOrDefault(salesman => salesman.ID.Equals(oldSelectedSalesman.ID));
         }
 
         private void UpdateCustomers()
         {
-            _customers.Clear();
+            var oldSelectedCustomer = _selectedCustomer;
+            Customers.Clear();
 
-            using (var context = new ERPContext())
+            var customers = DatabaseCustomerHelper.GetAll();
+            var allCustomer = new Customer { ID = -1, Name = "All" };
+            Customers.Add(new CustomerVM { Model = allCustomer });
+            foreach (var customer in customers)
+                Customers.Add(new CustomerVM { Model = customer });
+
+            UpdateSelectedCustomer(oldSelectedCustomer);
+        }
+
+        private void UpdateSelectedCustomer(CustomerVM oldSelectedCustomer)
+        {
+            if (oldSelectedCustomer == null) return;
+            SelectedCustomer = Customers.FirstOrDefault(customer => customer.ID.Equals(oldSelectedCustomer.ID));
+        }
+
+        private void ChangeAllSelections()
+        {
+            if (_allSelected)
             {
-                var customers = context.Customers.OrderBy(e => e.Name).ToList();
-                _customers.Add(new Customer { ID = -1, Name = "All" });
-                foreach (var customer in customers)
-                    _customers.Add(customer);
+                foreach (var line in DisplayedSalesTransactions)
+                    line.IsSelected = true;
+            }
+
+            else
+            {
+                foreach (var line in DisplayedSalesTransactions)
+                    line.IsSelected = false;
             }
         }
 
-        private void UpdateSalesTransactions()
+        private void UpdateAccordingToCitySalesmanSalesTransactions()
         {
-            _salesTransactions.Clear();
+            DisplayedSalesTransactions.Clear();
             _total = 0;
             List<SalesTransaction> salesTransactions;
 
@@ -409,7 +440,7 @@
                 foreach (var t in salesTransactions)
                 {
                     var vm = new SalesTransactionMultiPurposeVM { Model = t };
-                    _salesTransactions.Add(vm);
+                    DisplayedSalesTransactions.Add(vm);
                     _total += vm.Remaining;
                 }
 
@@ -417,9 +448,9 @@
             }
         }
 
-        private void UpdateCustomerSalesTransactions()
+        private void UpdateAccordingToCustomerSalesTransactions()
         {
-            _salesTransactions.Clear();
+            DisplayedSalesTransactions.Clear();
             _total = 0;
             using (var context = new ERPContext())
             {
@@ -477,7 +508,7 @@
 
                 foreach (var transaction in transactions)
                 {
-                    _salesTransactions.Add(new SalesTransactionMultiPurposeVM { Model = transaction });
+                    DisplayedSalesTransactions.Add(new SalesTransactionMultiPurposeVM { Model = transaction });
                     _total += transaction.Total - transaction.Paid;
                 }
 
@@ -485,30 +516,27 @@
             }
         }
 
-        private void UpdateCollectionDateSalesTransactions()
+        private void UpdateAccordingToCollectionDateSalesTransactions()
         {
-            _salesTransactions.Clear();
+            DisplayedSalesTransactions.Clear();
             using (var context = new ERPContext())
             {
                 var ledgerTransactions = context.Ledger_Transactions.Where(e => e.Description.Equals("Sales Transaction Receipt") && e.Date.Equals(_collectionDate)).ToList();
                 var temp = new List<SalesTransactionMultiPurposeVM>();
-                var emptyCollectionSalesman = context.Salesmans.Where(e => e.Name.Equals(" ")).FirstOrDefault();
+                var emptyCollectionSalesman = context.Salesmans.FirstOrDefault(e => e.Name.Equals(" "));
                 foreach (var lt in ledgerTransactions)
                 {
                     var transaction = context.SalesTransactions
                         .Include("Customer")
                         .Include("Customer.Group")
-                        .Include("CollectionSalesman")
-                        .Where(e => e.SalesTransactionID.Equals(lt.Documentation)).FirstOrDefault();
+                        .Include("CollectionSalesman").FirstOrDefault(e => e.SalesTransactionID.Equals(lt.Documentation));
 
                     var vm = new SalesTransactionMultiPurposeVM { Model = transaction };
 
-                    if (!temp.Contains(vm))
-                    {
-                        if (vm.CollectionSalesman == null) vm.CollectionSalesman = emptyCollectionSalesman;
-                        temp.Add(vm);
-                        _total += vm.Remaining;
-                    }
+                    if (temp.Contains(vm)) continue;
+                    if (vm.CollectionSalesman == null) vm.CollectionSalesman = emptyCollectionSalesman;
+                    temp.Add(vm);
+                    _total += vm.Remaining;
                 }
 
 
@@ -516,9 +544,21 @@
 
                 foreach (var line in sort)
                 {
-                    _salesTransactions.Add(line);
+                    DisplayedSalesTransactions.Add(line);
                 }
             }
+        }
+
+        private void UpdateDisplayedSalesTransactions()
+        {
+            if (_selectedCity != null && _selectedSalesman != null)
+                UpdateAccordingToCitySalesmanSalesTransactions();
+            if ((_selectedCity != null && _selectedSalesman == null) || (_selectedCity == null && _selectedSalesman != null))
+                DisplayedSalesTransactions.Clear();
+            if (_selectedCustomer != null)
+                UpdateAccordingToCustomerSalesTransactions();
+            if (_selectedCustomer == null && _selectedCity == null && _selectedSalesman == null)
+                UpdateAccordingToCollectionDateSalesTransactions();
         }
         #endregion
     }

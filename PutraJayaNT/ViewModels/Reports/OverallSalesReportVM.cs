@@ -144,8 +144,8 @@ namespace PutraJayaNT.ViewModels.Reports
                     salesTransactions = context.SalesTransactions
                         .Include("Customer")
                         .Include("User")
-                        .Where(e => e.Customer.Name.Equals(_selectedCustomer.Name) && e.When >= _fromDate && e.When <= _toDate)
-                        .OrderBy(e => e.When)
+                        .Where(e => e.Customer.Name.Equals(_selectedCustomer.Name) && e.Date >= _fromDate && e.Date <= _toDate)
+                        .OrderBy(e => e.Date)
                         .ThenBy(e => e.SalesTransactionID)
                         .ToList();
                 }
@@ -155,9 +155,9 @@ namespace PutraJayaNT.ViewModels.Reports
                     salesTransactions = context.SalesTransactions
                         .Include("Customer")
                         .Include("User")
-                        .Where(e => e.When >= _fromDate && e.When <= _toDate)
+                        .Where(e => e.Date >= _fromDate && e.Date <= _toDate)
                         .OrderBy(e => e.Customer.Name)
-                        .ThenBy(e => e.When)
+                        .ThenBy(e => e.Date)
                         .ThenBy(e => e.SalesTransactionID)
                         .ToList();
                 }

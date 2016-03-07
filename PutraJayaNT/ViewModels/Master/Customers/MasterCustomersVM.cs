@@ -188,9 +188,28 @@ namespace PutraJayaNT.ViewModels.Master.Customers
 
         private void UpdateCities()
         {
+            var oldSelectedCity = _selectedCity;
+
             var customersReturnedFromDatabase = DatabaseCustomerHelper.GetAll();
             foreach (var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
                 Cities.Add(customer.City);
+            ArrangeCitiesAlphabetically();
+
+            UpdateSelectedCity(oldSelectedCity);
+        }
+
+        private void ArrangeCitiesAlphabetically()
+        {
+            var arragedCities = Cities.OrderBy(city => city).ToList();
+            Cities.Clear();
+            foreach (var city in arragedCities)
+                Cities.Add(city);
+        }
+
+        private void UpdateSelectedCity(string oldSelectedCity)
+        {
+            if (oldSelectedCity == null) return;
+            SelectedCity = Cities.FirstOrDefault(city => city.Equals(oldSelectedCity));
         }
 
         public void UpdateDisplayedCustomers()

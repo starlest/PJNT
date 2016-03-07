@@ -1,6 +1,4 @@
 ﻿using PutraJayaNT.Utilities.Database;
-using PutraJayaNT.Utilities.Database.Customer;
-using PutraJayaNT.ViewModels.Master.Customers;
 
 namespace PJMixTests.Master
 {
@@ -50,7 +48,7 @@ namespace PJMixTests.Master
             Assert.AreNotEqual(result5, result6);
         }
 
-        private bool CompareSuppliers(Supplier supplier1, Supplier supplier2)
+        private static bool CompareSuppliers(Supplier supplier1, Supplier supplier2)
         {
             return supplier1.ID.Equals(supplier2.ID) && supplier1.Name.Equals(supplier2.Name)
                    && supplier1.Address.Equals(supplier2.Address) && supplier1.GSTID.Equals(supplier2.GSTID);

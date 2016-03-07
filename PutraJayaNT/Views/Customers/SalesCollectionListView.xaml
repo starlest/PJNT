@@ -2,10 +2,14 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PutraJayaNT.Utilities"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="28" />
+        </Style>
+    </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding  Key="F1"  Command="{Binding PrintPerSalesmanCommand}"/>
         <KeyBinding  Key="F2"  Command="{Binding PrintPerCityCommand}"/>
@@ -13,7 +17,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.125*" />
-            <RowDefinition Height="0.5*" />
+            <RowDefinition Height="0.375*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
@@ -31,7 +35,6 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
-                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
@@ -40,32 +43,28 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Rectangle Grid.ColumnSpan="99" Grid.RowSpan="3" Stroke="Blue" IsHitTestVisible="False" />
-            <Rectangle Grid.ColumnSpan="99" Grid.Row="3" Stroke="Blue" IsHitTestVisible="False" />
-            <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Paid:" />
-            <CheckBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding IsPaidChecked}" Margin="10, 10, 10, 0"/>
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Due From:" FontSize="28" />
-            <DatePicker Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Due To:" FontSize="28" />
-            <DatePicker Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="City:" Foreground="Red" />
-            <ComboBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                      ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedCity, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" />
-            <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Salesman:" Foreground="Red" />
-            <ComboBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                      ItemsSource="{Binding Salesmen}" SelectedItem="{Binding SelectedSalesman, UpdateSourceTrigger=Explicit}" IsEditable="True" DisplayMemberPath="Name" />
-            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Customer:" Foreground="Blue" />
-            <ComboBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                      ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer, UpdateSourceTrigger=Explicit}" IsEditable="True" DisplayMemberPath="Name"/>
-            <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Collection Date:" FontSize="26" Foreground="Green" />
-            <DatePicker Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding CollectionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="3" Grid.Column="2" Content="Refresh" Command="{Binding RefreshCollectionDateSelectionCommand}" Foreground="Green" Margin="15, 10, 15, 10"/>
+            <Rectangle Grid.ColumnSpan="7" Grid.RowSpan="4" Stroke="Blue" IsHitTestVisible="False" />
+            <Rectangle Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="2" Stroke="Blue" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Paid:" />
+            <CheckBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="10, 10, 0, 0" IsChecked="{Binding IsPaidChecked}" />
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="Due From:" />
+            <DatePicker Grid.Row="0" Grid.Column="3"  SelectedDateFormat="Long" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Row="0" Grid.Column="4" Text="Due To:" />
+            <DatePicker Grid.Row="0" Grid.Column="5" SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Foreground="Red" Text="City:" />
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedCity, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Row="1" Grid.Column="2" Foreground="Red" Text="Salesman:" />
+            <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding Salesmans}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSalesman, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Row="1" Grid.Column="4" Text="Customer:" Foreground="Blue" />
+            <ComboBox Grid.Row="1" Grid.Column="5" ItemsSource="{Binding Customers}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedCustomer, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="1" Grid.Column="6" Foreground="Black"  Content="Display" Margin="15, 10, 15, 10" Command="{Binding DisplayCommand}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" FontSize="24" Foreground="Green" Text="Collection Date:" />
+            <DatePicker Grid.Row="2" Grid.Column="1" SelectedDateFormat="Long" SelectedDate="{Binding CollectionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="2" Grid.Column="2" Foreground="Green" Content="Display" Margin="15, 10, 15, 10" Command="{Binding DisplayCollectionDateSelectionCommand}"/>
         </Grid>
-        <DataGrid Grid.Row="2" ItemsSource="{Binding SalesTransactions}">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSalesTransactions}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransactionID}"/>
                 <DataGridTextColumn Header="Customer" Width="1*" IsReadOnly="True" Binding="{Binding Customer.Name}" />
@@ -86,7 +85,7 @@
                 <DataGridCheckBoxColumn Binding="{Binding IsSelected}" Width="0.5*" >
                     <DataGridCheckBoxColumn.HeaderTemplate>
                         <DataTemplate>
-                            <CheckBox Margin="0, 0, -17, 0" HorizontalAlignment="Stretch" IsChecked="{Binding Path=DataContext.AllSelected,RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                            <CheckBox Margin="0, 5, -17, 0" HorizontalAlignment="Stretch" IsChecked="{Binding Path=DataContext.AllSelected,RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                         </DataTemplate>
                     </DataGridCheckBoxColumn.HeaderTemplate>
                 </DataGridCheckBoxColumn>
@@ -98,9 +97,8 @@
                 <ColumnDefinition Width="0.4*" />
                 <ColumnDefinition Width="0.4*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Text="Total:" FontSize="28" />
-            <TextBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
+            <TextBlock Grid.Column="1" Text="Total:" />
+            <TextBox Grid.Column="2" Foreground="Red" Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsEnabled="False"   />
         </Grid>
     </Grid>
 </UserControl>

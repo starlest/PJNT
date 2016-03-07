@@ -281,7 +281,7 @@ namespace PutraJayaNT.ViewModels.Reports
                         .Include("Warehouse")
                         .Include("SalesTransaction")
                         .Include("SalesTransaction.Customer")
-                        .Where(e => e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
+                        .Where(e => e.SalesTransaction.Date >= _fromDate && e.SalesTransaction.Date <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .ToList();
                 }
@@ -293,7 +293,7 @@ namespace PutraJayaNT.ViewModels.Reports
                         .Include("Warehouse")
                         .Include("SalesTransaction")
                         .Include("SalesTransaction.Customer")
-                        .Where(e => e.Item.Name == _selectedItem.Name && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
+                        .Where(e => e.Item.Name == _selectedItem.Name && e.SalesTransaction.Date >= _fromDate && e.SalesTransaction.Date <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .ToList();
                 }
@@ -303,7 +303,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
                     transactionLines = context.SalesTransactionLines
                         .Where(e => e.Item.Category.Name == _selectedCategory.Name
-                        && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
+                        && e.SalesTransaction.Date >= _fromDate && e.SalesTransaction.Date <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .Include("Item")
                         .Include("Warehouse")
@@ -317,8 +317,8 @@ namespace PutraJayaNT.ViewModels.Reports
                     transactionLines = context.SalesTransactionLines
                         .Where(e => e.Item.Category.Name == _selectedCategory.Name
                         && e.Item.Name == _selectedItem.Name
-                        && e.SalesTransaction.When >= _fromDate
-                        && e.SalesTransaction.When <= _toDate)
+                        && e.SalesTransaction.Date >= _fromDate
+                        && e.SalesTransaction.Date <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .Include("Item")
                         .Include("Warehouse")

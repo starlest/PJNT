@@ -601,7 +601,7 @@ namespace PutraJayaNT.ViewModels.Test
                 var salesLines = context.SalesTransactionLines
                     .Include("SalesTransaction")
                     .Include("SalesTransaction.Customer")
-                    .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.SalesTransaction.When >= monthDate && e.SalesTransaction.When <= fromDate)
+                    .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.SalesTransaction.Date >= monthDate && e.SalesTransaction.Date <= fromDate)
                     .ToList();
 
                 var salesReturnLines = context.SalesReturnTransactionLines

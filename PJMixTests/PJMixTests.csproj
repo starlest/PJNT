@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Master\MasterCustomersTests.cs" />
     <Compile Include="Master\MasterInventoryTests.cs" />
+    <Compile Include="Master\MasterSalesmansTests.cs" />
     <Compile Include="Master\MasterSuppliersTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -79,7 +80,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>

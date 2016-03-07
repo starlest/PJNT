@@ -39,5 +39,11 @@
         public decimal Total { get; set; }
 
         public decimal Commission { get; set; }
+
+        public void UpdatePropertiesToUI()
+        {
+            OnPropertyChanged("Category");
+            OnPropertyChanged("Percentage");
+        }
     }
 }

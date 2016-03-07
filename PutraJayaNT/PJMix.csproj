@@ -98,6 +98,14 @@
     <Compile Include="Migrations\201603041709518_Update1.Designer.cs">
       <DependentUpon>201603041709518_Update1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603070403129_Update2.cs" />
+    <Compile Include="Migrations\201603070403129_Update2.Designer.cs">
+      <DependentUpon>201603070403129_Update2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603070927590_Update3.cs" />
+    <Compile Include="Migrations\201603070927590_Update3.Designer.cs">
+      <DependentUpon>201603070927590_Update3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Date.cs" />
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
@@ -186,6 +194,9 @@
     <Compile Include="Utilities\Database\Item\DatabaseItemCategoryHelper.cs" />
     <Compile Include="Utilities\Database\Item\DatabaseItemHelper.cs" />
     <Compile Include="Utilities\Database\DatabaseSupplierHelper.cs" />
+    <Compile Include="Utilities\Database\Salesman\DatabaseSalesCommissionHelper.cs" />
+    <Compile Include="Utilities\Database\Salesman\DatabaseSalesmanHelper.cs" />
+    <Compile Include="Utilities\Database\SalesTransaction\DatabaseSalesTransactionHelper.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
     <Compile Include="Models\Inventory\Stock.cs" />
     <Compile Include="Models\Sales\SalesTransaction.cs" />
@@ -214,7 +225,7 @@
     <Compile Include="ViewModels\Customers\AlternativeSalesPriceVM.cs" />
     <Compile Include="ViewModels\Customers\BrowseSalesTransactionsVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionMultiPurposeVM.cs" />
-    <Compile Include="ViewModels\Customers\SalesCollectionListVM.cs" />
+    <Compile Include="ViewModels\Sales\SalesCollectionListVM.cs" />
     <Compile Include="ViewModels\Customers\PrintListVM.cs" />
     <Compile Include="ViewModels\Customers\SalesCollectVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturnTransactionLineVM.cs" />
@@ -240,7 +251,9 @@
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryNewEntryVM.cs" />
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryVM.cs" />
     <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
-    <Compile Include="ViewModels\Master\MasterSalesmanVM.cs" />
+    <Compile Include="ViewModels\Master\Salesmans\MasterSalesmansEditVM.cs" />
+    <Compile Include="ViewModels\Master\Salesmans\MasterSalesmansNewEntryVM.cs" />
+    <Compile Include="ViewModels\Master\Salesmans\MasterSalesmansVM.cs" />
     <Compile Include="ViewModels\Master\Suppliers\MasterSuppliersEditVM.cs" />
     <Compile Include="ViewModels\Master\Suppliers\MasterSuppliersNewEntryVM.cs" />
     <Compile Include="ViewModels\Master\Suppliers\MasterSuppliersVM.cs" />
@@ -327,8 +340,11 @@
     <Compile Include="Views\Master\Inventory\MasterInventoryEditView.xaml.cs">
       <DependentUpon>MasterInventoryEditView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Master\MasterSalesmanView.xaml.cs">
-      <DependentUpon>MasterSalesmanView.xaml</DependentUpon>
+    <Compile Include="Views\Master\Salesmans\MasterSalesmansEditView.xaml.cs">
+      <DependentUpon>MasterSalesmansEditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Salesmans\MasterSalesmansView.xaml.cs">
+      <DependentUpon>MasterSalesmansView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Master\Suppliers\MasterSuppliersEditView.xaml.cs">
       <DependentUpon>MasterSuppliersEditView.xaml</DependentUpon>
@@ -537,7 +553,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Master\MasterSalesmanView.xaml">
+    <Page Include="Views\Master\Salesmans\MasterSalesmansEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Salesmans\MasterSalesmansView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -630,6 +650,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201603041709518_Update1.resx">
       <DependentUpon>201603041709518_Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603070403129_Update2.resx">
+      <DependentUpon>201603070403129_Update2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603070927590_Update3.resx">
+      <DependentUpon>201603070927590_Update3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

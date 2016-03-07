@@ -213,7 +213,7 @@ namespace PutraJayaNT.ViewModels.Reports
                         .Include("SalesTransaction")
                         .Include("SalesTransaction.Customer")
                         .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) 
-                        && e.SalesTransaction.When >= _fromDate && e.SalesTransaction.When <= _toDate)
+                        && e.SalesTransaction.Date >= _fromDate && e.SalesTransaction.Date <= _toDate)
                         .ToList();
 
                     var salesReturnLines = context.SalesReturnTransactionLines
@@ -271,7 +271,7 @@ namespace PutraJayaNT.ViewModels.Reports
                         var vm = new StockBalanceLineVM
                         {
                             Item = line.Item,
-                            Date = line.SalesTransaction.When,
+                            Date = line.SalesTransaction.Date,
                             Documentation = line.SalesTransaction.SalesTransactionID,
                             Description = "Sales",
                             CustomerSupplier = line.SalesTransaction.Customer.Name,
@@ -473,7 +473,7 @@ namespace PutraJayaNT.ViewModels.Reports
                             .Include("SalesTransaction")
                             .Include("SalesTransaction.Customer")
                             .Where(e => e.ItemID.Equals(_selectedProduct.ID) && e.WarehouseID.Equals(warehouse.ID) &&
-                            e.SalesTransaction.When >= monthDate && e.SalesTransaction.When < fromDate)
+                            e.SalesTransaction.Date >= monthDate && e.SalesTransaction.Date < fromDate)
                             .ToList();
 
                         var salesReturnLines = context.SalesReturnTransactionLines

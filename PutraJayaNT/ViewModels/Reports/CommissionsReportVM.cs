@@ -151,8 +151,8 @@
                         .Include("SalesTransaction")
                         .Include("Item")
                         .Include("Item.Category")
-                        .Where(e => e.SalesTransaction.When >= _fromDate &&
-                        e.SalesTransaction.When <= _toDate)
+                        .Where(e => e.SalesTransaction.Date >= _fromDate &&
+                        e.SalesTransaction.Date <= _toDate)
                         .ToList();
                 }
 
@@ -162,8 +162,8 @@
                         .Include("SalesTransaction")
                         .Include("Item")
                         .Include("Item.Category")
-                        .Where(e => e.SalesTransaction.When >= _fromDate &&
-                        e.SalesTransaction.When <= _toDate && e.Salesman.ID.Equals(_selectedSalesman.ID))
+                        .Where(e => e.SalesTransaction.Date >= _fromDate &&
+                        e.SalesTransaction.Date <= _toDate && e.Salesman.ID.Equals(_selectedSalesman.ID))
                         .ToList();
                 }
 

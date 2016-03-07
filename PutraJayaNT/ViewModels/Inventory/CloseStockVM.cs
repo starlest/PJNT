@@ -151,7 +151,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                 .Include("SalesTransaction")
                 .Include("SalesTransaction.Customer")
                 .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
-                e.SalesTransaction.When.Month == _period && e.SalesTransaction.When.Year == _periodYear)
+                e.SalesTransaction.Date.Month == _period && e.SalesTransaction.Date.Year == _periodYear)
                 .ToList();
 
             var salesReturnLines = context.SalesReturnTransactionLines

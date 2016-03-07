@@ -54,7 +54,7 @@
 
         public DateTime When
         {
-            get { return Model.When; }
+            get { return Model.Date; }
         }
 
         public DateTime DueDate
