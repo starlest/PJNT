@@ -1,7 +1,7 @@
-﻿using PutraJayaNT.Models.Inventory;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PutraJayaNT.Models.Inventory;
 
 namespace PutraJayaNT.Models
 {

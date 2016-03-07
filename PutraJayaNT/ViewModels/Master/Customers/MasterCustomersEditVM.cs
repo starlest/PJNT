@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Transactions;
+using PutraJayaNT.Utilities.Database.Customer;
+using PutraJayaNT.ViewModels.Customers;
 
 namespace PutraJayaNT.ViewModels.Master.Customers
 {
@@ -14,6 +16,8 @@ namespace PutraJayaNT.ViewModels.Master.Customers
     public class MasterCustomersEditVM : ViewModelBase
     {
         #region Backing Fields
+        private readonly CustomerVM _editingCustomer;
+
         private int _editID;
         private string _editName;
         private string _editCity;
@@ -22,13 +26,13 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         private string _editNPWP;
         private int _editCreditTerms;
         private int _editMaxInvoices;
-        private CustomerGroup _editGroup;
+        private CustomerGroupVM _editCustomerGroup;
         private ICommand _editConfirmCommand;
         #endregion
 
         public MasterCustomersEditVM(CustomerVM editingCustomer)
         {
-            EditingCustomer = editingCustomer;
+            _editingCustomer = editingCustomer;
             EditGroups = new ObservableCollection<CustomerGroupVM>();
             UpdateEditGroups();
             SetDefaultEditProperties();
@@ -37,8 +41,6 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         public ObservableCollection<CustomerGroupVM> EditGroups { get; }
          
         #region Properties
-        public CustomerVM EditingCustomer { get; }
-
         public int EditID
         {
             get { return _editID; }
@@ -87,10 +89,10 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             set { SetProperty(ref _editMaxInvoices, value, "EditMaxInvoices"); }
         }
 
-        public CustomerGroup EditGroup
+        public CustomerGroupVM EditCustomerGroup
         {
-            get { return _editGroup; }
-            set { SetProperty(ref _editGroup, value, "EditGroup"); }
+            get { return _editCustomerGroup; }
+            set { SetProperty(ref _editCustomerGroup, value, "EditCustomerGroup"); }
         }
 
         public ICommand EditConfirmCommand
@@ -99,10 +101,10 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             {
                 return _editConfirmCommand ?? (_editConfirmCommand = new RelayCommand(() =>
                 {
-                    if (MessageBox.Show("Confirm edit?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
-                    var originalCustomer = EditingCustomer.Model;
+                    if (!IsEditConfirmationYes() && !AreEditFieldsValid()) return;
+                    var editingCustomer = _editingCustomer.Model;
                     var editedCustomerCopy = MakeEditedCustomer();
-                    SaveCustomerEditsToDatabase(originalCustomer, editedCustomerCopy);
+                    SaveCustomerEditsToDatabase(editingCustomer, editedCustomerCopy);
                     UpdateEditingCustomerUIValues();
                     UtilityMethods.CloseForemostWindow();
                 }));
@@ -111,12 +113,41 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         #endregion
 
         #region Helper Methods
+        private void SetDefaultEditProperties()
+        {
+            EditID = _editingCustomer.ID;
+            EditName = _editingCustomer.Name;
+            EditCity = _editingCustomer.City;
+            EditAddress = _editingCustomer.Address;
+            EditTelephone = _editingCustomer.Telephone;
+            EditNPWP = _editingCustomer.NPWP;
+            EditCreditTerms = _editingCustomer.CreditTerms;
+            EditMaxInvoices = _editingCustomer.MaxInvoices;
+            EditCustomerGroup = EditGroups.FirstOrDefault();
+        }
+
         private void UpdateEditGroups()
         {
             EditGroups.Clear();
-            var customerGroupsReturnedFromDatabase = DatabaseHelper.LoadAllCustomerGroupsFromDatabase();
+            var customerGroupsReturnedFromDatabase = DatabaseCustomerGroupHelper.GetAll();
             foreach (var customerGroup in customerGroupsReturnedFromDatabase)
                 EditGroups.Add(new CustomerGroupVM { Model = customerGroup });
+        }
+
+        private Customer MakeEditedCustomer()
+        {
+            return new Customer
+            {
+                ID = _editID,
+                Address = _editAddress,
+                City = _editCity,
+                CreditTerms = _editCreditTerms,
+                Group = _editCustomerGroup.Model,
+                MaxInvoices = _editMaxInvoices,
+                Telephone = _editTelephone,
+                Name = _editName,
+                NPWP = _editNPWP
+            };
         }
 
         private static LedgerAccount GetCustomerLedgerAccountFromDatabaseContext(ERPContext context, Customer customer)
@@ -125,82 +156,70 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             return context.Ledger_Accounts.First(e => e.Name.Equals(searchName));
         }
 
-        private void SetDefaultEditProperties()
+        private static bool IsCustomerNameChanged(Customer editingCustomer, Customer editedCustomer)
         {
-            EditID = EditingCustomer.ID;
-            EditName = EditingCustomer.Name;
-            EditCity = EditingCustomer.City;
-            EditAddress = EditingCustomer.Address;
-            EditTelephone = EditingCustomer.Telephone;
-            EditNPWP = EditingCustomer.NPWP;
-            EditCreditTerms = EditingCustomer.CreditTerms;
-            EditMaxInvoices = EditingCustomer.MaxInvoices;
-            EditGroup = EditingCustomer.Group;
+            return editingCustomer.Name == editedCustomer.Name;
         }
 
-        private static bool IsCustomerNameChanged(Customer originalCustomer, Customer editedCustomer)
+        private static void ChangeCustomerLedgerAccountNameInDatabaseContext(ERPContext context, Customer editingCustomer, Customer editedCustomer)
         {
-            return originalCustomer.Name == editedCustomer.Name;
-        }
-
-        private static void ChangeCustomerLedgerAccountNameInDatabaseContext(ERPContext context, Customer originalCustomer, Customer editedCustomer)
-        {
-            var ledgerAccountFromDatabase = GetCustomerLedgerAccountFromDatabaseContext(context, originalCustomer);
+            var ledgerAccountFromDatabase = GetCustomerLedgerAccountFromDatabaseContext(context, editingCustomer);
             ledgerAccountFromDatabase.Name = $"{editedCustomer.Name} Accounts Receivable";
             context.SaveChanges();
         }
 
-        private static void SaveCustomerEditsToDatabaseContext(ERPContext context, Customer originalCustomer, Customer editedCustomer)
+        private static void DeepCopyCustomerProperties(Customer fromCustomer, ref Customer toCustomer)
         {
-            var editingCustomer = originalCustomer;
-            DatabaseHelper.AttachCustomerToDatabaseContext(context, ref editingCustomer);
-            editingCustomer.Name = editedCustomer.Name;
-            editingCustomer.City = editedCustomer.City;
-            editingCustomer.Address = editedCustomer.Address;
-            editingCustomer.Telephone = editedCustomer.Telephone;
-            editingCustomer.NPWP = editedCustomer.NPWP;
-            editingCustomer.CreditTerms = editedCustomer.CreditTerms;
-            editingCustomer.MaxInvoices = editedCustomer.MaxInvoices;
+            toCustomer.Name = fromCustomer.Name;
+            toCustomer.City = fromCustomer.City;
+            toCustomer.Address = fromCustomer.Address;
+            toCustomer.Telephone = fromCustomer.Telephone;
+            toCustomer.NPWP = fromCustomer.NPWP;
+            toCustomer.CreditTerms = fromCustomer.CreditTerms;
+            toCustomer.MaxInvoices = fromCustomer.MaxInvoices;
+            toCustomer.Group = fromCustomer.Group;
+        }
 
-            var customerGroupToBeAttachedToDatabaseContext = editedCustomer.Group;
-            DatabaseHelper.AttachCustomerGroupToDatabaseContext(context, ref customerGroupToBeAttachedToDatabaseContext);
+        private static void SaveCustomerEditsToDatabaseContext(ERPContext context, Customer editingCustomer, Customer editedCustomer)
+        {
+            DatabaseCustomerHelper.AttachToObjectFromDatabaseContext(context, ref editingCustomer);
+            DeepCopyCustomerProperties(editedCustomer, ref editingCustomer);
+
+            var customerGroupToBeAttachedToDatabaseContext = editingCustomer.Group;
+            DatabaseCustomerGroupHelper.AttachToObjectFromDatabaseContext(context, ref customerGroupToBeAttachedToDatabaseContext);
             editingCustomer.Group = customerGroupToBeAttachedToDatabaseContext;
 
             context.SaveChanges();
         }
 
-        public static void SaveCustomerEditsToDatabase(Customer originalCustomer, Customer editedCustomer)
+        public static void SaveCustomerEditsToDatabase(Customer editingCustomer, Customer editedCustomer)
         {
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext();
-                if (!IsCustomerNameChanged(originalCustomer, editedCustomer))
-                    ChangeCustomerLedgerAccountNameInDatabaseContext(context, originalCustomer, editedCustomer);
-                SaveCustomerEditsToDatabaseContext(context, originalCustomer, editedCustomer);
+                if (!IsCustomerNameChanged(editingCustomer, editedCustomer))
+                    ChangeCustomerLedgerAccountNameInDatabaseContext(context, editingCustomer, editedCustomer);
+                SaveCustomerEditsToDatabaseContext(context, editingCustomer, editedCustomer);
                 ts.Complete();
             }
         }
 
-        private Customer MakeEditedCustomer()
+        private static bool IsEditConfirmationYes()
         {
-            return new Customer
-            {
-                ID = _editID,
-                Active = true,
-                Address = _editAddress,
-                City = _editCity,
-                CreditTerms = _editCreditTerms,
-                Group = _editGroup,
-                MaxInvoices = _editMaxInvoices,
-                Name = _editName,
-                NPWP = _editNPWP
-            };
+            return MessageBox.Show("Confirm edit?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+        }
+
+        private bool AreEditFieldsValid()
+        {
+            return _editName != null && _editAddress != null && _editCity != null && _editAddress != null;
         }
 
         private void UpdateEditingCustomerUIValues()
         {
-            EditingCustomer.Model = MakeEditedCustomer();
-            EditingCustomer.UpdatePropertiesToUI();
+            var editedCustomer = MakeEditedCustomer();
+            var customerTo = _editingCustomer.Model;
+            DeepCopyCustomerProperties(editedCustomer, ref customerTo);
+            _editingCustomer.UpdatePropertiesToUI();
         }
         #endregion
     }

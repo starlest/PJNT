@@ -1,4 +1,6 @@
-﻿namespace PutraJayaNT.ViewModels.Customers
+﻿using PutraJayaNT.ViewModels.Inventory;
+
+namespace PutraJayaNT.ViewModels.Customers
 {
     using MVVMFramework;
     using PutraJayaNT.Utilities;

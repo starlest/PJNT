@@ -5,6 +5,8 @@ using MVVMFramework;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Utilities;
+using PutraJayaNT.Utilities.Database.Customer;
+using PutraJayaNT.ViewModels.Customers;
 
 namespace PutraJayaNT.ViewModels.Master.Customers
 {
@@ -81,6 +83,8 @@ namespace PutraJayaNT.ViewModels.Master.Customers
                     var newCustomer = MakeNewEntryCustomer();
                     AddCustomerAlongWithItsLedgerToDatabase(newCustomer);
                     ResetEntryFields();
+                    _parentVM.UpdateListedCustomers();
+                    _parentVM.UpdateDisplayedCustomers();
                 }));
             }
         }
@@ -92,14 +96,9 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         private void UpdateNewEntryGroups()
         {
             NewEntryGroups.Clear();
-            var groupsReturnedFromDatabase = DatabaseHelper.LoadAllCustomerGroupsFromDatabase();
+            var groupsReturnedFromDatabase = DatabaseCustomerGroupHelper.GetAll();
             foreach (var group in groupsReturnedFromDatabase)
                 NewEntryGroups.Add(new CustomerGroupVM { Model = group });
-        }
-
-        private void UpdateDisplayedCustomers()
-        {
-            _parentVM.UpdateDisplayedCustomers();
         }
 
         private void ResetEntryFields()
@@ -110,7 +109,6 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             NewEntryTelephone = null;
             NewEntryNPWP = null;
             NewEntryGroup = null;
-            UpdateDisplayedCustomers();
         }
 
         private bool AreAllNewEntryFieldsFilled()
@@ -189,7 +187,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         private static void AddCustomerToDatabaseContext(ERPContext context, Customer customer)
         {
             var customerGroupToBeAttachedToDatabaseContext = customer.Group;
-            DatabaseHelper.AttachCustomerGroupToDatabaseContext(context, ref customerGroupToBeAttachedToDatabaseContext);
+            DatabaseCustomerGroupHelper.AttachToObjectFromDatabaseContext(context, ref customerGroupToBeAttachedToDatabaseContext);
             customer.Group = customerGroupToBeAttachedToDatabaseContext;
             context.Customers.Add(customer);
         }

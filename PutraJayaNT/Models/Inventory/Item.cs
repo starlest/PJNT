@@ -55,6 +55,5 @@ namespace PutraJayaNT.Models.Inventory
         {
             return base.GetHashCode();
         }
-
     }
 }

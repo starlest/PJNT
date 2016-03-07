@@ -63,7 +63,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Master\MasterCustomerTest.cs" />
+    <Compile Include="Master\MasterCustomersTests.cs" />
+    <Compile Include="Master\MasterInventoryTests.cs" />
+    <Compile Include="Master\MasterSuppliersTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

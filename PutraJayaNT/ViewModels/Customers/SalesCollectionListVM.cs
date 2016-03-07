@@ -2,10 +2,10 @@
 {
     using Models;
     using MVVMFramework;
-    using PutraJayaNT.Models.Sales;
-    using PutraJayaNT.Models.Salesman;
+    using Models.Sales;
+    using Models.Salesman;
     using PutraJayaNT.Reports.Windows;
-    using PutraJayaNT.Utilities;
+    using Utilities;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -22,7 +22,7 @@
 
         string _selectedCity;
         Salesman _selectedSalesman;
-        Customer _selectedCustomer;
+        Supplier _selectedCustomer;
         DateTime _toDate;
         DateTime _fromDate;
         DateTime _collectionDate;
@@ -138,7 +138,7 @@
             }
         }
 
-        public Customer SelectedCustomer
+        public Supplier SelectedCustomer
         {
             get { return _selectedCustomer; }
             set

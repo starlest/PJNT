@@ -6,6 +6,8 @@ using System.Windows.Input;
 using MVVMFramework;
 using PutraJayaNT.Models;
 using PutraJayaNT.Utilities;
+using PutraJayaNT.Utilities.Database.Customer;
+using PutraJayaNT.ViewModels.Customers;
 using PutraJayaNT.Views.Master.Customers;
 
 namespace PutraJayaNT.ViewModels.Master.Customers
@@ -14,7 +16,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
     {
         #region Backing Fields
         private bool _isActiveChecked;
-        private CustomerGroupVM _selectedGroup;
+        private CustomerGroupVM _selectedCustomerGroup;
         private CustomerVM _selectedCustomer;
         private string _selectedCity;
         private CustomerVM _selectedLine;
@@ -32,10 +34,12 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             DisplayedCustomers = new ObservableCollection<CustomerVM>();
 
             UpdateCities();
-            UpdateGroups();
+            UpdateCustomerGroups();
 
             _isActiveChecked = true;
-            DisplayAllCustomers();
+            SelectedCustomerGroup = CustomerGroups.FirstOrDefault();
+            SelectedCustomer = Customers.FirstOrDefault();
+            UpdateDisplayedCustomers();
 
             NewEntryVM = new MasterCustomersNewEntryVM(this);
         }
@@ -59,14 +63,14 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             set { SetProperty(ref _isActiveChecked, value, "IsActiveChecked"); }
         }
 
-        public CustomerGroupVM SelectedGroup
+        public CustomerGroupVM SelectedCustomerGroup
         {
-            get { return _selectedGroup; }
+            get { return _selectedCustomerGroup; }
             set
             {
-                SetProperty(ref _selectedGroup, value, "SelectedGroup");
+                SetProperty(ref _selectedCustomerGroup, value, "SelectedCustomerGroup");
 
-                if (_selectedGroup == null) return;
+                if (_selectedCustomerGroup == null) return;
 
                 SelectedCity = null;
                 UpdateListedCustomers();
@@ -89,7 +93,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
 
                 if (_selectedCity == null) return;
 
-                SelectedGroup = null;
+                SelectedCustomerGroup = null;
                 SelectedCustomer = null;
                 Customers.Clear();
             }
@@ -123,6 +127,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
                 {
                     if (!IsThereLineSelected()) return;
                     ShowEditWindow();
+                    UpdateListedCustomers();
                 }));
             }
         }
@@ -133,38 +138,57 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             {
                 return _activateCustomerCommand ?? (_activateCustomerCommand = new RelayCommand(() =>
                 {
-                    if (!IsThereLineSelected()) return;
+                    if (!IsThereLineSelected() || !IsConfirmationYes()) return;
                     if (_selectedLine.Active) DeactivateCustomerInDatabase(_selectedLine.Model);
                     else ActivateCustomerInDatabase(_selectedLine.Model);
-                    UpdateDisplayedCustomers();
+                    _selectedLine.Active = !_selectedLine.Active;
                 }));
             }
         }
         #endregion
 
         #region Helper Methods 
-        private void UpdateGroups()
+        private void UpdateCustomerGroups()
         {
+            var oldSelectedCustomerGroup = _selectedCustomerGroup;
+
             CustomerGroups.Clear();
             CustomerGroups.Add(new CustomerGroupVM { Model = new CustomerGroup { ID = -1, Name = "All" }});
-            var groupsReturnedFromDatabase = DatabaseHelper.LoadAllCustomerGroupsFromDatabase();
+            var groupsReturnedFromDatabase = DatabaseCustomerGroupHelper.GetAll();
             foreach (var group in groupsReturnedFromDatabase)
                 CustomerGroups.Add(new CustomerGroupVM { Model = group});
+
+            UpdateSelectedCustomerGroup(oldSelectedCustomerGroup);
         }
 
-        private void UpdateListedCustomers()
+        private void UpdateSelectedCustomerGroup(CustomerGroupVM oldSelectedCustomerGroup)
         {
-            DisplayedCustomers.Clear();
+            if (oldSelectedCustomerGroup == null) return;
+            SelectedCustomerGroup = CustomerGroups.FirstOrDefault(customerGroup => customerGroup.ID.Equals(oldSelectedCustomerGroup.ID));
+        }
+
+        public void UpdateListedCustomers()
+        {
+            var oldSelectedCustomer = _selectedCustomer;
+
             Customers.Clear();
             Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
-            var customersReturnedFromDatabase = _selectedGroup.Name.Equals("All") ? DatabaseHelper.LoadAllCustomersFromDatabase() : DatabaseHelper.LoadCustomersFromDatabase(customer => customer.Group.ID.Equals(_selectedGroup.ID));
+            var customersReturnedFromDatabase = _selectedCustomerGroup.Name.Equals("All") ? DatabaseCustomerHelper.GetAll() : DatabaseCustomerHelper.Get(customer => customer.Group.ID.Equals(_selectedCustomerGroup.ID));
             foreach (var customer in customersReturnedFromDatabase.OrderBy(customer => customer.Name))
                 Customers.Add(new CustomerVM { Model = customer });
+
+            UpdateSelectedCustomer(oldSelectedCustomer);
+        }
+
+        private void UpdateSelectedCustomer(CustomerVM oldSelectedCustomer)
+        {
+            if (oldSelectedCustomer == null) return;
+            SelectedCustomer = Customers.FirstOrDefault(customer => customer.ID.Equals(oldSelectedCustomer.ID));
         }
 
         private void UpdateCities()
         {
-            var customersReturnedFromDatabase = DatabaseHelper.LoadAllCustomersFromDatabase();
+            var customersReturnedFromDatabase = DatabaseCustomerHelper.GetAll();
             foreach (var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
                 Cities.Add(customer.City);
         }
@@ -177,24 +201,12 @@ namespace PutraJayaNT.ViewModels.Master.Customers
                 DisplayedCustomers.Add(new CustomerVM { Model = customer });
         }
 
-        private void DisplayAllCustomers()
-        {
-            SelectedGroup = CustomerGroups.FirstOrDefault();
-            SelectedCustomer = Customers.FirstOrDefault();
-            UpdateDisplayedCustomers();
-        }
-
-        private static Customer GetCustomerFromDatabaseContext(ERPContext context, Customer searchCustomer)
-        {
-            return context.Customers.First(customer => customer.ID.Equals(searchCustomer.ID));
-        }
-
         public static void DeactivateCustomerInDatabase(Customer customer)
         {
             using (var context = new ERPContext())
             {
-                var customerReturnedFromDatabase = GetCustomerFromDatabaseContext(context, customer);
-                customerReturnedFromDatabase.Active = false;
+                DatabaseCustomerHelper.AttachToObjectFromDatabaseContext(context, ref customer);
+                customer.Active = false;
                 context.SaveChanges();
             }
         }
@@ -203,10 +215,23 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         {
             using (var context = new ERPContext())
             {
-                var customerReturnedFromDatabase = GetCustomerFromDatabaseContext(context, customer);
-                customerReturnedFromDatabase.Active = true;
+                DatabaseCustomerHelper.AttachToObjectFromDatabaseContext(context, ref customer);
+                customer.Active = true;
                 context.SaveChanges();
             }
+        }
+
+        private IEnumerable<Customer> LoadCustomersFromDatabaseAccordingToSelections()
+        {
+            if (_selectedCity != null) return DatabaseCustomerHelper.Get(customer => customer.City.Equals(_selectedCity));
+
+            if (_selectedCustomerGroup.Name.Equals("All") && _selectedCustomer.Name.Equals("All"))
+                return DatabaseCustomerHelper.GetAll();
+
+            if (!_selectedCustomerGroup.Name.Equals("All") && _selectedCustomer.Name.Equals("All"))
+                return DatabaseCustomerHelper.Get(customer => customer.Group.ID.Equals(_selectedCustomerGroup.ID));
+
+            return DatabaseCustomerHelper.Get(customer => customer.ID.Equals(_selectedCustomer.ID));
         }
 
         private void ShowEditWindow()
@@ -227,17 +252,10 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             return false;
         }
 
-        private IEnumerable<Customer> LoadCustomersFromDatabaseAccordingToSelections()
+        private static bool IsConfirmationYes()
         {
-            if (_selectedCity != null) return DatabaseHelper.LoadCustomersFromDatabase(customer => customer.City.Equals(_selectedCity));
-
-            if (_selectedGroup.Name.Equals("All") && _selectedCustomer.Name.Equals("All"))
-                return DatabaseHelper.LoadAllCustomersFromDatabase();
-
-            if (!_selectedGroup.Name.Equals("All") && _selectedCustomer.Name.Equals("All"))
-                return DatabaseHelper.LoadCustomersFromDatabase(customer => customer.Group.ID.Equals(_selectedGroup.ID));
-
-            return DatabaseHelper.LoadCustomersFromDatabase(customer => customer.ID.Equals(_selectedCustomer.ID));
+            return MessageBox.Show("Confirm activating/deactivating customer?", "Confirmation", MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
         #endregion
     }

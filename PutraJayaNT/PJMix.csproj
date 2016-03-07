@@ -94,42 +94,14 @@
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601300731507_Update1.cs" />
-    <Compile Include="Migrations\201601300731507_Update1.Designer.cs">
-      <DependentUpon>201601300731507_Update1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602010442394_Update2.cs" />
-    <Compile Include="Migrations\201602010442394_Update2.Designer.cs">
-      <DependentUpon>201602010442394_Update2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602141031105_Update3.cs" />
-    <Compile Include="Migrations\201602141031105_Update3.Designer.cs">
-      <DependentUpon>201602141031105_Update3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602141033097_Update4.cs" />
-    <Compile Include="Migrations\201602141033097_Update4.Designer.cs">
-      <DependentUpon>201602141033097_Update4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602150139258_Update5.cs" />
-    <Compile Include="Migrations\201602150139258_Update5.Designer.cs">
-      <DependentUpon>201602150139258_Update5.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602150706265_Update6.cs" />
-    <Compile Include="Migrations\201602150706265_Update6.Designer.cs">
-      <DependentUpon>201602150706265_Update6.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602161045145_Update7.cs" />
-    <Compile Include="Migrations\201602161045145_Update7.Designer.cs">
-      <DependentUpon>201602161045145_Update7.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602290226524_Update8.cs" />
-    <Compile Include="Migrations\201602290226524_Update8.Designer.cs">
-      <DependentUpon>201602290226524_Update8.cs</DependentUpon>
+    <Compile Include="Migrations\201603041709518_Update1.cs" />
+    <Compile Include="Migrations\201603041709518_Update1.Designer.cs">
+      <DependentUpon>201603041709518_Update1.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Date.cs" />
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
-    <Compile Include="Models\Sales\AlternativeSalesPrice.cs" />
+    <Compile Include="Models\Inventory\AlternativeSalesPrice.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransactionLine.cs" />
     <Compile Include="Models\StockCorrection\AdjustStockTransaction.cs" />
     <Compile Include="Models\StockCorrection\MoveStockTransaction.cs" />
@@ -208,7 +180,12 @@
       <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\DatasetObjects\SalesReturnInvoice.cs" />
-    <Compile Include="Utilities\DatabaseHelper.cs" />
+    <Compile Include="Utilities\Database\Customer\DatabaseCustomerGroupHelper.cs" />
+    <Compile Include="Utilities\Database\Customer\DatabaseCustomerHelper.cs" />
+    <Compile Include="Utilities\Database\Item\DatabaseItemAlternativeSalesPriceHelper.cs" />
+    <Compile Include="Utilities\Database\Item\DatabaseItemCategoryHelper.cs" />
+    <Compile Include="Utilities\Database\Item\DatabaseItemHelper.cs" />
+    <Compile Include="Utilities\Database\DatabaseSupplierHelper.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
     <Compile Include="Models\Inventory\Stock.cs" />
     <Compile Include="Models\Sales\SalesTransaction.cs" />
@@ -232,8 +209,9 @@
     <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
-    <Compile Include="ViewModels\CategoryVM.cs" />
-    <Compile Include="ViewModels\CustomerGroupVM.cs" />
+    <Compile Include="ViewModels\Customers\CategoryVM.cs" />
+    <Compile Include="ViewModels\Customers\CustomerGroupVM.cs" />
+    <Compile Include="ViewModels\Customers\AlternativeSalesPriceVM.cs" />
     <Compile Include="ViewModels\Customers\BrowseSalesTransactionsVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionMultiPurposeVM.cs" />
     <Compile Include="ViewModels\Customers\SalesCollectionListVM.cs" />
@@ -243,34 +221,37 @@
     <Compile Include="ViewModels\Customers\SalesReturnTransactionVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesTransactionVM.cs" />
-    <Compile Include="ViewModels\CustomerVM.cs" />
+    <Compile Include="ViewModels\Customers\CustomerVM.cs" />
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionLineVM.cs" />
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionVM.cs" />
     <Compile Include="ViewModels\Inventory\CloseStockVM.cs" />
     <Compile Include="ViewModels\Inventory\MoveStockTransactionLineVM.cs" />
     <Compile Include="ViewModels\Inventory\MoveStockVM.cs" />
-    <Compile Include="ViewModels\ItemVM.cs" />
+    <Compile Include="ViewModels\Inventory\ItemVM.cs" />
     <Compile Include="ViewModels\Accounting\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\Accounting\LedgerTransactionLineVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\Master\Customers\MasterCustomersEditVM.cs" />
     <Compile Include="ViewModels\Master\Customers\MasterCustomersNewEntryVM.cs" />
     <Compile Include="ViewModels\Master\Customers\MasterCustomersVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryEditAddAlternativeSalesPriceVM.cs" />
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryEditAddSupplierVM.cs" />
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryEditVM.cs" />
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryNewEntryVM.cs" />
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryVM.cs" />
     <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
     <Compile Include="ViewModels\Master\MasterSalesmanVM.cs" />
-    <Compile Include="ViewModels\Master\MasterSuppliersVM.cs" />
-    <Compile Include="ViewModels\Master\Reports\CommissionsReportVM.cs" />
-    <Compile Include="ViewModels\Master\Reports\InventoryReportLineVM.cs" />
-    <Compile Include="ViewModels\Master\Reports\InventoryReportVM.cs" />
-    <Compile Include="ViewModels\Master\Reports\OverallSalesReportVM.cs" />
-    <Compile Include="ViewModels\Master\Reports\PurchasesReportVM.cs" />
-    <Compile Include="ViewModels\Master\Reports\SalesReportVM.cs" />
-    <Compile Include="ViewModels\Master\Reports\StockBalanceLineVM.cs" />
-    <Compile Include="ViewModels\Master\Reports\StockBalancesReportVM.cs" />
+    <Compile Include="ViewModels\Master\Suppliers\MasterSuppliersEditVM.cs" />
+    <Compile Include="ViewModels\Master\Suppliers\MasterSuppliersNewEntryVM.cs" />
+    <Compile Include="ViewModels\Master\Suppliers\MasterSuppliersVM.cs" />
+    <Compile Include="ViewModels\Reports\CommissionsReportVM.cs" />
+    <Compile Include="ViewModels\Reports\InventoryReportLineVM.cs" />
+    <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
+    <Compile Include="ViewModels\Reports\OverallSalesReportVM.cs" />
+    <Compile Include="ViewModels\Reports\PurchasesReportVM.cs" />
+    <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
+    <Compile Include="ViewModels\Reports\StockBalanceLineVM.cs" />
+    <Compile Include="ViewModels\Reports\StockBalancesReportVM.cs" />
     <Compile Include="ViewModels\Salesman\SalesCommissionVM.cs" />
     <Compile Include="ViewModels\Salesman\SalesmanVM.cs" />
     <Compile Include="ViewModels\Suppliers\PaymentListVM.cs" />
@@ -279,10 +260,10 @@
     <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseTransactionLineVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseTransactionVM.cs" />
-    <Compile Include="ViewModels\SupplierVM.cs" />
+    <Compile Include="ViewModels\Suppliers\SupplierVM.cs" />
     <Compile Include="ViewModels\Test\TestVM.cs" />
     <Compile Include="ViewModels\VerificationVM.cs" />
-    <Compile Include="ViewModels\WarehouseVM.cs" />
+    <Compile Include="ViewModels\Inventory\WarehouseVM.cs" />
     <Compile Include="Views\Accounting\BalanceSheetView.xaml.cs">
       <DependentUpon>BalanceSheetView.xaml</DependentUpon>
     </Compile>
@@ -337,6 +318,9 @@
     <Compile Include="Views\Master\Customers\MasterCustomersView.xaml.cs">
       <DependentUpon>MasterCustomersView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Master\Inventory\MasterInventoryEditAddAlternativeSalesPriceView.xaml.cs">
+      <DependentUpon>MasterInventoryEditAddAlternativeSalesPriceView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Master\Inventory\MasterInventoryEditAddSupplierView.xaml.cs">
       <DependentUpon>MasterInventoryEditAddSupplierView.xaml</DependentUpon>
     </Compile>
@@ -345,6 +329,9 @@
     </Compile>
     <Compile Include="Views\Master\MasterSalesmanView.xaml.cs">
       <DependentUpon>MasterSalesmanView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Suppliers\MasterSuppliersEditView.xaml.cs">
+      <DependentUpon>MasterSuppliersEditView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Menu\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
@@ -361,7 +348,7 @@
     <Compile Include="Views\Master\LedgerView.xaml.cs">
       <DependentUpon>LedgerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Master\MasterSuppliersView.xaml.cs">
+    <Compile Include="Views\Master\Suppliers\MasterSuppliersView.xaml.cs">
       <DependentUpon>MasterSuppliersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reports\OverallSalesReportView.xaml.cs">
@@ -538,6 +525,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Master\Inventory\MasterInventoryEditAddAlternativeSalesPriceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Master\Inventory\MasterInventoryEditAddSupplierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -549,6 +540,10 @@
     <Page Include="Views\Master\MasterSalesmanView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Master\Suppliers\MasterSuppliersEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Menu\HomeView.xaml">
       <SubType>Designer</SubType>
@@ -570,7 +565,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Master\MasterSuppliersView.xaml">
+    <Page Include="Views\Master\Suppliers\MasterSuppliersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -623,12 +618,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
-    <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
     <None Include="packages.config" />
-    <None Include="Properties\DataSources\PutraJayaNT.ViewModels.Customers.SalesTransactionLineVM.datasource" />
-    <None Include="Properties\DataSources\PutraJayaNT.ViewModels.Customers.SalesTransactionLineVM1.datasource" />
-    <None Include="Properties\DataSources\PutraJayaNT.ViewModels.Customers.SalesTransactionVM.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -638,29 +628,8 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601300731507_Update1.resx">
-      <DependentUpon>201601300731507_Update1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602010442394_Update2.resx">
-      <DependentUpon>201602010442394_Update2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602141031105_Update3.resx">
-      <DependentUpon>201602141031105_Update3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602141033097_Update4.resx">
-      <DependentUpon>201602141033097_Update4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602150139258_Update5.resx">
-      <DependentUpon>201602150139258_Update5.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602150706265_Update6.resx">
-      <DependentUpon>201602150706265_Update6.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602161045145_Update7.resx">
-      <DependentUpon>201602161045145_Update7.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602290226524_Update8.resx">
-      <DependentUpon>201602290226524_Update8.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201603041709518_Update1.resx">
+      <DependentUpon>201603041709518_Update1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -708,7 +677,9 @@
       <Name>MVVMFramework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\Supplier\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

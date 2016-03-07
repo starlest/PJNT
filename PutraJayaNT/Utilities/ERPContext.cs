@@ -20,7 +20,7 @@ namespace PutraJayaNT.Utilities
 
         public virtual DbSet<Stock> Stocks { get; set; }
         public virtual DbSet<Item> Inventory { get; set; }
-        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Category> ItemCategories { get; set; }
         public virtual DbSet<Warehouse> Warehouses { get; set; }
         public virtual DbSet<StockBalance> StockBalances { get; set; }
 

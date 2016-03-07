@@ -1,36 +1,45 @@
 ﻿using MVVMFramework;
-using PutraJayaNT.Models;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using PutraJayaNT.Utilities.Database;
+using PutraJayaNT.Utilities.Database.Item;
+using PutraJayaNT.ViewModels.Inventory;
 using PutraJayaNT.Views.Master.Inventory;
 
 namespace PutraJayaNT.ViewModels.Master.Inventory
 {
     public class MasterInventoryVM : ViewModelBase
     {
+        #region Backing Fields
+        private bool _isActiveChecked;
         private ItemVM _selectedItem;
         private CategoryVM _selectedCategory;
-        private Supplier _selectedSupplier;
+        private SupplierVM _selectedSupplier;
         private ItemVM _selectedLine;
 
         private ICommand _editItemCommand;
-        private ICommand _activateCommand;
+        private ICommand _activateItemCommand;
+        private ICommand _searchCommand;
+        #endregion
 
         public MasterInventoryVM()
         {
             Items = new ObservableCollection<ItemVM>();
-            CategoriesWithoutAll = new ObservableCollection<CategoryVM>();
             Categories = new ObservableCollection<CategoryVM>();
-            Suppliers = new ObservableCollection<Supplier>();
+            CategoriesWithAll = new ObservableCollection<CategoryVM>();
+            Suppliers = new ObservableCollection<SupplierVM>();
             DisplayedItems = new ObservableCollection<ItemVM>();
             UpdateItems();
             UpdateCategories();
             UpdateSuppliers();
-            SelectedCategory = Categories.FirstOrDefault();
+            SelectedCategory = CategoriesWithAll.FirstOrDefault();
+            _isActiveChecked = true;
+
+            UpdateDisplayedItems();
 
             NewEntryVM = new MasterInventoryNewEntryVM(this);
         }
@@ -40,60 +49,33 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
         #region Collections
         public ObservableCollection<ItemVM> Items { get; }
 
-        public ObservableCollection<Supplier> Suppliers { get; }
+        public ObservableCollection<SupplierVM> Suppliers { get; }
 
         public ObservableCollection<ItemVM> DisplayedItems { get; }
 
-        public ObservableCollection<CategoryVM> Categories { get; }
+        public ObservableCollection<CategoryVM> CategoriesWithAll { get; }
 
-        public ObservableCollection<CategoryVM> CategoriesWithoutAll { get; }
+        public ObservableCollection<CategoryVM> Categories { get; }
         #endregion
+
+        #region Properties
+        public bool IsActiveChecked
+        {
+            get { return _isActiveChecked; }
+            set { SetProperty(ref _isActiveChecked, value, "IsActiveChecked"); }
+        }
 
         public CategoryVM SelectedCategory
         {
             get { return _selectedCategory; }
             set
-            {
-                if (value == null)
-                {
-                    SetProperty(ref _selectedCategory, null, () => SelectedCategory);
-                    return;
-                }
+            { 
+                SetProperty(ref _selectedCategory, value, "SelectedCategory");
 
-                UpdateCategories();
+                if (_selectedCategory == null) return;
+
                 SelectedItem = null;
                 SelectedSupplier = null;
-
-                UpdateItems();
-
-                foreach (var category in Categories)
-                {
-                    if (value.ID.Equals(category.ID))
-                    {
-                        value = category;
-                        break;
-                    }
-                }
-
-                SetProperty(ref _selectedCategory, value, () => SelectedCategory);
-
-                DisplayedItems.Clear();
-
-                if (_selectedCategory.Name == "All")
-                {
-                    foreach (var item in Items)
-                    {
-                        DisplayedItems.Add(item);
-                    }
-                }
-
-                else
-                {
-                    foreach (var item in Items)
-                    {
-                        if (item.Category.Name == _selectedCategory.Name) DisplayedItems.Add(item);
-                    }
-                }
             }
         }
 
@@ -102,58 +84,26 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
             get { return _selectedItem; }
             set
             {
-                if (value == null)
-                {
-                    SetProperty(ref _selectedItem, null, () => SelectedItem);
-                    return;
-                }
+                SetProperty(ref _selectedItem, value, "SelectedItem");
+
+                if (_selectedItem == null) return;
 
                 SelectedCategory = null;
                 SelectedSupplier = null;
-                UpdateItems();
-
-                if (Items.Contains(value))
-                {
-                    DisplayedItems.Clear();
-                    foreach (var item in Items)
-                    {
-                        if (item.ID == value.ID)
-                        {
-                            DisplayedItems.Add(item);
-                            SetProperty(ref _selectedItem, item, () => SelectedItem);
-                            break;
-                        }
-                    }
-                }
             }
         }
 
-        public Supplier SelectedSupplier
+        public SupplierVM SelectedSupplier
         {
             get { return _selectedSupplier; }
             set
             {
-                if (value == null)
-                {
-                    SetProperty(ref _selectedSupplier, null, () => SelectedSupplier);
-                    return;
-                }
+                SetProperty(ref _selectedSupplier, value, "SelectedSupplier");
+
+                if (_selectedSupplier == null) return;
+                
                 SelectedCategory = null;
                 SelectedItem = null;
-                UpdateSuppliers();
-
-                if (Suppliers.Contains(value))
-                {
-                    UpdateItems();
-                    SetProperty(ref _selectedSupplier, value, () => SelectedSupplier);
-                    DisplayedItems.Clear();
-
-                    foreach (var item in Items)
-                    {
-                        if (item.Suppliers.Contains(value))
-                            DisplayedItems.Add(item);
-                    }
-                }
             }
         }
 
@@ -161,6 +111,36 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
         {
             get { return _selectedLine; }
             set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
+        }
+        #endregion
+
+        #region Commands
+        public ICommand SearchCommand
+        {
+            get
+            {
+                return _searchCommand ?? (_searchCommand = new RelayCommand(() =>
+                {
+                    UpdateDisplayedItems();
+                    UpdateCategories();
+                    UpdateItems();
+                    UpdateSuppliers();
+                }));
+            }
+        }
+
+        public ICommand ActivateItemCommand
+        {
+            get
+            {
+                return _activateItemCommand ?? (_activateItemCommand = new RelayCommand(() =>
+                {
+                    if (!IsThereLineSelected() || !IsConfirmationYes()) return;
+                    if (_selectedLine.Active) DeactivateItemInDatabase(_selectedLine.Model);
+                    else ActivateItemInDatabase(_selectedLine.Model);
+                    _selectedLine.Active = !_selectedLine.Active;
+                }));
+            }
         }
 
         public ICommand EditItemCommand
@@ -171,9 +151,11 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
                 {
                     if (!IsEditItemSelected()) return;
                     ShowEditWindow();
+                    UpdateItems();
                 }));
             }
         }
+        #endregion
 
         #region Helper Methods
         private void ShowEditWindow()
@@ -194,102 +176,134 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
             return false;
         }
 
-        public ICommand ActivateCommand
-        {
-            get
-            {
-                return _activateCommand ?? (_activateCommand = new RelayCommand(() =>
-                {
-                    if (_selectedLine != null && MessageBox.Show(string.Format("Confirm activation/deactivation of {0}?", SelectedLine.Name), "Confirmation", MessageBoxButton.YesNo)
-                    == MessageBoxResult.Yes)
-                    {
-                        using (var context = new ERPContext())
-                        {
-                            var item = context.Inventory
-                            .FirstOrDefault(e => e.ItemID.Equals(_selectedLine.ID));
-
-                            if (_selectedLine.Active == true)
-                            {
-                                _selectedLine.Active = false;
-                                _selectedLine.Suppliers.Clear();
-                                item.Active = false;
-                                foreach (var supplier in item.Suppliers.ToList())
-                                    item.Suppliers.Remove(supplier);
-                            }
-                            else
-                            {
-                                _selectedLine.Active = true;
-                                item.Active = true;
-                            }
-
-                            context.SaveChanges();
-                        }
-                    }
-                }));
-            }
-        }
-
         private void UpdateCategories()
         {
+            var oldSelectedCategory = _selectedCategory;
+
             Categories.Clear();
-            CategoriesWithoutAll.Clear();
+            CategoriesWithAll.Clear(); 
+            CategoriesWithAll.Add(new CategoryVM { Model = new Category { Name = "All" } });
 
-            // Load all categories for selection
-            using (var uow = new UnitOfWork())
+            var categoriesFromDatabase = DatabaseItemCategoryHelper.GetAll();
+            foreach (var categoryVM in categoriesFromDatabase.Select(category => new CategoryVM {Model = category}).Where(categoryVM => !CategoriesWithAll.Contains(categoryVM)))
             {
-                Categories.Add(new CategoryVM { Model= new Category { Name = "All" }});
-
-                var categories = uow.CategoryRepository.GetAll().OrderBy(e => e.Name);
-                foreach (var category in categories)
-                {
-                    var categoryVM = new CategoryVM {Model = category};
-                    if (!Categories.Contains(categoryVM))
-                    {
-                        Categories.Add(categoryVM);
-                        CategoriesWithoutAll.Add(categoryVM);
-                    }
-                }
+                CategoriesWithAll.Add(categoryVM);
+                Categories.Add(categoryVM);
             }
+
+            UpdateSelectedCategory(oldSelectedCategory);
+        }
+
+        private void UpdateSelectedCategory(CategoryVM oldSelectedCategory)
+        {
+            if (oldSelectedCategory == null) return;
+            SelectedCategory = CategoriesWithAll.FirstOrDefault(category => category.ID.Equals(oldSelectedCategory.ID));
         }
 
         public void UpdateItems()
         {
-            // Update items from database
+            var oldSelectedItem = _selectedItem;
+
             Items.Clear();
+            var itemsFromDatabase = DatabaseItemHelper.GetAll();
+            foreach (var item in itemsFromDatabase)
+                Items.Add(new ItemVM { Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault() });
 
-            using (var context = new ERPContext())
-            {
-                var items = context.Inventory
-                    .Include("AlternativeSalesPrices")
-                    .Include("Category")
-                    .Include("Suppliers")
-                    .OrderBy(e => e.Category.Name)
-                    .ThenBy(e => e.ItemID)
-                    .ToList();
+            UpdateSelectedItem(oldSelectedItem);
+        }
 
-                foreach (var item in items)
-                {
-                    Items.Add(new ItemVM { Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault() });
-                }
-
-                UpdateSuppliers();
-            }
+        private void UpdateSelectedItem(ItemVM oldSelectedItem)
+        {
+            if (oldSelectedItem == null) return;
+            SelectedItem = Items.FirstOrDefault(item => item.ID == oldSelectedItem.ID);
         }
 
         private void UpdateSuppliers()
         {
-            // Update suppliers from database
-            Suppliers.Clear();
+            var oldSelectedSupplier = _selectedSupplier;
 
-            using (var uow = new UnitOfWork())
+            Suppliers.Clear();
+            var suppliersFromDatabase = DatabaseSupplierHelper.GetAll();
+            foreach (var supplier in suppliersFromDatabase)
+                Suppliers.Add(new SupplierVM { Model= supplier });
+
+            UpdateSelectedSupplier(oldSelectedSupplier);
+        }
+
+        private void UpdateSelectedSupplier(SupplierVM oldSelectedSupplier)
+        {
+            if (oldSelectedSupplier == null) return;
+            SelectedSupplier = Suppliers.FirstOrDefault(supplier => supplier.ID.Equals(oldSelectedSupplier.ID));
+        }
+
+        private void DisplayCategoryItems()
+        {
+            if (_selectedCategory.Name == "All")
             {
-                var suppliers = uow.SupplierRepository.GetAll().OrderBy(supplier => supplier.Name);
-                foreach (var supplier in suppliers)
-                {
-                    if (supplier.Active == true && supplier.Name != "-")
-                        Suppliers.Add(supplier);
-                }
+                foreach (var item in Items.Where(item => item.Active.Equals(_isActiveChecked)))
+                    DisplayedItems.Add(item);
             }
+
+            else
+            {
+                foreach (
+                    var item in
+                        Items.Where(item => item.Category.ID.Equals(_selectedCategory.ID) && item.Active.Equals(_isActiveChecked)))
+                    DisplayedItems.Add(item);
+            }
+        }
+
+        private void DisplaySupplierItems()
+        {
+            foreach (
+                var item in
+                    Items.Where(item => item.Suppliers.Contains(_selectedSupplier.Model) && item.Active.Equals(_isActiveChecked)))
+                DisplayedItems.Add(item);
+        }
+
+        public void UpdateDisplayedItems()
+        {
+            UpdateItems();
+            DisplayedItems.Clear();
+            if (_selectedCategory != null) DisplayCategoryItems();
+            else if (_selectedItem != null)
+            {
+                if (_selectedItem.Active.Equals(_isActiveChecked)) DisplayedItems.Add(_selectedItem);
+            }
+            else if (_selectedSupplier != null) DisplaySupplierItems();
+        }
+
+        public static void DeactivateItemInDatabase(Item item)
+        {
+            using (var context = new ERPContext())
+            {
+                DatabaseItemHelper.AttachToObjectFromDatabaseContext(context, ref item);
+                item.Active = false;
+                context.SaveChanges();
+            }
+        }
+
+        public static void ActivateItemInDatabase(Item item)
+        {
+            using (var context = new ERPContext())
+            {
+                DatabaseItemHelper.AttachToObjectFromDatabaseContext(context, ref item);
+                item.Active = true;
+                context.SaveChanges();
+            }
+        }
+
+        private bool IsThereLineSelected()
+        {
+            if (_selectedLine != null) return true;
+            MessageBox.Show("Please select a line.", "No Selection", MessageBoxButton.OK);
+            return false;
+        }
+
+        private static bool IsConfirmationYes()
+        {
+            return MessageBox.Show("Confirm activating/deactivating item?", "Confirmation", MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
         #endregion
     }

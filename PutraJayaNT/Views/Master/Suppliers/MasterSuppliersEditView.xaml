@@ -1,0 +1,40 @@
+﻿<mui:ModernWindow x:Class="PutraJayaNT.Views.Master.Suppliers.MasterSuppliersEditView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                  xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+                  mc:Ignorable="d" 
+                  Height="400" 
+                  Width="800"
+                  ResizeMode="NoResize"
+                  Title="Edit Supplier"
+                  Style="{StaticResource BlankWindow}">
+    <Window.Resources>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="28" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height ="1*" />
+            <RowDefinition Height ="1*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EditName, Mode=TwoWay}" />
+        <TextBlock Grid.Row="0" Grid.Column="2" Text="Address:" />
+        <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding EditAddress, Mode=TwoWay}" />
+        <TextBlock Grid.Row="0" Grid.Column="4" Text="GST ID:" />
+        <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding EditGSTID, Mode=TwoWay}" />
+        <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="50" Content="Confirm" Command="{Binding ConfirmEditCommand}" />
+        <Button Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" Margin="50" Content="Cancel" Click="Cancel_Button_Clicked" />
+    </Grid>
+</mui:ModernWindow>

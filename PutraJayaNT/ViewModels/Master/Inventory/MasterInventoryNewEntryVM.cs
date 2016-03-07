@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -15,8 +16,8 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
         #region Backing Fields
         private string _newEntryID;
         private string _newEntryName;
-        private Category _newEntryCategory;
-        private Supplier _newEntrySupplier;
+        private CategoryVM _newEntryCategory;
+        private SupplierVM _newEntrySupplier;
         private int _newEntryPiecesPerUnit;
         private string _newEntryUnitName;
         private decimal? _newEntryPurchasePrice;
@@ -30,9 +31,12 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
         public MasterInventoryNewEntryVM(MasterInventoryVM parentVM)
         {
             _parentVM = parentVM;
-            
             _newEntryPiecesPerUnit = 1;
         }
+
+        public ObservableCollection<CategoryVM> Categories => _parentVM.Categories;
+
+        public ObservableCollection<SupplierVM> Suppliers => _parentVM.Suppliers; 
 
         #region Properties
         public string NewEntryID
@@ -47,13 +51,13 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
             set { SetProperty(ref _newEntryName, value, "NewEntryName"); }
         }
 
-        public Category NewEntryCategory
+        public CategoryVM NewEntryCategory
         {
             get { return _newEntryCategory; }
             set { SetProperty(ref _newEntryCategory, value, "NewEntryCategory"); }
         }
 
-        public Supplier NewEntrySupplier
+        public SupplierVM NewEntrySupplier
         {
             get { return _newEntrySupplier; }
             set { SetProperty(ref _newEntrySupplier, value, "NewEntrySupplier"); }
@@ -82,7 +86,9 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
             get { return _newEntryPurchasePrice; }
             set { SetProperty(ref _newEntryPurchasePrice, value, "NewEntryPurchasePrice"); }
         }
+        #endregion
 
+        #region Commands
         public ICommand NewEntryCommand
         {
             get
@@ -94,6 +100,8 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
                     var newEntryItem = MakeNewEntryItem();
                     AddItemToDatabase(newEntryItem);
                     ResetEntryFields();
+                    _parentVM.UpdateItems();
+                    _parentVM.UpdateDisplayedItems();
                 }));
             }
         }
@@ -112,7 +120,7 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
 
         private static void AttachItemCategoryToDatabaseContext(ERPContext context, Item item)
         {
-            item.Category = context.Categories.First(category => category.ID.Equals(item.Category.ID));
+            item.Category = context.ItemCategories.First(category => category.ID.Equals(item.Category.ID));
         }
 
         private static void AddItemToDatabaseContext(ERPContext context, Item item)
@@ -122,7 +130,7 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
             context.Inventory.Add(item);
         }
 
-        private static void AddItemToDatabase(Item item)
+        public static void AddItemToDatabase(Item item)
         {
             using (var context = new ERPContext())
             {
@@ -139,13 +147,14 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
             {
                 ItemID = _newEntryID,
                 Name = _newEntryName,
-                Category = _newEntryCategory,
+                Category = _newEntryCategory.Model,
                 UnitName = _newEntryUnitName,
                 PiecesPerUnit = _newEntryPiecesPerUnit,
                 PurchasePrice = (decimal) _newEntryPurchasePrice/_newEntryPiecesPerUnit,
-                SalesPrice = (decimal) _newEntrySalesPrice/_newEntryPiecesPerUnit
+                SalesPrice = (decimal) _newEntrySalesPrice/_newEntryPiecesPerUnit,
+                Suppliers = new ObservableCollection<Supplier>()
             };
-            newEntryItem.Suppliers.Add(_newEntrySupplier);
+            newEntryItem.Suppliers.Add(_newEntrySupplier.Model);
             return newEntryItem;
         }
 

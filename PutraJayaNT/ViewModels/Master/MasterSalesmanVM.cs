@@ -140,7 +140,7 @@
                                 var newCommission = new SalesCommission
                                 {
                                     Salesman = context.Salesmans.Where(e => e.ID.Equals(_selectedSalesman.ID)).FirstOrDefault(),
-                                    Category = context.Categories.Where(e => e.ID.Equals(_selectedLine.Category.ID)).FirstOrDefault(),
+                                    Category = context.ItemCategories.Where(e => e.ID.Equals(_selectedLine.Category.ID)).FirstOrDefault(),
                                     Percentage = _selectedLine.Percentage
                                 };
                                 context.SalesCommissions.Add(newCommission);
@@ -179,7 +179,7 @@
 
             using (var context = new ERPContext())
             {
-                var categories = context.Categories.OrderBy(e => e.Name).ToList();
+                var categories = context.ItemCategories.OrderBy(e => e.Name).ToList();
 
                 foreach (var category in categories)
                 {

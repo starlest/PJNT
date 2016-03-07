@@ -1,8 +1,9 @@
-﻿using MVVMFramework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MVVMFramework;
 
 namespace PutraJayaNT.Models.Inventory
 {
+    // TODO rename to Category
     public class Category : ObservableObject
     {
         public int ID { get; set; }
@@ -15,7 +16,7 @@ namespace PutraJayaNT.Models.Inventory
         {
             var category = obj as Category;
             if (category == null) return false;
-            else return this.ID.Equals(category.ID);
+            return ID.Equals(category.ID);
         }
 
         public override int GetHashCode()

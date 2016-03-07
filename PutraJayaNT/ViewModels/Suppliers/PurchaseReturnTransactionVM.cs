@@ -11,6 +11,7 @@ using System.Linq;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
+using PutraJayaNT.ViewModels.Inventory;
 
 namespace PutraJayaNT.ViewModels.Suppliers
 {
