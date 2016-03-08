@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using PutraJayaNT.ViewModels.Sales;
 
 namespace PutraJayaNT.Views.Customers
 {

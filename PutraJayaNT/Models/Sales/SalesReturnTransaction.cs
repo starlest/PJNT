@@ -1,5 +1,4 @@
-﻿using PutraJayaNT.Models.Sales;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,6 +20,6 @@ namespace PutraJayaNT.Models.Sales
         [Required]
         public decimal NetTotal { get; set; }
 
-        public virtual List<SalesReturnTransactionLine> TransactionLines { get; set; }
+        public virtual List<SalesReturnTransactionLine> SalesReturnTransactionLines { get; set; }
     }
 }

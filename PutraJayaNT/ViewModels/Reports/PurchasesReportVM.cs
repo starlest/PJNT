@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
-using System.Windows;
-using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Inventory;
-using PutraJayaNT.ViewModels.Suppliers;
-
-namespace PutraJayaNT.ViewModels.Reports
+﻿namespace PutraJayaNT.ViewModels.Reports
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Windows;
+    using MVVMFramework;
+    using Models;
+    using Models.Inventory;
+    using Utilities;
+    using Inventory;
+    using Suppliers;
+
     class PurchasesReportVM : ViewModelBase
     {
         ObservableCollection<Supplier> _suppliers;

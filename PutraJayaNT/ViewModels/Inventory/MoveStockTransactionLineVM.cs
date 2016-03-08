@@ -1,9 +1,9 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Models.StockCorrection;
-
-namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace PutraJayaNT.ViewModels.Inventory
 {
+    using MVVMFramework;
+    using Models.Inventory;
+    using Models.StockCorrection;
+
     public class MoveStockTransactionLineVM : ViewModelBase<MoveStockTransactionLine>
     {
         int _units;

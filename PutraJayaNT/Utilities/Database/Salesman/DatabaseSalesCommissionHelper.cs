@@ -1,4 +1,5 @@
-﻿using PutraJayaNT.Models.Salesman;
+﻿using System.Collections.Generic;
+using PutraJayaNT.Models.Salesman;
 
 namespace PutraJayaNT.Utilities.Database.Salesman
 {
@@ -13,11 +14,11 @@ namespace PutraJayaNT.Utilities.Database.Salesman
         //        return context.Salesmans.Include("SalesCommissions").OrderBy(salesman => salesman.Name).ToList();
         //}
 
-        //public static IEnumerable<Salesman> Get(Func<Salesman, bool> condition)
-        //{
-        //    using (var context = new ERPContext())
-        //        return context.Salesmans.Include("SalesCommissions").Where(condition).OrderBy(salesman => salesman.Name).ToList();
-        //}
+        public static IEnumerable<SalesCommission> Get(Func<SalesCommission, bool> condition)
+        {
+            using (var context = new ERPContext())
+                return context.SalesCommissions.Include("Salesman").Include("Category").Where(condition).OrderBy(salesCommision => salesCommision.Salesman.Name).ToList();
+        }
 
         public static SalesCommission FirstOrDefault(Func<SalesCommission, bool> condition)
         {

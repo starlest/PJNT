@@ -1,15 +1,15 @@
-﻿using System.Windows.Input;
-using MVVMFramework;
-using PutraJayaNT.Utilities;
-using System.Linq;
-using System.Windows;
-using PutraJayaNT.Models.Accounting;
-using System;
-using System.Transactions;
-using PutraJayaNT.Models.Inventory;
-
-namespace PutraJayaNT.ViewModels.Test
+﻿namespace PutraJayaNT.ViewModels.Test
 {
+    using System.Windows.Input;
+    using MVVMFramework;
+    using Utilities;
+    using System.Linq;
+    using System.Windows;
+    using Models.Accounting;
+    using System;
+    using System.Transactions;
+    using Models.Inventory;
+
     class TestVM : ViewModelBase
     {
         ICommand _checkSalesTransactionsCommand;
@@ -30,13 +30,13 @@ namespace PutraJayaNT.ViewModels.Test
                     using (var context = new ERPContext())
                     {
                         var transactions = context.SalesTransactions
-                        .Include("TransactionLines")
+                        .Include("SalesTransactionLines")
                         .ToList();
 
                         foreach (var transaction in transactions)
                         {
                             decimal grossAmount = 0M;
-                            foreach (var line in transaction.TransactionLines)
+                            foreach (var line in transaction.SalesTransactionLines)
                             {
                                 var actualTotal = line.Quantity * (line.SalesPrice - line.Discount);
                                 if (line.Total != actualTotal)
@@ -309,7 +309,7 @@ namespace PutraJayaNT.ViewModels.Test
                         .Include("LedgerTransactionLines")
                         .ToList();
                         var accounts = context.Ledger_Accounts
-                          .Include("TransactionLines")
+                          .Include("LedgerTransactionLines")
                           .Include("LedgerGeneral")
                           .ToList();
 
@@ -402,7 +402,7 @@ namespace PutraJayaNT.ViewModels.Test
 
                         foreach (var a in accounts)
                         {
-                            foreach (var h in a.TransactionLines)
+                            foreach (var h in a.LedgerTransactionLines)
                             {
                                 var found = false;
                                 foreach (var z in transactions)
@@ -437,7 +437,7 @@ namespace PutraJayaNT.ViewModels.Test
                     using (var context = new ERPContext())
                     {
                         var accounts = context.Ledger_Accounts
-                        .Include("TransactionLines")
+                        .Include("LedgerTransactionLines")
                         .Include("LedgerGeneral")
                         .ToList();
                         var count = 0;
@@ -445,7 +445,7 @@ namespace PutraJayaNT.ViewModels.Test
                         {
                             decimal totalDebit = 0;
                             decimal totalCredit = 0;
-                            foreach (var line in a.TransactionLines.Where(e => e.LedgerTransaction.Date.Month == 3))
+                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 3))
                             {
                                 count++;
                                 if (line.Amount < 0) MessageBox.Show(string.Format("Check {0} - {1}", line.LedgerTransactionID, line.Seq), "Error", MessageBoxButton.OK);

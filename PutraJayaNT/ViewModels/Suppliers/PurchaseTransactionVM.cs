@@ -1,22 +1,20 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Input;
-using System.Linq;
-using PutraJayaNT.Models.Accounting;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Transactions;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Purchase;
-using System.Collections.Generic;
-using System.Data.Entity;
-
-namespace PutraJayaNT.ViewModels.Suppliers
+﻿namespace PutraJayaNT.ViewModels.Suppliers
 {
+    using MVVMFramework;
+    using Utilities;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Windows;
+    using System.Windows.Input;
+    using System.Linq;
+    using Models.Accounting;
+    using System.Transactions;
+    using Models.Inventory;
+    using Models;
+    using Models.Purchase;
+    using System.Collections.Generic;
+    using Utilities.Database;
+
     class PurchaseTransactionVM : ViewModelBase<PurchaseTransaction>
     {
         ObservableCollection<PurchaseTransactionLineVM> _lines;
@@ -612,14 +610,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
         private void UpdateSuppliers()
         {
             _suppliers.Clear();
-
-            using (var uow = new UnitOfWork())
-            {
-                var suppliers = uow.SupplierRepository.GetAll();
-                foreach (var supplier in suppliers)
-                    if (supplier.Name != "-")
-                        _suppliers.Add(supplier);
-            }
+            var suppliers = DatabaseSupplierHelper.GetAll();
+            foreach (var supplier in suppliers)
+                _suppliers.Add(supplier);
         }
 
         private void UpdateWarehouses()

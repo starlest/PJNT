@@ -1,19 +1,21 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
-using PutraJayaNT.Models.Inventory;
-using System.Data.Entity.Infrastructure;
-using PutraJayaNT.Models;
 using Microsoft.Reporting.WinForms;
-using System.Data;
+using MVVMFramework;
+using PutraJayaNT.Models;
+using PutraJayaNT.Models.Accounting;
+using PutraJayaNT.Models.Inventory;
+using PutraJayaNT.Models.Sales;
+using PutraJayaNT.Utilities;
+using PutraJayaNT.ViewModels.Customer;
+using PutraJayaNT.ViewModels.Sales;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
@@ -81,9 +83,9 @@ namespace PutraJayaNT.ViewModels.Customers
                 using (var context = new ERPContext())
                 {
                     var sr = context.SalesReturnTransactions
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Warehouse")
-                        .Include("TransactionLines.Item")
+                        .Include("SalesReturnTransactionLines")
+                        .Include("SalesReturnTransactionLines.Warehouse")
+                        .Include("SalesReturnTransactionLines.Item")
                         .Where(e => e.SalesReturnTransactionID.Equals(value))
                         .FirstOrDefault();
 
@@ -96,7 +98,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     Model = sr;
                     SelectedSalesTransactionID = Model.SalesTransaction.SalesTransactionID;
                     SalesReturnTransactionDate = Model.Date;
-                    foreach (var line in Model.TransactionLines)
+                    foreach (var line in Model.SalesReturnTransactionLines)
                         _salesReturnTransactionLines.Add(new SalesReturnTransactionLineVM { Model = line });
 
                     OnPropertyChanged("SalesReturnTransactionNetTotal");
@@ -409,9 +411,9 @@ namespace PutraJayaNT.ViewModels.Customers
                     using (var context = new ERPContext())
                     {
                         transaction = context.SalesReturnTransactions
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Item")
-                        .Include("TransactionLines.Warehouse")
+                        .Include("SalesReturnTransactionLines")
+                        .Include("SalesReturnTransactionLines.Item")
+                        .Include("SalesReturnTransactionLines.Warehouse")
                         .Include("SalesTransaction.Customer")
                         .Include("SalesTransaction")
                         .Where(e => e.SalesReturnTransactionID.Equals(Model.SalesReturnTransactionID))
@@ -450,9 +452,9 @@ namespace PutraJayaNT.ViewModels.Customers
             using (var context = new ERPContext())
             {
                 var transaction = context.SalesTransactions
-                    .Include("TransactionLines")
-                    .Include("TransactionLines.Item")
-                    .Include("TransactionLines.Warehouse")
+                    .Include("SalesReturnTransactionLines")
+                    .Include("SalesReturnTransactionLines.Item")
+                    .Include("SalesReturnTransactionLines.Warehouse")
                     .Include("Customer")
                     .Where(e => e.SalesTransactionID.Equals(salesTransactionID) && e.InvoiceIssued != null && e.Paid > 0)
                     .FirstOrDefault();
@@ -463,7 +465,7 @@ namespace PutraJayaNT.ViewModels.Customers
                 {
                     _salesTransactionLines.Clear();
 
-                    foreach (var line in transaction.TransactionLines.ToList())
+                    foreach (var line in transaction.SalesTransactionLines.ToList())
                         _salesTransactionLines.Add(new SalesTransactionLineVM { Model = line });
 
                     return true;
@@ -611,7 +613,7 @@ namespace PutraJayaNT.ViewModels.Customers
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
 
             int count = 1;
-            foreach (var line in transaction.TransactionLines)
+            foreach (var line in transaction.SalesReturnTransactionLines)
             {
                 DataRow dr = dt1.NewRow();
                 dr["LineNumber"] = count++;

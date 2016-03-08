@@ -1,10 +1,10 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-using System.Linq;
-
-namespace PutraJayaNT.ViewModels.Reports
+﻿namespace PutraJayaNT.ViewModels.Reports
 {
+    using MVVMFramework;
+    using Models;
+    using Models.Inventory;
+    using System.Linq;
+
     public class InventoryReportLineVM : ViewModelBase
     {
         Item _item;

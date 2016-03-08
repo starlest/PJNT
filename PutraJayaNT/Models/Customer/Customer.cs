@@ -1,9 +1,9 @@
-﻿using PutraJayaNT.Models.Sales;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PutraJayaNT.Models.Sales;
 
-namespace PutraJayaNT.Models
+namespace PutraJayaNT.Models.Customer
 {
     [Table("Customers")]
     public class Customer

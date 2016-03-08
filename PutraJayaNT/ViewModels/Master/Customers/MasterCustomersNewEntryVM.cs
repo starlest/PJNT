@@ -1,15 +1,15 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Input;
-using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.Utilities.Database.Customer;
-using PutraJayaNT.ViewModels.Customers;
-
-namespace PutraJayaNT.ViewModels.Master.Customers
+﻿namespace PutraJayaNT.ViewModels.Master.Customers
 {
+    using System.Collections.ObjectModel;
+    using System.Windows;
+    using System.Windows.Input;
+    using MVVMFramework;
+    using Models.Accounting;
+    using Utilities;
+    using Utilities.Database.Customer;
+    using Customer;
+    using Models.Customer;
+
     public class MasterCustomersNewEntryVM : ViewModelBase
     {
         #region Backing Fields

@@ -1,21 +1,23 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.Reports.Windows;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Customers;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
+﻿
 
 namespace PutraJayaNT.ViewModels.Reports
 {
+    using MVVMFramework;
+    using Models.Sales;
+    using PutraJayaNT.Reports.Windows;
+    using Utilities;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using Models.Customer;
+    using Customer;
+
     class OverallSalesReportVM : ViewModelBase
     {
-        ObservableCollection<SalesTransactionMultiPurposeVM> _lines;
+        ObservableCollection<Sales.SalesTransactionVM> _lines;
         ObservableCollection<CustomerVM> _customers;
 
         CustomerVM _selectedCustomer;
@@ -28,14 +30,14 @@ namespace PutraJayaNT.ViewModels.Reports
         public OverallSalesReportVM()
         {
             _customers = new ObservableCollection<CustomerVM>();
-            _lines = new ObservableCollection<SalesTransactionMultiPurposeVM>();
+            _lines = new ObservableCollection<Sales.SalesTransactionVM>();
             var currentDate = UtilityMethods.GetCurrentDate();
             _fromDate = currentDate.AddDays(-currentDate.Day + 1);
             _toDate = currentDate;
             UpdateCustomers();
         }
 
-        public ObservableCollection<SalesTransactionMultiPurposeVM> Lines
+        public ObservableCollection<Sales.SalesTransactionVM> Lines
         {
             get { return _lines; }
         }
@@ -164,7 +166,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
                 foreach (var st in salesTransactions)
                 {
-                    _lines.Add(new SalesTransactionMultiPurposeVM { Model = st });
+                    _lines.Add(new Sales.SalesTransactionVM { Model = st });
                     _total += st.Total;
                     _remaining += (st.Total - st.Paid);
                 }

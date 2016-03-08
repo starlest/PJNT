@@ -1,90 +1,73 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Transactions;
-using System.Windows;
-using System.Windows.Input;
+﻿using System;
+using PutraJayaNT.Utilities.Database.Customer;
+using PutraJayaNT.Utilities.Database.Ledger;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
-    class SalesCollectVM : ViewModelBase
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Transactions;
+    using System.Windows;
+    using System.Windows.Input;
+    using MVVMFramework;
+    using Models.Accounting;
+    using Models.Sales;
+    using Utilities;
+    using Customer;
+    using Sales;
+
+    internal class SalesCollectVM : ViewModelBase
     {
-        ObservableCollection<CustomerVM> _customers;
-        ObservableCollection<string> _collectmentModes;
-        ObservableCollection<SalesTransaction> _customerUnpaidSalesTransactions;
-        ObservableCollection<SalesTransactionLineVM> _selectedSalesTransactionLines;
+        private readonly DateTime _date;
 
-        CustomerVM _selectedCustomer;
-        DateTime _date;
-        SalesTransaction _selectedSalesTransaction;
-        string _selectedPaymentMode;
-        decimal _salesReturnCredits;
+        private CustomerVM _selectedCustomer;
+        private SalesTransaction _selectedSalesTransaction;
+        private string _selectedPaymentMode;
 
-        decimal _grossTotal;
-        decimal _discount;
-        decimal _salesExpense;
-        decimal _total;
+        private decimal _salesTransactionGrossTotal;
+        private decimal _salesTransactionDiscount;
+        private decimal _salesTransactionSalesExpense;
+        private decimal _salesTransactionTotal;
 
-        decimal _useCredits;
-        decimal _remaining;
-        decimal? _collect;
+        private decimal _salesReturnCredits;
+        private decimal _useCredits;
+        private decimal _remaining;
+        private decimal _collect;
 
-        ICommand _confirmPaymentCommand;
+        private ICommand _confirmPaymentCommand;
 
         public SalesCollectVM()
         {
-            _customers = new ObservableCollection<CustomerVM>();
-            _customerUnpaidSalesTransactions = new ObservableCollection<SalesTransaction>();
-            _selectedSalesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
-            _collectmentModes = new ObservableCollection<string>();
-            _date = UtilityMethods.GetCurrentDate().Date;
-            UpdatePaymentModes();
+            Customers = new ObservableCollection<CustomerVM>();
+            CustomerUnpaidSalesTransactions = new ObservableCollection<SalesTransaction>();
+            SelectedSalesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
+            PaymentModes = new ObservableCollection<string>();
+
             UpdateCustomers();
+            UpdatePaymentModes();
+
+            _date = UtilityMethods.GetCurrentDate().Date;
         }
 
-        public ObservableCollection<CustomerVM> Customers
-        {
-            get { return _customers; }
-        }
+        #region Collections
+        public ObservableCollection<CustomerVM> Customers { get; }
 
-        public ObservableCollection<string> PaymentModes
-        {
-            get { return _collectmentModes; }
-        }
+        public ObservableCollection<string> PaymentModes { get; }
 
-        public ObservableCollection<SalesTransaction> CustomerUnpaidSalesTransactions
-        {
-            get { return _customerUnpaidSalesTransactions; }
-        }
+        public ObservableCollection<SalesTransaction> CustomerUnpaidSalesTransactions { get; }
 
-        public ObservableCollection<SalesTransactionLineVM> SelectedSalesTransactionLines
-        {
-            get { return _selectedSalesTransactionLines; }
-        }
+        public ObservableCollection<SalesTransactionLineVM> SelectedSalesTransactionLines { get; }
+        #endregion
 
-        public DateTime Date
-        {
-            get { return _date; }
-            set { SetProperty(ref _date, value, "Date"); }
-        }
-
+        #region Properties
         public CustomerVM SelectedCustomer
         {
             get { return _selectedCustomer; }
             set
             {
                 SetProperty(ref _selectedCustomer, value, "SelectedCustomer");
-
                 if (_selectedCustomer == null) return;
-
-                UpdateCustomers();
-                SalesReturnCredits = _selectedCustomer.SalesReturnCredits;
-                UpdateCustomerUnpaidSalesTransactions();
-                _selectedSalesTransactionLines.Clear();
+                UpdateUIAccordingToSelectedCustomer();
             }
         }
 
@@ -98,10 +81,10 @@ namespace PutraJayaNT.ViewModels.Customers
                 if (_selectedSalesTransaction == null) return;
 
                 UpdateSelectedSalesTransactionLines();
-                GrossTotal = _selectedSalesTransaction.GrossTotal;
-                Discount = _selectedSalesTransaction.Discount;
-                SalesExpense = _selectedSalesTransaction.SalesExpense;
-                Total = _selectedSalesTransaction.Total;
+                SalesTransactionGrossTotal = _selectedSalesTransaction.GrossTotal;
+                SalesTransactionDiscount = _selectedSalesTransaction.Discount;
+                SalesTransactionSalesExpense = _selectedSalesTransaction.SalesExpense;
+                SalesTransactionTotal = _selectedSalesTransaction.Total;
                 Remaining = _selectedSalesTransaction.Total - _selectedSalesTransaction.Paid;
             }
         }
@@ -117,91 +100,35 @@ namespace PutraJayaNT.ViewModels.Customers
             get { return _salesReturnCredits; }
             set { SetProperty(ref _salesReturnCredits, value, "SalesReturnCredits"); }
         }
-
-        private void UpdatePaymentModes()
-        {
-            _collectmentModes.Clear();
-
-            _collectmentModes.Add("Cash");
-
-            using (var context = new ERPContext())
-            {
-                var banks = context.Ledger_Accounts
-                    .Where(e => e.Name.Contains("Bank") && !e.Name.Contains("Expense"))
-                    .ToList();
-
-                foreach (var bank in banks)
-                    _collectmentModes.Add(bank.Name);
-            }
-        }
-
-        private void UpdateCustomers()
-        {
-            _customers.Clear();
-
-            using (var context = new ERPContext())
-            {
-                var customers = context.Customers.OrderBy(e => e.Name).ToList();
-
-                foreach (var customer in customers)
-                    _customers.Add(new CustomerVM { Model = customer });
-            }
-        }
-
-        private void UpdateCustomerUnpaidSalesTransactions()
-        {
-            _customerUnpaidSalesTransactions.Clear();
-
-            using (var context = new ERPContext())
-            {
-                var transactions = context.SalesTransactions
-                    .Include("TransactionLines")
-                    .Include("TransactionLines.Item")
-                    .Include("TransactionLines.Warehouse")
-                    .Where(e => e.InvoiceIssued != null && e.Customer.ID.Equals(_selectedCustomer.ID) && (e.Paid < e.Total))
-                    .ToList();
-
-                foreach (var transaction in transactions)
-                    _customerUnpaidSalesTransactions.Add(transaction);
-            }
-        }
-
-        private void UpdateSelectedSalesTransactionLines()
-        {
-            _selectedSalesTransactionLines.Clear();
-
-            foreach (var line in _selectedSalesTransaction.TransactionLines.ToList())
-                _selectedSalesTransactionLines.Add(new SalesTransactionLineVM { Model = line });
-        }
+        #endregion
 
         #region Sales Transaction Properties
-        public decimal GrossTotal
+        public decimal SalesTransactionGrossTotal
         {
-            get { return _grossTotal; }
-            set { SetProperty(ref _grossTotal, value, "GrossTotal"); }
+            get { return _salesTransactionGrossTotal; }
+            set { SetProperty(ref _salesTransactionGrossTotal, value, "SalesTransactionGrossTotal"); }
         }
 
-        public decimal Discount
+        public decimal SalesTransactionDiscount
         {
-            get { return _discount; }
-            set { SetProperty(ref _discount, value, "Discount"); }
+            get { return _salesTransactionDiscount; }
+            set { SetProperty(ref _salesTransactionDiscount, value, "SalesTransactionDiscount"); }
         }
 
-        public decimal SalesExpense
+        public decimal SalesTransactionSalesExpense
         {
-            get { return _salesExpense; }
-            set { SetProperty(ref _salesExpense, value, "SalesExpense"); }
+            get { return _salesTransactionSalesExpense; }
+            set { SetProperty(ref _salesTransactionSalesExpense, value, "SalesTransactionSalesExpense"); }
         }
 
-        public decimal Total
+        public decimal SalesTransactionTotal
         {
-            get { return _total; }
+            get { return _salesTransactionTotal; }
             set
             {
-                SetProperty(ref _total, value, "Total");
-
-                if (_total == 0) return;
-                Remaining = _total - _selectedSalesTransaction.Paid - _useCredits;
+                SetProperty(ref _salesTransactionTotal, value, "SalesTransactionTotal");
+                if (_salesTransactionTotal == 0) return;
+                Remaining = _salesTransactionTotal - _selectedSalesTransaction.Paid - _useCredits;
             }
         }
         #endregion
@@ -211,41 +138,25 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             get { return _useCredits; }
             set
-            {          
-                if (value < 0 || value > _salesReturnCredits )
-                {
-                    MessageBox.Show(string.Format("The available number of credits is {0}", _salesReturnCredits), "Invalid Input", MessageBoxButton.OK);
-                    return;
-                }
-
+            {
+                if (!IsCreditsValueValid(value)) return;
                 SetProperty(ref _useCredits, value, "UseCredits");
-
-                if (_useCredits == 0) return;
-
-                Remaining = _total - _selectedSalesTransaction.Paid - _useCredits;
+                Remaining = _salesTransactionTotal - _selectedSalesTransaction.Paid - _useCredits;
             }
         }
 
         public decimal Remaining
         {
             get { return _remaining; }
-            set
-            {
-                SetProperty(ref _remaining, value, "Remaining");
-            }
+            set {  SetProperty(ref _remaining, value, "Remaining");  }
         }
 
-        public decimal? Collect
+        public decimal Collect
         {
             get { return _collect; }
             set
             {
-                if (value < 0 || value > _remaining)
-                {
-                    MessageBox.Show(string.Format("The valid range is 0 - {0}", _remaining), "Invalid Input", MessageBoxButton.OK);
-                    return;
-                }
-
+                if (!IsCollectValueValid(value)) return;
                 SetProperty(ref _collect, value, "Collect");
             }
         }
@@ -299,38 +210,114 @@ namespace PutraJayaNT.ViewModels.Customers
                             ts.Complete();
                         }
 
-                        Total = 0;
-                        Collect = null;
-                        SelectedCustomer = null;
-                        SelectedPaymentMode = null;
-                        SelectedSalesTransaction = null;
-                        SalesReturnCredits = 0;
-                        UseCredits = 0;
-                        Remaining = 0;
-                        _selectedSalesTransactionLines.Clear();
-                        _customerUnpaidSalesTransactions.Clear();
+                        ResetTransaction();
                     }
 
                 }));
             }
         }
 
+        #region Helper Methods
+        private void UpdateCustomers()
+        {
+            var oldSelectedCustomer = _selectedCustomer;
+
+            Customers.Clear();
+            var customersFromDatabase = DatabaseCustomerHelper.GetAll();
+            foreach (var customer in customersFromDatabase)
+                Customers.Add(new CustomerVM { Model = customer });
+
+            UpdateSelectedCustomer(oldSelectedCustomer);
+        }
+
+        private void UpdateSelectedCustomer(CustomerVM oldSelectedCustomer)
+        {
+            if (oldSelectedCustomer == null) return;
+            SelectedCustomer = Customers.FirstOrDefault(customer => customer.ID.Equals(oldSelectedCustomer.ID));
+        }
+
+        private void UpdatePaymentModes()
+        {
+            var oldSelectedPaymentMode = _selectedPaymentMode;
+
+            PaymentModes.Clear();
+            PaymentModes.Add("Cash");
+
+            var banksFromDatabase =
+                DatabaseLedgerAccountHelper.GetWithoutLines(ledgerAccount => ledgerAccount.Name.Contains("Bank") && !ledgerAccount.Name.Contains("Expense"));
+
+            foreach (var bank in banksFromDatabase)
+                PaymentModes.Add(bank.Name);
+
+            UpdateSelectedPaymentMode(oldSelectedPaymentMode);
+        }
+
+        private void UpdateSelectedPaymentMode(string oldSelectedPaymentMode)
+        {
+            if (oldSelectedPaymentMode == null) return;
+            SelectedPaymentMode = PaymentModes.FirstOrDefault(paymentMode => paymentMode.Equals(oldSelectedPaymentMode));
+        }
+
+        private void UpdateUIAccordingToSelectedCustomer()
+        {
+            SalesReturnCredits = _selectedCustomer.SalesReturnCredits;
+            UpdateCustomerUnpaidSalesTransactions();
+            SelectedSalesTransactionLines.Clear();
+        }
+
+        private void UpdateCustomerUnpaidSalesTransactions()
+        {
+            CustomerUnpaidSalesTransactions.Clear();
+
+            using (var context = new ERPContext())
+            {
+                var transactions = context.SalesTransactions
+                    .Include("SalesTransactionLines")
+                    .Include("SalesTransactionLines.Item")
+                    .Include("SalesTransactionLines.Warehouse")
+                    .Where(e => e.InvoiceIssued != null && e.Customer.ID.Equals(_selectedCustomer.ID) && (e.Paid < e.Total))
+                    .ToList();
+
+                foreach (var transaction in transactions)
+                    CustomerUnpaidSalesTransactions.Add(transaction);
+            }
+        }
+
+        private void UpdateSelectedSalesTransactionLines()
+        {
+            SelectedSalesTransactionLines.Clear();
+
+            foreach (var line in _selectedSalesTransaction.SalesTransactionLines.ToList())
+                SelectedSalesTransactionLines.Add(new SalesTransactionLineVM { Model = line });
+        }
+
+        private bool IsCreditsValueValid(decimal value)
+        {
+            if (value >= 0 && value <= _salesReturnCredits) return true;
+            MessageBox.Show($"The available number of credits is {_salesReturnCredits}", "Invalid Value", MessageBoxButton.OK);
+            return false;
+        }
+
+        private bool IsCollectValueValid(decimal value)
+        {
+            if (value >= 0 && value <= _remaining) return true;
+            MessageBox.Show($"The valid range is 0 - {_remaining}", "Invalid Value", MessageBoxButton.OK);
+            return false;
+        }
+
         private void ResetTransaction()
         {
-            SalesReturnCredits = 0;
             SelectedCustomer = null;
+            SelectedPaymentMode = null;
             SelectedSalesTransaction = null;
-            UpdateCustomers();
-            _customerUnpaidSalesTransactions.Clear();
-            _selectedSalesTransactionLines.Clear();
-
-            GrossTotal = 0;
-            Discount = 0;
-            SalesExpense = 0;
-            Total = 0;
+            SalesTransactionTotal = 0;
+            SalesReturnCredits = 0;
             UseCredits = 0;
             Remaining = 0;
-            Collect = null;
+            Collect = 0;
+            SelectedSalesTransactionLines.Clear();
+            CustomerUnpaidSalesTransactions.Clear();
         }
+        #endregion
     }
 }

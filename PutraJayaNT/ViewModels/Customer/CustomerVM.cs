@@ -1,8 +1,9 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-
-namespace PutraJayaNT.ViewModels.Customers
+﻿namespace PutraJayaNT.ViewModels.Customer
 {
+    using Models.Customer;
+    using MVVMFramework;
+
+    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class CustomerVM : ViewModelBase<Customer>
     {
         public int ID
@@ -127,7 +128,7 @@ namespace PutraJayaNT.ViewModels.Customers
             OnPropertyChanged("CreditTerms");
             OnPropertyChanged("MaxInvoices");
             OnPropertyChanged("SalesReturnCredits");
-            OnPropertyChanged("Active");      
+            OnPropertyChanged("Active");
         }
 
         public override string ToString()
@@ -139,13 +140,7 @@ namespace PutraJayaNT.ViewModels.Customers
         {
             if (obj == null) return false;
             var customer = obj as CustomerVM;
-            if (customer == null) return false;
-            else return this.ID.Equals(customer.ID);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return customer != null && ID.Equals(customer.ID);
         }
     }
 }

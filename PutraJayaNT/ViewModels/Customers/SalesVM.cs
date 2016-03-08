@@ -1,28 +1,30 @@
-﻿using PutraJayaNT.ViewModels.Inventory;
+﻿using PutraJayaNT.ViewModels.Customer;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
     using MVVMFramework;
-    using PutraJayaNT.Utilities;
+    using Utilities;
     using System;
     using System.Collections.ObjectModel;
     using System.Data.Entity;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using PutraJayaNT.Models.Inventory;
-    using PutraJayaNT.Models.Sales;
+    using Models.Inventory;
+    using Models.Sales;
     using System.Transactions;
-    using PutraJayaNT.Models.Accounting;
+    using Models.Accounting;
     using System.Data;
-    using PutraJayaNT.Models;
-    using PutraJayaNT.Views.Customers;
-    using PutraJayaNT.Models.Salesman;
+    using Models;
+    using Views.Customers;
+    using Models.Salesman;
     using Microsoft.Reporting.WinForms;
     using System.Collections.Generic;
     using PutraJayaNT.Reports.Windows;
+    using Inventory;
+    using Sales;
 
-    public class SalesTransactionVM : ViewModelBase<SalesTransaction>
+    public class SalesVM : ViewModelBase<SalesTransaction>
     {
         ObservableCollection<CustomerVM> _customers;
         ObservableCollection<ItemVM> _products;
@@ -94,7 +96,7 @@ namespace PutraJayaNT.ViewModels.Customers
         bool _invoiceNotPaid = true;
         CustomerVM _editCustomer;
 
-        public SalesTransactionVM()
+        public SalesVM()
         {
             _isEditWindowNotOpen = true;
             _editWindowVisibility = Visibility.Hidden;
@@ -272,8 +274,7 @@ namespace PutraJayaNT.ViewModels.Customers
                         _deletedLines.Add(deletedLine);
                     }
 
-                    _selectedLine.Units = _editLineUnits;
-                    _selectedLine.Pieces = _editLinePieces;
+                    _selectedLine.Quantity = _editLineUnits * _selectedLine.Item.PiecesPerUnit + _editLinePieces;
                     _selectedLine.Discount = _editLineDiscount;
                     _selectedLine.SalesPrice = _editLineSalesPrice;
                     _selectedLine.Salesman = _editLineSalesman;
@@ -350,11 +351,11 @@ namespace PutraJayaNT.ViewModels.Customers
                 using (var context = new ERPContext())
                 {
                     var transaction = context.SalesTransactions
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Salesman")
-                        .Include("TransactionLines.Item")
-                        .Include("TransactionLines.Warehouse")
-                        .Include("TransactionLines.Item.Stocks")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Salesman")
+                        .Include("SalesTransactionLines.Item")
+                        .Include("SalesTransactionLines.Warehouse")
+                        .Include("SalesTransactionLines.Item.Stocks")
                         .Where(e => e.SalesTransactionID.Equals(value))
                         .FirstOrDefault();
 
@@ -556,13 +557,13 @@ namespace PutraJayaNT.ViewModels.Customers
                         using (var context = new ERPContext())
                         {
                             var transaction = context.SalesTransactions
-                            .Include("TransactionLines")
-                            .Include("TransactionLines.Item")
-                            .Include("TransactionLines.Warehouse")
+                            .Include("SalesTransactionLines")
+                            .Include("SalesTransactionLines.Item")
+                            .Include("SalesTransactionLines.Warehouse")
                             .Where(e => e.SalesTransactionID.Equals(_newTransactionID)).FirstOrDefault();
 
                             // Increase the stock for each line's item
-                            foreach (var line in transaction.TransactionLines.ToList())
+                            foreach (var line in transaction.SalesTransactionLines.ToList())
                             {
                                 var stock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID)).FirstOrDefault();
 
@@ -662,11 +663,11 @@ namespace PutraJayaNT.ViewModels.Customers
                     {
                         Model = c.SalesTransactions
                         .Include("Customer")
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Salesman")
-                        .Include("TransactionLines.Item")
-                        .Include("TransactionLines.Warehouse")
-                        .Include("TransactionLines.Item.Stocks")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Salesman")
+                        .Include("SalesTransactionLines.Item")
+                        .Include("SalesTransactionLines.Warehouse")
+                        .Include("SalesTransactionLines.Item.Stocks")
                         .Where(e => e.SalesTransactionID.Equals(_newTransactionID))
                         .FirstOrDefault();
                     }
@@ -937,9 +938,9 @@ namespace PutraJayaNT.ViewModels.Customers
                     using (var context = new ERPContext())
                     {
                         transaction = context.SalesTransactions
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Item")
-                        .Include("TransactionLines.Warehouse")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Item")
+                        .Include("SalesTransactionLines.Warehouse")
                         .Include("Customer")
                         .Where(e => e.SalesTransactionID.Equals(Model.SalesTransactionID))
                         .FirstOrDefault();
@@ -971,9 +972,9 @@ namespace PutraJayaNT.ViewModels.Customers
                     using (var context = new ERPContext())
                     {
                         transaction = context.SalesTransactions
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Item")
-                        .Include("TransactionLines.Warehouse")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Item")
+                        .Include("SalesTransactionLines.Warehouse")
                         .Include("Customer")
                         .Where(e => e.SalesTransactionID.Equals(Model.SalesTransactionID))
                         .FirstOrDefault();
@@ -1012,9 +1013,9 @@ namespace PutraJayaNT.ViewModels.Customers
                     using (var context = new ERPContext())
                     {
                         transaction = context.SalesTransactions
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Item")
-                        .Include("TransactionLines.Warehouse")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Item")
+                        .Include("SalesTransactionLines.Warehouse")
                         .Include("Customer")
                         .Where(e => e.SalesTransactionID
                         .Equals(Model.SalesTransactionID))
@@ -1076,9 +1077,9 @@ namespace PutraJayaNT.ViewModels.Customers
                     using (var context = new ERPContext())
                     {
                         transaction = context.SalesTransactions
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Item")
-                        .Include("TransactionLines.Warehouse")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Item")
+                        .Include("SalesTransactionLines.Warehouse")
                         .Include("Customer")
                         .Where(e => e.SalesTransactionID
                         .Equals(Model.SalesTransactionID))
@@ -1153,7 +1154,7 @@ namespace PutraJayaNT.ViewModels.Customers
                             if (user != null) transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
                             Model = transaction;
 
-                            var costOfGoodsSoldAmount = CalculateCOGS(context, transaction.TransactionLines.ToList());
+                            var costOfGoodsSoldAmount = CalculateCOGS(context, transaction.SalesTransactionLines.ToList());
 
                             // Recognise revenue recognitition at this point and record the corresponding journal entries
                             var transaction1 = new LedgerTransaction();
@@ -1341,7 +1342,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
             _salesTransactionLines.Clear();
             _deletedLines.Clear();
-            foreach (var line in Model.TransactionLines)
+            foreach (var line in Model.SalesTransactionLines)
             {
                 var vm = new SalesTransactionLineVM { Model = line, StockDeducted = line.Quantity };
                 _salesTransactionLines.Add(vm);
@@ -1475,14 +1476,14 @@ namespace PutraJayaNT.ViewModels.Customers
 
                     var transaction = context.SalesTransactions
                         .Include("Customer")
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Salesman")
-                        .Include("TransactionLines.Warehouse")
-                        .Include("TransactionLines.Item")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Salesman")
+                        .Include("SalesTransactionLines.Warehouse")
+                        .Include("SalesTransactionLines.Item")
                         .Where(e => e.SalesTransactionID.Equals(_newTransactionID))
                         .FirstOrDefault();
 
-                    var originalTransactionLines = transaction.TransactionLines.ToList();
+                    var originalTransactionLines = transaction.SalesTransactionLines.ToList();
 
                     foreach (var line in _salesTransactionLines)
                     {
@@ -1633,7 +1634,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                                     context.SaveChanges();
 
-                                    transaction.TransactionLines.Remove(li);
+                                    transaction.SalesTransactionLines.Remove(li);
                                     context.SaveChanges();
 
                                     break;
@@ -1675,14 +1676,14 @@ namespace PutraJayaNT.ViewModels.Customers
 
                     var transaction = context.SalesTransactions
                         .Include("Customer")
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Salesman")
-                        .Include("TransactionLines.Warehouse")
-                        .Include("TransactionLines.Item")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Salesman")
+                        .Include("SalesTransactionLines.Warehouse")
+                        .Include("SalesTransactionLines.Item")
                         .Where(e => e.SalesTransactionID.Equals(_newTransactionID))
                         .FirstOrDefault();
 
-                    var originalTransactionLines = transaction.TransactionLines.ToList();
+                    var originalTransactionLines = transaction.SalesTransactionLines.ToList();
 
                     if (transaction.Total != _netTotal)
                     {
@@ -1778,7 +1779,7 @@ namespace PutraJayaNT.ViewModels.Customers
 
                 // Add the item line's model to the sales transaction if there is enough stock
                 stock.Pieces -= line.Quantity;
-                Model.TransactionLines.Add(line.Model);
+                Model.SalesTransactionLines.Add(line.Model);
 
                 // Remove the stock entry if it is 0
                 if (stock.Pieces == 0) context.Stocks.Remove(stock);
@@ -1810,9 +1811,9 @@ namespace PutraJayaNT.ViewModels.Customers
             using (var context = new ERPContext())
             {
                 salesTransaction = context.SalesTransactions
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Item")
-                        .Include("TransactionLines.Warehouse")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Item")
+                        .Include("SalesTransactionLines.Warehouse")
                         .Include("Customer")
                         .Where(e => e.SalesTransactionID.Equals(Model.SalesTransactionID))
                         .FirstOrDefault();
@@ -1832,7 +1833,7 @@ namespace PutraJayaNT.ViewModels.Customers
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
 
             int count = 1;
-            foreach (var line in salesTransaction.TransactionLines)
+            foreach (var line in salesTransaction.SalesTransactionLines)
             {
                 var dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;
@@ -1934,16 +1935,16 @@ namespace PutraJayaNT.ViewModels.Customers
             using (var context = new ERPContext())
             {
                 salesTransaction = context.SalesTransactions
-                        .Include("TransactionLines")
-                        .Include("TransactionLines.Item")
-                            .Include("TransactionLines.Warehouse")
+                        .Include("SalesTransactionLines")
+                        .Include("SalesTransactionLines.Item")
+                            .Include("SalesTransactionLines.Warehouse")
                         .Include("Customer")
                         .Where(e => e.SalesTransactionID.Equals(Model.SalesTransactionID))
                         .FirstOrDefault();
             }
 
             int count = 1;
-            foreach (var line in salesTransaction.TransactionLines.Where(e => e.Warehouse.ID.Equals(warehouseID)).ToList())
+            foreach (var line in salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(warehouseID)).ToList())
             {
                 var dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;

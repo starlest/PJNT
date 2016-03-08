@@ -5,6 +5,7 @@ using System;
 using System.Data;
 using System.Drawing.Printing;
 using System.Windows;
+using PutraJayaNT.ViewModels.Sales;
 
 namespace PutraJayaNT.Reports.Windows
 {

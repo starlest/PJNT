@@ -1,8 +1,4 @@
-﻿using Microsoft.Reporting.WinForms;
-using PutraJayaNT.ViewModels.Customers;
-using System;
-using System.Data;
-using System.Windows;
+﻿using PutraJayaNT.ViewModels.Customers;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -10,14 +6,14 @@ using System.Windows.Input;
 namespace PutraJayaNT.Views.Customers
 {
     /// <summary>
-    /// Interaction logic for SalesTransactionView.xaml
+    /// Interaction logic for SCustomeralesTransactionView.xaml
     /// </summary>
-    public partial class SalesTransactionView : UserControl
+    public partial class CustomerSalesTransactionView
     {
-        public SalesTransactionView()
+        public CustomerSalesTransactionView()
         {
             InitializeComponent();
-            var vm = new SalesTransactionVM();
+            var vm = new SalesVM();
             DataContext = vm;
         }
 

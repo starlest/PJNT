@@ -67,7 +67,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _transactionLines.Clear();
 
-                foreach (var line in Model.TransactionLines)
+                foreach (var line in Model.LedgerTransactionLines)
                 {
                     _transactionLines.Add(new LedgerTransactionLineVM { Model = line } );
                 }

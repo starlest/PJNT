@@ -134,8 +134,8 @@
     <Compile Include="Models\Accounting\LedgerTransaction.cs" />
     <Compile Include="Models\Accounting\LedgerTransactionLine.cs" />
     <Compile Include="Models\Inventory\Category.cs" />
-    <Compile Include="Models\Customer.cs" />
-    <Compile Include="Models\CustomerGroup.cs" />
+    <Compile Include="Models\Customer\Customer.cs" />
+    <Compile Include="Models\Customer\CustomerGroup.cs" />
     <Compile Include="Models\Inventory\Item.cs" />
     <Compile Include="Models\Inventory\Warehouse.cs" />
     <Compile Include="Models\Purchase\PurchaseReturnTransaction.cs" />
@@ -194,21 +194,20 @@
     <Compile Include="Utilities\Database\Item\DatabaseItemCategoryHelper.cs" />
     <Compile Include="Utilities\Database\Item\DatabaseItemHelper.cs" />
     <Compile Include="Utilities\Database\DatabaseSupplierHelper.cs" />
+    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerAccountHelper.cs" />
+    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionHelper.cs" />
     <Compile Include="Utilities\Database\Salesman\DatabaseSalesCommissionHelper.cs" />
     <Compile Include="Utilities\Database\Salesman\DatabaseSalesmanHelper.cs" />
-    <Compile Include="Utilities\Database\SalesTransaction\DatabaseSalesTransactionHelper.cs" />
+    <Compile Include="Utilities\Database\Sales\DatabaseSalesTransactionHelper.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
     <Compile Include="Models\Inventory\Stock.cs" />
     <Compile Include="Models\Sales\SalesTransaction.cs" />
     <Compile Include="Models\Sales\SalesTransactionLine.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Models\IRepository.cs" />
     <Compile Include="Utilities\LedgerDBHelper.cs" />
     <Compile Include="Utilities\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\PasswordHelper.cs" />
     <Compile Include="Utilities\PrintHelper.cs" />
-    <Compile Include="Utilities\Repository.cs" />
-    <Compile Include="Utilities\UnitOfWork.cs" />
     <Compile Include="Utilities\UtilityMethods.cs" />
     <Compile Include="VerificationWindow.xaml.cs">
       <DependentUpon>VerificationWindow.xaml</DependentUpon>
@@ -221,18 +220,18 @@
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
     <Compile Include="ViewModels\Customers\CategoryVM.cs" />
-    <Compile Include="ViewModels\Customers\CustomerGroupVM.cs" />
-    <Compile Include="ViewModels\Customers\AlternativeSalesPriceVM.cs" />
+    <Compile Include="ViewModels\Customer\CustomerGroupVM.cs" />
+    <Compile Include="ViewModels\Item\AlternativeSalesPriceVM.cs" />
     <Compile Include="ViewModels\Customers\BrowseSalesTransactionsVM.cs" />
-    <Compile Include="ViewModels\Customers\SalesTransactionMultiPurposeVM.cs" />
-    <Compile Include="ViewModels\Sales\SalesCollectionListVM.cs" />
+    <Compile Include="ViewModels\Sales\SalesTransactionVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesCollectionListVM.cs" />
     <Compile Include="ViewModels\Customers\PrintListVM.cs" />
     <Compile Include="ViewModels\Customers\SalesCollectVM.cs" />
-    <Compile Include="ViewModels\Customers\SalesReturnTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Sales\SalesReturnTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturnTransactionVM.cs" />
-    <Compile Include="ViewModels\Customers\SalesTransactionLineVM.cs" />
-    <Compile Include="ViewModels\Customers\SalesTransactionVM.cs" />
-    <Compile Include="ViewModels\Customers\CustomerVM.cs" />
+    <Compile Include="ViewModels\Sales\SalesTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesVM.cs" />
+    <Compile Include="ViewModels\Customer\CustomerVM.cs" />
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionLineVM.cs" />
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionVM.cs" />
     <Compile Include="ViewModels\Inventory\CloseStockVM.cs" />
@@ -313,8 +312,8 @@
     <Compile Include="Views\Customers\SalesReturnView.xaml.cs">
       <DependentUpon>SalesReturnView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Customers\SalesTransactionView.xaml.cs">
-      <DependentUpon>SalesTransactionView.xaml</DependentUpon>
+    <Compile Include="Views\Customers\CustomerSalesTransactionView.xaml.cs">
+      <DependentUpon>CustomerSalesTransactionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Inventory\CloseStockView.xaml.cs">
       <DependentUpon>CloseStockView.xaml</DependentUpon>
@@ -517,7 +516,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Customers\SalesTransactionView.xaml">
+    <Page Include="Views\Customers\CustomerSalesTransactionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

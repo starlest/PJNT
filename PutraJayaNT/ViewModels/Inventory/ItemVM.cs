@@ -1,11 +1,11 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-
-namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace PutraJayaNT.ViewModels.Inventory
 {
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using MVVMFramework;
+    using Models;
+    using Models.Inventory;
+
     public class ItemVM : ViewModelBase<Item>
     {
         private Supplier _selectedSupplier;

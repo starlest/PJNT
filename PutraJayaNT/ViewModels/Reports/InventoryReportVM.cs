@@ -1,17 +1,18 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Reports.Windows;
-using PutraJayaNT.Utilities;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using PutraJayaNT.ViewModels.Inventory;
-
-namespace PutraJayaNT.ViewModels.Reports
+﻿namespace PutraJayaNT.ViewModels.Reports
 {
+    using MVVMFramework;
+    using Models;
+    using Models.Inventory;
+    using PutraJayaNT.Reports.Windows;
+    using Utilities;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using Inventory;
+    using Suppliers;
+
     public class InventoryReportVM : ViewModelBase
     {
         ObservableCollection<ItemVM> _items;
@@ -356,6 +357,7 @@ namespace PutraJayaNT.ViewModels.Reports
                     _lines.Add(line);
                 }
 
+                _lines.RemoveAll(line => line.Quantity == 0);
                 OnPropertyChanged("Total");
             }
         }

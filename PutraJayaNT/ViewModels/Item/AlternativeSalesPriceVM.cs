@@ -1,12 +1,11 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Models.Sales;
 
-namespace PutraJayaNT.ViewModels.Customers
+namespace PutraJayaNT.ViewModels.Item
 {
     public class AlternativeSalesPriceVM : ViewModelBase<AlternativeSalesPrice>
     {
-        public Item Item
+        public Models.Inventory.Item Item
         {
             get { return Model.Item; }
             set { Model.Item = value; }

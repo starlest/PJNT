@@ -71,7 +71,7 @@ namespace PutraJayaNT.Reports.Windows
         {
             InitializeDataSources();
             int count = 1;
-            foreach (var line in _salesTransaction.TransactionLines.Where(e => e.Warehouse.ID.Equals(2)).ToList())
+            foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(2)).ToList())
             {
                 DataRow dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;
@@ -117,7 +117,7 @@ namespace PutraJayaNT.Reports.Windows
         {
             InitializeDataSources();
             int count = 1;
-            foreach (var line in _salesTransaction.TransactionLines.Where(e => e.Warehouse.ID.Equals(1)).ToList())
+            foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(1)).ToList())
             {
                 DataRow dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;
@@ -163,7 +163,7 @@ namespace PutraJayaNT.Reports.Windows
         {
             InitializeDataSources();
             int count = 1;
-            foreach (var line in _salesTransaction.TransactionLines.Where(e => e.Warehouse.ID.Equals(3)).ToList())
+            foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(3)).ToList())
             {
                 DataRow dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;
@@ -209,7 +209,7 @@ namespace PutraJayaNT.Reports.Windows
         {
             InitializeDataSources();
             int count = 1;
-            foreach (var line in _salesTransaction.TransactionLines.Where(e => e.Warehouse.ID.Equals(4)).ToList())
+            foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(4)).ToList())
             {
                 DataRow dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;

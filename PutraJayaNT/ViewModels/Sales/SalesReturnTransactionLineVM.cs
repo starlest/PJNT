@@ -1,11 +1,9 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.Utilities;
-using System.Linq;
-
-namespace PutraJayaNT.ViewModels.Customers
+﻿namespace PutraJayaNT.ViewModels.Sales
 {
+    using MVVMFramework;
+    using Models.Inventory;
+    using Models.Sales;
+
     public class SalesReturnTransactionLineVM : ViewModelBase<SalesReturnTransactionLine>
     {
         int _units;

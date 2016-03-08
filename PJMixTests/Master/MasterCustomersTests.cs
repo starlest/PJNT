@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PutraJayaNT.Models;
+using PutraJayaNT.Models.Customer;
 using PutraJayaNT.Utilities;
 using PutraJayaNT.Utilities.Database.Customer;
 using PutraJayaNT.ViewModels.Master.Customers;

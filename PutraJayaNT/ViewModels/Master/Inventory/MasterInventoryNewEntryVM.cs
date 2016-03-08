@@ -1,15 +1,16 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Utilities;
-
-namespace PutraJayaNT.ViewModels.Master.Inventory
+﻿namespace PutraJayaNT.ViewModels.Master.Inventory
 {
+    using System.Collections.ObjectModel;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using MVVMFramework;
+    using Models;
+    using Models.Inventory;
+    using Utilities;
+    using ViewModels.Suppliers;
+
     public class MasterInventoryNewEntryVM : ViewModelBase
     {
         private readonly MasterInventoryVM _parentVM;

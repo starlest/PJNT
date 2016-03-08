@@ -1,10 +1,10 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-using System.Collections.ObjectModel;
-
-namespace PutraJayaNT.ViewModels
+﻿namespace PutraJayaNT.ViewModels.Suppliers
 {
+    using System.Collections.ObjectModel;
+    using Models;
+    using Models.Inventory;
+    using MVVMFramework;
+
     public class SupplierVM : ViewModelBase<Supplier>
     {
         public int ID

@@ -1,17 +1,16 @@
-﻿using System.Collections.ObjectModel;
-using System.Transactions;
-using PutraJayaNT.Utilities.Database.Customer;
-using PutraJayaNT.ViewModels.Customers;
-
-namespace PutraJayaNT.ViewModels.Master.Customers
+﻿namespace PutraJayaNT.ViewModels.Master.Customers
 {
     using MVVMFramework;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Models;
     using Models.Accounting;
     using Utilities;
+    using System.Collections.ObjectModel;
+    using System.Transactions;
+    using Models.Customer;
+    using Utilities.Database.Customer;
+    using Customer;
 
     public class MasterCustomersEditVM : ViewModelBase
     {

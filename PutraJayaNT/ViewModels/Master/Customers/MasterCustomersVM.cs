@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.Utilities.Database.Customer;
-using PutraJayaNT.ViewModels.Customers;
-using PutraJayaNT.Views.Master.Customers;
-
-namespace PutraJayaNT.ViewModels.Master.Customers
+﻿namespace PutraJayaNT.ViewModels.Master.Customers
 {
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using MVVMFramework;
+    using Models.Customer;
+    using Utilities;
+    using Utilities.Database.Customer;
+    using Customer;
+    using Views.Master.Customers;
+
     public class MasterCustomersVM : ViewModelBase
     {
         #region Backing Fields

@@ -48,7 +48,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var retainedEarnings = context.Ledger_Accounts
                     .Include("LedgerGeneral")
                     .Include("LedgerAccountBalances") 
-                    .Include("TransactionLines")               
+                    .Include("LedgerTransactionLines")               
                     .Where(e => e.Name.Equals("Retained Earnings"))
                     .FirstOrDefault();
 
@@ -108,7 +108,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             var retainedEarnings = context.Ledger_Accounts
                 .Include("LedgerGeneral")
                 .Include("LedgerAccountBalances")
-                .Include("TransactionLines")
+                .Include("LedgerTransactionLines")
                 .Where(e => e.Name.Equals("Retained Earnings"))
                 .FirstOrDefault();
 

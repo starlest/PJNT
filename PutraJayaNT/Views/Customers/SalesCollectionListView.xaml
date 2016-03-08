@@ -7,7 +7,7 @@
              d:DesignHeight="768" d:DesignWidth="1024">
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
-            <Setter Property="FontSize" Value="28" />
+            <Setter Property="FontSize" Value="20" />
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -59,10 +59,10 @@
             <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding Salesmans}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSalesman, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Row="1" Grid.Column="4" Text="Customer:" Foreground="Blue" />
             <ComboBox Grid.Row="1" Grid.Column="5" ItemsSource="{Binding Customers}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedCustomer, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="1" Grid.Column="6" Foreground="Black"  Content="Display" Margin="15, 10, 15, 10" Command="{Binding DisplayCommand}"/>
-            <TextBlock Grid.Row="2" Grid.Column="0" FontSize="24" Foreground="Green" Text="Collection Date:" />
+            <Button Grid.Row="1" Grid.Column="6" Foreground="Black"  Content="Search" Margin="15, 10, 15, 10" Command="{Binding SearchCommand}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Foreground="Green" Text="Collection Date:" />
             <DatePicker Grid.Row="2" Grid.Column="1" SelectedDateFormat="Long" SelectedDate="{Binding CollectionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="2" Grid.Column="2" Foreground="Green" Content="Display" Margin="15, 10, 15, 10" Command="{Binding DisplayCollectionDateSelectionCommand}"/>
+            <Button Grid.Row="2" Grid.Column="2" Foreground="Green" Content="Search" Margin="15, 10, 15, 10" Command="{Binding SearchCollectionDateSelectionCommand}"/>
         </Grid>
         <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSalesTransactions}">
             <DataGrid.Columns>
@@ -71,13 +71,13 @@
                 <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
                 <DataGridTextColumn Header="Paid" Width="1*" IsReadOnly="True" Binding="{Binding Paid, StringFormat=N2}" />
                 <DataGridTextColumn Header="Remaining" Width="1*" IsReadOnly="True" Binding="{Binding Remaining, StringFormat=N2}" />
-                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding When, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTemplateColumn x:Name="collectorColumn" Header="Collector" Width="0.8*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox Width="{Binding ActualWidth, ElementName=collectorColumn}" Margin="0"
-                                      ItemsSource="{Binding Path=Salesmen}"  DisplayMemberPath="Name"  
+                                      ItemsSource="{Binding Path=CollectionSalesmans}"  DisplayMemberPath="Name"  
                                       SelectedItem="{Binding Path=CollectionSalesman, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

@@ -41,7 +41,7 @@ namespace PutraJayaNT.Reports.Windows
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
 
             int count = 1;
-            foreach (var line in _salesTransaction.TransactionLines)
+            foreach (var line in _salesTransaction.SalesTransactionLines)
             {
                 DataRow dr = dt1.NewRow();
                 dr["LineNumber"] = count++;

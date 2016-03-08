@@ -1,12 +1,12 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
-using PutraJayaNT.ViewModels.Reports;
-using System;
-using System.Data;
-using System.Windows;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace PutraJayaNT.Reports.Windows
 {
+    using FirstFloor.ModernUI.Windows.Controls;
+    using Microsoft.Reporting.WinForms;
+    using ViewModels.Reports;
+    using System;
+    using System.Data;
+    using System.Windows;
+
     /// <summary>
     /// Interaction logic for InventoryReportWindow.xaml
     /// </summary>

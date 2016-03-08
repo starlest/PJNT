@@ -11,8 +11,8 @@ namespace PutraJayaNT.Models.Purchase
     {
         public PurchaseTransaction()
         {
+            // ReSharper disable once VirtualMemberCallInContructor
             PurchaseTransactionLines = new ObservableCollection<PurchaseTransactionLine>();
-            Paid = 0;
         }
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 0), StringLength(128)]

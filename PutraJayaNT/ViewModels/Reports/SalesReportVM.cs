@@ -1,18 +1,19 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Customers;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
-using System.Windows;
-
-namespace PutraJayaNT.ViewModels.Reports
+﻿namespace PutraJayaNT.ViewModels.Reports
 {
+    using MVVMFramework;
+    using Models.Inventory;
+    using Models.Sales;
+    using Utilities;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Windows;
+    using Models.Customer;
+    using Customer;
+    using Sales;
+
     class SalesReportVM : ViewModelBase
     {
         ObservableCollection<Category> _categories;

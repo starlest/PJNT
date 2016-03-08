@@ -11,7 +11,8 @@ namespace PutraJayaNT.Models.Accounting
         public LedgerAccount()
         {
             Notes = "";
-            TransactionLines = new ObservableCollection<LedgerTransactionLine>();
+            // ReSharper disable once VirtualMemberCallInContructor
+            LedgerTransactionLines = new ObservableCollection<LedgerTransactionLine>();
         }
 
         public int ID { get; set; }
@@ -28,6 +29,6 @@ namespace PutraJayaNT.Models.Accounting
 
         public virtual ObservableCollection<LedgerAccountBalance> LedgerAccountBalances { get; set; }
 
-        public virtual ObservableCollection<LedgerTransactionLine> TransactionLines { get; set; }
+        public virtual ObservableCollection<LedgerTransactionLine> LedgerTransactionLines { get; set; }
     }
 }

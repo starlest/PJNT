@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Windows;
+using PutraJayaNT.ViewModels.Sales;
 
 namespace PutraJayaNT.Reports.Windows
 {
@@ -15,9 +16,9 @@ namespace PutraJayaNT.Reports.Windows
     /// </summary>
     public partial class OverallSalesReportWindow : ModernWindow
     {
-        ObservableCollection<SalesTransactionMultiPurposeVM>  _salesTransactions;
+        ObservableCollection<ViewModels.Sales.SalesTransactionVM>  _salesTransactions;
 
-        public OverallSalesReportWindow(ObservableCollection<SalesTransactionMultiPurposeVM> salesTransactions)
+        public OverallSalesReportWindow(ObservableCollection<ViewModels.Sales.SalesTransactionVM> salesTransactions)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
@@ -42,7 +43,7 @@ namespace PutraJayaNT.Reports.Windows
             foreach (var t in _salesTransactions)
             {
                 DataRow dr = dt.NewRow();
-                dr["Date"] = t.When.ToShortDateString();
+                dr["Date"] = t.Date.ToShortDateString();
                 dr["DueDate"] = t.DueDate.ToShortDateString();
                 dr["ID"] = t.SalesTransactionID;
                 dr["Customer"] = t.Customer.Name;

@@ -184,7 +184,7 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0"  HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="28" Text="Note: " />
-            <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10, 10, 0, 10" 
+            <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" Margin="10, 10, 0, 10" 
                      Text="{Binding NewTransactionNote, Mode=TwoWay}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" MaxLength="500"
                      IsEnabled="{Binding IsTransactionNotPaid}"/>
             <TextBlock Grid.Column="7" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Total: " />

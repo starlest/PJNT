@@ -1,9 +1,9 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using System;
-
-namespace PutraJayaNT.ViewModels.Reports
+﻿namespace PutraJayaNT.ViewModels.Reports
 {
+    using MVVMFramework;
+    using Models.Inventory;
+    using System;
+
     public class StockBalanceLineVM : ViewModelBase
     {
         DateTime _date;

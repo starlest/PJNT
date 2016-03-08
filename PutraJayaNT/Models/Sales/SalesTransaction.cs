@@ -8,10 +8,16 @@ namespace PutraJayaNT.Models.Sales
 
     public class SalesTransaction
     {
+        public SalesTransaction()
+        {
+            // ReSharper disable once VirtualMemberCallInContructor
+            SalesTransactionLines = new List<SalesTransactionLine>();
+        }
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 0), StringLength(128)]
         public string SalesTransactionID { get; set; }
 
-        public virtual Customer Customer { get; set; }
+        public virtual Customer.Customer Customer { get; set; }
 
         public virtual User User { get; set; }
 
@@ -42,7 +48,7 @@ namespace PutraJayaNT.Models.Sales
         [Required]
         public bool InvoicePrinted { get; set; }
 
-        public virtual ICollection<SalesTransactionLine> TransactionLines { get; set; }
+        public virtual ICollection<SalesTransactionLine> SalesTransactionLines { get; set; }
 
         public virtual ICollection<SalesReturnTransaction> SalesReturnTransactions { get; set; }
     }

@@ -1,16 +1,15 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
-
-namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace PutraJayaNT.ViewModels.Inventory
 {
+    using MVVMFramework;
+    using Models.Inventory;
+    using Utilities;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Windows;
+
     class CloseStockVM : ViewModelBase
     {
         ObservableCollection<int> _periodYears;

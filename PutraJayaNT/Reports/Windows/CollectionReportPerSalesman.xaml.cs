@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Windows;
+using PutraJayaNT.ViewModels.Sales;
 
 namespace PutraJayaNT.Reports.Windows
 {
@@ -15,10 +16,10 @@ namespace PutraJayaNT.Reports.Windows
     /// </summary>
     public partial class CollectionReportPerSalesmanWindow : ModernWindow
     {
-        ObservableCollection<SalesTransactionMultiPurposeVM>  _salesTransactions;
+        ObservableCollection<ViewModels.Sales.SalesTransactionVM>  _salesTransactions;
         DateTime _dateSelected;
 
-        public CollectionReportPerSalesmanWindow(ObservableCollection<SalesTransactionMultiPurposeVM> salesTransactions, DateTime date)
+        public CollectionReportPerSalesmanWindow(ObservableCollection<ViewModels.Sales.SalesTransactionVM> salesTransactions, DateTime date)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
@@ -51,7 +52,7 @@ namespace PutraJayaNT.Reports.Windows
                 if (t.IsSelected)
                 {
                     DataRow dr = dt.NewRow();
-                    dr["Date"] = t.When.ToShortDateString();
+                    dr["Date"] = t.Date.ToShortDateString();
                     dr["ID"] = t.SalesTransactionID;
                     dr["Customer"] = t.Customer.Name;
                     dr["City"] = t.Customer.City;
@@ -74,7 +75,7 @@ namespace PutraJayaNT.Reports.Windows
             reportViewer.RefreshReport();
         }
 
-        private decimal GetPaidToday(SalesTransactionMultiPurposeVM t)
+        private decimal GetPaidToday(ViewModels.Sales.SalesTransactionVM t)
         {
             using (var context = new ERPContext())
             {

@@ -298,7 +298,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 var banks = context.Ledger_Accounts
                     .Where(e => e.Name.Contains("Bank") && !e.Name.Contains("Expense") || e.Name.Equals("Cash"))
-                    .Include("TransactionLines");
+                    .Include("LedgerTransactionLines");
 
                 foreach (var bank in banks)
                 {

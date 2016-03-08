@@ -6,6 +6,7 @@ using MVVMFramework;
 using PutraJayaNT.Models.Inventory;
 using PutraJayaNT.Utilities;
 using PutraJayaNT.ViewModels.Customers;
+using PutraJayaNT.ViewModels.Item;
 
 namespace PutraJayaNT.ViewModels.Master.Inventory
 {

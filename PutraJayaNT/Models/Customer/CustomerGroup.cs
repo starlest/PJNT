@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PutraJayaNT.Models
+namespace PutraJayaNT.Models.Customer
 {
     [Table("CustomerGroups")]
+    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class CustomerGroup
     {
         public int ID { get; set; }
@@ -16,13 +17,7 @@ namespace PutraJayaNT.Models
         public override bool Equals(object obj)
         {
             var customerGroup = obj as CustomerGroup;
-            if (customerGroup == null) return false;
-            else return this.ID.Equals(customerGroup.ID);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return customerGroup != null && ID.Equals(customerGroup.ID);
         }
     }
 }

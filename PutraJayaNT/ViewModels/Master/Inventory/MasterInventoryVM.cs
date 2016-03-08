@@ -1,17 +1,18 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Utilities;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using PutraJayaNT.Utilities.Database;
-using PutraJayaNT.Utilities.Database.Item;
-using PutraJayaNT.ViewModels.Inventory;
-using PutraJayaNT.Views.Master.Inventory;
-
-namespace PutraJayaNT.ViewModels.Master.Inventory
+﻿namespace PutraJayaNT.ViewModels.Master.Inventory
 {
+    using MVVMFramework;
+    using Models.Inventory;
+    using Utilities;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using Utilities.Database;
+    using Utilities.Database.Item;
+    using ViewModels.Inventory;
+    using ViewModels.Suppliers;
+    using Views.Master.Inventory;
+
     public class MasterInventoryVM : ViewModelBase
     {
         #region Backing Fields

@@ -1,10 +1,10 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Models.Purchase;
-using System.Windows;
-
-namespace PutraJayaNT.ViewModels.Suppliers
+﻿namespace PutraJayaNT.ViewModels.Suppliers
 {
+    using MVVMFramework;
+    using Models.Inventory;
+    using Models.Purchase;
+    using System.Windows;
+
     class PurchaseTransactionLineVM : ViewModelBase<PurchaseTransactionLine>
     {
         int _pieces;

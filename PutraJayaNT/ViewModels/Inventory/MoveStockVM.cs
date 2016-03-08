@@ -1,18 +1,18 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Models.StockCorrection;
-using PutraJayaNT.Reports.Windows;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-
-namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace PutraJayaNT.ViewModels.Inventory
 {
+    using MVVMFramework;
+    using Models;
+    using Models.Inventory;
+    using Models.StockCorrection;
+    using PutraJayaNT.Reports.Windows;
+    using Utilities;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+
     public class MoveStockVM : ViewModelBase<MoveStockTransaction>
     {
         ObservableCollection<ItemVM> _products;

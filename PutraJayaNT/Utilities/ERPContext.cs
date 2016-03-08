@@ -1,3 +1,5 @@
+using PutraJayaNT.Models.Customer;
+
 namespace PutraJayaNT.Utilities
 {
     using Models;

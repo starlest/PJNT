@@ -1,12 +1,11 @@
-﻿using System.Windows.Controls;
-using PutraJayaNT.ViewModels.Sales;
-
-namespace PutraJayaNT.Views.Customers
+﻿namespace PutraJayaNT.Views.Customers
 {
+    using ViewModels.Customers;
+
     /// <summary>
     /// Interaction logic for SalesCollectionListView.xaml
     /// </summary>
-    public partial class SalesCollectionListView : UserControl
+    public partial class SalesCollectionListView
     {
         public SalesCollectionListView()
         {
