@@ -3,12 +3,8 @@ namespace PutraJayaNT.Models.Inventory
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public partial class Stock
+    public class Stock
     {
-        public Stock()
-        {
-        }
-
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 1)]
         public string ItemID { get; set; }
 

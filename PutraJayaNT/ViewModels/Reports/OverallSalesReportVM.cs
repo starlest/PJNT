@@ -167,8 +167,8 @@ namespace PutraJayaNT.ViewModels.Reports
                 foreach (var st in salesTransactions)
                 {
                     _lines.Add(new Sales.SalesTransactionVM { Model = st });
-                    _total += st.Total;
-                    _remaining += (st.Total - st.Paid);
+                    _total += st.NetTotal;
+                    _remaining += (st.NetTotal - st.Paid);
                 }
 
                 OnPropertyChanged("Remaining");

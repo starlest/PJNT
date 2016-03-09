@@ -85,6 +85,7 @@
                     ResetEntryFields();
                     _parentVM.UpdateListedCustomers();
                     _parentVM.UpdateDisplayedCustomers();
+                    MessageBox.Show("Successfully added customer!", "Success", MessageBoxButton.OK);
                 }));
             }
         }
@@ -109,6 +110,7 @@
             NewEntryTelephone = null;
             NewEntryNPWP = null;
             NewEntryGroup = null;
+            UpdateNewEntryGroups();
         }
 
         private bool AreAllNewEntryFieldsFilled()

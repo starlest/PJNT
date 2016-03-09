@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace PutraJayaNT.Utilities
 {
-    public static class LedgerDBHelper
+    public static class DatabaseLedgerHelper
     {
         public static bool AddTransaction(ERPContext context, LedgerTransaction transaction, DateTime date, string documentation, string description)
         {
@@ -32,10 +32,16 @@ namespace PutraJayaNT.Utilities
             transaction.Documentation = documentation;
             transaction.Date = date;
             transaction.Description = description;
-            var user = App.Current.TryFindResource("CurrentUser") as User;
-            if (user != null) transaction.User = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
-            context.Ledger_Transactions.Add(transaction);
 
+            if (Application.Current != null)
+            {
+                var user = Application.Current.TryFindResource("CurrentUser") as User;
+                if (user != null)
+                    transaction.User = context.Users.FirstOrDefault(e => e.Username.Equals(user.Username));
+            }
+            else transaction.User = context.Users.FirstOrDefault(e => e.Username.Equals("EMPTY"));
+
+            context.Ledger_Transactions.Add(transaction);
             return true;
         }
 

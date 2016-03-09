@@ -36,43 +36,63 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="0.5*" />
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="0.2*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Warehouse:" />
                 <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Warehouses}" DisplayMemberPath="Name"
                           SelectedItem="{Binding SelectedWarehouse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Active:" />
+                <Border Grid.Row="0" Grid.Column="3" BorderThickness="1" BorderBrush="Blue" Margin="10, 10, 10, 10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Item" />
+                    <CheckBox Grid.Column="1" HorizontalAlignment="Left" Margin="10, 5, 10, 0" IsChecked="{Binding IsItemActiveChecked}" />
+                    <TextBlock Grid.Column="2" Text="Supplier" />
+                    <CheckBox Grid.Column="3" HorizontalAlignment="Left" Margin="10, 5, 10, 0" IsChecked="{Binding IsSupplierActiveChecked}" />
+                </Grid>
+                </Border>
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Category:" />
                 <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Categories}" DisplayMemberPath="Name" 
                           SelectedItem="{Binding SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Grid.Row="1" Grid.Column="2" Text="Supplier:" />
                 <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding Suppliers}" DisplayMemberPath="Name" 
                           SelectedItem="{Binding SelectedSupplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Product ID:" />
-                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Items}" DisplayMemberPath="ID" 
-                          SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=Explicit}" />
-                <TextBlock Grid.Row="2" Grid.Column="2" Text="Product:" />
-                <ComboBox Grid.Row="2" Grid.Column="3" ItemsSource="{Binding Items}" DisplayMemberPath="Name" 
-                          SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=Explicit}" />
-                <Button Grid.Row="2" Grid.Column="4" Margin="10" Content="Search" Visibility="Hidden"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Item:" />
+                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ListedItems}" DisplayMemberPath="Name" 
+                          SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding ListedItems}" DisplayMemberPath="ID" 
+                          SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Grid Grid.Row="2" Grid.Column="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Margin="10" Content="Display" Command="{Binding DisplayCommand}" />
+                    <Button Grid.Column="1" Margin="10" Content="Clear" Command="{Binding ClearCommand}" />
+                </Grid>
             </Grid> 
         </Border>
-        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" >
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedLines}" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
-                <DataGridTextColumn Header="Name" Width="1.5*" IsReadOnly="True" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Unit" Width="0.8*" IsReadOnly="True" Binding="{Binding Unit}" />
-                <DataGridTextColumn Header="Units" Width="0.8*" IsReadOnly="True" Binding="{Binding Units}" />
-                <DataGridTextColumn Header="Pieces" Width="0.8*" IsReadOnly="True" Binding="{Binding Pieces}" />
-                <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice, StringFormat=N2}" />
-                <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice, StringFormat=N2}" />
-                <DataGridTextColumn Header="Value" Width="1*" IsReadOnly="True" Binding="{Binding InventoryValue, StringFormat=N2}" />
-                <DataGridTemplateColumn Header="Suppliers" Width="1*">
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding Item.ItemID}" />
+                <DataGridTextColumn Header="Name" Width="1.5*" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Unit" Width="0.8*" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Units" Width="0.8*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="0.8*" Binding="{Binding Pieces}" />
+                <DataGridTextColumn Header="Purchase Price" Width="1*" Binding="{Binding PurchasePrice, StringFormat=N2}" />
+                <DataGridTextColumn Header="Sales Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
+                <DataGridTextColumn Header="Value" Width="1*" Binding="{Binding InventoryValue, StringFormat=N2}" />
+                <DataGridTemplateColumn x:Name="SuppliersColumn" Header="Suppliers" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox DisplayMemberPath="Name"
+                            <ComboBox Margin="0"  ItemsSource="{Binding Path=Item.Suppliers}" DisplayMemberPath="Name"
                                       SelectedItem="{Binding Path=SelectedSupplier, Mode=OneWay}"
-                                      ItemsSource="{Binding Path=Item.Suppliers}"
-                                      Width="200" IsEditable="True" />
+                                      Width="{Binding ActualWidth, ElementName=SuppliersColumn}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -85,7 +105,7 @@
                 <ColumnDefinition Width="0.2*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="1" Text="Total:" />
-            <TextBox Grid.Column="2" Foreground="Red" Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsEnabled="False" />
+            <TextBox Grid.Column="2" Foreground="Red" Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" />
         </Grid>
     </Grid>
 </UserControl>

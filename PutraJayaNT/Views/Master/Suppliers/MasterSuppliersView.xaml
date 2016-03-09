@@ -68,7 +68,7 @@
                       SelectedItem="{Binding SelectedCategoryItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Column="8" Content="Search" Margin="10" Command="{Binding SearchCommand}" />
         </Grid>
-        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSuppliers}" SelectedItem="{Binding SelectedLine}" Margin="0,5,0,-5">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSuppliers}" SelectedItem="{Binding SelectedLine}" IsReadOnly="True">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Edit" HorizontalAlignment="Left" Command="{Binding EditSupplierCommand}" />
@@ -76,11 +76,11 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Width="0.5*" IsReadOnly="True" Binding="{Binding ID}" />
-                <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Address" Width="1*" IsReadOnly="True" Binding="{Binding Address}" />
-                <DataGridTextColumn Header="GSTID" Width="1*" IsReadOnly="True" Binding="{Binding GSTID}" />
-                <DataGridTextColumn Header="Active" Width="1*" IsReadOnly="True" Binding="{Binding Active}" />
+                <DataGridTextColumn Header="ID" Width="0.5*" Binding="{Binding ID}" />
+                <DataGridTextColumn Header="Name" Width="1*" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Address" Width="1*" Binding="{Binding Address}" />
+                <DataGridTextColumn Header="GSTID" Width="1*" Binding="{Binding GSTID}" />
+                <DataGridTextColumn Header="Active" Width="1*" Binding="{Binding Active}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

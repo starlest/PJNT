@@ -191,7 +191,7 @@
                     SelectedCustomer = null;
                     SelectedCity = null;
                     SelectedSalesman = null;
-                    UpdateDisplayedSalesTransactions();
+                    UpdateDisplayedSalesTransactionsAccordingToCollectionDateSalesTransactions();
                     UpdateCities();
                     UpdateSalesmen();
                     UpdateCustomers();
@@ -324,18 +324,15 @@
         private void UpdateDisplayedSalesTransactions()
         {
             if (_selectedCity != null && _selectedSalesman != null)
-                UpdateAccordingToCitySalesmanSalesTransactions();
+                UpdateDisplayedSalesTransactionsAccordingToCitySalesmanSalesTransactions();
             if ((_selectedCity != null && _selectedSalesman == null) || (_selectedCity == null && _selectedSalesman != null))
                 DisplayedSalesTransactions.Clear();
             if (_selectedCustomer != null)
-                UpdateAccordingToCustomerSalesTransactions();
-            if (_selectedCustomer == null && _selectedCity == null && _selectedSalesman == null)
-                UpdateAccordingToCollectionDateSalesTransactions();
-
+                UpdateDisplayedSalesTransactionsAccordingToCustomerSalesTransactions();
             UpdateTotalToUI();
         }
 
-        private void UpdateAccordingToCitySalesmanSalesTransactions()
+        private void UpdateDisplayedSalesTransactionsAccordingToCitySalesmanSalesTransactions()
         {
             _total = 0;
             var searchCondition = GetCitySalesmanSelectionSearchCondition();
@@ -359,27 +356,27 @@
                 if (_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
                     searchCondition = 
                         salesTransaction =>
-                        salesTransaction.Paid < salesTransaction.Total && salesTransaction.DueDate <= _toDate;
+                        salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
 
                 else if (_selectedCity.Equals("All") && !_selectedSalesman.Name.Equals("All"))
                     searchCondition =
                         salesTransaction => 
                         salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
-                        && salesTransaction.Paid < salesTransaction.Total &&
+                        && salesTransaction.Paid < salesTransaction.NetTotal &&
                         salesTransaction.DueDate <= _toDate;
 
                 else if (!_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
                     searchCondition =
                         salesTransaction =>
                         salesTransaction.Customer.City.Equals(_selectedCity) &&
-                        salesTransaction.Paid < salesTransaction.Total && salesTransaction.DueDate <= _toDate;
+                        salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
 
                 else
                     searchCondition =
                         salesTransaction =>
                         salesTransaction.Customer.City.Equals(_selectedCity) &&
                         salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
-                        && salesTransaction.Paid < salesTransaction.Total && salesTransaction.DueDate <= _toDate;
+                        && salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
             }
 
             else
@@ -387,19 +384,19 @@
                 if (_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
                     searchCondition = 
                         salesTransaction => 
-                        salesTransaction.Paid >= salesTransaction.Total && salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate <= _toDate;
+                        salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate <= _toDate;
 
                 else if (_selectedCity.Equals("All") && !_selectedSalesman.Name.Equals("All"))
                     searchCondition = 
                         salesTransaction =>
-                        salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID) && salesTransaction.Paid >= salesTransaction.Total &&
+                        salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID) && salesTransaction.Paid >= salesTransaction.NetTotal &&
                         salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate <= _toDate;
 
                 else if (!_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
                     searchCondition =
                         salesTransaction =>
                             salesTransaction.Customer.City.Equals(_selectedCity) &&
-                            salesTransaction.Paid >= salesTransaction.Total && salesTransaction.DueDate >= _fromDate &&
+                            salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate &&
                             salesTransaction.DueDate <= _toDate;
 
                 else
@@ -407,14 +404,14 @@
                         salesTransaction =>
                         salesTransaction.Customer.City.Equals(_selectedCity) &&
                         salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID) &&
-                        salesTransaction.Paid >= salesTransaction.Total && salesTransaction.DueDate >= _fromDate &&
+                        salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate &&
                         salesTransaction.DueDate <= _toDate;
             }
 
             return searchCondition;
         }
 
-        private void UpdateAccordingToCustomerSalesTransactions()
+        private void UpdateDisplayedSalesTransactionsAccordingToCustomerSalesTransactions()
         {
             _total = 0;
             var searchCondition = GetCustomerSelectionSearchCondition();
@@ -425,32 +422,32 @@
             foreach (var salesTransaction in sortedSalesTransactions)
             {
                 DisplayedSalesTransactions.Add(new SalesTransactionVM { Model = salesTransaction });
-                _total += salesTransaction.Total - salesTransaction.Paid;
+                _total += salesTransaction.NetTotal - salesTransaction.Paid;
             }
         }
 
         private Func<SalesTransaction, bool> GetCustomerSelectionSearchCondition()
         {
             if (_selectedCustomer.Name.Equals("All") && !_isPaidChecked)
-                return salesTransaction => salesTransaction.Paid < salesTransaction.Total && salesTransaction.DueDate <= _toDate;
+                return salesTransaction => salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
 
             if (_selectedCustomer.Name.Equals("All") && _isPaidChecked)
-                return salesTransaction => salesTransaction.Paid >= salesTransaction.Total && 
+                return salesTransaction => salesTransaction.Paid >= salesTransaction.NetTotal && 
                                            salesTransaction.DueDate <= _toDate && salesTransaction.DueDate >= _fromDate;
 
             if (!_selectedCustomer.Name.Equals("All") && !_isPaidChecked)
-                return salesTransaction => salesTransaction.Paid < salesTransaction.Total && salesTransaction.Customer.ID.Equals(_selectedCustomer.ID);
+                return salesTransaction => salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.Customer.ID.Equals(_selectedCustomer.ID);
 
             return salesTransaction => salesTransaction.Customer.ID.Equals(_selectedCustomer.ID) &&
-                                       salesTransaction.Paid >= salesTransaction.Total && salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate >= _fromDate &&
+                                       salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate >= _fromDate &&
                                        salesTransaction.DueDate <= _toDate;
         }
 
-        private void UpdateAccordingToCollectionDateSalesTransactions()
+        private void UpdateDisplayedSalesTransactionsAccordingToCollectionDateSalesTransactions()
         {
             _total = 0;
 
-            var ledgerTransactions = DatabaseLedgerTransactionHelper.GetWithoutLines(e => e.Description.Equals("Sales Transaction Receipt") && e.Date.Equals(_collectionDate));
+            var ledgerTransactions = Utilities.Database.Ledger.DatabaseLedgerTransactionHelper.GetWithoutLines(e => e.Description.Equals("Sales Transaction Receipt") && e.Date.Equals(_collectionDate));
             var tempList = new List<SalesTransactionVM>();
             var emptyCollectionSalesman = DatabaseSalesmanHelper.FirstOrDefault(e => e.Name.Equals(" "));
 

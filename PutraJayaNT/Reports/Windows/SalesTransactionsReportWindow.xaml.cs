@@ -41,7 +41,7 @@ namespace PutraJayaNT.Reports.Windows
                 dr["Date"] = t.Date.ToShortDateString();
                 dr["ID"] = t.SalesTransactionID;
                 dr["Customer"] = t.Customer.Name;
-                dr["InvoiceNetTotal"] = t.Total;
+                dr["InvoiceNetTotal"] = t.NetTotal;
                 dt.Rows.Add(dr);
             }
 

@@ -1,43 +1,48 @@
-﻿namespace PutraJayaNT.ViewModels.Reports
+﻿using System;
+using PutraJayaNT.Utilities.Database;
+using PutraJayaNT.Utilities.Database.Item;
+using PutraJayaNT.Utilities.Database.Stock;
+
+namespace PutraJayaNT.ViewModels.Reports
 {
     using MVVMFramework;
     using Models;
     using Models.Inventory;
     using PutraJayaNT.Reports.Windows;
-    using Utilities;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
     using Inventory;
     using Suppliers;
+    using Utilities.Database.Warehouse;
 
     public class InventoryReportVM : ViewModelBase
     {
-        ObservableCollection<ItemVM> _items;
-        ObservableCollection<Category> _categories;
-        ObservableCollection<SupplierVM> _suppliers;
-        ObservableCollection<WarehouseVM> _warehouses;
+        #region Backing Fields
+        private bool _isItemActiveChecked;
+        private bool _isSupplierActiveChecked;
+        private ItemVM _selectedItem;
+        private CategoryVM _selectedCategory;
+        private SupplierVM _selectedSupplier;
+        private WarehouseVM _selectedWarehouse;
+        private decimal _total;
 
-        ObservableCollection<InventoryReportLineVM> _lines;
-
-        ItemVM _selectedItem;
-        Category _selectedCategory;
-        SupplierVM _selectedSupplier;
-        WarehouseVM _selectedWarehouse;
-
-        ICommand _printCommand;
-
-        decimal _total;
+        private ICommand _displayCommand;
+        private ICommand _clearCommand;
+        private ICommand _printCommand;
+        #endregion
 
         public InventoryReportVM()
         {
-            _items = new ObservableCollection<ItemVM>();
-            _categories = new ObservableCollection<Category>();
-            _suppliers = new ObservableCollection<SupplierVM>();
-            _warehouses = new ObservableCollection<WarehouseVM>();
-            _lines = new ObservableCollection<InventoryReportLineVM>();
+            ListedItems = new ObservableCollection<ItemVM>();
+            Categories = new ObservableCollection<CategoryVM>();
+            Suppliers = new ObservableCollection<SupplierVM>();
+            Warehouses = new ObservableCollection<WarehouseVM>();
+            DisplayedLines = new ObservableCollection<InventoryReportLineVM>();
+
+            _isItemActiveChecked = true;
+            _isSupplierActiveChecked = true;
 
             UpdateWarehouses();
             UpdateCategories();
@@ -45,67 +50,55 @@
         }
 
         #region Collections
-        public ObservableCollection<ItemVM> Items
-        {
-            get
-            {
-                return _items;
-            }
-        }
+        public ObservableCollection<WarehouseVM> Warehouses { get; }
 
-        public ObservableCollection<SupplierVM> Suppliers
-        {
-            get
-            {
-                return _suppliers;
-            }
-        }
+        public ObservableCollection<CategoryVM> Categories { get; }
 
-        public ObservableCollection<WarehouseVM> Warehouses
-        {
-            get { return _warehouses; }
-        }
+        public ObservableCollection<SupplierVM> Suppliers { get; }
 
-        public ObservableCollection<InventoryReportLineVM> Lines
-        {
-            get { return _lines; }
-        }
+        public ObservableCollection<ItemVM> ListedItems { get; }
 
-        public ObservableCollection<Category> Categories
-        {
-            get
-            {
-                return _categories;
-            }
-        }
+        public ObservableCollection<InventoryReportLineVM> DisplayedLines { get; }
         #endregion
+
+        #region Properties
+        public bool IsItemActiveChecked
+        {
+            get { return _isItemActiveChecked; }
+            set
+            {
+                SetProperty(ref _isItemActiveChecked, value, () => IsItemActiveChecked);
+                if (ListedItems.Count > 0) UpdateListedItems();
+            }
+        }
+
+        public bool IsSupplierActiveChecked
+        {
+            get { return _isSupplierActiveChecked; }
+            set
+            {
+                SetProperty(ref _isSupplierActiveChecked, value, () => IsSupplierActiveChecked);
+                if (_selectedSupplier != null) return;
+                UpdateSuppliers();
+                ListedItems.Clear();
+            }
+        }
 
         public WarehouseVM SelectedWarehouse
         {
             get { return _selectedWarehouse; }
-            set
-            {
-                if (value == null) return;
-
-                UpdateWarehouses();
-                SetProperty(ref _selectedWarehouse, value, "SelectedWarehouse");
-            }
+            set { SetProperty(ref _selectedWarehouse, value, "SelectedWarehouse"); }
         }
 
-        public Category SelectedCategory
+        public CategoryVM SelectedCategory
         {
             get { return _selectedCategory; }
             set
             {
-                if (value == null && _selectedSupplier == null) return;
-
-                UpdateCategories();
                 SetProperty(ref _selectedCategory, value, "SelectedCategory");
-
                 if (_selectedCategory == null) return;
-
                 SelectedSupplier = null;
-                UpdateItems();
+                UpdateListedItems();
             }
         }
 
@@ -114,29 +107,17 @@
             get { return _selectedSupplier; }
             set
             {
-                if (value == null && _selectedCategory == null) return;
-
-                UpdateSuppliers();
                 SetProperty(ref _selectedSupplier, value, "SelectedSupplier");
-
                 if (_selectedSupplier == null) return;
-
                 SelectedCategory = null;
-                UpdateItems();
+                UpdateListedItems();
             }
         }
 
         public ItemVM SelectedItem
         {
             get { return _selectedItem; }
-            set
-            {
-                SetProperty(ref _selectedItem, value, "SelectedItem");
-
-                if (_selectedItem == null) return;
-
-                UpdateLines();
-            }
+            set { SetProperty(ref _selectedItem, value, "SelectedItem"); }
         }
 
         public decimal Total
@@ -144,7 +125,7 @@
             get
             {
                 _total = 0;
-                foreach (var line in _lines)
+                foreach (var line in DisplayedLines)
                 {
                     _total += line.InventoryValue;
                 }
@@ -152,7 +133,34 @@
             }
             set { SetProperty(ref _total, value, "Total"); }
         }
+        #endregion
 
+        #region Commands
+        public ICommand DisplayCommand
+        {
+            get
+            {
+                return _displayCommand ?? (_displayCommand = new RelayCommand(() =>
+                {
+                    if (_selectedItem != null) UpdateDisplayedLines();
+                }));
+            }
+        }
+
+        public ICommand ClearCommand
+        {
+            get
+            {
+                return _clearCommand ?? (_clearCommand = new RelayCommand(() =>
+                {
+                    ClearSelections();
+                    DisplayedLines.Clear();
+                    UpdateWarehouses();
+                    UpdateCategories();
+                    UpdateSuppliers();
+                }));
+            }
+        }
 
         public ICommand PrintCommand
         {
@@ -160,206 +168,192 @@
             {
                 return _printCommand ?? (_printCommand = new RelayCommand(() =>
                 {
-                    if (_lines.Count == 0) return;
+                    if (DisplayedLines.Count == 0) return;
 
-                    var inventoryReportWindow = new InventoryReportWindow(this);
-                    inventoryReportWindow.Owner = App.Current.MainWindow;
-                    inventoryReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    var inventoryReportWindow = new InventoryReportWindow(this)
+                    {
+                        Owner = Application.Current.MainWindow,
+                        WindowStartupLocation = WindowStartupLocation.CenterOwner
+                    };
                     inventoryReportWindow.Show();
                 }));
             }
         }
+        #endregion
 
         #region Helper Methods
         private void UpdateWarehouses()
         {
-            _warehouses.Clear();
+            var oldSelectedWarehouse = _selectedWarehouse;
+
+            Warehouses.Clear();
 
             var allWarehouse = new Warehouse { ID = -1, Name = "All" };
-            _warehouses.Add(new WarehouseVM { Model = allWarehouse });
+            Warehouses.Add(new WarehouseVM { Model = allWarehouse });
 
-            using (var context = new ERPContext())
-            {
-                var warehouses = context.Warehouses.OrderBy(e => e.Name).ToList();
+            var warehousesFromDatabase = DatabaseWarehouseHelper.GetAll().OrderBy(warehouse => warehouse.Name).ToList();
+            foreach (var warehouse in warehousesFromDatabase)
+                Warehouses.Add(new WarehouseVM { Model = warehouse });
 
-                foreach (var warehouse in warehouses)
-                    _warehouses.Add(new WarehouseVM { Model = warehouse });
-            }
+            UpdateSelectedWarehouse(oldSelectedWarehouse);
+        }
+
+        private void UpdateSelectedWarehouse(WarehouseVM oldSelectedWarehouse)
+        {
+            if (oldSelectedWarehouse == null) return;
+            SelectedWarehouse = oldSelectedWarehouse;
         }
 
         private void UpdateCategories()
         {
-            _categories.Clear();
-            _categories.Add(new Category { ID = -1, Name = "All" });
+            var oldSelectedCategory = _selectedCategory;
 
-            using (var context = new ERPContext())
-            {
-                var categories = context.ItemCategories.ToList();
+            Categories.Clear();
+            var allCategory = new Category {ID = -1, Name = "All"};
+            Categories.Add(new CategoryVM { Model = allCategory });
 
-                foreach (var category in categories)
-                    _categories.Add(category);
-            }
+            var categoriesFromDatabase = DatabaseItemCategoryHelper.GetAll();
+            foreach (var category in categoriesFromDatabase)
+                Categories.Add(new CategoryVM { Model = category });
+
+            UpdateSelectedCategory(oldSelectedCategory);
+        }
+
+        private void UpdateSelectedCategory(CategoryVM oldSelectedCategory)
+        {
+            if (oldSelectedCategory == null) return;
+            SelectedCategory = Categories.FirstOrDefault(category => category.ID.Equals(oldSelectedCategory.ID));
         }
 
         private void UpdateSuppliers()
         {
-            _suppliers.Clear();
-            _suppliers.Add(new SupplierVM { Model = new Supplier { ID = -1, Name = "All" } });
+            var oldSelectedSupplier = _selectedSupplier;
 
-            using (var context = new ERPContext())
+            Suppliers.Clear();
+            Suppliers.Add(new SupplierVM { Model = new Supplier { ID = -1, Name = "All" } });
+
+            var suppliersFromDatabase = DatabaseSupplierHelper.GetAll();
+            foreach (var supplier in suppliersFromDatabase.Where(supplier => supplier.Active.Equals(_isSupplierActiveChecked)))
+                Suppliers.Add(new SupplierVM {Model = supplier});
+            
+            UpdateSelectedSupplier(oldSelectedSupplier);
+        }
+
+        private void UpdateSelectedSupplier(SupplierVM oldSelectedSupplier)
+        {
+            if (oldSelectedSupplier == null) return;
+            SelectedSupplier = Suppliers.FirstOrDefault(supplier => supplier.ID.Equals(oldSelectedSupplier.ID));
+        }
+
+        private void UpdateListedItems()
+        {
+            ListedItems.Clear();
+            var allItem = new Item { ItemID = "All", Name = "All" };
+            ListedItems.Add(new ItemVM { Model = allItem });
+
+            var searchCondition = _selectedCategory != null ? GetSearchConditionAccordingToSelectedCategory() : GetSearchConditionAccordingToSelectedSupplier();
+
+            var itemsFromDatabase = DatabaseItemHelper.Get(searchCondition);
+            foreach (var item in itemsFromDatabase)
+                ListedItems.Add(new ItemVM { Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault() });
+        }
+
+        private Func<Item, bool> GetSearchConditionAccordingToSelectedCategory()
+        {
+            if (_selectedCategory.Name.Equals("All"))
+                return item => item.Active.Equals(_isItemActiveChecked);
+            return item => item.Category.ID.Equals(_selectedCategory.ID) && item.Active.Equals(_isItemActiveChecked);
+        }
+
+        private Func<Item, bool> GetSearchConditionAccordingToSelectedSupplier()
+        {
+            if (_selectedSupplier.Name.Equals("All"))
+                return item => item.Active.Equals(_isItemActiveChecked);
+            return item => item.Suppliers.Contains(_selectedSupplier.Model) && item.Active.Equals(_isItemActiveChecked);
+        }
+
+        private void UpdateDisplayedLines()
+        {
+            DisplayedLines.Clear();
+
+            if (_selectedWarehouse.Name.Equals("All") && _selectedItem.Name.Equals("All"))
+                DisplayAllItems();
+
+            else if (_selectedWarehouse.Name.Equals("All") && !_selectedItem.Name.Equals("All"))
+                DisplaySelectedItemFromAllWarehouses();
+
+            else if (!_selectedWarehouse.Name.Equals("All") && _selectedItem.Name.Equals("All"))
+                DisplayListedItemsFromSelectedWarehouse();
+
+            else
+                DisplaySelectedItemFromSelectedWarehouse();
+
+            UpdateUITotal();
+        }
+
+        private void DisplayAllItems()
+        {
+            foreach (var item in ListedItems)
             {
-                var suppliers = context.Suppliers.ToList();
-
-                foreach (var supplier in suppliers)
-                    _suppliers.Add(new SupplierVM { Model = supplier });
+                if (item.Name.Equals("All")) continue;
+                var line = new InventoryReportLineVM(item.Model);
+                var stocks = DatabaseStockHelper.Get(stock => stock.ItemID.Equals(item.ID)).ToList();
+                if (stocks.Count > 0)
+                {
+                    foreach (var stock in stocks)
+                        line.Quantity += stock.Pieces;
+                }
+                DisplayedLines.Add(line);
             }
         }
 
-        private void UpdateItems()
+        private void DisplaySelectedItemFromAllWarehouses()
         {
-            _items.Clear();
-            _items.Add(new ItemVM { Model = new Item { ItemID = "All", Name = "All" } });
-            using (var context = new ERPContext())
+            var line = new InventoryReportLineVM(_selectedItem.Model);
+            var stocks = DatabaseStockHelper.Get(stock => stock.ItemID.Equals(_selectedItem.ID)).ToList();
+            if (stocks.Count == 0) return;
+            foreach (var stock in stocks)
+                line.Quantity += stock.Pieces;          
+            DisplayedLines.Add(line);
+        }
+
+        private void DisplayListedItemsFromSelectedWarehouse()
+        {
+            foreach (var item in ListedItems)
             {
-                List<Item> items;
-
-                if (_selectedCategory != null)
+                if (item.Name.Equals("All")) continue;
+                var line = new InventoryReportLineVM(item.Model);
+                var stocks = DatabaseStockHelper.Get(stock => stock.ItemID.Equals(item.ID) && stock.WarehouseID.Equals(_selectedWarehouse.ID)).ToList();
+                if (stocks.Count > 0)
                 {
-                    if (_selectedCategory.Name.Equals("All"))
-                    {
-                        items = context.Inventory
-                            .Include("Suppliers")
-                            .Include("Category")
-                            .Include("Stocks")
-                            .Include("Stocks.Warehouse")
-                            .Where(e => e.Active.Equals(true))
-                            .OrderBy(e => e.ItemID)
-                            .ToList();
-                    }
-
-                    else
-                    {
-                        items = context.Inventory
-                            .Include("Suppliers")
-                            .Include("Category")
-                            .Include("Stocks")
-                            .Include("Stocks.Warehouse")
-                            .Where(e => e.Category.ID.Equals(_selectedCategory.ID) && e.Active.Equals(true))
-                            .OrderBy(e => e.ItemID)
-                            .ToList();
-                    }
+                    foreach (var stock in stocks)
+                        line.Quantity += stock.Pieces;
                 }
-
-                else
-                {
-                    var allItems = context.Inventory
-                        .Include("Suppliers")
-                        .Include("Category")
-                        .Include("Stocks")
-                        .Include("Stocks.Warehouse")
-                        .Where(e => e.Active.Equals(true))
-                        .OrderBy(e => e.ItemID)
-                        .ToList();
-
-                    if (_selectedSupplier.Name.Equals("All"))
-                    {
-                        items = allItems;
-                    }
-
-                    else
-                    {
-                        items = new List<Item>();
-                        foreach (var i in allItems)
-                        {
-                            if (i.Suppliers.Contains(_selectedSupplier.Model))
-                            {
-                                items.Add(i);
-                            }
-                        }
-                    }
-                }
-
-                foreach (var item in items)
-                {
-                    if (item.Active == true)
-                        _items.Add(new ItemVM { Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault() });
-                }
+                DisplayedLines.Add(line);
             }
         }
 
-        private void UpdateLines()
+        private void DisplaySelectedItemFromSelectedWarehouse()
         {
-            _lines.Clear();
-            using (var context = new ERPContext())
-            {
-                if (_selectedWarehouse.Name.Equals("All") && _selectedItem.Name.Equals("All"))
-                {
-                    foreach (var item in _items)
-                    {
-                        if (!item.Name.Equals("All"))
-                        {
-                            var line = new InventoryReportLineVM(item.Model);
-                            var stocks = context.Stocks.Where(e => e.ItemID.Equals(item.ID)).ToList();
+            var line = new InventoryReportLineVM(_selectedItem.Model);
+            var stocks = DatabaseStockHelper.Get(stock => stock.ItemID.Equals(_selectedItem.ID) && stock.WarehouseID.Equals(_selectedWarehouse.ID)).ToList();
+            if (stocks.Count == 0) return;
+            foreach (var stock in stocks)
+                line.Quantity += stock.Pieces;
+            DisplayedLines.Add(line);
+        }
 
-                            if (stocks.Count > 0)
-                            {
-                                foreach (var stock in stocks)
-                                {
-                                    line.Quantity += stock.Pieces;
-                                }
-                            }
-                            _lines.Add(line);
-                        }
-                    }
-                }
+        private void ClearSelections()
+        {
+            SelectedWarehouse = null;
+            SelectedSupplier = null;
+            SelectedCategory = null;
+            SelectedItem = null;
+        }
 
-                else if (_selectedWarehouse.Name.Equals("All") && !_selectedItem.Name.Equals("All"))
-                {
-                    var line = new InventoryReportLineVM(_selectedItem.Model);
-                    var stocks = context.Stocks.Where(e => e.ItemID.Equals(_selectedItem.ID)).ToList();
-
-                    if (stocks.Count > 0)
-                    {
-                        foreach (var stock in stocks)
-                        {
-                            line.Quantity += stock.Pieces;
-                        }
-                    }
-                    _lines.Add(line);
-                }
-
-                else if (!_selectedWarehouse.Name.Equals("All") && _selectedItem.Name.Equals("All"))
-                {
-                    foreach (var item in _items)
-                    {
-                        if (!item.Name.Equals("All"))
-                        {
-                            var line = new InventoryReportLineVM(item.Model);
-                            var stocks = context.Stocks.Where(e => e.ItemID.Equals(item.ID) && e.WarehouseID.Equals(_selectedWarehouse.ID)).ToList();
-
-                            if (stocks.Count > 0)
-                            {
-                                foreach (var stock in stocks)
-                                {
-                                    line.Quantity += stock.Pieces;
-                                }
-                            }
-                            _lines.Add(line);
-                        }
-                    }
-                }
-
-                else
-                {
-                    var line = new InventoryReportLineVM(_selectedItem.Model);
-                    var stock = context.Stocks.Where(e => e.ItemID.Equals(_selectedItem.ID) && e.WarehouseID.Equals(_selectedWarehouse.ID)).FirstOrDefault();
-                    if (stock != null) line.Quantity = stock.Pieces;
-                    _lines.Add(line);
-                }
-
-                _lines.RemoveAll(line => line.Quantity == 0);
-                OnPropertyChanged("Total");
-            }
+        private void UpdateUITotal()
+        {
+            OnPropertyChanged("Total");
         }
         #endregion
     }

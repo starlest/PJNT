@@ -1,6 +1,6 @@
-﻿using System;
-using PutraJayaNT.Utilities.Database.Customer;
+﻿using PutraJayaNT.Utilities.Database.Customer;
 using PutraJayaNT.Utilities.Database.Ledger;
+using PutraJayaNT.Utilities.Database.Sales;
 
 namespace PutraJayaNT.ViewModels.Customers
 {
@@ -16,10 +16,8 @@ namespace PutraJayaNT.ViewModels.Customers
     using Customer;
     using Sales;
 
-    internal class SalesCollectVM : ViewModelBase
+    public class SalesCollectVM : ViewModelBase
     {
-        private readonly DateTime _date;
-
         private CustomerVM _selectedCustomer;
         private SalesTransaction _selectedSalesTransaction;
         private string _selectedPaymentMode;
@@ -32,9 +30,11 @@ namespace PutraJayaNT.ViewModels.Customers
         private decimal _salesReturnCredits;
         private decimal _useCredits;
         private decimal _remaining;
-        private decimal _collect;
+        private decimal _collectionAmount;
 
-        private ICommand _confirmPaymentCommand;
+        private bool _isCollectionSuccess;
+
+        private ICommand _confirmCollectionCommand;
 
         public SalesCollectVM()
         {
@@ -45,8 +45,6 @@ namespace PutraJayaNT.ViewModels.Customers
 
             UpdateCustomers();
             UpdatePaymentModes();
-
-            _date = UtilityMethods.GetCurrentDate().Date;
         }
 
         #region Collections
@@ -68,6 +66,7 @@ namespace PutraJayaNT.ViewModels.Customers
                 SetProperty(ref _selectedCustomer, value, "SelectedCustomer");
                 if (_selectedCustomer == null) return;
                 UpdateUIAccordingToSelectedCustomer();
+                UpdateCustomers();
             }
         }
 
@@ -80,12 +79,13 @@ namespace PutraJayaNT.ViewModels.Customers
 
                 if (_selectedSalesTransaction == null) return;
 
+                UpdatePaymentModes();
                 UpdateSelectedSalesTransactionLines();
                 SalesTransactionGrossTotal = _selectedSalesTransaction.GrossTotal;
                 SalesTransactionDiscount = _selectedSalesTransaction.Discount;
                 SalesTransactionSalesExpense = _selectedSalesTransaction.SalesExpense;
-                SalesTransactionTotal = _selectedSalesTransaction.Total;
-                Remaining = _selectedSalesTransaction.Total - _selectedSalesTransaction.Paid;
+                SalesTransactionTotal = _selectedSalesTransaction.NetTotal;
+                Remaining = _selectedSalesTransaction.NetTotal - _selectedSalesTransaction.Paid;
             }
         }
 
@@ -133,7 +133,7 @@ namespace PutraJayaNT.ViewModels.Customers
         }
         #endregion
 
-        #region Payment Properties
+        #region Collection Properties
         public decimal UseCredits
         {
             get { return _useCredits; }
@@ -141,6 +141,7 @@ namespace PutraJayaNT.ViewModels.Customers
             {
                 if (!IsCreditsValueValid(value)) return;
                 SetProperty(ref _useCredits, value, "UseCredits");
+                if (_useCredits <= 0) return;
                 Remaining = _salesTransactionTotal - _selectedSalesTransaction.Paid - _useCredits;
             }
         }
@@ -151,68 +152,33 @@ namespace PutraJayaNT.ViewModels.Customers
             set {  SetProperty(ref _remaining, value, "Remaining");  }
         }
 
-        public decimal Collect
+        public decimal CollectionAmount
         {
-            get { return _collect; }
+            get { return _collectionAmount; }
             set
             {
                 if (!IsCollectValueValid(value)) return;
-                SetProperty(ref _collect, value, "Collect");
+                SetProperty(ref _collectionAmount, value, () => CollectionAmount);
             }
         }
         #endregion
 
-        public ICommand ConfirmPaymentCommand
+        public bool IsCollectionSuccess
+        {
+            get { return _isCollectionSuccess; }
+            set { SetProperty(ref _isCollectionSuccess, value, () => IsCollectionSuccess); }
+        }
+
+        public ICommand ConfirmCollectionCommand
         {
             get
             {
-                return _confirmPaymentCommand ?? (_confirmPaymentCommand = new RelayCommand(() =>
+                return _confirmCollectionCommand ?? (_confirmCollectionCommand = new RelayCommand(() =>
                 {
-                    if (_collect == null)
-                    {
-                        MessageBox.Show("Please enter payment amount", "Empty Field", MessageBoxButton.OK);
-                        return;
-                    }
-
-                    if (_selectedPaymentMode == null)
-                    {
-                        MessageBox.Show("Please select a payment mode.", "No Selection", MessageBoxButton.OK);
-                        return;
-                    }
-
-                    if (MessageBox.Show("Confirm Payment?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    {
-                        using (var ts = new TransactionScope())
-                        {
-                            var context = new ERPContext();
-
-                            _selectedSalesTransaction = context.SalesTransactions
-                            .Include("Customer")
-                            .Where(e => e.SalesTransactionID.Equals(_selectedSalesTransaction.SalesTransactionID)).FirstOrDefault();
-
-                            _selectedSalesTransaction.Paid += (decimal)_collect + _useCredits;
-                            _selectedSalesTransaction.Customer.SalesReturnCredits -= _useCredits;
-
-                            var accountsReceivableName = _selectedCustomer.Name + " Accounts Receivable";
-
-                            if (_collect > 0)
-                            {
-                                var transaction = new LedgerTransaction();
-
-                                if (!LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedSalesTransaction.SalesTransactionID, "Sales Transaction Receipt")) return;
-                                context.SaveChanges();
-
-                                LedgerDBHelper.AddTransactionLine(context, transaction, _selectedPaymentMode, "Debit", (decimal)_collect);
-                                LedgerDBHelper.AddTransactionLine(context, transaction, accountsReceivableName, "Credit", (decimal)_collect);
-                            }
-                            context.SaveChanges();
-
-                            ts.Complete();
-                        }
-
-                        ResetTransaction();
-                    }
-
+                    if (!IsPaymentModeSelected() || !IsCollectionConfirmationYes()) return;
+                    Collect(_selectedSalesTransaction, _salesReturnCredits, _collectionAmount, _selectedPaymentMode);
+                    MessageBox.Show("Succesfully collected!", "Success", MessageBoxButton.OK);
+                    ResetTransaction();
                 }));
             }
         }
@@ -233,7 +199,8 @@ namespace PutraJayaNT.ViewModels.Customers
         private void UpdateSelectedCustomer(CustomerVM oldSelectedCustomer)
         {
             if (oldSelectedCustomer == null) return;
-            SelectedCustomer = Customers.FirstOrDefault(customer => customer.ID.Equals(oldSelectedCustomer.ID));
+            _selectedCustomer = Customers.FirstOrDefault(customer => customer.ID.Equals(oldSelectedCustomer.ID));
+            if (_selectedCustomer != null) SalesReturnCredits = _selectedCustomer.SalesReturnCredits;
         }
 
         private void UpdatePaymentModes()
@@ -275,7 +242,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     .Include("SalesTransactionLines")
                     .Include("SalesTransactionLines.Item")
                     .Include("SalesTransactionLines.Warehouse")
-                    .Where(e => e.InvoiceIssued != null && e.Customer.ID.Equals(_selectedCustomer.ID) && (e.Paid < e.Total))
+                    .Where(e => e.InvoiceIssued != null && e.Customer.ID.Equals(_selectedCustomer.ID) && (e.Paid < e.NetTotal))
                     .ToList();
 
                 foreach (var transaction in transactions)
@@ -305,6 +272,47 @@ namespace PutraJayaNT.ViewModels.Customers
             return false;
         }
 
+        private bool IsPaymentModeSelected()
+        {
+            if (_selectedPaymentMode != null) return true;
+            MessageBox.Show("Please select a payment mode.", "Incomplete Selections", MessageBoxButton.OK);
+            return false;
+        }
+
+        private static bool IsCollectionConfirmationYes()
+        {
+            return MessageBox.Show("Confirm collection?", "Confirmation", MessageBoxButton.YesNo) ==
+                   MessageBoxResult.Yes;
+        }
+
+        public static void Collect(SalesTransaction salesTransaction, decimal creditsUsed, decimal collectionAmount, string paymentMode)
+        {
+            using (var ts = new TransactionScope())
+            {
+                var context = new ERPContext();
+                DatabaseSalesTransactionHelper.AttachToDatabaseContext(context, ref salesTransaction);
+                salesTransaction.Paid += collectionAmount + creditsUsed;
+                salesTransaction.Customer.SalesReturnCredits -= creditsUsed;
+                SaveCollectionLedgerTransactionInDatabase(context, salesTransaction, collectionAmount, paymentMode);
+                ts.Complete();
+            }
+        }
+
+        private static void SaveCollectionLedgerTransactionInDatabase(ERPContext context, SalesTransaction salesTransaction, decimal collectionAmount, string paymentMode)
+        {
+            if (collectionAmount <= 0) return;
+
+            var accountsReceivableName = salesTransaction.Customer.Name + " Accounts Receivable";
+            var date = UtilityMethods.GetCurrentDate().Date;
+            var transaction = new LedgerTransaction();
+
+            if (!DatabaseLedgerHelper.AddTransaction(context, transaction, date, salesTransaction.SalesTransactionID, "Sales Transaction Receipt")) return;
+            context.SaveChanges();
+            DatabaseLedgerHelper.AddTransactionLine(context, transaction, paymentMode, "Debit", collectionAmount);
+            DatabaseLedgerHelper.AddTransactionLine(context, transaction, accountsReceivableName, "Credit", collectionAmount);
+            context.SaveChanges();
+        }
+
         private void ResetTransaction()
         {
             SelectedCustomer = null;
@@ -312,11 +320,13 @@ namespace PutraJayaNT.ViewModels.Customers
             SelectedSalesTransaction = null;
             SalesTransactionTotal = 0;
             SalesReturnCredits = 0;
+            SalesTransactionGrossTotal = 0;
             UseCredits = 0;
             Remaining = 0;
-            Collect = 0;
+            CollectionAmount = 0;
             SelectedSalesTransactionLines.Clear();
             CustomerUnpaidSalesTransactions.Clear();
+            IsCollectionSuccess = true;
         }
         #endregion
     }

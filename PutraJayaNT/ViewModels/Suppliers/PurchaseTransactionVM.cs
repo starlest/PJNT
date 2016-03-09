@@ -777,10 +777,10 @@
                 LedgerTransaction transaction = new LedgerTransaction();
                 string accountsPayableName = _newTransactionSupplier.Name + " Accounts Payable";
 
-                if (!LedgerDBHelper.AddTransaction(context, transaction, _newTransactionDate, _newTransactionID.ToString(), "Purchase Transaction")) return;
+                if (!DatabaseLedgerHelper.AddTransaction(context, transaction, _newTransactionDate, _newTransactionID.ToString(), "Purchase Transaction")) return;
                 context.SaveChanges();
-                LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Debit", Model.Total);
-                LedgerDBHelper.AddTransactionLine(context, transaction, accountsPayableName, "Credit", Model.Total);
+                DatabaseLedgerHelper.AddTransactionLine(context, transaction, "Inventory", "Debit", Model.Total);
+                DatabaseLedgerHelper.AddTransactionLine(context, transaction, accountsPayableName, "Credit", Model.Total);
                 context.SaveChanges();
 
                 ts.Complete();
@@ -815,20 +815,20 @@
                 {
                     // Adjust Supplier's Accounts Payable and Inventory
                     var ledgerTransaction1 = new LedgerTransaction();
-                    LedgerDBHelper.AddTransaction(context, ledgerTransaction1, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Purchase Transaction Adjustment");
+                    DatabaseLedgerHelper.AddTransaction(context, ledgerTransaction1, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Purchase Transaction Adjustment");
                     context.SaveChanges();
 
                     if (_newTransactionNetTotal > transaction.Total)
                     {
                         var valueChanged = (decimal)_newTransactionNetTotal - transaction.Total;
-                        LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Debit", valueChanged);
-                        LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", _newTransactionSupplier.Name), "Credit", valueChanged);
+                        DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Debit", valueChanged);
+                        DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", _newTransactionSupplier.Name), "Credit", valueChanged);
                     }
                     else
                     {
                         var valueChanged = transaction.Total - (decimal)_newTransactionNetTotal;
-                        LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", _newTransactionSupplier.Name), "Debit", valueChanged);
-                        LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", valueChanged);
+                        DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", _newTransactionSupplier.Name), "Debit", valueChanged);
+                        DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", valueChanged);
                     }
 
                     var originalTransactionGrossTotal = transaction.GrossTotal;
@@ -887,20 +887,20 @@
                     if (changesMade)
                     {
                         var ledgerTransaction2 = new LedgerTransaction();
-                        LedgerDBHelper.AddTransaction(context, ledgerTransaction2, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Purchase Transaction Adjustment (COGS)");
+                        DatabaseLedgerHelper.AddTransaction(context, ledgerTransaction2, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Purchase Transaction Adjustment (COGS)");
                         context.SaveChanges();
 
                         // Indicates there is an increase in COGS
                         if (totalValueChanged > 0)
                         {
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Debit", totalValueChanged);
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Credit", totalValueChanged);
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Debit", totalValueChanged);
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Credit", totalValueChanged);
                         }
 
                         else
                         {
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Debit", -totalValueChanged);
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Credit", -totalValueChanged);
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Debit", -totalValueChanged);
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Credit", -totalValueChanged);
                         }
                     }
                 }

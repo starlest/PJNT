@@ -1,23 +1,18 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Reports.Windows;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using PutraJayaNT.ViewModels.Inventory;
-
-namespace PutraJayaNT.ViewModels.Reports
+﻿namespace PutraJayaNT.ViewModels.Reports
 {
-    public class StockBalancesReportVM : ViewModelBase
-    {
-        ObservableCollection<ItemVM> _products;
-        ObservableCollection<WarehouseVM> _warehouses;
-        ObservableCollection<StockBalanceLineVM> _lines;
+    using MVVMFramework;
+    using PutraJayaNT.Reports.Windows;
+    using Utilities;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using Inventory;
 
+    public class StockCardReportVM : ViewModelBase
+    {
         ItemVM _selectedProduct;
         DateTime _fromDate;
         DateTime _toDate;
@@ -29,33 +24,24 @@ namespace PutraJayaNT.ViewModels.Reports
 
         ICommand _printCommand;
 
-        int _beginningBalance = 0;
+        int _beginningBalance;
 
-        public StockBalancesReportVM()
+        public StockCardReportVM()
         {
-            _products = new ObservableCollection<ItemVM>();
-            _warehouses = new ObservableCollection<WarehouseVM>();
-            _lines = new ObservableCollection<StockBalanceLineVM>();
+            Products = new ObservableCollection<ItemVM>();
+            Warehouses = new ObservableCollection<WarehouseVM>();
+            DisplayedLines = new ObservableCollection<StockCardLineVM>();
             _fromDate = UtilityMethods.GetCurrentDate().Date.AddDays(-UtilityMethods.GetCurrentDate().Day + 1);
             _toDate = UtilityMethods.GetCurrentDate().Date;
             UpdateProducts();
             UpdateWarehouses();
         }
 
-        public ObservableCollection<ItemVM> Products
-        {
-            get { return _products; }
-        }
+        public ObservableCollection<ItemVM> Products { get; }
 
-        public ObservableCollection<WarehouseVM> Warehouses
-        {
-            get { return _warehouses; }
-        }
+        public ObservableCollection<WarehouseVM> Warehouses { get; }
 
-        public ObservableCollection<StockBalanceLineVM> Lines
-        {
-            get { return _lines; }
-        }
+        public ObservableCollection<StockCardLineVM> DisplayedLines { get; }
 
         public ItemVM SelectedProduct
         {
@@ -148,7 +134,7 @@ namespace PutraJayaNT.ViewModels.Reports
             {
                 return _printCommand ?? (_printCommand = new RelayCommand(() =>
                 {
-                    if (_lines.Count == 0) return;
+                    if (DisplayedLines.Count == 0) return;
 
                     var stockCardReportWindow = new StockCardReportWindow(this);
                     stockCardReportWindow.Owner = App.Current.MainWindow;
@@ -161,13 +147,13 @@ namespace PutraJayaNT.ViewModels.Reports
         #region Helper Methods
         private void UpdateProducts()
         {
-            _products.Clear();
+            Products.Clear();
             using (var context = new ERPContext())
             {
                 var products = context.Inventory.ToList();
 
                 foreach (var product in products)
-                    _products.Add(new ItemVM { Model = product });
+                    Products.Add(new ItemVM { Model = product });
             }
         }
 
@@ -175,22 +161,22 @@ namespace PutraJayaNT.ViewModels.Reports
         {
             using (var context = new ERPContext())
             {
-                _warehouses.Clear();
+                Warehouses.Clear();
 
                 var warehouses = context.Warehouses.ToList();
 
                 foreach (var warehouse in warehouses)
-                    _warehouses.Add(new WarehouseVM { Model = warehouse });
+                    Warehouses.Add(new WarehouseVM { Model = warehouse });
             }
         }
 
         private void UpdateLines()
         {
-            _lines.Clear();
-            var lines = new List<StockBalanceLineVM>();
+            DisplayedLines.Clear();
+            var lines = new List<StockCardLineVM>();
             using (var context = new ERPContext())
             {
-                foreach (var warehouse in _warehouses)
+                foreach (var warehouse in Warehouses)
                 {
                     if (!warehouse.IsSelected) continue;
 
@@ -240,7 +226,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
                     foreach (var line in purchaseLines)
                     {
-                        var vm = new StockBalanceLineVM
+                        var vm = new StockCardLineVM
                         {
                             Item = line.Item,
                             Date = line.PurchaseTransaction.Date,
@@ -254,7 +240,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
                     foreach (var line in purchaseReturnLines)
                     {
-                        var vm = new StockBalanceLineVM
+                        var vm = new StockCardLineVM
                         {
                             Item = line.Item,
                             Date = line.PurchaseReturnTransaction.Date,
@@ -268,7 +254,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
                     foreach (var line in salesLines)
                     {
-                        var vm = new StockBalanceLineVM
+                        var vm = new StockCardLineVM
                         {
                             Item = line.Item,
                             Date = line.SalesTransaction.Date,
@@ -282,7 +268,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
                     foreach (var line in salesReturnLines)
                     {
-                        var vm = new StockBalanceLineVM
+                        var vm = new StockCardLineVM
                         {
                             Item = line.Item,
                             Date = line.SalesReturnTransaction.Date,
@@ -296,7 +282,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
                     foreach (var line in stockAdjustmentLines)
                     {
-                        var vm = new StockBalanceLineVM
+                        var vm = new StockCardLineVM
                         {
                             Item = line.Item,
                             Date = line.AdjustStockTransaction.Date,
@@ -317,7 +303,7 @@ namespace PutraJayaNT.ViewModels.Reports
                             {
                                 if (transaction.FromWarehouse.ID.Equals(warehouse.ID))
                                 {
-                                    var vm = new StockBalanceLineVM
+                                    var vm = new StockCardLineVM
                                     {
                                         Item = line.Item,
                                         Date = line.MoveStockTransaction.Date,
@@ -332,7 +318,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
                                 else if (transaction.ToWarehouse.ID.Equals(warehouse.ID))
                                 {
-                                    var vm = new StockBalanceLineVM
+                                    var vm = new StockCardLineVM
                                     {
                                         Item = line.Item,
                                         Date = line.MoveStockTransaction.Date,
@@ -356,7 +342,7 @@ namespace PutraJayaNT.ViewModels.Reports
                 {
                     balance += l.Amount;
                     l.Balance = balance;
-                    _lines.Add(l);
+                    DisplayedLines.Add(l);
 
                     if (l.Amount < 0) totalOut += -l.Amount;
                     else totalIn += l.Amount;
@@ -383,7 +369,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
             using (var context = new ERPContext())
             {
-                foreach (var warehouse in _warehouses)
+                foreach (var warehouse in Warehouses)
                 {
                     if (warehouse.IsSelected)
                     {
@@ -450,7 +436,7 @@ namespace PutraJayaNT.ViewModels.Reports
 
             using (var context = new ERPContext())
             {
-                foreach (var warehouse in _warehouses)
+                foreach (var warehouse in Warehouses)
                 {
                     if (warehouse.IsSelected)
                     {

@@ -56,6 +56,7 @@ namespace PutraJayaNT.ViewModels.Master.Suppliers
                     ResetEntryFields();
                     _parentVM.UpdateSuppliers();
                     _parentVM.UpdateDisplayedSuppliers();
+                    MessageBox.Show("Successfully added supplier!", "Success", MessageBoxButton.OK);
                 }));
             }
         }
@@ -71,7 +72,7 @@ namespace PutraJayaNT.ViewModels.Master.Suppliers
 
         private bool AreAllEntryFieldsFilled()
         {
-            if (_newEntryName != null || _newEntryAddress != null) return true;
+            if (_newEntryName != null && _newEntryAddress != null) return true;
             MessageBox.Show("Please enter supplier's Name and Address", "Missing Fields", MessageBoxButton.OK);
             return false;
         }

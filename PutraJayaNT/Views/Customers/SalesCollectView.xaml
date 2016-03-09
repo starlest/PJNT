@@ -11,18 +11,18 @@
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding  Key="F1"  Command="{Binding ConfirmPaymentCommand}"/>
+        <KeyBinding  Key="F1"  Command="{Binding ConfirmCollectionCommand}"/>
     </UserControl.InputBindings>
     <Grid>
-        <!--<Grid.Style>
+        <Grid.Style>
             <Style>
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding NewEntrySubmitted}" Value="True">
+                    <DataTrigger Binding="{Binding IsCollectionButtonPressed}" Value="True">
                         <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=CustomerComboBox}"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
-        </Grid.Style>-->
+        </Grid.Style>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*" />
             <RowDefinition Height="1*" />
@@ -55,16 +55,16 @@
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SalesReturnCredits, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding SelectedSalesTransactionLines}" >
+        <DataGrid Grid.Row="1" ItemsSource="{Binding SelectedSalesTransactionLines}" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding Item.ItemID}" />
-                <DataGridTextColumn Header="Name" Width="1*" IsReadOnly="True" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding Item.ItemID}" />
+                <DataGridTextColumn Header="Name" Width="1*" Binding="{Binding Item.Name}" />
                 <DataGridTextColumn Header="Unit Name" Width="1*" Binding="{Binding Item.UnitName}" />
                 <DataGridTextColumn Header="Pieces/Unit" Width="1*" Binding="{Binding Item.PiecesPerUnit}" />
                 <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
-                <DataGridTextColumn Header="Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice, StringFormat=N2}" />
-                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
+                <DataGridTextColumn Header="Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
+                <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Total, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="2">
@@ -83,20 +83,20 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="Gross Total: " />
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding GrossTotal, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SalesTransactionGrossTotal, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
             <TextBlock Grid.Row="0" Grid.Column="2" Text="Discount: " />
-            <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding Discount, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
+            <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding SalesTransactionDiscount, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
             <TextBlock Grid.Row="0" Grid.Column="4" FontSize="19"  Text="Sales Expense: " />
-            <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding SalesExpense, Mode=OneWay, StringFormat=N2}" IsEnabled="False"/>
+            <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding SalesTransactionSalesExpense, Mode=OneWay, StringFormat=N2}" IsEnabled="False"/>
             <TextBlock Grid.Row="0" Grid.Column="6" FontWeight="Black" Text="Total: " />
-            <TextBox Grid.Row="0" Grid.Column="7" FontWeight="Black" Text="{Binding Total, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
+            <TextBox Grid.Row="0" Grid.Column="7" FontWeight="Black" Text="{Binding SalesTransactionTotal, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Use Credits: " />
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding UseCredits, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, StringFormat=N2}" TabIndex="3" />
             <TextBlock Grid.Row="1" Grid.Column="2" FontWeight="Black" Text="Remaining: " />
             <TextBox Grid.Row="1" Grid.Column="3" FontWeight="Black" Text="{Binding Remaining, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
             <TextBlock Grid.Row="1" Grid.Column="4" Text="Collect:" Foreground="Red" />
-            <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding Collect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" TabIndex="4" />
-            <Button Grid.Row="1" Grid.Column="7" Content="(F1) Confirm" Command="{Binding ConfirmPaymentCommand}" Margin="10" TabIndex="5" />
+            <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding CollectionAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" TabIndex="4" />
+            <Button Grid.Row="1" Grid.Column="7" Content="(F1) Confirm" Command="{Binding ConfirmCollectionCommand}" Margin="10" TabIndex="5" />
         </Grid>
     </Grid>
 </UserControl>

@@ -91,7 +91,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LoginWindow.xaml.cs">
+    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionLineHelper.cs" />
+    <Compile Include="Utilities\Database\Stock\DatabaseStockHelper.cs" />
+    <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Migrations\201603041709518_Update1.cs" />
@@ -105,6 +107,10 @@
     <Compile Include="Migrations\201603070927590_Update3.cs" />
     <Compile Include="Migrations\201603070927590_Update3.Designer.cs">
       <DependentUpon>201603070927590_Update3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603080402369_Update4.cs" />
+    <Compile Include="Migrations\201603080402369_Update4.Designer.cs">
+      <DependentUpon>201603080402369_Update4.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Date.cs" />
     <Compile Include="Models\Inventory\StockBalance.cs" />
@@ -199,17 +205,18 @@
     <Compile Include="Utilities\Database\Salesman\DatabaseSalesCommissionHelper.cs" />
     <Compile Include="Utilities\Database\Salesman\DatabaseSalesmanHelper.cs" />
     <Compile Include="Utilities\Database\Sales\DatabaseSalesTransactionHelper.cs" />
+    <Compile Include="Utilities\Database\Warehouse\DatabaseWarehouseHelper.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
     <Compile Include="Models\Inventory\Stock.cs" />
     <Compile Include="Models\Sales\SalesTransaction.cs" />
     <Compile Include="Models\Sales\SalesTransactionLine.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Utilities\LedgerDBHelper.cs" />
+    <Compile Include="Utilities\DatabaseLedgerHelper.cs" />
     <Compile Include="Utilities\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\PasswordHelper.cs" />
     <Compile Include="Utilities\PrintHelper.cs" />
     <Compile Include="Utilities\UtilityMethods.cs" />
-    <Compile Include="VerificationWindow.xaml.cs">
+    <Compile Include="Views\VerificationWindow.xaml.cs">
       <DependentUpon>VerificationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\Accounting\BalanceSheetVM.cs" />
@@ -219,7 +226,7 @@
     <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
-    <Compile Include="ViewModels\Customers\CategoryVM.cs" />
+    <Compile Include="ViewModels\Inventory\CategoryVM.cs" />
     <Compile Include="ViewModels\Customer\CustomerGroupVM.cs" />
     <Compile Include="ViewModels\Item\AlternativeSalesPriceVM.cs" />
     <Compile Include="ViewModels\Customers\BrowseSalesTransactionsVM.cs" />
@@ -262,8 +269,8 @@
     <Compile Include="ViewModels\Reports\OverallSalesReportVM.cs" />
     <Compile Include="ViewModels\Reports\PurchasesReportVM.cs" />
     <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
-    <Compile Include="ViewModels\Reports\StockBalanceLineVM.cs" />
-    <Compile Include="ViewModels\Reports\StockBalancesReportVM.cs" />
+    <Compile Include="ViewModels\Reports\StockCardLineVM.cs" />
+    <Compile Include="ViewModels\Reports\StockCardReportVM.cs" />
     <Compile Include="ViewModels\Salesman\SalesCommissionVM.cs" />
     <Compile Include="ViewModels\Salesman\SalesmanVM.cs" />
     <Compile Include="ViewModels\Suppliers\PaymentListVM.cs" />
@@ -312,8 +319,8 @@
     <Compile Include="Views\Customers\SalesReturnView.xaml.cs">
       <DependentUpon>SalesReturnView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Customers\CustomerSalesTransactionView.xaml.cs">
-      <DependentUpon>CustomerSalesTransactionView.xaml</DependentUpon>
+    <Compile Include="Views\Customers\SalesTransactionView.xaml.cs">
+      <DependentUpon>SalesTransactionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Inventory\CloseStockView.xaml.cs">
       <DependentUpon>CloseStockView.xaml</DependentUpon>
@@ -378,8 +385,8 @@
     <Compile Include="Views\Reports\SalesReturnsReportView.xaml.cs">
       <DependentUpon>SalesReturnsReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Reports\StockBalancesReportView.xaml.cs">
-      <DependentUpon>StockBalancesReportView.xaml</DependentUpon>
+    <Compile Include="Views\Reports\StockCardReportView.xaml.cs">
+      <DependentUpon>StockCardReportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Reports\CommissionsReportView.xaml.cs">
       <DependentUpon>CommissionsReportView.xaml</DependentUpon>
@@ -403,15 +410,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="LoginWindow.xaml">
+    <Page Include="Views\LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -464,7 +471,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VerificationWindow.xaml">
+    <Page Include="Views\VerificationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -516,7 +523,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Customers\CustomerSalesTransactionView.xaml">
+    <Page Include="Views\Customers\SalesTransactionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -604,7 +611,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Reports\StockBalancesReportView.xaml">
+    <Page Include="Views\Reports\StockCardReportView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -655,6 +662,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603070927590_Update3.resx">
       <DependentUpon>201603070927590_Update3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603080402369_Update4.resx">
+      <DependentUpon>201603080402369_Update4.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

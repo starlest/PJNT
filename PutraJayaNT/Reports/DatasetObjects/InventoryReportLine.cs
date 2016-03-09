@@ -1,6 +1,6 @@
 ﻿namespace PutraJayaNT.Reports.DatasetObjects
 {
-    class InventoryReportLine
+    internal class InventoryReportLine
     {
         public string ItemID { get; set; }
 

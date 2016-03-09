@@ -222,7 +222,7 @@ namespace PutraJayaNT.ViewModels.Inventory
 
                                     context.Stocks.Add(newStock);
                                 }
-                                stock.Pieces += line.Quantity;
+                                else stock.Pieces += line.Quantity;
 
                                 // Add the line into the new purchase transaction
                                 var l = new PurchaseTransactionLine
@@ -249,10 +249,10 @@ namespace PutraJayaNT.ViewModels.Inventory
                         if (decreaseAdjustment)
                         {
                             var transaction = new LedgerTransaction();
-                            if (!LedgerDBHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Stock Adjustment (Decrement)")) return;
+                            if (!DatabaseLedgerHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Stock Adjustment (Decrement)")) return;
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
-                            LedgerDBHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);
                         }
 
                         if (increaseAdjustment)
@@ -427,13 +427,18 @@ namespace PutraJayaNT.ViewModels.Inventory
 
             using (var context = new ERPContext())
             {
-                var products = context.Stocks
-                    .Include("Item")
-                    .Where(e => e.WarehouseID.Equals(_newEntryWarehouse.ID))
-                    .ToList();
+                //var products = context.Stocks
+                //    .Include("Item")
+                //    .Where(e => e.WarehouseID.Equals(_newEntryWarehouse.ID))
+                //    .OrderBy(stock => stock.Item.Name)
+                //    .ToList();
 
-                foreach (var product in products)
-                    _products.Add(new ItemVM { Model = product.Item });
+                //foreach (var product in products)
+                //    _products.Add(new ItemVM { Model = product.Item }
+
+                var items = context.Inventory.OrderBy(item => item.Name).ToList();
+                foreach (var item in items)
+                    _products.Add(new ItemVM { Model = item });
             }
         }
 

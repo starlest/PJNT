@@ -2,14 +2,13 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using PutraJayaNT.ViewModels.Sales;
 
 namespace PutraJayaNT.Views.Customers
 {
     /// <summary>
     /// Interaction logic for SalesReturnView.xaml
     /// </summary>
-    public partial class SalesReturnView : UserControl
+    public partial class SalesReturnView
     {
         public SalesReturnView()
         {

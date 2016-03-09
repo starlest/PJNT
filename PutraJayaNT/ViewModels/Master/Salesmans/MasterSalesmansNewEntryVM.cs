@@ -36,6 +36,7 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
                     AddSalesmanToDatabase(newSalesman);
                     ResetEntryFields();
                     _parentVM.UpdateSalesmans();
+                    MessageBox.Show("Successfully added salesman!", "Success", MessageBoxButton.OK);
                 }));
             }
         }

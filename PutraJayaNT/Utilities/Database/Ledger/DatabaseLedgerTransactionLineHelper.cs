@@ -5,7 +5,7 @@ using PutraJayaNT.Models.Accounting;
 
 namespace PutraJayaNT.Utilities.Database.Ledger
 {
-    public static class DatabaseLedgerTransactionHelper
+    public static class DatabaseLedgerTransactionLineHelper
     {
         public static IEnumerable<LedgerTransaction> GetAll()
         {
@@ -13,16 +13,16 @@ namespace PutraJayaNT.Utilities.Database.Ledger
                 return context.Ledger_Transactions.Include("LedgerTransactionLines").ToList();
         }
 
-        public static IEnumerable<LedgerTransaction> Get(Func<LedgerTransaction, bool> condition)
+        public static IEnumerable<LedgerTransactionLine> Get(Func<LedgerTransactionLine, bool> condition)
         {
             using (var context = new ERPContext())
-                return context.Ledger_Transactions.Include("LedgerTransactionLines").Where(condition).ToList();
+                return context.Ledger_Transaction_Lines.Include("LedgerTransaction").Where(condition).ToList();
         }
 
-        public static LedgerTransaction FirstOrDefault(Func<LedgerTransaction, bool> condition)
+        public static LedgerTransactionLine FirstOrDefault(Func<LedgerTransactionLine, bool> condition)
         {
             using (var context = new ERPContext())
-                return context.Ledger_Transactions.Include("LedgerTransactionLines").Where(condition).FirstOrDefault();
+                return context.Ledger_Transaction_Lines.Include("LedgerTransaction").Where(condition).FirstOrDefault();
         }
 
         public static void AttachToObjectFromDatabaseContext(ERPContext context, ref LedgerTransaction ledgerTransactionToBeAttached)

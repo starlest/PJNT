@@ -29,7 +29,7 @@ namespace PutraJayaNT.Models.Sales
 
         public decimal SalesExpense { get; set; }
 
-        public decimal Total { get; set; }
+        public decimal NetTotal { get; set; }
 
         public decimal Paid { get; set; }
 

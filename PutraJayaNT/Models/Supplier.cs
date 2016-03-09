@@ -5,6 +5,7 @@ using PutraJayaNT.Models.Inventory;
 
 namespace PutraJayaNT.Models
 {
+    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class Supplier
     {
         public Supplier()
@@ -33,13 +34,7 @@ namespace PutraJayaNT.Models
         public override bool Equals(object obj)
         {
             var supplier = obj as Supplier;
-            if (supplier == null) return false;
-            else return this.ID.Equals(supplier.ID);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return supplier != null && ID.Equals(supplier.ID);
         }
     }
 }

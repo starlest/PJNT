@@ -4,14 +4,14 @@
     using Models.Inventory;
     using System;
 
-    public class StockBalanceLineVM : ViewModelBase
+    public class StockCardLineVM : ViewModelBase
     {
-        DateTime _date;
-        string _documentation;
-        string _description;
-        string _customerSupplier;
-        int _amount;
-        int _balance;
+        private DateTime _date;
+        private string _documentation;
+        private string _description;
+        private string _customerSupplier;
+        private int _amount;
+        private int _balance;
 
         public Item Item { get; set; }
 
@@ -45,25 +45,13 @@
             set { SetProperty(ref _amount, value, "Amount"); }
         }
 
-        public string InQuantity
-        {
-            get { return _amount > 0 ? Units + "/" + Pieces : "0/0"; }
-        }
+        public string InQuantity => _amount > 0 ? Units + "/" + Pieces : "0/0";
 
-        public string OutQuantity
-        {
-            get { return _amount < 0 ? -Units + "/" + -Pieces : "0/0"; }
-        }
+        public string OutQuantity => _amount < 0 ? -Units + "/" + -Pieces : "0/0";
 
-        public int Units
-        {
-            get { return _amount / Item.PiecesPerUnit; }
-        }
+        public int Units => _amount / Item.PiecesPerUnit;
 
-        public int Pieces
-        {
-            get { return _amount % Item.PiecesPerUnit; }
-        }
+        public int Pieces => _amount % Item.PiecesPerUnit;
 
         public int Balance
         {
@@ -71,9 +59,6 @@
             set { SetProperty(ref _balance, value, "Balance"); }
         }
 
-        public string StringBalance
-        {
-            get { return (_balance / Item.PiecesPerUnit) + "/" + (_balance % Item.PiecesPerUnit); }
-        }
+        public string StringBalance => _balance / Item.PiecesPerUnit + "/" + _balance % Item.PiecesPerUnit;
     }
 }

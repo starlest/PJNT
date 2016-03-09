@@ -244,11 +244,11 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             var accountsPayableName = _selectedSupplier.Name + " Accounts Payable";
                             var transaction = new LedgerTransaction();
 
-                            if (!LedgerDBHelper.AddTransaction(context, transaction, _date, _selectedPurchase.PurchaseID.ToString(), "Purchase Payment")) return;
+                            if (!DatabaseLedgerHelper.AddTransaction(context, transaction, _date, _selectedPurchase.PurchaseID.ToString(), "Purchase Payment")) return;
                             context.SaveChanges();
 
-                            LedgerDBHelper.AddTransactionLine(context, transaction, accountsPayableName, "Debit", (decimal) _pay);
-                            LedgerDBHelper.AddTransactionLine(context, transaction, _selectedPaymentMode, "Credit", (decimal) _pay);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, accountsPayableName, "Debit", (decimal) _pay);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, _selectedPaymentMode, "Credit", (decimal) _pay);
                             context.SaveChanges();
 
                             ts.Complete();

@@ -7,12 +7,12 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels
 {
-    class LoginVM : ViewModelBase
+    internal class LoginVM : ViewModelBase
     {
-        string _userName;
-        string _password;
+        private string _userName;
+        private string _password;
 
-        ICommand _loginCommand;
+        private ICommand _loginCommand;
 
         public string Username
         {
@@ -40,7 +40,7 @@ namespace PutraJayaNT.ViewModels
 
                     using (var context = new ERPContext())
                     {
-                        var user = context.Users.Where(e => e.Username.Equals(_userName) && e.Password.Equals(_password)).FirstOrDefault();
+                        var user = context.Users.FirstOrDefault(e => e.Username.Equals(_userName) && e.Password.Equals(_password));
 
                         if (user == null)
                         {
@@ -49,15 +49,12 @@ namespace PutraJayaNT.ViewModels
                         }
 
                         // Login Successful
-                        App.Current.Resources.Add("CurrentUser", user);
-                        var windows = App.Current.Windows;
-                        foreach (ModernWindow window in windows)
+                        Application.Current.Resources.Add("CurrentUser", user);
+                        var windows = Application.Current.Windows;
+                        foreach (ModernWindow window in windows.Cast<ModernWindow>().Where(window => window.Title == "Login"))
                         {
-                            if (window.Title == "Login")
-                            {
-                                window.Close();
-                                return;
-                            }
+                            window.Close();
+                            return;
                         }
                     }
                 }));

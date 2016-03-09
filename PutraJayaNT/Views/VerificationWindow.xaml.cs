@@ -1,13 +1,11 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using PutraJayaNT.ViewModels;
-
-namespace PutraJayaNT
+﻿namespace PutraJayaNT.Views
 {
-    
+    using ViewModels;
+
     /// <summary>
     /// Interaction logic for VerificationWindow.xaml
     /// </summary>
-    public partial class VerificationWindow : ModernWindow
+    public partial class VerificationWindow
     {
         public VerificationWindow()
         {

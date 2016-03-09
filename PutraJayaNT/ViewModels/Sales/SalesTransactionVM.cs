@@ -28,11 +28,11 @@
 
         public Customer Customer => Model.Customer;
 
-        public decimal Total => Model.Total;
+        public decimal Total => Model.NetTotal;
 
         public decimal Paid => Model.Paid;
 
-        public decimal Remaining => Model.Total - Model.Paid;
+        public decimal Remaining => Model.NetTotal - Model.Paid;
 
         public DateTime Date => Model.Date;
 
@@ -75,9 +75,11 @@
         {
             using (var context = new ERPContext())
             {
-                var transactionFromDatabase =
-                    DatabaseSalesTransactionHelper.FirstOrDefault(transaction => transaction.SalesTransactionID.Equals(Model.SalesTransactionID));
-                transactionFromDatabase.CollectionSalesman = DatabaseSalesmanHelper.FirstOrDefault(salesman => salesman.ID.Equals(Model.CollectionSalesman.ID));
+                var transaction = Model;
+                var collectionSalesmanToBeAttached = Model.CollectionSalesman;
+                DatabaseSalesTransactionHelper.AttachToDatabaseContext(context, ref transaction);
+                DatabaseSalesmanHelper.AttachToDatabaseContext(context, ref collectionSalesmanToBeAttached);
+                transaction.CollectionSalesman = collectionSalesmanToBeAttached;
                 context.SaveChanges();
             }
         }

@@ -6,7 +6,7 @@ namespace PutraJayaNT.Views.Reports
     /// <summary>
     /// Interaction logic for InventoryView.xaml
     /// </summary>
-    public partial class InventoryReportView : UserControl
+    public partial class InventoryReportView
     {
         public InventoryReportView()
         { 

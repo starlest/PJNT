@@ -25,10 +25,10 @@
                 return context.SalesTransactions.Include("Customer").Include("Customer.Group").Include("CollectionSalesman").Include("SalesTransactionLines").Where(condition).FirstOrDefault();
         }
 
-        public static void AttachToDatabaseContext(ERPContext context, ref Models.Salesman.Salesman salesmanToBeAttached)
+        public static void AttachToDatabaseContext(ERPContext context, ref SalesTransaction salestransactionToBeAttached)
         {
-            var salesmanID = salesmanToBeAttached.ID;
-            salesmanToBeAttached = context.Salesmans.First(salesman => salesman.ID.Equals(salesmanID));
+            var salestransactionID = salestransactionToBeAttached.SalesTransactionID;
+            salestransactionToBeAttached = context.SalesTransactions.First(salesTransaction => salesTransaction.SalesTransactionID.Equals(salestransactionID));
         }
 
         public static IEnumerable<SalesTransaction> GetWithoutLines(Func<SalesTransaction, bool> condition)

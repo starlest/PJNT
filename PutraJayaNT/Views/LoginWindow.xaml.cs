@@ -1,9 +1,8 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels;
-
-namespace PutraJayaNT
+﻿namespace PutraJayaNT.Views
 {
+    using FirstFloor.ModernUI.Windows.Controls;
+    using ViewModels;
+
     /// <summary>
     /// Interaction logic for LoginWindow.xaml
     /// </summary>

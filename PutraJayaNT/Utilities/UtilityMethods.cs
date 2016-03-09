@@ -5,6 +5,8 @@ using System.Windows;
 
 namespace PutraJayaNT.Utilities
 {
+    using Views;
+
     public static class UtilityMethods
     {
         public static bool GetVerification()

@@ -371,15 +371,15 @@ namespace PutraJayaNT.ViewModels.Customers
                             var ledgerTransaction1 = new LedgerTransaction();
                             var ledgerTransaction2 = new LedgerTransaction();
 
-                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, UtilityMethods.GetCurrentDate().Date, _salesReturnTransactionID, "Sales Return")) return;
+                            if (!DatabaseLedgerHelper.AddTransaction(context, ledgerTransaction1, UtilityMethods.GetCurrentDate().Date, _salesReturnTransactionID, "Sales Return")) return;
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Sales Returns and Allowances", "Debit", _salesReturnTransactionNetTotal);
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Receivable", Model.SalesTransaction.Customer.Name), "Credit", _salesReturnTransactionNetTotal);
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction1, "Sales Returns and Allowances", "Debit", _salesReturnTransactionNetTotal);
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Receivable", Model.SalesTransaction.Customer.Name), "Credit", _salesReturnTransactionNetTotal);
 
-                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction2, UtilityMethods.GetCurrentDate().Date, _salesReturnTransactionID, "Sales Return")) return;
+                            if (!DatabaseLedgerHelper.AddTransaction(context, ledgerTransaction2, UtilityMethods.GetCurrentDate().Date, _salesReturnTransactionID, "Sales Return")) return;
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Debit", totalCOGS);
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Credit", totalCOGS);
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction2, "Inventory", "Debit", totalCOGS);
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction2, "Cost of Goods Sold", "Credit", totalCOGS);
 
                             context.SaveChanges();
 

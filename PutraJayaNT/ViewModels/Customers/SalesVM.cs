@@ -399,7 +399,7 @@ namespace PutraJayaNT.ViewModels.Customers
                 {
                     using (var context = new ERPContext())
                     {
-                        var customerTransactions = context.SalesTransactions.Where(e => e.Customer.ID.Equals(value.ID) && e.Paid < e.Total).ToList();
+                        var customerTransactions = context.SalesTransactions.Where(e => e.Customer.ID.Equals(value.ID) && e.Paid < e.NetTotal).ToList();
 
                         var verified = false;
                         if (customerTransactions.Count > value.MaxInvoices)
@@ -1158,17 +1158,17 @@ namespace PutraJayaNT.ViewModels.Customers
 
                             // Recognise revenue recognitition at this point and record the corresponding journal entries
                             var transaction1 = new LedgerTransaction();
-                            if (!LedgerDBHelper.AddTransaction(context, transaction1, UtilityMethods.GetCurrentDate().Date, transaction.SalesTransactionID, "Sales Revenue")) return;
+                            if (!DatabaseLedgerHelper.AddTransaction(context, transaction1, UtilityMethods.GetCurrentDate().Date, transaction.SalesTransactionID, "Sales Revenue")) return;
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, transaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", Model.Total);
-                            LedgerDBHelper.AddTransactionLine(context, transaction1, "Sales Revenue", "Credit", Model.Total);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", Model.NetTotal);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction1, "Sales Revenue", "Credit", Model.NetTotal);
                             context.SaveChanges();
 
                             var transaction2 = new LedgerTransaction();
-                            if (!LedgerDBHelper.AddTransaction(context, transaction2, UtilityMethods.GetCurrentDate().Date, transaction.SalesTransactionID, "Cost of Goods Sold")) return;
+                            if (!DatabaseLedgerHelper.AddTransaction(context, transaction2, UtilityMethods.GetCurrentDate().Date, transaction.SalesTransactionID, "Cost of Goods Sold")) return;
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, transaction2, "Cost of Goods Sold", "Debit", costOfGoodsSoldAmount);
-                            LedgerDBHelper.AddTransactionLine(context, transaction2, "Inventory", "Credit", costOfGoodsSoldAmount);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction2, "Cost of Goods Sold", "Debit", costOfGoodsSoldAmount);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction2, "Inventory", "Credit", costOfGoodsSoldAmount);
                             context.SaveChanges();
 
                             ts.Complete();
@@ -1650,7 +1650,7 @@ namespace PutraJayaNT.ViewModels.Customers
                     transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
                     transaction.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal)_newTransactionSalesExpense;
                     transaction.GrossTotal = _newTransactionGrossTotal;
-                    transaction.Total = _netTotal;
+                    transaction.NetTotal = _netTotal;
                     transaction.Date = _newTransactionDate;
                     transaction.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
                     transaction.InvoiceIssued = Model.InvoiceIssued;
@@ -1685,24 +1685,24 @@ namespace PutraJayaNT.ViewModels.Customers
 
                     var originalTransactionLines = transaction.SalesTransactionLines.ToList();
 
-                    if (transaction.Total != _netTotal)
+                    if (transaction.NetTotal != _netTotal)
                     {
                         // Adjust the Sales Revenue, AR, COGS for this transaction due to the price changes 
-                        var transactionTotalDifference = _netTotal - transaction.Total;
+                        var transactionTotalDifference = _netTotal - transaction.NetTotal;
 
                         var adjustmentLedgerTransaction1 = new LedgerTransaction();
-                        LedgerDBHelper.AddTransaction(context, adjustmentLedgerTransaction1, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Sales Revenue Adjustment");
+                        DatabaseLedgerHelper.AddTransaction(context, adjustmentLedgerTransaction1, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Sales Revenue Adjustment");
                         context.SaveChanges();
                         if (transactionTotalDifference > 0)
                         {
-                            LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", transactionTotalDifference);
-                            LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, "Sales Revenue", "Credit", transactionTotalDifference);
+                            DatabaseLedgerHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", transactionTotalDifference);
+                            DatabaseLedgerHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, "Sales Revenue", "Credit", transactionTotalDifference);
                         }
 
                         else
                         {
-                            LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, "Sales Revenue", "Debit", -transactionTotalDifference);
-                            LedgerDBHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Credit", -transactionTotalDifference);
+                            DatabaseLedgerHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, "Sales Revenue", "Debit", -transactionTotalDifference);
+                            DatabaseLedgerHelper.AddTransactionLine(context, adjustmentLedgerTransaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Credit", -transactionTotalDifference);
                         }
 
                         foreach (var line in originalTransactionLines)
@@ -1751,7 +1751,7 @@ namespace PutraJayaNT.ViewModels.Customers
                         transaction.Notes = _newTransactionNotes;
                         transaction.GrossTotal = _newTransactionGrossTotal;
                         transaction.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
-                        transaction.Total = _netTotal;
+                        transaction.NetTotal = _netTotal;
 
                         context.SaveChanges();
                         ts.Complete();
@@ -1792,7 +1792,7 @@ namespace PutraJayaNT.ViewModels.Customers
             Model.Discount = _newTransactionDiscount == null ? 0 : (decimal)_newTransactionDiscount;
             Model.SalesExpense = _newTransactionSalesExpense == null ? 0 : (decimal)_newTransactionSalesExpense;
             Model.GrossTotal = _newTransactionGrossTotal;
-            Model.Total = _netTotal;
+            Model.NetTotal = _netTotal;
             Model.Date = _newTransactionDate;
             Model.DueDate = _newTransactionDate.AddDays(_newTransactionCustomer.CreditTerms);
             var user = App.Current.FindResource("CurrentUser") as User;
@@ -1863,7 +1863,7 @@ namespace PutraJayaNT.ViewModels.Customers
             dr2["InvoiceGrossTotal"] = salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = salesTransaction.SalesExpense;
-            dr2["InvoiceNetTotal"] = salesTransaction.Total;
+            dr2["InvoiceNetTotal"] = salesTransaction.NetTotal;
             dr2["Customer"] = salesTransaction.Customer.Name;
             dr2["Address"] = salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = salesTransaction.SalesTransactionID;
@@ -1960,7 +1960,7 @@ namespace PutraJayaNT.ViewModels.Customers
             dr2["InvoiceGrossTotal"] = salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = salesTransaction.SalesExpense;
-            dr2["InvoiceNetTotal"] = salesTransaction.Total;
+            dr2["InvoiceNetTotal"] = salesTransaction.NetTotal;
             dr2["Customer"] = salesTransaction.Customer.Name;
             dr2["Address"] = salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = salesTransaction.SalesTransactionID;

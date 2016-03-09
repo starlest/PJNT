@@ -1,10 +1,7 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using Microsoft.Reporting.WinForms;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.ViewModels.Customers;
 using PutraJayaNT.ViewModels.Reports;
 using System;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
 
@@ -14,11 +11,11 @@ namespace PutraJayaNT.Reports.Windows
     /// <summary>
     /// Interaction logic for StockCardReportWindow.xaml
     /// </summary>
-    public partial class StockCardReportWindow : ModernWindow
+    public partial class StockCardReportWindow
     {
-        StockBalancesReportVM _stockReport;
+        readonly StockCardReportVM _stockReport;
 
-        public StockCardReportWindow(StockBalancesReportVM stockReport)
+        public StockCardReportWindow(StockCardReportVM stockReport)
         {
             InitializeComponent();
             _stockReport = stockReport;
@@ -50,7 +47,7 @@ namespace PutraJayaNT.Reports.Windows
 
             string endingBalance = "";
 
-            foreach (var line in _stockReport.Lines)
+            foreach (var line in _stockReport.DisplayedLines)
             {
                 DataRow dr1 = dt1.NewRow();
                 dr1["Date"] = line.Date.ToString("dd-MM-yyyy");

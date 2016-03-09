@@ -66,8 +66,8 @@
                                     "Error", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                                 {
                                     transaction.GrossTotal = grossAmount;
-                                    transaction.Total = grossAmount - transaction.Discount + transaction.SalesExpense;
-                                    transaction.Paid = transaction.Total;
+                                    transaction.NetTotal = grossAmount - transaction.Discount + transaction.SalesExpense;
+                                    transaction.Paid = transaction.NetTotal;
                                     context.SaveChanges();
                                 }
                             }
@@ -173,20 +173,20 @@
                                 MessageBoxResult.Yes)
                             {
                                 var newTransaction = new LedgerTransaction();
-                                LedgerDBHelper.AddTransaction(context, newTransaction, UtilityMethods.GetCurrentDate().Date, "Inventory Adjustment", "Inventory Adjustment");
+                                DatabaseLedgerHelper.AddTransaction(context, newTransaction, UtilityMethods.GetCurrentDate().Date, "Inventory Adjustment", "Inventory Adjustment");
                                 context.SaveChanges();
 
                                 if (actualCOGS < calculatedCOGS)
                                 {
-                                    LedgerDBHelper.AddTransactionLine(context, newTransaction, "Inventory", "Debit", calculatedCOGS - actualCOGS);
-                                    LedgerDBHelper.AddTransactionLine(context, newTransaction, "Cost of Goods Sold", "Credit", calculatedCOGS - actualCOGS);
+                                    DatabaseLedgerHelper.AddTransactionLine(context, newTransaction, "Inventory", "Debit", calculatedCOGS - actualCOGS);
+                                    DatabaseLedgerHelper.AddTransactionLine(context, newTransaction, "Cost of Goods Sold", "Credit", calculatedCOGS - actualCOGS);
                                     MessageBox.Show(string.Format("Increased inventory by {0}", calculatedCOGS - actualCOGS), "Fixed", MessageBoxButton.OK);
                                 }
 
                                 else
                                 {
-                                    LedgerDBHelper.AddTransactionLine(context, newTransaction, "Cost of Goods Sold", "Debit", actualCOGS - calculatedCOGS);
-                                    LedgerDBHelper.AddTransactionLine(context, newTransaction, "Inventory", "Credit", actualCOGS - calculatedCOGS);
+                                    DatabaseLedgerHelper.AddTransactionLine(context, newTransaction, "Cost of Goods Sold", "Debit", actualCOGS - calculatedCOGS);
+                                    DatabaseLedgerHelper.AddTransactionLine(context, newTransaction, "Inventory", "Credit", actualCOGS - calculatedCOGS);
                                     MessageBox.Show(string.Format("Decreased inventory by {0}", actualCOGS - calculatedCOGS), "Fixed", MessageBoxButton.OK);
                                 }
 

@@ -177,7 +177,7 @@
             return false;
         }
 
-        private void UpdateCategories()
+        public void UpdateCategories()
         {
             var oldSelectedCategory = _selectedCategory;
 
@@ -219,7 +219,7 @@
             SelectedItem = Items.FirstOrDefault(item => item.ID == oldSelectedItem.ID);
         }
 
-        private void UpdateSuppliers()
+        public void UpdateSuppliers()
         {
             var oldSelectedSupplier = _selectedSupplier;
 

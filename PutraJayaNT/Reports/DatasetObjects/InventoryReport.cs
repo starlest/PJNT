@@ -1,6 +1,6 @@
 ﻿namespace PutraJayaNT.Reports.DatasetObjects
 {
-    class InventoryReport
+    internal class InventoryReport
     {
         public string Warehouse { get; set; }
 

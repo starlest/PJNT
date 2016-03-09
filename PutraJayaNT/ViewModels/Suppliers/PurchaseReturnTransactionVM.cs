@@ -334,12 +334,12 @@ namespace PutraJayaNT.ViewModels.Suppliers
                             // Record the corresponding ledger transactions in the database
                             var ledgerTransaction1 = new LedgerTransaction();
 
-                            if (!LedgerDBHelper.AddTransaction(context, ledgerTransaction1, UtilityMethods.GetCurrentDate(), _purchaseReturnEntryID, "Purchase Return")) return;
+                            if (!DatabaseLedgerHelper.AddTransaction(context, ledgerTransaction1, UtilityMethods.GetCurrentDate(), _purchaseReturnEntryID, "Purchase Return")) return;
                             context.SaveChanges();
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Debit", _purchaseReturnTransactionNetTotal);
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction1, string.Format("{0} Accounts Payable", Model.PurchaseTransaction.Supplier.Name), "Debit", _purchaseReturnTransactionNetTotal);
                             if (cogs - PurchaseReturnTransactionNetTotal > 0)
-                                LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Cost of Goods Sold", "Debit", cogs - PurchaseReturnTransactionNetTotal); // Debit the differences to COGS
-                            LedgerDBHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", cogs);
+                                DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction1, "Cost of Goods Sold", "Debit", cogs - PurchaseReturnTransactionNetTotal); // Debit the differences to COGS
+                            DatabaseLedgerHelper.AddTransactionLine(context, ledgerTransaction1, "Inventory", "Credit", cogs);
               
                             context.SaveChanges();
                             ts.Complete();

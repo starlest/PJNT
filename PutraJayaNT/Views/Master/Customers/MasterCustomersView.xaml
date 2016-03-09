@@ -75,7 +75,8 @@
             <ComboBox Grid.Column="7" ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedCity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Grid.Column="8" Content="Search" Margin="10" Command="{Binding SearchCommand}" />
         </Grid>
-        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding DisplayedCustomers}" SelectedItem="{Binding SelectedLine}" >
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding DisplayedCustomers}" SelectedItem="{Binding SelectedLine}"
+                  IsReadOnly="True">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Edit" Command="{Binding EditCustomerCommand}" HorizontalAlignment="Left" />
@@ -83,15 +84,16 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding ID}" />
-                <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="City" Width="1*" IsReadOnly="True" Binding="{Binding City}" />
-                <DataGridTextColumn Header="Address" Width="1*" IsReadOnly="True" Binding="{Binding Address}" />
-                <DataGridTextColumn Header="Telephone" Width="1*" IsReadOnly="True" Binding="{Binding Telephone}" />
-                <DataGridTextColumn Header="NPWP" Width="1*" IsReadOnly="True" Binding="{Binding NPWP}" />
-                <DataGridTextColumn Header="Credit Terms" Width="1*" IsReadOnly="True" Binding="{Binding CreditTerms}" />
-                <DataGridTextColumn Header="Max Invoices" Width="1*" IsReadOnly="True" Binding="{Binding MaxInvoices}" />
-                <DataGridTextColumn Header="Group" Width="1*" IsReadOnly="True" Binding="{Binding Group.Name}" />
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding ID}" />
+                <DataGridTextColumn Header="Name" Width="2*" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="City" Width="1*" Binding="{Binding City}" />
+                <DataGridTextColumn Header="Address" Width="1*" Binding="{Binding Address}" />
+                <DataGridTextColumn Header="Telephone" Width="1*" Binding="{Binding Telephone}" />
+                <DataGridTextColumn Header="NPWP" Width="1*" Binding="{Binding NPWP}" />
+                <DataGridTextColumn Header="Credit Terms" Width="1*" Binding="{Binding CreditTerms}" />
+                <DataGridTextColumn Header="Max Invoices" Width="1*" Binding="{Binding MaxInvoices}" />
+                <DataGridTextColumn Header="Group" Width="1*" Binding="{Binding Group.Name}" />
+                <DataGridTextColumn Header="Active" Width="1*" Binding="{Binding Active, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

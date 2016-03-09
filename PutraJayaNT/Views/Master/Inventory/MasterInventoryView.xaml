@@ -79,7 +79,7 @@
             <ComboBox Grid.Column="7" ItemsSource="{Binding Suppliers}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Column="8" Content="Search" Margin="10" Command="{Binding SearchCommand}" />
         </Grid>
-        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedItems}" SelectedItem="{Binding SelectedLine}">
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedItems}" SelectedItem="{Binding SelectedLine}" IsReadOnly="True">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Edit" HorizontalAlignment="Left" Command="{Binding EditItemCommand}" />
@@ -87,14 +87,14 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding ID}" />
-                <DataGridTextColumn Header="Name" Width="2*" IsReadOnly="True" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Category" Width="1*" IsReadOnly="True" Binding="{Binding Category.Name}" />
-                <DataGridTextColumn Header="Unit Name" Width="1*" IsReadOnly="True" Binding="{Binding UnitName}" />
-                <DataGridTextColumn Header="Pieces/Unit" Width="1*" IsReadOnly="True" Binding="{Binding PiecesPerUnit}" />
-                <DataGridTextColumn Header="Purchase Price" Width="1*" IsReadOnly="True" Binding="{Binding PurchasePrice, StringFormat=N2}" />
-                <DataGridTextColumn Header="Sales Price" Width="1*" IsReadOnly="True" Binding="{Binding SalesPrice, StringFormat=N2}" />
-                <DataGridTextColumn Header="Expense" Width="1*" IsReadOnly="True" Binding="{Binding SalesExpense, StringFormat=N2}" />
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding ID}" />
+                <DataGridTextColumn Header="Name" Width="2*" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Category" Width="1*" Binding="{Binding Category.Name}" />
+                <DataGridTextColumn Header="Unit Name" Width="1*" Binding="{Binding UnitName}" />
+                <DataGridTextColumn Header="Pieces/Unit" Width="1*" Binding="{Binding PiecesPerUnit}" />
+                <DataGridTextColumn Header="Purchase Price" Width="1*" Binding="{Binding PurchasePrice, StringFormat=N2}" />
+                <DataGridTextColumn Header="Sales Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
+                <DataGridTextColumn Header="Expense" Width="1*" Binding="{Binding SalesExpense, StringFormat=N2}" />
                 <DataGridTemplateColumn x:Name="SuppliersColumn" Header="Suppliers" Width="1.5*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -104,6 +104,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Active" Width="1*" Binding="{Binding Active, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

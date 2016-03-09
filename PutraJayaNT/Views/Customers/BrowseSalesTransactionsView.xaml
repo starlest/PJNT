@@ -38,7 +38,7 @@
                 <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="Invoice Date" Width="1*" IsReadOnly="True" Binding="{Binding InvoiceIssued, StringFormat={}{0:dd/MM/yyyy}}" />
                 <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransactionID}" />
-                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
+                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding NetTotal, StringFormat=N2}" />
                 <DataGridTextColumn Header="Customer" Width="1*" IsReadOnly="True" Binding="{Binding Customer.Name}" />
                 <DataGridTextColumn Header="User" Width="1*" IsReadOnly="True" Binding="{Binding User.Username}" />
             </DataGrid.Columns>

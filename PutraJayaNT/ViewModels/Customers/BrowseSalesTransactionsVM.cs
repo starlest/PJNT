@@ -106,7 +106,7 @@ namespace PutraJayaNT.ViewModels.Customers
                 foreach (var t in salesTransactions)
                 {
                     _salesTransactions.Add(t);
-                    _total += t.Total;
+                    _total += t.NetTotal;
                 }
             }
 

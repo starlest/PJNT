@@ -1,16 +1,16 @@
-﻿using FirstFloor.ModernUI;
-using FirstFloor.ModernUI.Presentation;
-using PutraJayaNT.Models;
-using PutraJayaNT.Utilities;
-using System;
-using System.ComponentModel;
-using System.Configuration;
-using System.Threading;
-using System.Windows;
-using System.Windows.Media;
-
-namespace PutraJayaNT
+﻿namespace PutraJayaNT.Views
 {
+    using System;
+    using System.ComponentModel;
+    using System.Configuration;
+    using System.Threading;
+    using System.Windows;
+    using System.Windows.Media;
+    using FirstFloor.ModernUI;
+    using FirstFloor.ModernUI.Presentation;
+    using Models;
+    using Utilities;
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -56,7 +56,7 @@ namespace PutraJayaNT
                     var link = new Link
                     {
                         DisplayName = "Inventory",
-                        Source = new Uri("/Views/Master/MasterInventoryView.xaml", UriKind.Relative)
+                        Source = new Uri("/Views/Master/Inventory/MasterInventoryView.xaml", UriKind.Relative)
                     };
                     MenuLinkGroups[1].Links.Add(link);
                 }

@@ -117,10 +117,10 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var amount = account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                 var transaction = new LedgerTransaction();
 
-                LedgerDBHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name);
+                DatabaseLedgerHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name);
                 context.SaveChanges();
-                LedgerDBHelper.AddTransactionLine(context, transaction, account.Name, "Credit", amount);
-                LedgerDBHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Debit", amount);
+                DatabaseLedgerHelper.AddTransactionLine(context, transaction, account.Name, "Credit", amount);
+                DatabaseLedgerHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Debit", amount);
 
                 account.LedgerGeneral.Credit -= amount;
             }
@@ -130,10 +130,10 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var amount = account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                 var transaction = new LedgerTransaction();
 
-                if (!LedgerDBHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name)) return;
+                if (!DatabaseLedgerHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name)) return;
                 context.SaveChanges();
-                LedgerDBHelper.AddTransactionLine(context, transaction, account.Name, "Debit", amount);
-                LedgerDBHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Credit", amount);
+                DatabaseLedgerHelper.AddTransactionLine(context, transaction, account.Name, "Debit", amount);
+                DatabaseLedgerHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Credit", amount);
 
                 account.LedgerGeneral.Debit -= amount;
             }

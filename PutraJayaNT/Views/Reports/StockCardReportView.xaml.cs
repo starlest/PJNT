@@ -6,12 +6,12 @@ namespace PutraJayaNT.Views.Reports
     /// <summary>
     /// Interaction logic for StockBalancesReportView.xaml
     /// </summary>
-    public partial class StockBalancesReportView : UserControl
+    public partial class StockCardReportView
     {
-        public StockBalancesReportView()
+        public StockCardReportView()
         {
             InitializeComponent();
-            var vm = new StockBalancesReportVM();
+            var vm = new StockCardReportVM();
             DataContext = vm;
         }
 

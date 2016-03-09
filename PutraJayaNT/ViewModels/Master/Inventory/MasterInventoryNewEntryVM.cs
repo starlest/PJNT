@@ -1,4 +1,6 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Inventory
+﻿using PutraJayaNT.ViewModels.Inventory;
+
+namespace PutraJayaNT.ViewModels.Master.Inventory
 {
     using System.Collections.ObjectModel;
     using System.Diagnostics;
@@ -102,6 +104,7 @@
                     ResetEntryFields();
                     _parentVM.UpdateItems();
                     _parentVM.UpdateDisplayedItems();
+                    MessageBox.Show("Successfully added item!", "Success", MessageBoxButton.OK);
                 }));
             }
         }
@@ -180,6 +183,8 @@
             NewEntryUnitName = null;
             NewEntrySalesPrice = null;
             NewEntryPurchasePrice = null;
+            _parentVM.UpdateSuppliers();
+            _parentVM.UpdateCategories();
         }
         #endregion
     }

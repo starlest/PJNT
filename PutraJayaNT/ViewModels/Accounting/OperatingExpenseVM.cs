@@ -171,11 +171,11 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                             var transaction = new LedgerTransaction();
 
-                            if (!LedgerDBHelper.AddTransaction(context, transaction, _newEntryDate, "Operating Expense", _newEntryDescription)) return;
+                            if (!DatabaseLedgerHelper.AddTransaction(context, transaction, _newEntryDate, "Operating Expense", _newEntryDescription)) return;
                             context.SaveChanges();
 
-                            LedgerDBHelper.AddTransactionLine(context, transaction, _newEntryAccount.Name, "Debit", (decimal) _newEntryAmount);
-                            LedgerDBHelper.AddTransactionLine(context, transaction, _newEntryPaymentMode, "Credit", (decimal)_newEntryAmount);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, _newEntryAccount.Name, "Debit", (decimal) _newEntryAmount);
+                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, _newEntryPaymentMode, "Credit", (decimal)_newEntryAmount);
                             context.SaveChanges();
 
                             ts.Complete();

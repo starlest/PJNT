@@ -1,23 +1,21 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Customers;
-using System;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Windows;
-using PutraJayaNT.ViewModels.Sales;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace PutraJayaNT.Reports.Windows
 {
+    using Microsoft.Reporting.WinForms;
+    using Utilities;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Data;
+    using System.Linq;
+    using System.Windows;
+    using ViewModels.Sales;
+
     /// <summary>
     /// Interaction logic for CollectionReportPerSalesmanWindow.xaml
     /// </summary>
-    public partial class CollectionReportPerSalesmanWindow : ModernWindow
+    public partial class CollectionReportPerSalesmanWindow
     {
-        ObservableCollection<ViewModels.Sales.SalesTransactionVM>  _salesTransactions;
-        DateTime _dateSelected;
+        ObservableCollection<SalesTransactionVM>  _salesTransactions;
+        private readonly DateTime _dateSelected;
 
         public CollectionReportPerSalesmanWindow(ObservableCollection<ViewModels.Sales.SalesTransactionVM> salesTransactions, DateTime date)
         {

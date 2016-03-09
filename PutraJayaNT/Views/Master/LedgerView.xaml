@@ -31,7 +31,7 @@
                 <TextBox Grid.Column="1" Text="{Binding NewEntryName}" />
                 <TextBlock Grid.Column="2" Foreground="Blue" Text="Group:" />
                 <ComboBox Grid.Column="3" ItemsSource="{Binding Groups}" SelectedItem="{Binding NewEntryGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Button Grid.Column="4" Margin="10" Content="Add" Command="{Binding NewEntryCommand}" />
+                <Button Grid.Column="4" Margin="10, 20, 10, 15" Content="Add" Command="{Binding NewEntryCommand}" />
             </Grid>
         </Border>
         <Grid Grid.Row="1">

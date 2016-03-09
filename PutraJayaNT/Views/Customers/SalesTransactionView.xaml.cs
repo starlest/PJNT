@@ -8,9 +8,9 @@ namespace PutraJayaNT.Views.Customers
     /// <summary>
     /// Interaction logic for SCustomeralesTransactionView.xaml
     /// </summary>
-    public partial class CustomerSalesTransactionView
+    public partial class SalesTransactionView
     {
-        public CustomerSalesTransactionView()
+        public SalesTransactionView()
         {
             InitializeComponent();
             var vm = new SalesVM();

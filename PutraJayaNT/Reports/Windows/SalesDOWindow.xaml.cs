@@ -87,7 +87,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
-            dr2["InvoiceNetTotal"] = _salesTransaction.Total;
+            dr2["InvoiceNetTotal"] = _salesTransaction.NetTotal;
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
@@ -133,7 +133,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
-            dr2["InvoiceNetTotal"] = _salesTransaction.Total;
+            dr2["InvoiceNetTotal"] = _salesTransaction.NetTotal;
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
@@ -179,7 +179,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
-            dr2["InvoiceNetTotal"] = _salesTransaction.Total;
+            dr2["InvoiceNetTotal"] = _salesTransaction.NetTotal;
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
@@ -225,7 +225,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
-            dr2["InvoiceNetTotal"] = _salesTransaction.Total;
+            dr2["InvoiceNetTotal"] = _salesTransaction.NetTotal;
             dr2["Customer"] = _salesTransaction.Customer.Name;
             dr2["Address"] = _salesTransaction.Customer.City;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;

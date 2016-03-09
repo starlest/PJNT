@@ -1,8 +1,9 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models.Inventory;
 
-namespace PutraJayaNT.ViewModels
+namespace PutraJayaNT.ViewModels.Inventory
 {
+    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class CategoryVM : ViewModelBase<Category>
     {
         public int ID => Model.ID;
@@ -12,13 +13,7 @@ namespace PutraJayaNT.ViewModels
         public override bool Equals(object obj)
         {
             var category = obj as CategoryVM;
-            if (category == null) return false;
-            else return this.ID.Equals(category.ID);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return category != null && ID.Equals(category.ID);
         }
     }
 }
