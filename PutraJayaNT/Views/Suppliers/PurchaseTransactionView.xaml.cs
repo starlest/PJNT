@@ -1,6 +1,4 @@
-﻿using PutraJayaNT.ViewModels;
-using PutraJayaNT.ViewModels.Suppliers;
-using System.Windows;
+﻿using PutraJayaNT.ViewModels.Suppliers;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -10,7 +8,7 @@ namespace PutraJayaNT.Views.Suppliers
     /// <summary>
     /// Interaction logic for PurchaseTransactionView.xaml
     /// </summary>
-    public partial class PurchaseTransactionView : UserControl
+    public partial class PurchaseTransactionView
     {
         public PurchaseTransactionView()
         {

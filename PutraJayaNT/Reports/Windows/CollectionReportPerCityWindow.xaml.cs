@@ -1,12 +1,9 @@
-﻿using PutraJayaNT.Utilities.Database.Ledger;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace PutraJayaNT.Reports.Windows
 {
     using Microsoft.Reporting.WinForms;
     using System;
     using System.Collections.ObjectModel;
     using System.Data;
-    using System.Linq;
     using System.Windows;
     using ViewModels.Sales;
 
@@ -16,14 +13,12 @@ namespace PutraJayaNT.Reports.Windows
     public partial class CollectionReportPerCityWindow
     {
         private readonly ObservableCollection<SalesTransactionVM>  _salesTransactions;
-        private readonly DateTime _dateSelected;
         private readonly DataTable _reportDataTable;
 
-        public CollectionReportPerCityWindow(ObservableCollection<SalesTransactionVM> salesTransactions, DateTime date)
+        public CollectionReportPerCityWindow(ObservableCollection<SalesTransactionVM> salesTransactions)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
-            _dateSelected = date;
             _reportDataTable = new DataTable();
         }
 
@@ -67,7 +62,6 @@ namespace PutraJayaNT.Reports.Windows
                 row["City"] = salesTransaction.Customer.City;
                 row["InvoiceNetTotal"] = salesTransaction.Total;
                 row["InvoicePaid"] = salesTransaction.Paid;
-                row["PaidToday"] = GetSalesTransactionSelectedDatePaidAmount(salesTransaction);
                 row["InvoiceRemaining"] = salesTransaction.Total - salesTransaction.Paid;
                 row["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");
                 row["CollectionSalesman"] = salesTransaction.CollectionSalesman != null ? salesTransaction.CollectionSalesman.Name : "";
@@ -81,17 +75,6 @@ namespace PutraJayaNT.Reports.Windows
             reportViewer.LocalReport.DataSources.Add(reportDataSource);
             reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\CollectionReportPerCity.rdlc"); // Path of the rdlc file
             reportViewer.PageCountMode = PageCountMode.Actual;
-        }
-
-        private decimal GetSalesTransactionSelectedDatePaidAmount(SalesTransactionVM salesTransaction)
-        {
-            var selectedDateSalesTransactionReceiptsLedgerLinesFromDatabase =
-                DatabaseLedgerTransactionLineHelper.Get(
-                    line =>
-                        line.LedgerTransaction.Description.Equals("Sales Transaction Receipt") &&
-                        line.LedgerTransaction.Documentation.Equals(salesTransaction.SalesTransactionID) &&
-                        line.LedgerTransaction.Date.Equals(_dateSelected) && line.LedgerAccount.Name.Equals("Cash"));
-            return selectedDateSalesTransactionReceiptsLedgerLinesFromDatabase.Sum(line => line.Amount);
         }
     }
 }

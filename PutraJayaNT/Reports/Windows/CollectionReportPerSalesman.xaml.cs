@@ -14,14 +14,16 @@
     /// </summary>
     public partial class CollectionReportPerSalesmanWindow
     {
-        ObservableCollection<SalesTransactionVM>  _salesTransactions;
+        private readonly ObservableCollection<SalesTransactionVM>  _salesTransactions;
         private readonly DateTime _dateSelected;
+        private readonly DataTable _reportDataTable;
 
-        public CollectionReportPerSalesmanWindow(ObservableCollection<ViewModels.Sales.SalesTransactionVM> salesTransactions, DateTime date)
+        public CollectionReportPerSalesmanWindow(ObservableCollection<SalesTransactionVM> salesTransactions, DateTime date)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
             _dateSelected = date;
+            _reportDataTable = new DataTable();
         }
 
         private void reportViewer_RenderingComplete(object sender, RenderingCompleteEventArgs e)
@@ -31,58 +33,65 @@
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            DataTable dt = new DataTable();
-
-            dt.Columns.Add(new DataColumn("Date", typeof(string)));
-            dt.Columns.Add(new DataColumn("ID", typeof(string)));
-            dt.Columns.Add(new DataColumn("City", typeof(string)));
-            dt.Columns.Add(new DataColumn("Customer", typeof(string)));
-            dt.Columns.Add(new DataColumn("InvoiceNetTotal", typeof(decimal)));
-            dt.Columns.Add(new DataColumn("InvoicePaid", typeof(decimal)));
-            dt.Columns.Add(new DataColumn("PaidToday", typeof(decimal)));
-            dt.Columns.Add(new DataColumn("InvoiceRemaining", typeof(decimal)));
-            dt.Columns.Add(new DataColumn("DueDate", typeof(string)));
-            dt.Columns.Add(new DataColumn("CollectionSalesman", typeof(string)));
-            dt.Columns.Add(new DataColumn("CollectionTotal", typeof(decimal)));
-
-            foreach (var t in _salesTransactions)
-            {
-                if (t.IsSelected)
-                {
-                    DataRow dr = dt.NewRow();
-                    dr["Date"] = t.Date.ToShortDateString();
-                    dr["ID"] = t.SalesTransactionID;
-                    dr["Customer"] = t.Customer.Name;
-                    dr["City"] = t.Customer.City;
-                    dr["InvoiceNetTotal"] = t.Total;
-                    dr["InvoicePaid"] = t.Paid;
-                    dr["PaidToday"] = GetPaidToday(t);
-                    dr["InvoiceRemaining"] = t.Total - t.Paid;
-                    dr["DueDate"] = t.DueDate.ToString("dd-MM-yyyy");
-                    dr["CollectionSalesman"] = t.CollectionSalesman != null ? t.CollectionSalesman.Name : "";
-                    dt.Rows.Add(dr);
-                }
-            }
-
-            ReportDataSource reportDataSource = new ReportDataSource("InvoiceDataSet", dt);
- 
-            reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\CollectionReportPerSalesman.rdlc"); // Path of the rdlc file
-
-            reportViewer.LocalReport.DataSources.Add(reportDataSource);
-            reportViewer.PageCountMode = PageCountMode.Actual;
+            SetupReportDataTable();
+            LoadReportDataTableRows();
+            SetupReportViewer();
             reportViewer.RefreshReport();
         }
 
-        private decimal GetPaidToday(ViewModels.Sales.SalesTransactionVM t)
+        private void SetupReportDataTable()
+        {
+            _reportDataTable.Columns.Add(new DataColumn("Date", typeof(string)));
+            _reportDataTable.Columns.Add(new DataColumn("ID", typeof(string)));
+            _reportDataTable.Columns.Add(new DataColumn("City", typeof(string)));
+            _reportDataTable.Columns.Add(new DataColumn("Customer", typeof(string)));
+            _reportDataTable.Columns.Add(new DataColumn("InvoiceNetTotal", typeof(decimal)));
+            _reportDataTable.Columns.Add(new DataColumn("InvoicePaid", typeof(decimal)));
+            _reportDataTable.Columns.Add(new DataColumn("PaidToday", typeof(decimal)));
+            _reportDataTable.Columns.Add(new DataColumn("InvoiceRemaining", typeof(decimal)));
+            _reportDataTable.Columns.Add(new DataColumn("DueDate", typeof(string)));
+            _reportDataTable.Columns.Add(new DataColumn("CollectionSalesman", typeof(string)));
+            _reportDataTable.Columns.Add(new DataColumn("CollectionTotal", typeof(decimal)));
+        }
+
+        private void LoadReportDataTableRows()
+        {
+            foreach (var salesTransaction in _salesTransactions)
+            {
+                if (!salesTransaction.IsSelected) continue;
+                var dr = _reportDataTable.NewRow();
+                dr["Date"] = salesTransaction.Date.ToShortDateString();
+                dr["ID"] = salesTransaction.SalesTransactionID;
+                dr["Customer"] = salesTransaction.Customer.Name;
+                dr["City"] = salesTransaction.Customer.City;
+                dr["InvoiceNetTotal"] = salesTransaction.Total;
+                dr["InvoicePaid"] = salesTransaction.Paid;
+                dr["PaidToday"] = GetSelectedDateSalesTransactionPaidAmount(salesTransaction);
+                dr["InvoiceRemaining"] = salesTransaction.Total - salesTransaction.Paid;
+                dr["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");
+                dr["CollectionSalesman"] = salesTransaction.CollectionSalesman != null ? salesTransaction.CollectionSalesman.Name : "";
+                _reportDataTable.Rows.Add(dr);
+            }
+        }
+
+        private decimal GetSelectedDateSalesTransactionPaidAmount(SalesTransactionVM salesTransaction)
         {
             using (var context = new ERPContext())
             {
-                var receipts = context.Ledger_Transaction_Lines.Where(e => e.LedgerTransaction.Description.Equals("Sales Transaction Receipt") && e.LedgerTransaction.Documentation.Equals(t.SalesTransactionID) && e.LedgerTransaction.Date.Equals(_dateSelected) && e.LedgerAccount.Name.Equals("Cash")).ToList();
-                var balance = 0m;
-                foreach (var r in receipts)
-                    balance += r.Amount;
-                return balance;
+                var receipts = context.Ledger_Transaction_Lines
+                    .Where(line => line.LedgerTransaction.Description.Equals("Sales Transaction Receipt") && 
+                    line.LedgerTransaction.Documentation.Equals(salesTransaction.SalesTransactionID) && line.LedgerTransaction.Date.Equals(_dateSelected) &&
+                    line.LedgerAccount.Name.Equals("Cash")).ToList();
+                return receipts.Sum(r => r.Amount);
             }
+        }
+
+        private void SetupReportViewer()
+        {
+            reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\CollectionReportPerSalesman.rdlc"); // Path of the rdlc file
+            var reportDataSource = new ReportDataSource("InvoiceDataSet", _reportDataTable);
+            reportViewer.LocalReport.DataSources.Add(reportDataSource);
+            reportViewer.PageCountMode = PageCountMode.Actual;
         }
     }
 }

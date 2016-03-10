@@ -9,6 +9,7 @@
     using System;
     using System.Transactions;
     using Models.Inventory;
+    using Utilities.ModelHelpers;
 
     class TestVM : ViewModelBase
     {
@@ -173,20 +174,20 @@
                                 MessageBoxResult.Yes)
                             {
                                 var newTransaction = new LedgerTransaction();
-                                DatabaseLedgerHelper.AddTransaction(context, newTransaction, UtilityMethods.GetCurrentDate().Date, "Inventory Adjustment", "Inventory Adjustment");
+                                LedgerTransactionHelper.AddTransactionToDatabase(context, newTransaction, UtilityMethods.GetCurrentDate().Date, "Inventory Adjustment", "Inventory Adjustment");
                                 context.SaveChanges();
 
                                 if (actualCOGS < calculatedCOGS)
                                 {
-                                    DatabaseLedgerHelper.AddTransactionLine(context, newTransaction, "Inventory", "Debit", calculatedCOGS - actualCOGS);
-                                    DatabaseLedgerHelper.AddTransactionLine(context, newTransaction, "Cost of Goods Sold", "Credit", calculatedCOGS - actualCOGS);
+                                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Debit", calculatedCOGS - actualCOGS);
+                                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Credit", calculatedCOGS - actualCOGS);
                                     MessageBox.Show(string.Format("Increased inventory by {0}", calculatedCOGS - actualCOGS), "Fixed", MessageBoxButton.OK);
                                 }
 
                                 else
                                 {
-                                    DatabaseLedgerHelper.AddTransactionLine(context, newTransaction, "Cost of Goods Sold", "Debit", actualCOGS - calculatedCOGS);
-                                    DatabaseLedgerHelper.AddTransactionLine(context, newTransaction, "Inventory", "Credit", actualCOGS - calculatedCOGS);
+                                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Debit", actualCOGS - calculatedCOGS);
+                                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Credit", actualCOGS - calculatedCOGS);
                                     MessageBox.Show(string.Format("Decreased inventory by {0}", actualCOGS - calculatedCOGS), "Fixed", MessageBoxButton.OK);
                                 }
 

@@ -207,7 +207,7 @@
                 {
                     if (DisplayedSalesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportPerCityWindow(DisplayedSalesTransactions, _toDate)
+                    var collectionReportWindow = new CollectionReportPerCityWindow(DisplayedSalesTransactions)
                     {
                         Owner = Application.Current.MainWindow,
                         WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -336,15 +336,18 @@
         {
             _total = 0;
             var searchCondition = GetCitySalesmanSelectionSearchCondition();
-            var salesTransactionsFromDatabase = DatabaseSalesTransactionHelper.GetWithoutLines(searchCondition);
+            var salesTransactionsFromDatabase = DatabaseSalesTransactionHelper.GetWithoutLines(searchCondition)
+                .OrderBy(salesTransaction => salesTransaction.DueDate)
+                .ThenBy(salesTransaction => salesTransaction.Date)
+                .ThenBy(SalesTransaction => SalesTransaction.Customer.Name)
+                .ThenBy(salesTransaction => salesTransaction.CollectionSalesman.Name);
 
             DisplayedSalesTransactions.Clear();
-            foreach (var salesTransactionVM in salesTransactionsFromDatabase.Select(t => new SalesTransactionVM { Model = t }))
+            foreach (var salesTransactionVM in salesTransactionsFromDatabase.Select(salesTransaction => new SalesTransactionVM { Model = salesTransaction }))
             {
                 DisplayedSalesTransactions.Add(salesTransactionVM);
                 _total += salesTransactionVM.Remaining;
             }
-            SortDisplayedTransactionsAccordingToCollectionSalesman();
         }
 
         private Func<SalesTransaction, bool> GetCitySalesmanSelectionSearchCondition()
@@ -415,14 +418,16 @@
         {
             _total = 0;
             var searchCondition = GetCustomerSelectionSearchCondition();
-            var salesTransactions = DatabaseSalesTransactionHelper.GetWithoutLines(searchCondition);
-            var sortedSalesTransactions = salesTransactions.OrderBy(e => e.Customer.Name).ThenBy(e => e.DueDate);
+            var salesTransactionsFromDatabase = DatabaseSalesTransactionHelper.GetWithoutLines(searchCondition)
+                .OrderBy(salesTransaction => salesTransaction.Customer.Name)
+                .ThenBy(salesTransaction => salesTransaction.DueDate)
+                .ThenBy(salesTransaction => salesTransaction.Date);
 
             DisplayedSalesTransactions.Clear();
-            foreach (var salesTransaction in sortedSalesTransactions)
+            foreach (var salesTransactionVM in salesTransactionsFromDatabase.Select(salesTransaction => new SalesTransactionVM { Model = salesTransaction }))
             {
-                DisplayedSalesTransactions.Add(new SalesTransactionVM { Model = salesTransaction });
-                _total += salesTransaction.NetTotal - salesTransaction.Paid;
+                DisplayedSalesTransactions.Add(salesTransactionVM);
+                _total += salesTransactionVM.Remaining;
             }
         }
 
@@ -447,21 +452,23 @@
         {
             _total = 0;
 
-            var ledgerTransactions = Utilities.Database.Ledger.DatabaseLedgerTransactionHelper.GetWithoutLines(e => e.Description.Equals("Sales Transaction Receipt") && e.Date.Equals(_collectionDate));
-            var tempList = new List<SalesTransactionVM>();
+            var ledgerTransactions = DatabaseLedgerTransactionHelper.GetWithoutLines(e => e.Description.Equals("Sales Transaction Receipt") && e.Date.Equals(_collectionDate));
             var emptyCollectionSalesman = DatabaseSalesmanHelper.FirstOrDefault(e => e.Name.Equals(" "));
 
-            foreach (var vm in ledgerTransactions.Select(GetCorrespondingSalesTransactionVM).Where(vm => !tempList.Contains(vm)))
+            using (var context = new ERPContext())
             {
-                if (vm.CollectionSalesman == null) vm.CollectionSalesman = emptyCollectionSalesman;
-                tempList.Add(vm);
-                _total += vm.Remaining;
+                DisplayedSalesTransactions.Clear();
+                foreach (var ledgerTransaction in ledgerTransactions)
+                {
+                    var vm = GetCorrespondingSalesTransactionVM(context, ledgerTransaction);
+                    if (DisplayedSalesTransactions.Contains(vm)) continue;
+                    if (vm.CollectionSalesman == null) vm.CollectionSalesman = emptyCollectionSalesman;
+                    DisplayedSalesTransactions.Add(vm);
+                    _total += vm.Remaining;
+                }
             }
-
-            var sortedList = tempList.OrderBy(e => e.CollectionSalesman.Name).ToList();
-            DisplayedSalesTransactions.Clear();
-            foreach (var line in sortedList)
-                DisplayedSalesTransactions.Add(line);
+            SortDisplayedTransactionsAccordingToCollectionSalesman();
+            UpdateTotalToUI();
         }
 
         private void SortDisplayedTransactionsAccordingToCollectionSalesman()
@@ -472,11 +479,9 @@
                 DisplayedSalesTransactions.Add(line);
         }
 
-        private static SalesTransactionVM GetCorrespondingSalesTransactionVM(LedgerTransaction ledgerTransaction)
+        private static SalesTransactionVM GetCorrespondingSalesTransactionVM(ERPContext context, LedgerTransaction ledgerTransaction)
         {
-            var salesTransactionFromDatabase =
-                DatabaseSalesTransactionHelper.FirstOrDefaultWithoutLines(
-                    salesTransaction => salesTransaction.SalesTransactionID.Equals(ledgerTransaction.Documentation));
+            var salesTransactionFromDatabase = context.SalesTransactions.Include("CollectionSalesman").Include("Customer").FirstOrDefault(salesTransaction => salesTransaction.SalesTransactionID.Equals(ledgerTransaction.Documentation));
             return new SalesTransactionVM { Model = salesTransactionFromDatabase };
         }
 

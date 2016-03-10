@@ -2,10 +2,14 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PutraJayaNT.Views.Reports"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+    </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding  Key="F1"  Command="{Binding PrintCommand}"/>
     </UserControl.InputBindings>
@@ -21,7 +25,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.2*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Row="1" Grid.Column="1" Content="(F1) Print" Command="{Binding PrintCommand}" />
+            <Button Grid.Row="0" Grid.Column="1" Content="(F1) Print" Command="{Binding PrintCommand}" />
         </Grid>
         <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid>
@@ -32,30 +36,27 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Customer:" Foreground="Blue" />
-                <ComboBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0" 
-                      ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer, UpdateSourceTrigger=Explicit}" IsEditable="True" DisplayMemberPath="Name"/>
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="From:" FontSize="28" />
-                <DatePicker Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Text="To:" FontSize="28" />
-                <DatePicker Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                            SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Column="0" Foreground="Blue" Text="Customer:" />
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Customers}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedCustomer, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Column="2" Margin="10, 15,10, 15" Content="Display" Command="{Binding DisplayCommand}" />
+                <TextBlock Grid.Column="3" Text="From:" />
+                <DatePicker Grid.Column="4" SelectedDateFormat="Long" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Column="5" Text="To:" />
+                <DatePicker Grid.Column="6" SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" VerticalAlignment="Stretch" CanUserAddRows="False" 
-                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                  AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False">
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedSalesTransactions}" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Customer" Width="1*" IsReadOnly="True" Binding="{Binding Customer.Name}" />
-                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding When, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTextColumn Header="Invoice Date" Width="1*" IsReadOnly="True" Binding="{Binding InvoiceIssued, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransactionID}" />
-                <DataGridTextColumn Header="Remaining" Width="1*" IsReadOnly="True" Binding="{Binding Remaining, StringFormat=N2}" />
-                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
-                <DataGridTextColumn Header="User" Width="1*" IsReadOnly="True" Binding="{Binding User.Username}" />
+                <DataGridTextColumn Header="Customer" Width="1*" Binding="{Binding Customer.Name}" />
+                <DataGridTextColumn Header="Date" Width="1*" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Due Date" Width="1*" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Invoice Date" Width="1*" Binding="{Binding InvoiceIssued, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding SalesTransactionID}" />
+                <DataGridTextColumn Header="Remaining" Width="1*" Binding="{Binding Remaining, StringFormat=N2}" />
+                <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Total, StringFormat=N2}" />
+                <DataGridTextColumn Header="User" Width="1*" Binding="{Binding User.Username}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="3">
@@ -66,12 +67,10 @@
                 <ColumnDefinition Width="0.2*" />
                 <ColumnDefinition Width="0.2*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Remaining:" FontSize="28" />
-            <TextBox Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding Remaining, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
-            <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total:" FontSize="28" />
-            <TextBox Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" Foreground="Red" />
+            <TextBlock Grid.Column="1" Text="Remaining:" />
+            <TextBox Grid.Column="2" Foreground="Red" Text="{Binding Remaining, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" />
+            <TextBlock Grid.Column="3" Text="Total:" />
+            <TextBox Grid.Column="4" Foreground="Red" Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" />
         </Grid>
     </Grid>
 </UserControl>

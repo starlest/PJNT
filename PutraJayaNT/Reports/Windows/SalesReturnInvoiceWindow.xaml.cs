@@ -1,22 +1,21 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
-using PutraJayaNT.ViewModels.Customers;
+﻿using Microsoft.Reporting.WinForms;
 using System;
 using System.Data;
 using System.Drawing.Printing;
 using System.Windows;
-using PutraJayaNT.ViewModels.Sales;
 
 namespace PutraJayaNT.Reports.Windows
 {
+    using ViewModels.Customers.SalesReturn;
+
     /// <summary>
     /// Interaction logic for SalesInvoiceWindow.xaml
     /// </summary>
-    public partial class SalesReturnInvoiceWindow : ModernWindow
+    public partial class SalesReturnInvoiceWindow
     {
-        SalesReturnTransactionVM _salesReturnTransaction;
+        readonly SalesReturnVM _salesReturnTransaction;
 
-        public SalesReturnInvoiceWindow(SalesReturnTransactionVM vm)
+        public SalesReturnInvoiceWindow(SalesReturnVM vm)
         {
             InitializeComponent();
             _salesReturnTransaction = vm;
@@ -42,7 +41,7 @@ namespace PutraJayaNT.Reports.Windows
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
 
             int count = 1;
-            foreach (var line in _salesReturnTransaction.SalesReturnTransactionLines)
+            foreach (var line in _salesReturnTransaction.DisplayedSalesReturnTransactionLines)
             {
                 DataRow dr = dt1.NewRow();
                 dr["LineNumber"] = count++;

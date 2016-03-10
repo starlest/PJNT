@@ -1,13 +1,13 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Customers
+﻿using PutraJayaNT.Utilities.ModelHelpers;
+
+namespace PutraJayaNT.ViewModels.Master.Customers
 {
     using MVVMFramework;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Models.Accounting;
     using Utilities;
     using System.Collections.ObjectModel;
-    using System.Transactions;
     using Models.Customer;
     using Utilities.Database.Customer;
     using Customer;
@@ -104,7 +104,7 @@
                     if (!IsEditConfirmationYes() && !AreEditFieldsValid()) return;
                     var editingCustomer = _editingCustomer.Model;
                     var editedCustomerCopy = MakeEditedCustomer();
-                    SaveCustomerEditsToDatabase(editingCustomer, editedCustomerCopy);
+                    CustomerHelper.SaveCustomerEditsToDatabase(editingCustomer, editedCustomerCopy);
                     UpdateEditingCustomerUIValues();
                     UtilityMethods.CloseForemostWindow();
                 }));
@@ -148,61 +148,7 @@
                 NPWP = _editNPWP
             };
         }
-
-        private static LedgerAccount GetCustomerLedgerAccountFromDatabaseContext(ERPContext context, Customer customer)
-        {
-            var searchName = customer.Name + " Accounts Receivable";
-            return context.Ledger_Accounts.First(e => e.Name.Equals(searchName));
-        }
-
-        private static bool IsCustomerNameChanged(Customer editingCustomer, Customer editedCustomer)
-        {
-            return editingCustomer.Name == editedCustomer.Name;
-        }
-
-        private static void ChangeCustomerLedgerAccountNameInDatabaseContext(ERPContext context, Customer editingCustomer, Customer editedCustomer)
-        {
-            var ledgerAccountFromDatabase = GetCustomerLedgerAccountFromDatabaseContext(context, editingCustomer);
-            ledgerAccountFromDatabase.Name = $"{editedCustomer.Name} Accounts Receivable";
-            context.SaveChanges();
-        }
-
-        private static void DeepCopyCustomerProperties(Customer fromCustomer, ref Customer toCustomer)
-        {
-            toCustomer.Name = fromCustomer.Name;
-            toCustomer.City = fromCustomer.City;
-            toCustomer.Address = fromCustomer.Address;
-            toCustomer.Telephone = fromCustomer.Telephone;
-            toCustomer.NPWP = fromCustomer.NPWP;
-            toCustomer.CreditTerms = fromCustomer.CreditTerms;
-            toCustomer.MaxInvoices = fromCustomer.MaxInvoices;
-            toCustomer.Group = fromCustomer.Group;
-        }
-
-        private static void SaveCustomerEditsToDatabaseContext(ERPContext context, Customer editingCustomer, Customer editedCustomer)
-        {
-            DatabaseCustomerHelper.AttachToObjectFromDatabaseContext(context, ref editingCustomer);
-            DeepCopyCustomerProperties(editedCustomer, ref editingCustomer);
-
-            var customerGroupToBeAttachedToDatabaseContext = editingCustomer.Group;
-            DatabaseCustomerGroupHelper.AttachToObjectFromDatabaseContext(context, ref customerGroupToBeAttachedToDatabaseContext);
-            editingCustomer.Group = customerGroupToBeAttachedToDatabaseContext;
-
-            context.SaveChanges();
-        }
-
-        public static void SaveCustomerEditsToDatabase(Customer editingCustomer, Customer editedCustomer)
-        {
-            using (var ts = new TransactionScope())
-            {
-                var context = new ERPContext();
-                if (!IsCustomerNameChanged(editingCustomer, editedCustomer))
-                    ChangeCustomerLedgerAccountNameInDatabaseContext(context, editingCustomer, editedCustomer);
-                SaveCustomerEditsToDatabaseContext(context, editingCustomer, editedCustomer);
-                ts.Complete();
-            }
-        }
-
+       
         private static bool IsEditConfirmationYes()
         {
             return MessageBox.Show("Confirm edit?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
@@ -217,7 +163,7 @@
         {
             var editedCustomer = MakeEditedCustomer();
             var customerTo = _editingCustomer.Model;
-            DeepCopyCustomerProperties(editedCustomer, ref customerTo);
+            CustomerHelper.DeepCopyCustomerProperties(editedCustomer, ref customerTo);
             _editingCustomer.UpdatePropertiesToUI();
         }
         #endregion

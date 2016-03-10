@@ -11,6 +11,7 @@
     using Utilities;
     using Utilities.Database;
     using Utilities.Database.Item;
+    using Utilities.Database.Supplier;
     using ViewModels.Inventory;
     using Views.Master.Suppliers;
     using ViewModels.Suppliers;

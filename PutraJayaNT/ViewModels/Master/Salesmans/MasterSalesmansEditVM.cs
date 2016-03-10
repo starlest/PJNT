@@ -62,7 +62,6 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
             _editPercentage = EditingSalesCommission.Percentage;
         }
 
-
         private SalesCommission MakeEditedSalesCommission()
         {
             return new SalesCommission
@@ -78,8 +77,6 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
             toSalesCommission.Percentage = fromSalesCommission.Percentage;
         }
 
-
-
         private static void SaveSalesCommissionEditsToDatabaseContext(ERPContext context, SalesCommission editingSalesCommission, SalesCommission editedSalesCommission)
         {
             DatabaseSalesmanCommisionHelper.AttachToDatabaseContext(context, ref editingSalesCommission);
@@ -87,8 +84,6 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
             else context.SalesCommissions.Add(editedSalesCommission);
             context.SaveChanges();
         }
-
-
 
         public static void SaveSalesCommissionEditsToDatabase(SalesCommission editingSalesCommission, SalesCommission editedSalesCommission)
         {
@@ -99,7 +94,6 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
                 ts.Complete();
             }
         }
-
 
         private void UpdateEditingSalesCommissionUIValues()
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PutraJayaNT.Models;
 using PutraJayaNT.Models.Customer;
 
 namespace PutraJayaNT.Utilities.Database.Customer

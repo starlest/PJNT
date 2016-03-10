@@ -12,6 +12,8 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Accounting
 {
+    using Utilities.ModelHelpers;
+
     class CashBankTransactionVM : ViewModelBase
     {
         DateTime _fromDate;
@@ -229,11 +231,11 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                             var transaction = new LedgerTransaction();
 
-                            if (!DatabaseLedgerHelper.AddTransaction(context1, transaction, _newEntryDate, _newEntryDescription, _newEntryDescription)) return;
+                            if (!LedgerTransactionHelper.AddTransactionToDatabase(context1, transaction, _newEntryDate, _newEntryDescription, _newEntryDescription)) return;
                             context1.SaveChanges();
 
-                            DatabaseLedgerHelper.AddTransactionLine(context1, transaction, _newEntryAccount.Name, _newEntrySequence, (decimal)_newEntryAmount);
-                            DatabaseLedgerHelper.AddTransactionLine(context1, transaction, _selectedBank.Name, _newEntrySequence == "Debit" ? "Credit" : "Debit", (decimal)_newEntryAmount);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context1, transaction, _newEntryAccount.Name, _newEntrySequence, (decimal)_newEntryAmount);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context1, transaction, _selectedBank.Name, _newEntrySequence == "Debit" ? "Credit" : "Debit", (decimal)_newEntryAmount);
                             context1.SaveChanges();
 
                             ts.Complete();

@@ -92,7 +92,22 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionLineHelper.cs" />
+    <Compile Include="Utilities\Database\Purchase\DatabasePurchaseReturnTransactionLineHelper.cs" />
+    <Compile Include="Utilities\Database\Purchase\DatabasePurchaseTransactionLineHelper.cs" />
+    <Compile Include="Utilities\Database\Sales\DatabaseSalesReturnTransactionLineHelper.cs" />
+    <Compile Include="Utilities\Database\Sales\DatabaseSalesReturnTransactionHelper.cs" />
+    <Compile Include="Utilities\Database\Sales\DatabaseSalesTransactionLineHelper.cs" />
+    <Compile Include="Utilities\Database\Stock\DatabaseStockBalanceHelper.cs" />
+    <Compile Include="Utilities\Database\Stock\DatabaseStockMovementTransactionHelper.cs" />
+    <Compile Include="Utilities\Database\Stock\DatabaseStockAdjustmentTransactionLineHelper.cs" />
     <Compile Include="Utilities\Database\Stock\DatabaseStockHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SalesmanHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionLineHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SupplierHelper.cs" />
+    <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
     <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
@@ -199,7 +214,7 @@
     <Compile Include="Utilities\Database\Item\DatabaseItemAlternativeSalesPriceHelper.cs" />
     <Compile Include="Utilities\Database\Item\DatabaseItemCategoryHelper.cs" />
     <Compile Include="Utilities\Database\Item\DatabaseItemHelper.cs" />
-    <Compile Include="Utilities\Database\DatabaseSupplierHelper.cs" />
+    <Compile Include="Utilities\Database\Supplier\DatabaseSupplierHelper.cs" />
     <Compile Include="Utilities\Database\Ledger\DatabaseLedgerAccountHelper.cs" />
     <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionHelper.cs" />
     <Compile Include="Utilities\Database\Salesman\DatabaseSalesCommissionHelper.cs" />
@@ -211,7 +226,7 @@
     <Compile Include="Models\Sales\SalesTransaction.cs" />
     <Compile Include="Models\Sales\SalesTransactionLine.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Utilities\DatabaseLedgerHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\LedgerTransactionHelper.cs" />
     <Compile Include="Utilities\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\PasswordHelper.cs" />
     <Compile Include="Utilities\PrintHelper.cs" />
@@ -235,7 +250,7 @@
     <Compile Include="ViewModels\Customers\PrintListVM.cs" />
     <Compile Include="ViewModels\Customers\SalesCollectVM.cs" />
     <Compile Include="ViewModels\Sales\SalesReturnTransactionLineVM.cs" />
-    <Compile Include="ViewModels\Customers\SalesReturnTransactionVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnVM.cs" />
     <Compile Include="ViewModels\Sales\SalesTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesVM.cs" />
     <Compile Include="ViewModels\Customer\CustomerVM.cs" />

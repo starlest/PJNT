@@ -2,14 +2,13 @@
 using System.Windows.Input;
 using MVVMFramework;
 using PutraJayaNT.Models;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities;
+using PutraJayaNT.Utilities.ModelHelpers;
 
 namespace PutraJayaNT.ViewModels.Master.Suppliers
 {
     public class MasterSuppliersNewEntryVM : ViewModelBase
     {
-        private MasterSuppliersVM _parentVM;
+        private readonly MasterSuppliersVM _parentVM;
 
         private string _newEntryName;
         private string _newEntryAddress;
@@ -52,7 +51,7 @@ namespace PutraJayaNT.ViewModels.Master.Suppliers
                 {
                     if (!IsNewEntryCommandChecksSuccessful()) return;
                     var newSupplier = CreateNewEntrySupplier();
-                    AddSupplierAlongWithItsLedgerToDatabase(newSupplier);
+                    SupplierHelper.AddSupplierAlongWithItsLedgerToDatabase(newSupplier);
                     ResetEntryFields();
                     _parentVM.UpdateSuppliers();
                     _parentVM.UpdateDisplayedSuppliers();
@@ -92,62 +91,6 @@ namespace PutraJayaNT.ViewModels.Master.Suppliers
             NewEntryName = null;
             NewEntryAddress = null;
             NewEntryGSTID = null;
-        }
-
-        private static LedgerAccount CreateSupplierLedgerAccount(Supplier supplier)
-        {
-            return new LedgerAccount
-            {
-                Name = supplier.Name + " Accounts Payable",
-                Notes = "Accounts Payable",
-                Class = "Liability"
-            };
-        }
-
-        private static LedgerGeneral CreateSupplierLedgerGeneral(LedgerAccount ledgerAccount)
-        {
-            return new LedgerGeneral
-            {
-                LedgerAccount = ledgerAccount,
-                PeriodYear = UtilityMethods.GetCurrentDate().Year,
-                Period = UtilityMethods.GetCurrentDate().Month,
-            };
-        }
-
-        private static LedgerAccountBalance CreateSupplierLedgerAccountBalance(LedgerAccount ledgerAccount)
-        {
-            return new LedgerAccountBalance
-            {
-                LedgerAccount = ledgerAccount,
-                PeriodYear = UtilityMethods.GetCurrentDate().Year,
-            };
-        }
-
-        private static void CreateAndAddSupplierLedgerToDatabaseContext(ERPContext context, Supplier suppplier)
-        {
-            var ledgerAccount = CreateSupplierLedgerAccount(suppplier);
-            context.Ledger_Accounts.Add(ledgerAccount);
-
-            var ledgerGeneral = CreateSupplierLedgerGeneral(ledgerAccount);
-            context.Ledger_General.Add(ledgerGeneral);
-
-            var ledgerAccountBalance = CreateSupplierLedgerAccountBalance(ledgerAccount);
-            context.Ledger_Account_Balances.Add(ledgerAccountBalance);
-        }
-
-        private static void AddSupplierToDatabaseContext(ERPContext context, Supplier supplier)
-        {
-            context.Suppliers.Add(supplier);
-        }
-
-        public static void AddSupplierAlongWithItsLedgerToDatabase(Supplier supplier)
-        {
-            using (var context = new ERPContext())
-            {
-                AddSupplierToDatabaseContext(context, supplier);
-                CreateAndAddSupplierLedgerToDatabaseContext(context, supplier);
-                context.SaveChanges();
-            }
         }
         #endregion
     }

@@ -7,6 +7,11 @@ namespace PutraJayaNT.Models.Sales
 {
     public class SalesReturnTransaction
     {
+        public SalesReturnTransaction()
+        {
+            SalesReturnTransactionLines = new List<SalesReturnTransactionLine>();
+        }
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 0), StringLength(128)]
         public string SalesReturnTransactionID { get; set; }
 

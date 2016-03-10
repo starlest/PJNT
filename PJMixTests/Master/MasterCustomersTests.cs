@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PutraJayaNT.Models.Customer;
 using PutraJayaNT.Utilities;
 using PutraJayaNT.Utilities.Database.Customer;
+using PutraJayaNT.Utilities.ModelHelpers;
 using PutraJayaNT.ViewModels.Master.Customers;
 
 namespace PJMixTests.Master
@@ -14,7 +15,7 @@ namespace PJMixTests.Master
         public void TestAddCustomer()
         {
             var customer = CreateTestCustomer();
-            MasterCustomersNewEntryVM.AddCustomerAlongWithItsLedgerToDatabase(customer);
+            CustomerHelper.AddCustomerAlongWithItsLedgerToDatabase(customer);
             var result1 = CheckIfCustomerAndItsLedgerExistsInDatabase(customer);
             Assert.AreEqual(true, result1);
             RemoveCustomerAndItsLedgerFromDatabase(customer);
@@ -25,19 +26,19 @@ namespace PJMixTests.Master
         [TestMethod]
         public void TestEditCustomer()
         {
-            var originalCustomer = DatabaseCustomerHelper.FirstOrDefault(customer => customer.ID == 1);
+            var originalCustomer = DatabaseCustomerHelper.FirstOrDefault(customer => customer.ID >= 1);
             var editedCustomer = CreateTestCustomer();
             editedCustomer.ID = originalCustomer.ID;
 
-            MasterCustomersEditVM.SaveCustomerEditsToDatabase(originalCustomer, editedCustomer);
-            var editedCustomerFromDatabase = DatabaseCustomerHelper.FirstOrDefault(customer => customer.ID == 1);
+            CustomerHelper.SaveCustomerEditsToDatabase(originalCustomer, editedCustomer);
+            var editedCustomerFromDatabase = DatabaseCustomerHelper.FirstOrDefault(customer => customer.ID >= 1);
             var result1 = CompareCustomers(editedCustomerFromDatabase, editedCustomer);
             var result2 = CheckIfCustomerAndItsLedgerExistsInDatabase(editedCustomerFromDatabase);
             var result3 = CheckIfCustomerAndItsLedgerExistsInDatabase(originalCustomer);
 
             // Revert editedCustomer back to original values
-            MasterCustomersEditVM.SaveCustomerEditsToDatabase(editedCustomer, originalCustomer);
-            editedCustomerFromDatabase = DatabaseCustomerHelper.FirstOrDefault(customer => customer.ID == 1);
+            CustomerHelper.SaveCustomerEditsToDatabase(editedCustomer, originalCustomer);
+            editedCustomerFromDatabase = DatabaseCustomerHelper.FirstOrDefault(customer => customer.ID >= 1);
             var result4 = CompareCustomers(editedCustomerFromDatabase, originalCustomer);
             var result5 = CheckIfCustomerAndItsLedgerExistsInDatabase(editedCustomerFromDatabase);
             var result6 = CheckIfCustomerAndItsLedgerExistsInDatabase(editedCustomer);

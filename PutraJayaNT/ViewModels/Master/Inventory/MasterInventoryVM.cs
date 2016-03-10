@@ -9,6 +9,7 @@
     using System.Windows.Input;
     using Utilities.Database;
     using Utilities.Database.Item;
+    using Utilities.Database.Supplier;
     using ViewModels.Inventory;
     using ViewModels.Suppliers;
     using Views.Master.Inventory;
@@ -206,7 +207,7 @@
             var oldSelectedItem = _selectedItem;
 
             Items.Clear();
-            var itemsFromDatabase = DatabaseItemHelper.GetAll();
+            var itemsFromDatabase = DatabaseItemHelper.GetAll().ToList();
             foreach (var item in itemsFromDatabase)
                 Items.Add(new ItemVM { Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault() });
 

@@ -1,5 +1,8 @@
 ﻿
 
+using PutraJayaNT.Utilities.Database.Customer;
+using PutraJayaNT.Utilities.Database.Sales;
+
 namespace PutraJayaNT.ViewModels.Reports
 {
     using MVVMFramework;
@@ -7,7 +10,6 @@ namespace PutraJayaNT.ViewModels.Reports
     using PutraJayaNT.Reports.Windows;
     using Utilities;
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
@@ -15,50 +17,38 @@ namespace PutraJayaNT.ViewModels.Reports
     using Models.Customer;
     using Customer;
 
-    class OverallSalesReportVM : ViewModelBase
+    internal class OverallSalesReportVM : ViewModelBase
     {
-        ObservableCollection<Sales.SalesTransactionVM> _lines;
-        ObservableCollection<CustomerVM> _customers;
+        #region Backing Fields
+        private CustomerVM _selectedCustomer;
+        private DateTime _fromDate;
+        private DateTime _toDate;
+        private decimal _total;
+        private decimal _remaining;
 
-        CustomerVM _selectedCustomer;
-        DateTime _fromDate;
-        DateTime _toDate;
-        decimal _total;
-        decimal _remaining;
-        ICommand _printCommand;
+        private ICommand _printCommand;
+        private ICommand _displayCommand;
+        #endregion
 
         public OverallSalesReportVM()
         {
-            _customers = new ObservableCollection<CustomerVM>();
-            _lines = new ObservableCollection<Sales.SalesTransactionVM>();
+            Customers = new ObservableCollection<CustomerVM>();
+            DisplayedSalesTransactions = new ObservableCollection<Sales.SalesTransactionVM>();
             var currentDate = UtilityMethods.GetCurrentDate();
             _fromDate = currentDate.AddDays(-currentDate.Day + 1);
             _toDate = currentDate;
             UpdateCustomers();
         }
 
-        public ObservableCollection<Sales.SalesTransactionVM> Lines
-        {
-            get { return _lines; }
-        }
+        public ObservableCollection<Sales.SalesTransactionVM> DisplayedSalesTransactions { get; }
 
-        public ObservableCollection<CustomerVM> Customers
-        {
-            get { return _customers; }
-        }
+        public ObservableCollection<CustomerVM> Customers { get; }
 
+        #region Properties
         public CustomerVM SelectedCustomer
         {
             get { return _selectedCustomer; }
-            set
-            {
-                SetProperty(ref _selectedCustomer, value, "SelectedCustomer");
-
-                if (_selectedCustomer == null) return;
-
-                UpdateCustomers();
-                RefreshDisplayLines();
-            }
+            set { SetProperty(ref _selectedCustomer, value, () => SelectedCustomer); }
         }
 
         public DateTime FromDate
@@ -73,7 +63,6 @@ namespace PutraJayaNT.ViewModels.Reports
                 }
 
                 SetProperty(ref _fromDate, value, "FromDate");
-                if (_selectedCustomer != null) RefreshDisplayLines();
             }
         }
 
@@ -89,29 +78,6 @@ namespace PutraJayaNT.ViewModels.Reports
                 }
 
                 SetProperty(ref _toDate, value, "ToDate");
-                if (_selectedCustomer != null) RefreshDisplayLines();
-            }
-        }
-
-        public decimal Total
-        {
-            get { return _total; }
-            set { SetProperty(ref _total, value, "Total"); }
-        }
-
-        public ICommand PrintCommand
-        {
-            get
-            {
-                return _printCommand ?? (_printCommand = new RelayCommand(() =>
-                {
-                    if (_lines.Count == 0) return;
-
-                    var overallSalesReportWindow = new OverallSalesReportWindow(_lines);
-                    overallSalesReportWindow.Owner = App.Current.MainWindow;
-                    overallSalesReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    overallSalesReportWindow.Show();
-                }));
             }
         }
 
@@ -121,59 +87,106 @@ namespace PutraJayaNT.ViewModels.Reports
             set { SetProperty(ref _remaining, value, "Remaining"); }
         }
 
+        public decimal Total
+        {
+            get { return _total; }
+            set { SetProperty(ref _total, value, "Total"); }
+        }
+        #endregion
+
+        #region Commands
+        public ICommand DisplayCommand
+        {
+            get
+            {
+                return _displayCommand ?? (_displayCommand = new RelayCommand(() =>
+                {
+                    UpdateDisplayLines();
+                    UpdateCustomers();
+                }));
+            }
+        }
+
+        public ICommand PrintCommand
+        {
+            get
+            {
+                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                {
+                    if (DisplayedSalesTransactions.Count == 0) return;
+                    ShowPrintWindow();
+                }));
+            }
+        }
+        #endregion
+
+        #region Helper Methods
         private void UpdateCustomers()
         {
-            _customers.Clear();
-            _customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
-            using (var context = new ERPContext())
-            {
-                var customers = context.Customers.OrderBy(e => e.Name).ToList();
+            var oldSelectedCustomer = _selectedCustomer;
 
-                foreach (var customer in customers)
-                    _customers.Add(new CustomerVM { Model = customer }); 
-            }
+            Customers.Clear();
+            Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
+
+            var customersFromDatabase = DatabaseCustomerHelper.GetAll();
+
+            foreach (var customer in customersFromDatabase)
+                Customers.Add(new CustomerVM { Model = customer });
+
+            UpdateSelectedCustomer(oldSelectedCustomer);
         }
 
-        private void RefreshDisplayLines()
+        private void UpdateSelectedCustomer(CustomerVM oldSelectedCustomer)
         {
-            _lines.Clear();
-            _total = 0;
-            using (var context = new ERPContext())
-            {
-                List<SalesTransaction> salesTransactions;
-                if (!_selectedCustomer.Name.Equals("All"))
-                {
-                    salesTransactions = context.SalesTransactions
-                        .Include("Customer")
-                        .Include("User")
-                        .Where(e => e.Customer.Name.Equals(_selectedCustomer.Name) && e.Date >= _fromDate && e.Date <= _toDate)
-                        .OrderBy(e => e.Date)
-                        .ThenBy(e => e.SalesTransactionID)
-                        .ToList();
-                }
-
-                else
-                {
-                    salesTransactions = context.SalesTransactions
-                        .Include("Customer")
-                        .Include("User")
-                        .Where(e => e.Date >= _fromDate && e.Date <= _toDate)
-                        .OrderBy(e => e.Customer.Name)
-                        .ThenBy(e => e.Date)
-                        .ThenBy(e => e.SalesTransactionID)
-                        .ToList();
-                }
-
-                foreach (var st in salesTransactions)
-                {
-                    _lines.Add(new Sales.SalesTransactionVM { Model = st });
-                    _total += st.NetTotal;
-                    _remaining += (st.NetTotal - st.Paid);
-                }
-
-                OnPropertyChanged("Remaining");
-                OnPropertyChanged("Total");
-            }
+            if (oldSelectedCustomer == null) return;
+            SelectedCustomer = Customers.FirstOrDefault(customer => customer.ID.Equals(oldSelectedCustomer.ID));
         }
+
+        private void UpdateDisplayLines()
+        {
+            _total = 0;
+            _remaining = 0;
+            DisplayedSalesTransactions.Clear();
+
+            Func<SalesTransaction, bool> searchCondition;
+            if (!_selectedCustomer.Name.Equals("All"))
+                searchCondition = salesTransaction =>
+                    salesTransaction.Customer.Name.Equals(_selectedCustomer.Name)
+                    && salesTransaction.Date >= _fromDate && salesTransaction.Date <= _toDate;     
+            else
+                searchCondition = salesTransaction => salesTransaction.Date >= _fromDate && salesTransaction.Date <= _toDate;
+            
+
+            var salesTransactionsFromDatabase = DatabaseSalesTransactionHelper.GetWithoutLines(searchCondition)
+                .OrderBy(salesTransaction => salesTransaction.Date)
+                .ThenBy(salesTransaction => salesTransaction.SalesTransactionID)
+                .ThenBy(salesTransaction => salesTransaction.Customer.Name);
+
+            foreach (var salesTransaction in salesTransactionsFromDatabase)
+            {
+                DisplayedSalesTransactions.Add(new Sales.SalesTransactionVM { Model = salesTransaction });
+                _total += salesTransaction.NetTotal;
+                _remaining += salesTransaction.NetTotal - salesTransaction.Paid;
+            }
+
+            UpdateUITotalAndRemaining();
+        }
+
+        private void UpdateUITotalAndRemaining()
+        {
+            OnPropertyChanged("Remaining");
+            OnPropertyChanged("Total");
+        }
+
+        private void ShowPrintWindow()
+        {
+            var overallSalesReportWindow = new OverallSalesReportWindow(DisplayedSalesTransactions)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            overallSalesReportWindow.Show();
+        }
+        #endregion
     }
 }

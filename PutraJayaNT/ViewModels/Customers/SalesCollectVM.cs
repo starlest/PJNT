@@ -15,6 +15,7 @@ namespace PutraJayaNT.ViewModels.Customers
     using Utilities;
     using Customer;
     using Sales;
+    using Utilities.ModelHelpers;
 
     public class SalesCollectVM : ViewModelBase
     {
@@ -306,10 +307,10 @@ namespace PutraJayaNT.ViewModels.Customers
             var date = UtilityMethods.GetCurrentDate().Date;
             var transaction = new LedgerTransaction();
 
-            if (!DatabaseLedgerHelper.AddTransaction(context, transaction, date, salesTransaction.SalesTransactionID, "Sales Transaction Receipt")) return;
+            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, date, salesTransaction.SalesTransactionID, "Sales Transaction Receipt")) return;
             context.SaveChanges();
-            DatabaseLedgerHelper.AddTransactionLine(context, transaction, paymentMode, "Debit", collectionAmount);
-            DatabaseLedgerHelper.AddTransactionLine(context, transaction, accountsReceivableName, "Credit", collectionAmount);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, paymentMode, "Debit", collectionAmount);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, accountsReceivableName, "Credit", collectionAmount);
             context.SaveChanges();
         }
 

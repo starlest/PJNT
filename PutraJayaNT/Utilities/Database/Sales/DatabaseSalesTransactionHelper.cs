@@ -16,13 +16,16 @@
         public static IEnumerable<SalesTransaction> Get(Func<SalesTransaction, bool> condition)
         {
             using (var context = new ERPContext())
-                return context.SalesTransactions.Include("Customer").Include("Customer.Group").Include("CollectionSalesman").Include("SalesTransactionLines").Where(condition).ToList();
+                return context.SalesTransactions.Include("Customer").Include("User").Include("Customer.Group").Include("CollectionSalesman").Include("SalesTransactionLines").Where(condition).ToList();
         }
 
         public static SalesTransaction FirstOrDefault(Func<SalesTransaction, bool> condition)
         {
             using (var context = new ERPContext())
-                return context.SalesTransactions.Include("Customer").Include("Customer.Group").Include("CollectionSalesman").Include("SalesTransactionLines").Where(condition).FirstOrDefault();
+                return context.SalesTransactions.Include("Customer").Include("Customer.Group")
+                    .Include("CollectionSalesman").Include("SalesTransactionLines")
+                    .Include("SalesTransactionLines.Item").Include("SalesTransactionLines.Warehouse")
+                    .Where(condition).FirstOrDefault();
         }
 
         public static void AttachToDatabaseContext(ERPContext context, ref SalesTransaction salestransactionToBeAttached)
@@ -34,7 +37,7 @@
         public static IEnumerable<SalesTransaction> GetWithoutLines(Func<SalesTransaction, bool> condition)
         {
             using (var context = new ERPContext())
-                return context.SalesTransactions.Include("Customer").Include("Customer.Group").Include("CollectionSalesman").Where(condition).ToList();
+                return context.SalesTransactions.Include("Customer").Include("User").Include("Customer.Group").Include("CollectionSalesman").Where(condition).ToList();
         }
 
         public static SalesTransaction FirstOrDefaultWithoutLines(Func<SalesTransaction, bool> condition)

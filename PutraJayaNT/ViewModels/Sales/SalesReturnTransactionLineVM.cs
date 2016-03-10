@@ -6,9 +6,6 @@
 
     public class SalesReturnTransactionLineVM : ViewModelBase<SalesReturnTransactionLine>
     {
-        int _units;
-        int _pieces;
-
         public Item Item
         {
             get { return Model.Item; }
@@ -39,10 +36,7 @@
             }
         }
 
-        public string Unit
-        {
-            get { return Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit; }
-        }
+        public string Unit => Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit;
 
         public int Quantity
         {
@@ -53,43 +47,12 @@
                 OnPropertyChanged("Quantity");
                 OnPropertyChanged("Units");
                 OnPropertyChanged("Pieces");
-                OnPropertyChanged("Total");
             }
         }
 
-        public int Pieces
-        {
-            get
-            {
-                _pieces = Model.Quantity % Model.Item.PiecesPerUnit;
-                return _pieces;
-            }
-            set
-            {
-                Model.Quantity = value + (_units * Model.Item.PiecesPerUnit);
+        public int Pieces => Model.Quantity%Model.Item.PiecesPerUnit;
 
-                SetProperty(ref _pieces, value, "Pieces");
-                OnPropertyChanged("Units");
-                OnPropertyChanged("Total");
-            }
-        }
-
-        public int Units
-        {
-            get
-            {
-                _units = Model.Quantity / Model.Item.PiecesPerUnit;
-                return _units;
-            }
-            set
-            {
-                Model.Quantity = _pieces + (value * Model.Item.PiecesPerUnit);
-
-                SetProperty(ref _units, value, "Units");
-                OnPropertyChanged("Pieces");
-                OnPropertyChanged("Total");
-            }
-        }
+        public int Units => Model.Quantity / Model.Item.PiecesPerUnit;
 
         public decimal SalesPrice
         {

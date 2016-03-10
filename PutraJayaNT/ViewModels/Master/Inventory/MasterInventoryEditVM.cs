@@ -2,19 +2,18 @@
 {
     using System.Collections.ObjectModel;
     using System.Linq;
-    using System.Transactions;
     using System.Windows;
     using System.Windows.Input;
     using MVVMFramework;
     using Models;
     using Models.Inventory;
     using Utilities;
-    using Utilities.Database;
     using Utilities.Database.Customer;
     using Utilities.Database.Item;
     using Customer;
     using ViewModels.Inventory;
     using Item;
+    using Utilities.ModelHelpers;
     using ViewModels.Suppliers;
     using Views.Master.Inventory;
 
@@ -164,7 +163,7 @@
                     if (!IsEditConfirmationYes() && !AreEditFieldsValid()) return;
                     var originalItem = EditingItem.Model;
                     var editedItemCopy = MakeEditedItem();
-                    SaveItemEditsToDatabase(originalItem, editedItemCopy);
+                    InventoryHelper.SaveItemEditsToDatabase(originalItem, editedItemCopy);
                     UpdateEditingItemUIValues();
                     UtilityMethods.CloseForemostWindow();
                 }));
@@ -254,58 +253,6 @@
             return false;
         }
 
-        private static void DeepCopyItemProperties(Item fromItem, ref Item toItem)
-        {
-            toItem.Name = fromItem.Name;
-            toItem.Category = fromItem.Category;
-            toItem.PurchasePrice = fromItem.PurchasePrice;
-            toItem.SalesPrice = fromItem.SalesPrice;
-            toItem.SalesExpense = fromItem.SalesExpense;
-            toItem.UnitName = fromItem.UnitName;
-            toItem.PiecesPerUnit = fromItem.PiecesPerUnit;
-        }
-        
-        private static void SaveItemEditsToDatabaseContext(ERPContext context, Item editingItem, Item editedItem)
-        {
-            DatabaseItemHelper.AttachToObjectFromDatabaseContext(context, ref editingItem);
-
-            DeepCopyItemProperties(editedItem, ref editingItem);
-            var categoryToBeAttached = editingItem.Category;
-            DatabaseItemCategoryHelper.AttachToObjectFromDatabaseContext(context, ref categoryToBeAttached);
-            editingItem.Category = categoryToBeAttached;
-
-            // Assign and attach to Database Context editedItem's suppliers to editingItem's 
-            var editingSuppliers = editingItem.Suppliers;
-            editingItem.Suppliers.ToList().ForEach(supplier => editingSuppliers.Remove(supplier));
-            foreach (var supplier in editedItem.Suppliers.ToList())
-            {
-                var supplierToBeAttached = supplier;
-                DatabaseSupplierHelper.AttachToDatabaseContext(context, ref supplierToBeAttached);
-                editingItem.Suppliers.Add(supplierToBeAttached);
-            }
-
-            // Assign and attach to Database Context editedItem's alternativeSalesPrices to editingItem's 
-            var editingSalesPrices = editingItem.AlternativeSalesPrices;
-            editingItem.AlternativeSalesPrices.ToList().ForEach(altSalesPrice => editingSalesPrices.Remove(altSalesPrice));
-            foreach (var altSalesPrice in editedItem.AlternativeSalesPrices.ToList())
-            {
-                altSalesPrice.Item = editingItem;
-                context.AlternativeSalesPrices.Add(altSalesPrice);
-            }
-
-            context.SaveChanges();
-        }
-
-        public static void SaveItemEditsToDatabase(Item editingItem, Item editedItem)
-        {
-            using (var ts = new TransactionScope())
-            {
-                var context = new ERPContext();
-                SaveItemEditsToDatabaseContext(context, editingItem, editedItem);
-                ts.Complete();
-            }
-        }
-
         private void ShowEditAddSupplierWindow()
         {
             var vm = new MasterInventoryEditAddSupplierVM(EditSuppliers);
@@ -342,7 +289,7 @@
         {
             var editedItem = MakeEditedItem();
             var itemTo = EditingItem.Model;
-            DeepCopyItemProperties(editedItem, ref itemTo);
+            InventoryHelper.DeepCopyItemProperties(editedItem, ref itemTo);
             EditingItem.Suppliers.Clear();
             foreach (var supplier in EditSuppliers)
                 EditingItem.Suppliers.Add(supplier.Model);

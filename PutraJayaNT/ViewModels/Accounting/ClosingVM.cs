@@ -8,6 +8,8 @@ using System.Transactions;
 
 namespace PutraJayaNT.ViewModels.Accounting
 {
+    using Utilities.ModelHelpers;
+
     class ClosingVM : ViewModelBase
     {
         int _periodYear;
@@ -117,10 +119,10 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var amount = account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                 var transaction = new LedgerTransaction();
 
-                DatabaseLedgerHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name);
+                LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name);
                 context.SaveChanges();
-                DatabaseLedgerHelper.AddTransactionLine(context, transaction, account.Name, "Credit", amount);
-                DatabaseLedgerHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Debit", amount);
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, account.Name, "Credit", amount);
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, retainedEarnings.Name, "Debit", amount);
 
                 account.LedgerGeneral.Credit -= amount;
             }
@@ -130,10 +132,10 @@ namespace PutraJayaNT.ViewModels.Accounting
                 var amount = account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                 var transaction = new LedgerTransaction();
 
-                if (!DatabaseLedgerHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name)) return;
+                if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name)) return;
                 context.SaveChanges();
-                DatabaseLedgerHelper.AddTransactionLine(context, transaction, account.Name, "Debit", amount);
-                DatabaseLedgerHelper.AddTransactionLine(context, transaction, retainedEarnings.Name, "Credit", amount);
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, account.Name, "Debit", amount);
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, retainedEarnings.Name, "Credit", amount);
 
                 account.LedgerGeneral.Debit -= amount;
             }

@@ -1,6 +1,4 @@
-﻿using PutraJayaNT.ViewModels.Inventory;
-
-namespace PutraJayaNT.ViewModels.Master.Inventory
+﻿namespace PutraJayaNT.ViewModels.Master.Inventory
 {
     using System.Collections.ObjectModel;
     using System.Diagnostics;
@@ -11,7 +9,9 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
     using Models;
     using Models.Inventory;
     using Utilities;
+    using Utilities.ModelHelpers;
     using ViewModels.Suppliers;
+    using ViewModels.Inventory;
 
     public class MasterInventoryNewEntryVM : ViewModelBase
     {
@@ -100,7 +100,7 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
                     if (!AreAllEntryFieldsFilled()) return;
                     if (MessageBox.Show("Confirm adding this product?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
                     var newEntryItem = MakeNewEntryItem();
-                    AddItemToDatabase(newEntryItem);
+                    InventoryHelper.AddItemToDatabase(newEntryItem);
                     ResetEntryFields();
                     _parentVM.UpdateItems();
                     _parentVM.UpdateDisplayedItems();
@@ -113,35 +113,6 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
         #endregion
 
         #region Helper Methods
-        private static void AttachItemSupplierToDatabaseContext(ERPContext context, Item item)
-        {
-            var supplier = item.Suppliers.First();
-            item.Suppliers.RemoveAt(0);
-            supplier = context.Suppliers.FirstOrDefault(e => e.ID.Equals(supplier.ID));
-            item.Suppliers.Add(supplier);
-        }
-
-        private static void AttachItemCategoryToDatabaseContext(ERPContext context, Item item)
-        {
-            item.Category = context.ItemCategories.First(category => category.ID.Equals(item.Category.ID));
-        }
-
-        private static void AddItemToDatabaseContext(ERPContext context, Item item)
-        {
-            AttachItemSupplierToDatabaseContext(context, item);
-            AttachItemCategoryToDatabaseContext(context, item);
-            context.Inventory.Add(item);
-        }
-
-        public static void AddItemToDatabase(Item item)
-        {
-            using (var context = new ERPContext())
-            {
-                AddItemToDatabaseContext(context, item);
-                context.SaveChanges();
-            }
-        }
-
         private Item MakeNewEntryItem()
         {
             Debug.Assert(_newEntryPurchasePrice != null, "_newEntryPurchasePrice != null");

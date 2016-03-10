@@ -7,6 +7,7 @@ using PutraJayaNT.Utilities.Database;
 
 namespace PutraJayaNT.ViewModels.Master.Inventory
 {
+    using Utilities.Database.Supplier;
     using ViewModels.Suppliers;
 
     public class MasterInventoryEditAddSupplierVM : ViewModelBase

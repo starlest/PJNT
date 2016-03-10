@@ -1,4 +1,4 @@
-﻿using PutraJayaNT.Utilities.Database;
+﻿using PutraJayaNT.Utilities.ModelHelpers;
 
 namespace PJMixTests.Master
 {
@@ -7,6 +7,7 @@ namespace PJMixTests.Master
     using PutraJayaNT.Utilities;
     using PutraJayaNT.ViewModels.Master.Suppliers;
     using PutraJayaNT.Models;
+    using PutraJayaNT.Utilities.Database.Supplier;
 
     [TestClass]
     public class MasterSuppliersTests
@@ -15,7 +16,7 @@ namespace PJMixTests.Master
         public void TestAddSupplier()
         {
             var supplier = CreateTestSupplier();
-            MasterSuppliersNewEntryVM.AddSupplierAlongWithItsLedgerToDatabase(supplier);
+            SupplierHelper.AddSupplierAlongWithItsLedgerToDatabase(supplier);
             var result1 = CheckIfSupplierAndItsLedgerExistsInDatabase(supplier);
             Assert.AreEqual(true, result1);
             RemoveSupplierAndItsLedgerFromDatabase(supplier);
@@ -26,19 +27,19 @@ namespace PJMixTests.Master
         [TestMethod]
         public void TestEditSupplier()
         {
-            var originalSupplier = DatabaseSupplierHelper.FirstOrDefault(supplier => supplier.ID == 1);
+            var originalSupplier = DatabaseSupplierHelper.FirstOrDefault(supplier => supplier.ID >= 1);
             var editedSupplier = CreateTestSupplier();
             editedSupplier.ID = originalSupplier.ID;
 
-            MasterSuppliersEditVM.SaveSupplierEditsToDatabase(originalSupplier, editedSupplier);
-            var editedSupplierFromDatabase = DatabaseSupplierHelper.FirstOrDefault(supplier => supplier.ID == 1);
+            SupplierHelper.SaveSupplierEditsToDatabase(originalSupplier, editedSupplier);
+            var editedSupplierFromDatabase = DatabaseSupplierHelper.FirstOrDefault(supplier => supplier.ID >= 1);
             var result1 = CompareSuppliers(editedSupplierFromDatabase, editedSupplier);
             var result2 = CheckIfSupplierAndItsLedgerExistsInDatabase(editedSupplierFromDatabase);
             var result3 = CheckIfSupplierAndItsLedgerExistsInDatabase(originalSupplier);
 
             // Revert editedSupplier back to original values
-            MasterSuppliersEditVM.SaveSupplierEditsToDatabase(editedSupplier, originalSupplier);
-            editedSupplierFromDatabase = DatabaseSupplierHelper.FirstOrDefault(supplier => supplier.ID == 1);
+            SupplierHelper.SaveSupplierEditsToDatabase(editedSupplier, originalSupplier);
+            editedSupplierFromDatabase = DatabaseSupplierHelper.FirstOrDefault(supplier => supplier.ID >= 1);
             var result4 = CompareSuppliers(editedSupplierFromDatabase, originalSupplier);
             var result5 = CheckIfSupplierAndItsLedgerExistsInDatabase(editedSupplierFromDatabase);
             var result6 = CheckIfSupplierAndItsLedgerExistsInDatabase(editedSupplier);

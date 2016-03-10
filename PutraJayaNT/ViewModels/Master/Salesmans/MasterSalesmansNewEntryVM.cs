@@ -6,6 +6,7 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
     using System.Windows.Input;
     using MVVMFramework;
     using Models.Salesman;
+    using Utilities.ModelHelpers;
 
     public class MasterSalesmansNewEntryVM : ViewModelBase
     {
@@ -33,7 +34,7 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
                 {
                     if (!IsNewEntryCommandChecksSuccessful()) return;
                     var newSalesman = CreateNewEntrySalesman();
-                    AddSalesmanToDatabase(newSalesman);
+                    SalesmanHelper.AddSalesmanToDatabase(newSalesman);
                     ResetEntryFields();
                     _parentVM.UpdateSalesmans();
                     MessageBox.Show("Successfully added salesman!", "Success", MessageBoxButton.OK);
@@ -70,15 +71,6 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
         private void ResetEntryFields()
         {
             NewEntryName = null;
-        }
-
-        public static void AddSalesmanToDatabase(Salesman salesman)
-        {
-            using (var context = new ERPContext())
-            {
-                context.Salesmans.Add(salesman);
-                context.SaveChanges();
-            }
         }
         #endregion
     }

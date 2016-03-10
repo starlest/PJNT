@@ -12,6 +12,8 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Accounting
 {
+    using Utilities.ModelHelpers;
+
     class OperatingExpenseVM : ViewModelBase
     {
         ObservableCollection<LedgerAccountVM> _accounts;
@@ -171,11 +173,11 @@ namespace PutraJayaNT.ViewModels.Accounting
 
                             var transaction = new LedgerTransaction();
 
-                            if (!DatabaseLedgerHelper.AddTransaction(context, transaction, _newEntryDate, "Operating Expense", _newEntryDescription)) return;
+                            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, _newEntryDate, "Operating Expense", _newEntryDescription)) return;
                             context.SaveChanges();
 
-                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, _newEntryAccount.Name, "Debit", (decimal) _newEntryAmount);
-                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, _newEntryPaymentMode, "Credit", (decimal)_newEntryAmount);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, _newEntryAccount.Name, "Debit", (decimal) _newEntryAmount);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, _newEntryPaymentMode, "Credit", (decimal)_newEntryAmount);
                             context.SaveChanges();
 
                             ts.Complete();

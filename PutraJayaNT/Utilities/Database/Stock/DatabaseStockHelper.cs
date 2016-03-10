@@ -19,13 +19,13 @@
                 return context.Stocks.Include("Item").Include("Warehouse").Where(condition).OrderBy(stock => stock.Item.Name).ThenBy(stock => stock.Warehouse.Name).ToList();
         }
 
-        public static Models.Inventory.Item FirstOrDefault(Func<Models.Inventory.Item, bool> condition)
+        public static Item FirstOrDefault(Func<Item, bool> condition)
         {
             using (var context = new ERPContext())
                 return context.Inventory.Include("Category").Include("Suppliers").Include("AlternativeSalesPrices").Where(condition).FirstOrDefault();
         }
 
-        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref Models.Inventory.Item itemToBeAttached)
+        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref Item itemToBeAttached)
         {
             var itemID = itemToBeAttached.ItemID;
             itemToBeAttached = context.Inventory.First(item => item.ItemID.Equals(itemID));

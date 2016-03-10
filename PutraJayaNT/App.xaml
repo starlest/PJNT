@@ -18,7 +18,7 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Height" Value="30" />
-                <Setter Property="Margin" Value="10, 10, 10, 0"/>
+                <Setter Property="Margin" Value="10, 5, 10, 0"/>
             </Style>
             <Style TargetType="{x:Type CheckBox}">
                 <Setter Property="VerticalAlignment" Value="Center" />
@@ -34,14 +34,14 @@
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Height" Value="30" />
-                <Setter Property="Margin" Value="10, 10, 10, 0"/>
+                <Setter Property="Margin" Value="10, 5, 10, 0"/>
             </Style>
             <Style TargetType="{x:Type ComboBox}">
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Height" Value="30" />
-                <Setter Property="Margin" Value="10, 10, 10, 0"/>
+                <Setter Property="Margin" Value="10, 5, 10, 0"/>
                 <Setter Property="IsEditable" Value="True" />
                 <EventSetter Event="PreviewKeyDown" Handler="ComboBox_KeyDown" />
             </Style>

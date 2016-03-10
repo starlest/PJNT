@@ -14,6 +14,8 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Inventory
 {
+    using Utilities.ModelHelpers;
+
     class AdjustStockTransactionVM : ViewModelBase<AdjustStockTransaction>
     {
         #region Collections Backing Fields
@@ -249,10 +251,10 @@ namespace PutraJayaNT.ViewModels.Inventory
                         if (decreaseAdjustment)
                         {
                             var transaction = new LedgerTransaction();
-                            if (!DatabaseLedgerHelper.AddTransaction(context, transaction, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Stock Adjustment (Decrement)")) return;
+                            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, UtilityMethods.GetCurrentDate().Date, _newTransactionID, "Stock Adjustment (Decrement)")) return;
                             context.SaveChanges();
-                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, "Cost of Goods Sold", "Debit", cogs);
-                            DatabaseLedgerHelper.AddTransactionLine(context, transaction, "Inventory", "Credit", cogs);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, "Cost of Goods Sold", "Debit", cogs);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, "Inventory", "Credit", cogs);
                         }
 
                         if (increaseAdjustment)

@@ -15,6 +15,7 @@ namespace PutraJayaNT.ViewModels.Reports
     using System.Windows.Input;
     using Inventory;
     using Suppliers;
+    using Utilities.Database.Supplier;
     using Utilities.Database.Warehouse;
 
     public class InventoryReportVM : ViewModelBase
@@ -191,7 +192,7 @@ namespace PutraJayaNT.ViewModels.Reports
             var allWarehouse = new Warehouse { ID = -1, Name = "All" };
             Warehouses.Add(new WarehouseVM { Model = allWarehouse });
 
-            var warehousesFromDatabase = DatabaseWarehouseHelper.GetAll().OrderBy(warehouse => warehouse.Name).ToList();
+            var warehousesFromDatabase = DatabaseWarehouseHelper.GetAll().OrderBy(warehouse => warehouse.Name);
             foreach (var warehouse in warehousesFromDatabase)
                 Warehouses.Add(new WarehouseVM { Model = warehouse });
 

@@ -4,11 +4,10 @@
     using System.Windows;
     using System.Windows.Input;
     using MVVMFramework;
-    using Models.Accounting;
-    using Utilities;
     using Utilities.Database.Customer;
     using Customer;
     using Models.Customer;
+    using Utilities.ModelHelpers;
 
     public class MasterCustomersNewEntryVM : ViewModelBase
     {
@@ -81,7 +80,7 @@
                 {
                     if (!IsNewEntryCommandChecksSuccessful()) return;
                     var newCustomer = MakeNewEntryCustomer();
-                    AddCustomerAlongWithItsLedgerToDatabase(newCustomer);
+                    CustomerHelper.AddCustomerAlongWithItsLedgerToDatabase(newCustomer);
                     ResetEntryFields();
                     _parentVM.UpdateListedCustomers();
                     _parentVM.UpdateDisplayedCustomers();
@@ -143,65 +142,6 @@
                 MaxInvoices = _newEntryGroup.MaxInvoices,
                 Group = _newEntryGroup.Model
             };
-        }
-
-        private static LedgerAccount CreateCustomerLedgerAccount(Customer customer)
-        {
-            return new LedgerAccount
-            {
-                Name = customer.Name + " Accounts Receivable",
-                Notes = "Accounts Receivable",
-                Class = "Asset"
-            };
-        }
-
-        private static LedgerGeneral CreateCustomerLedgerGeneral(LedgerAccount ledgerAccount)
-        {
-            return new LedgerGeneral
-            {
-                LedgerAccount = ledgerAccount,
-                PeriodYear = UtilityMethods.GetCurrentDate().Year,
-                Period = UtilityMethods.GetCurrentDate().Month,
-            };
-        }
-
-        private static LedgerAccountBalance CreateCustomerLedgerAccountBalance(LedgerAccount ledgerAccount)
-        {
-            return new LedgerAccountBalance
-            {
-                LedgerAccount = ledgerAccount,
-                PeriodYear = UtilityMethods.GetCurrentDate().Year,
-            };
-        }
-
-        private static void CreateAndAddCustomerLedgerToDatabaseContext(ERPContext context, Customer customer)
-        {
-            var ledgerAccount = CreateCustomerLedgerAccount(customer);
-            context.Ledger_Accounts.Add(ledgerAccount);
-
-            var ledgerGeneral = CreateCustomerLedgerGeneral(ledgerAccount);
-            context.Ledger_General.Add(ledgerGeneral);
-
-            var ledgerAccountBalance = CreateCustomerLedgerAccountBalance(ledgerAccount);
-            context.Ledger_Account_Balances.Add(ledgerAccountBalance);
-        }
-
-        private static void AddCustomerToDatabaseContext(ERPContext context, Customer customer)
-        {
-            var customerGroupToBeAttachedToDatabaseContext = customer.Group;
-            DatabaseCustomerGroupHelper.AttachToObjectFromDatabaseContext(context, ref customerGroupToBeAttachedToDatabaseContext);
-            customer.Group = customerGroupToBeAttachedToDatabaseContext;
-            context.Customers.Add(customer);
-        }
-
-        public static void AddCustomerAlongWithItsLedgerToDatabase(Customer customer)
-        {
-            using (var context = new ERPContext())
-            {
-                AddCustomerToDatabaseContext(context, customer);
-                CreateAndAddCustomerLedgerToDatabaseContext(context, customer);
-                context.SaveChanges();
-            }
         }
         #endregion
     }

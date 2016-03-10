@@ -1,15 +1,16 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.Utilities.Database;
-using PutraJayaNT.Utilities.Database.Item;
-using PutraJayaNT.ViewModels.Master.Inventory;
-
-namespace PJMixTests.Master
+﻿namespace PJMixTests.Master
 {
+    using PutraJayaNT.Utilities.Database.Supplier;
+    using PutraJayaNT.Utilities.ModelHelpers;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using PutraJayaNT.Models;
+    using PutraJayaNT.Models.Inventory;
+    using PutraJayaNT.Utilities;
+    using PutraJayaNT.Utilities.Database.Item;
+    using PutraJayaNT.ViewModels.Master.Inventory;
+
     [TestClass]
     public class MasterInventoryTests
     {
@@ -17,7 +18,7 @@ namespace PJMixTests.Master
         public void TestAddItem()
         {
             var item = CreateTestItem();
-            MasterInventoryNewEntryVM.AddItemToDatabase(item);
+            InventoryHelper.AddItemToDatabase(item);
             var result1 = CheckIfItemExistsInDatabase(item);
             RemoveItemFromDatabase(item);
             var result2 = CheckIfItemExistsInDatabase(item);
@@ -31,12 +32,12 @@ namespace PJMixTests.Master
             var editedItem = CreateTestItem();
             editedItem.ItemID = originalItem.ItemID;
 
-            MasterInventoryEditVM.SaveItemEditsToDatabase(originalItem, editedItem);
+            InventoryHelper.SaveItemEditsToDatabase(originalItem, editedItem);
             var editedItemFromDatabase = DatabaseItemHelper.FirstOrDefault(item => item.ItemID.Equals("BH001"));
             var result1 = CompareItems(editedItemFromDatabase, editedItem);
 
             // Revert editedCustomer back to original values
-            MasterInventoryEditVM.SaveItemEditsToDatabase(editedItem, originalItem);
+            InventoryHelper.SaveItemEditsToDatabase(editedItem, originalItem);
             editedItemFromDatabase = DatabaseItemHelper.FirstOrDefault(item => item.ItemID.Equals("BH001"));
             var result2 = CompareItems(editedItemFromDatabase, originalItem);
 
