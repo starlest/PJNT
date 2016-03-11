@@ -65,6 +65,28 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Customers\SalesCollectTests.cs" />
+    <Compile Include="Database\Customer\DatabaseCustomerGroupHelper.cs" />
+    <Compile Include="Database\Customer\DatabaseCustomerHelper.cs" />
+    <Compile Include="Database\Item\DatabaseItemAlternativeSalesPriceHelper.cs" />
+    <Compile Include="Database\Item\DatabaseItemCategoryHelper.cs" />
+    <Compile Include="Database\Item\DatabaseItemHelper.cs" />
+    <Compile Include="Database\Ledger\DatabaseLedgerAccountHelper.cs" />
+    <Compile Include="Database\Ledger\DatabaseLedgerTransactionHelper.cs" />
+    <Compile Include="Database\Ledger\DatabaseLedgerTransactionLineHelper.cs" />
+    <Compile Include="Database\Purchase\DatabasePurchaseReturnTransactionLineHelper.cs" />
+    <Compile Include="Database\Purchase\DatabasePurchaseTransactionLineHelper.cs" />
+    <Compile Include="Database\Salesman\DatabaseSalesCommissionHelper.cs" />
+    <Compile Include="Database\Salesman\DatabaseSalesmanHelper.cs" />
+    <Compile Include="Database\Sales\DatabaseSalesReturnTransactionHelper.cs" />
+    <Compile Include="Database\Sales\DatabaseSalesReturnTransactionLineHelper.cs" />
+    <Compile Include="Database\Sales\DatabaseSalesTransactionHelper.cs" />
+    <Compile Include="Database\Sales\DatabaseSalesTransactionLineHelper.cs" />
+    <Compile Include="Database\Stock\DatabaseStockAdjustmentTransactionLineHelper.cs" />
+    <Compile Include="Database\Stock\DatabaseStockBalanceHelper.cs" />
+    <Compile Include="Database\Stock\DatabaseStockHelper.cs" />
+    <Compile Include="Database\Stock\DatabaseStockMovementTransactionHelper.cs" />
+    <Compile Include="Database\Supplier\DatabaseSupplierHelper.cs" />
+    <Compile Include="Database\Warehouse\DatabaseWarehouseHelper.cs" />
     <Compile Include="Master\MasterCustomersTests.cs" />
     <Compile Include="Master\MasterInventoryTests.cs" />
     <Compile Include="Master\MasterSalesmansTests.cs" />

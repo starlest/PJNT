@@ -6,7 +6,7 @@
     using Sales;
     using MVVMFramework;
     using System.Linq;
-    using Utilities.Database.Sales;
+    using Utilities;
     using Utilities.ModelHelpers;
 
     public class SalesReturnNewEntryVM : ViewModelBase
@@ -97,24 +97,26 @@
 
         private int GetAvailableReturnQuantity()
         {
-            var availableReturnQuantity = _parentVM.SelectedSalesTransactionLine.Quantity;
+            using (var context = new ERPContext())
+            {
+                var availableReturnQuantity = _parentVM.SelectedSalesTransactionLine.Quantity;
 
-            var selectedSalesTransactionReturnedItems =
-                              DatabaseSalesReturnTransactionLineHelper.Get(
-                                  line => line.SalesReturnTransaction.SalesTransaction.SalesTransactionID
-                                      .Equals(_parentVM.Model.SalesTransaction.SalesTransactionID) &&
-                                       line.ItemID.Equals(_parentVM.SelectedSalesTransactionLine.Item.ItemID))
-                                       .ToList();
+                var selectedSalesTransactionReturnedItems =
+                    context.SalesReturnTransactionLines.Where(
+                        line => line.SalesReturnTransaction.SalesTransaction.SalesTransactionID
+                        .Equals(_parentVM.Model.SalesTransaction.SalesTransactionID) &&
+                        line.ItemID.Equals(_parentVM.SelectedSalesTransactionLine.Item.ItemID))
+                        .ToList();
 
-            if (selectedSalesTransactionReturnedItems.Count != 0)
                 availableReturnQuantity = selectedSalesTransactionReturnedItems.Aggregate(availableReturnQuantity, (current, item) => current - item.Quantity);
 
-            return _parentVM.DisplayedSalesReturnTransactionLines.Where(
-                line => line.Item.ItemID.Equals(_parentVM.SelectedSalesTransactionLine.Item.ItemID) 
-                && line.Warehouse.ID.Equals(_parentVM.SelectedSalesTransactionLine.Warehouse.ID) 
-                && line.SalesPrice.Equals(_parentVM.SelectedSalesTransactionLine.SalesPrice) 
-                && line.Discount.Equals(_parentVM.SelectedSalesTransactionLine.Discount))
-                .Aggregate(availableReturnQuantity, (current, l) => current - l.Quantity);
+                return _parentVM.DisplayedSalesReturnTransactionLines.Where(
+                    line => line.Item.ItemID.Equals(_parentVM.SelectedSalesTransactionLine.Item.ItemID)
+                            && line.Warehouse.ID.Equals(_parentVM.SelectedSalesTransactionLine.Warehouse.ID)
+                            && line.SalesPrice.Equals(_parentVM.SelectedSalesTransactionLine.SalesPrice)
+                            && line.Discount.Equals(_parentVM.SelectedSalesTransactionLine.Discount))
+                    .Aggregate(availableReturnQuantity, (current, l) => current - l.Quantity);
+            }
         }
 
         private void AddEntryToDisplayedSalesReturnTransactionLines()

@@ -1,11 +1,10 @@
 ﻿using System.Linq;
 using System.Transactions;
 using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Models.Customer;
-using PutraJayaNT.Utilities.Database.Customer;
-
 namespace PutraJayaNT.Utilities.ModelHelpers
 {
+    using Models.Customer;
+
     public static class CustomerHelper
     {
         public static void AddCustomerAlongWithItsLedgerToDatabase(Customer customer)
@@ -45,9 +44,7 @@ namespace PutraJayaNT.Utilities.ModelHelpers
         #region Add Customer Helper Methods
         private static void AddCustomerToDatabaseContext(ERPContext context, Customer customer)
         {
-            var customerGroupToBeAttached = customer.Group;
-            DatabaseCustomerGroupHelper.AttachToObjectFromDatabaseContext(context, ref customerGroupToBeAttached);
-            customer.Group = customerGroupToBeAttached;
+            customer.Group = context.CustomerGroups.First(group => group.ID.Equals(customer.Group.ID));
             context.Customers.Add(customer);
         }
 
@@ -114,12 +111,10 @@ namespace PutraJayaNT.Utilities.ModelHelpers
 
         private static void SaveCustomerEditsToDatabaseContext(ERPContext context, Customer editingCustomer, Customer editedCustomer)
         {
-            DatabaseCustomerHelper.AttachToObjectFromDatabaseContext(context, ref editingCustomer);
+            editingCustomer = context.Customers.Include("Group").Single(customer => customer.ID.Equals(editingCustomer.ID));
             DeepCopyCustomerProperties(editedCustomer, ref editingCustomer);
 
-            var customerGroupToBeAttachedToDatabaseContext = editingCustomer.Group;
-            DatabaseCustomerGroupHelper.AttachToObjectFromDatabaseContext(context, ref customerGroupToBeAttachedToDatabaseContext);
-            editingCustomer.Group = customerGroupToBeAttachedToDatabaseContext;
+            editingCustomer.Group = context.CustomerGroups.First(group => group.ID.Equals(editingCustomer.Group.ID));
 
             context.SaveChanges();
         }

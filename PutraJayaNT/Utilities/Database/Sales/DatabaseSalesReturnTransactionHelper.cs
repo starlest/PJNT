@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Models.Sales;
+    using Utilities;
 
     public static class DatabaseSalesReturnTransactionHelper
     {
@@ -26,7 +27,7 @@
                 return context.SalesReturnTransactions
                     .Include("SalesTransaction")
                     .Include("SalesTransaction.Customer")
-                    .Include("SalesReturnTransactionLines") 
+                    .Include("SalesReturnTransactionLines")
                     .Include("SalesReturnTransactionLines.Warehouse")
                     .Include("SalesReturnTransactionLines.Item")
                     .Where(condition)

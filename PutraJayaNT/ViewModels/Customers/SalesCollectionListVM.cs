@@ -1,7 +1,6 @@
 ﻿namespace PutraJayaNT.ViewModels.Customers
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
@@ -15,10 +14,6 @@
     using PutraJayaNT.Reports.Windows;
     using Salesman;
     using Utilities;
-    using Utilities.Database.Customer;
-    using Utilities.Database.Ledger;
-    using Utilities.Database.Sales;
-    using Utilities.Database.Salesman;
     using Sales;
 
     public class SalesCollectionListVM : ViewModelBase
@@ -243,11 +238,14 @@
             var oldSelectedCity = _selectedCity;
 
             Cities.Clear();
-            var customersReturnedFromDatabase = DatabaseCustomerHelper.GetAll();
-            foreach (var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
-                Cities.Add(customer.City);
-            ArrangeCitiesAlphabetically();
+            using (var context = new ERPContext())
+            {
+                var customersReturnedFromDatabase = context.Customers.ToList();
+                foreach (var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
+                    Cities.Add(customer.City);
+            }
 
+            ArrangeCitiesAlphabetically();
             UpdateSelectedCity(oldSelectedCity);
         }
 
@@ -271,11 +269,14 @@
             var oldSelectedSalesman = _selectedSalesman;
             Salesmans.Clear();
 
-            var salesmansFromDatabase = DatabaseSalesmanHelper.GetAll();
-            var allSalesman = new Salesman { ID = -1, Name = "All" };
-            Salesmans.Add(new SalesmanVM { Model = allSalesman });
-            foreach (var salesman in salesmansFromDatabase)
-                Salesmans.Add(new SalesmanVM { Model = salesman });
+            using (var context = new ERPContext())
+            {
+                var salesmansFromDatabase = context.Salesmans.Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name);
+                var allSalesman = new Salesman {ID = -1, Name = "All"};
+                Salesmans.Add(new SalesmanVM {Model = allSalesman});
+                foreach (var salesman in salesmansFromDatabase)
+                    Salesmans.Add(new SalesmanVM {Model = salesman});
+            }
 
             UpdateSelectedSalesman(oldSelectedSalesman);
         }
@@ -291,11 +292,14 @@
             var oldSelectedCustomer = _selectedCustomer;
             Customers.Clear();
 
-            var customers = DatabaseCustomerHelper.GetAll();
-            var allCustomer = new Customer { ID = -1, Name = "All" };
-            Customers.Add(new CustomerVM { Model = allCustomer });
-            foreach (var customer in customers)
-                Customers.Add(new CustomerVM { Model = customer });
+            using (var context = new ERPContext())
+            {
+                var allCustomer = new Customer {ID = -1, Name = "All"};
+                Customers.Add(new CustomerVM {Model = allCustomer});
+                var customersFromDatabase = context.Customers.OrderBy(customer => customer.Name);
+                foreach (var customer in customersFromDatabase)
+                    Customers.Add(new CustomerVM {Model = customer});
+            }
 
             UpdateSelectedCustomer(oldSelectedCustomer);
         }
@@ -336,17 +340,23 @@
         {
             _total = 0;
             var searchCondition = GetCitySalesmanSelectionSearchCondition();
-            var salesTransactionsFromDatabase = DatabaseSalesTransactionHelper.GetWithoutLines(searchCondition)
-                .OrderBy(salesTransaction => salesTransaction.DueDate)
-                .ThenBy(salesTransaction => salesTransaction.Date)
-                .ThenBy(SalesTransaction => SalesTransaction.Customer.Name)
-                .ThenBy(salesTransaction => salesTransaction.CollectionSalesman.Name);
-
-            DisplayedSalesTransactions.Clear();
-            foreach (var salesTransactionVM in salesTransactionsFromDatabase.Select(salesTransaction => new SalesTransactionVM { Model = salesTransaction }))
+            using (var context = new ERPContext())
             {
-                DisplayedSalesTransactions.Add(salesTransactionVM);
-                _total += salesTransactionVM.Remaining;
+                var salesTransactionsFromDatabase = 
+                    context.SalesTransactions
+                    .Include("Customer")
+                    .Include("CollectionSalesman")
+                    .Where(searchCondition)
+                    .OrderBy(salesTransaction => salesTransaction.DueDate)
+                    .ThenBy(salesTransaction => salesTransaction.Date)
+                    .ThenBy(salesTransaction => salesTransaction.Customer.Name);
+
+                DisplayedSalesTransactions.Clear();
+                foreach (var salesTransactionVM in salesTransactionsFromDatabase.Select(salesTransaction => new SalesTransactionVM { Model = salesTransaction }))
+                {
+                    DisplayedSalesTransactions.Add(salesTransactionVM);
+                    _total += salesTransactionVM.Remaining;
+                }
             }
         }
 
@@ -418,16 +428,26 @@
         {
             _total = 0;
             var searchCondition = GetCustomerSelectionSearchCondition();
-            var salesTransactionsFromDatabase = DatabaseSalesTransactionHelper.GetWithoutLines(searchCondition)
-                .OrderBy(salesTransaction => salesTransaction.Customer.Name)
-                .ThenBy(salesTransaction => salesTransaction.DueDate)
-                .ThenBy(salesTransaction => salesTransaction.Date);
-
-            DisplayedSalesTransactions.Clear();
-            foreach (var salesTransactionVM in salesTransactionsFromDatabase.Select(salesTransaction => new SalesTransactionVM { Model = salesTransaction }))
+            using (var context = new ERPContext())
             {
-                DisplayedSalesTransactions.Add(salesTransactionVM);
-                _total += salesTransactionVM.Remaining;
+                var salesTransactionsFromDatabase =
+                    context.SalesTransactions
+                    .Include("Customer")
+                    .Include("CollectionSalesman")
+                    .Where(searchCondition)
+                    .OrderBy(salesTransaction => salesTransaction.DueDate)
+                    .ThenBy(salesTransaction => salesTransaction.Date)
+                    .ThenBy(salesTransaction => salesTransaction.Customer.Name);
+
+                DisplayedSalesTransactions.Clear();
+                foreach (
+                    var salesTransactionVM in
+                        salesTransactionsFromDatabase.Select(
+                            salesTransaction => new SalesTransactionVM {Model = salesTransaction}))
+                {
+                    DisplayedSalesTransactions.Add(salesTransactionVM);
+                    _total += salesTransactionVM.Remaining;
+                }
             }
         }
 
@@ -451,16 +471,16 @@
         private void UpdateDisplayedSalesTransactionsAccordingToCollectionDateSalesTransactions()
         {
             _total = 0;
-
-            var ledgerTransactions = DatabaseLedgerTransactionHelper.GetWithoutLines(e => e.Description.Equals("Sales Transaction Receipt") && e.Date.Equals(_collectionDate));
-            var emptyCollectionSalesman = DatabaseSalesmanHelper.FirstOrDefault(e => e.Name.Equals(" "));
-
             using (var context = new ERPContext())
             {
+                var emptyCollectionSalesman = context.Salesmans.SingleOrDefault(e => e.Name.Equals(" "));
+                var ledgerTransactions = context.Ledger_Transactions
+                    .Where(transaction => transaction.Description.Equals("Sales Transaction Receipt") && transaction.Date.Equals(_collectionDate));
+
                 DisplayedSalesTransactions.Clear();
                 foreach (var ledgerTransaction in ledgerTransactions)
                 {
-                    var vm = GetCorrespondingSalesTransactionVM(context, ledgerTransaction);
+                    var vm = GetCorrespondingSalesTransactionVM(ledgerTransaction);
                     if (DisplayedSalesTransactions.Contains(vm)) continue;
                     if (vm.CollectionSalesman == null) vm.CollectionSalesman = emptyCollectionSalesman;
                     DisplayedSalesTransactions.Add(vm);
@@ -471,18 +491,24 @@
             UpdateTotalToUI();
         }
 
+        private static SalesTransactionVM GetCorrespondingSalesTransactionVM(LedgerTransaction ledgerTransaction)
+        {
+            using (var context = new ERPContext())
+            {
+                var salesTransactionFromDatabase = context.SalesTransactions
+                    .Include("CollectionSalesman")
+                    .Include("Customer")
+                    .SingleOrDefault(salesTransaction => salesTransaction.SalesTransactionID.Equals(ledgerTransaction.Documentation));
+                return new SalesTransactionVM {Model = salesTransactionFromDatabase};
+            }
+        }
+
         private void SortDisplayedTransactionsAccordingToCollectionSalesman()
         {
             var sortedList = DisplayedSalesTransactions.OrderBy(e => e.CollectionSalesman.Name).ToList();
             DisplayedSalesTransactions.Clear();
             foreach (var line in sortedList)
                 DisplayedSalesTransactions.Add(line);
-        }
-
-        private static SalesTransactionVM GetCorrespondingSalesTransactionVM(ERPContext context, LedgerTransaction ledgerTransaction)
-        {
-            var salesTransactionFromDatabase = context.SalesTransactions.Include("CollectionSalesman").Include("Customer").FirstOrDefault(salesTransaction => salesTransaction.SalesTransactionID.Equals(ledgerTransaction.Documentation));
-            return new SalesTransactionVM { Model = salesTransactionFromDatabase };
         }
 
         private void UpdateTotalToUI()

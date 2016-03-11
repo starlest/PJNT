@@ -9,7 +9,6 @@ namespace PutraJayaNT.ViewModels.Master.Customers
     using Utilities;
     using System.Collections.ObjectModel;
     using Models.Customer;
-    using Utilities.Database.Customer;
     using Customer;
 
     public class MasterCustomersEditVM : ViewModelBase
@@ -128,9 +127,12 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         private void UpdateEditGroups()
         {
             EditGroups.Clear();
-            var customerGroupsReturnedFromDatabase = DatabaseCustomerGroupHelper.GetAll();
-            foreach (var customerGroup in customerGroupsReturnedFromDatabase)
-                EditGroups.Add(new CustomerGroupVM { Model = customerGroup });
+            using (var context = new ERPContext())
+            {
+                var customerGroupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
+                foreach (var customerGroup in customerGroupsReturnedFromDatabase)
+                    EditGroups.Add(new CustomerGroupVM {Model = customerGroup});
+            }
         }
 
         private Customer MakeEditedCustomer()

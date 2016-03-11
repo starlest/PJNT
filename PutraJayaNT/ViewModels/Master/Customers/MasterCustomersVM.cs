@@ -2,13 +2,13 @@
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Data.Entity;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
     using MVVMFramework;
     using Models.Customer;
     using Utilities;
-    using Utilities.Database.Customer;
     using Customer;
     using Views.Master.Customers;
 
@@ -141,7 +141,7 @@
                     if (!IsThereLineSelected() || !IsConfirmationYes()) return;
                     if (_selectedLine.Active) DeactivateCustomerInDatabase(_selectedLine.Model);
                     else ActivateCustomerInDatabase(_selectedLine.Model);
-                    _selectedLine.Active = !_selectedLine.Active;
+                    _selectedLine.Active = !_isActiveChecked;
                 }));
             }
         }
@@ -154,10 +154,12 @@
 
             CustomerGroups.Clear();
             CustomerGroups.Add(new CustomerGroupVM { Model = new CustomerGroup { ID = -1, Name = "All" }});
-            var groupsReturnedFromDatabase = DatabaseCustomerGroupHelper.GetAll();
-            foreach (var group in groupsReturnedFromDatabase)
-                CustomerGroups.Add(new CustomerGroupVM { Model = group});
-
+            using (var context = new ERPContext())
+            {
+                var groupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
+                foreach (var group in groupsReturnedFromDatabase)
+                    CustomerGroups.Add(new CustomerGroupVM {Model = group});
+            }
             UpdateSelectedCustomerGroup(oldSelectedCustomerGroup);
         }
 
@@ -173,10 +175,17 @@
 
             Customers.Clear();
             Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
-            var customersReturnedFromDatabase = _selectedCustomerGroup.Name.Equals("All") ? DatabaseCustomerHelper.GetAll() : DatabaseCustomerHelper.Get(customer => customer.Group.ID.Equals(_selectedCustomerGroup.ID));
-            foreach (var customer in customersReturnedFromDatabase.OrderBy(customer => customer.Name))
-                Customers.Add(new CustomerVM { Model = customer });
+            using (var context = new ERPContext())
+            {
+                var customersReturnedFromDatabase = _selectedCustomerGroup.Name.Equals("All") ? 
+                    context.Customers.Include("Group").OrderBy(customer => customer.Name) : 
+                    context.Customers.Include("Group").Where(
+                        customer => customer.Group.ID.Equals(_selectedCustomerGroup.ID))
+                    .OrderBy(customer => customer.Name);
 
+                foreach (var customer in customersReturnedFromDatabase.OrderBy(customer => customer.Name))
+                    Customers.Add(new CustomerVM {Model = customer});
+            }
             UpdateSelectedCustomer(oldSelectedCustomer);
         }
 
@@ -190,11 +199,15 @@
         {
             var oldSelectedCity = _selectedCity;
 
-            var customersReturnedFromDatabase = DatabaseCustomerHelper.GetAll();
-            foreach (var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
-                Cities.Add(customer.City);
-            ArrangeCitiesAlphabetically();
+            using (var context = new ERPContext())
+            {
+                var customersReturnedFromDatabase = context.Customers.Include("Group").OrderBy(customer => customer.Name);
+                foreach (
+                    var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
+                    Cities.Add(customer.City);
+            }
 
+            ArrangeCitiesAlphabetically();
             UpdateSelectedCity(oldSelectedCity);
         }
 
@@ -215,16 +228,23 @@
         public void UpdateDisplayedCustomers()
         {
             DisplayedCustomers.Clear();
-            var customersReturnedFromDatabase = LoadCustomersFromDatabaseAccordingToSelections();
-            foreach (var customer in customersReturnedFromDatabase.Where(customer => customer.Active.Equals(_isActiveChecked)).OrderBy(customer => customer.Name))
-                DisplayedCustomers.Add(new CustomerVM { Model = customer });
+
+            using (var context = new ERPContext())
+            {
+                var customersReturnedFromDatabase = LoadCustomersFromDatabaseContextAccordingToSelections(context);
+                foreach (
+                    var customer in
+                        customersReturnedFromDatabase.Where(customer => customer.Active.Equals(_isActiveChecked))
+                            .OrderBy(customer => customer.Name))
+                    DisplayedCustomers.Add(new CustomerVM {Model = customer});
+            }
         }
 
         public static void DeactivateCustomerInDatabase(Customer customer)
         {
             using (var context = new ERPContext())
             {
-                DatabaseCustomerHelper.AttachToObjectFromDatabaseContext(context, ref customer);
+                context.Entry(customer).State = EntityState.Modified;
                 customer.Active = false;
                 context.SaveChanges();
             }
@@ -234,23 +254,24 @@
         {
             using (var context = new ERPContext())
             {
-                DatabaseCustomerHelper.AttachToObjectFromDatabaseContext(context, ref customer);
+                context.Entry(customer).State = EntityState.Modified;
                 customer.Active = true;
                 context.SaveChanges();
             }
         }
 
-        private IEnumerable<Customer> LoadCustomersFromDatabaseAccordingToSelections()
+        private IEnumerable<Customer> LoadCustomersFromDatabaseContextAccordingToSelections(ERPContext context)
         {
-            if (_selectedCity != null) return DatabaseCustomerHelper.Get(customer => customer.City.Equals(_selectedCity));
+            if (_selectedCity != null)
+                return context.Customers.Include("Group").Where(customer => customer.City.Equals(_selectedCity)).OrderBy(customer => customer.Name);
 
             if (_selectedCustomerGroup.Name.Equals("All") && _selectedCustomer.Name.Equals("All"))
-                return DatabaseCustomerHelper.GetAll();
+                return context.Customers.Include("Group").OrderBy(customer => customer.Name);
 
             if (!_selectedCustomerGroup.Name.Equals("All") && _selectedCustomer.Name.Equals("All"))
-                return DatabaseCustomerHelper.Get(customer => customer.Group.ID.Equals(_selectedCustomerGroup.ID));
+                return context.Customers.Include("Group").Where(customer => customer.Group.ID.Equals(_selectedCustomerGroup.ID)).OrderBy(customer => customer.Name);
 
-            return DatabaseCustomerHelper.Get(customer => customer.ID.Equals(_selectedCustomer.ID));
+            return context.Customers.Include("Group").Where(customer => customer.ID.Equals(_selectedCustomer.ID)).OrderBy(customer => customer.Name);
         }
 
         private void ShowEditWindow()

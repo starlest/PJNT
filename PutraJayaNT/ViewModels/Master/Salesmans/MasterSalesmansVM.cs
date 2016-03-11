@@ -1,8 +1,4 @@
-﻿using PutraJayaNT.Utilities.Database.Item;
-using PutraJayaNT.Utilities.Database.Salesman;
-using PutraJayaNT.Views.Master.Salesmans;
-
-namespace PutraJayaNT.ViewModels.Master.Salesmans 
+﻿namespace PutraJayaNT.ViewModels.Master.Salesmans 
 {
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -11,6 +7,9 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
     using MVVMFramework;
     using Models.Salesman;
     using Salesman;
+    using Utilities;
+    using Views.Master.Salesmans;
+
 
     public class MasterSalesmansVM : ViewModelBase
     {
@@ -104,9 +103,13 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
             var oldSelectedSalesman = _selectedSalesman;
 
             Salesmans.Clear();
-            var salesmansFromDatabase = DatabaseSalesmanHelper.GetAll();
-            foreach (var salesman in salesmansFromDatabase)
-                Salesmans.Add(new SalesmanVM { Model = salesman });
+            using (var context = new ERPContext())
+            {
+                var salesmansFromDatabase =
+                    context.Salesmans.Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name);
+                foreach (var salesman in salesmansFromDatabase)
+                    Salesmans.Add(new SalesmanVM {Model = salesman});
+            }
 
             UpdateSelectedSalesman(oldSelectedSalesman);
         }
@@ -121,19 +124,33 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
         {
             DisplayedSalesCommissions.Clear();
 
-            var categories = DatabaseItemCategoryHelper.GetAll();
-
-            foreach (var category in categories)
+            using (var context = new ERPContext())
             {
-                var commission = DatabaseSalesmanCommisionHelper.FirstOrDefault(salesman => salesman.Salesman_ID.Equals(_selectedSalesman.ID) && salesman.Category_ID.Equals(category.ID));
+                var categories = context.ItemCategories.OrderBy(category => category.Name);
 
-                if (commission != null)
-                    DisplayedSalesCommissions.Add(new SalesCommissionVM { Model = commission });
-
-                else
+                foreach (var category in categories.ToList())
                 {
-                    var newCommission = new SalesCommission { Salesman = _selectedSalesman.Model, Category = category, Percentage = 0m };
-                    DisplayedSalesCommissions.Add(new SalesCommissionVM { Model = newCommission });
+                    var commission = context.SalesCommissions
+                        .Include("Category")
+                        .Include("Salesman")
+                        .FirstOrDefault(
+                            salesman =>
+                            salesman.Salesman_ID.Equals(_selectedSalesman.ID) &&
+                            salesman.Category_ID.Equals(category.ID));
+
+                    if (commission != null)
+                        DisplayedSalesCommissions.Add(new SalesCommissionVM { Model = commission });
+
+                    else
+                    {
+                        var newCommission = new SalesCommission
+                        {
+                            Salesman = _selectedSalesman.Model,
+                            Category = category,
+                            Percentage = 0m
+                        };
+                        DisplayedSalesCommissions.Add(new SalesCommissionVM {Model = newCommission});
+                    }
                 }
             }
 

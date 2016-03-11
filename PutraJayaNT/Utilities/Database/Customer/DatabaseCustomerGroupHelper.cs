@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using PutraJayaNT.Models.Customer;
-
-namespace PutraJayaNT.Utilities.Database.Customer
+﻿namespace PutraJayaNT.Utilities.Database.Customer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Models.Customer;
+    using Utilities;
+
     public static class DatabaseCustomerGroupHelper
     {
         public static IEnumerable<CustomerGroup> GetAll()
@@ -19,10 +20,12 @@ namespace PutraJayaNT.Utilities.Database.Customer
                 return context.CustomerGroups.Where(condition).FirstOrDefault();
         }
 
-        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref CustomerGroup customerGroupToBeAttached)
+        public static void AttachToObjectFromDatabaseContext(ERPContext context,
+            ref CustomerGroup customerGroupToBeAttached)
         {
             var customerGroupID = customerGroupToBeAttached.ID;
-            customerGroupToBeAttached = context.CustomerGroups.First(customerGroup => customerGroup.ID.Equals(customerGroupID));
+            customerGroupToBeAttached =
+                context.CustomerGroups.First(customerGroup => customerGroup.ID.Equals(customerGroupID));
         }
     }
 }

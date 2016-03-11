@@ -42,7 +42,7 @@
                 <Button Grid.Column="2" Foreground="Red" Content="Search" Margin="20" Command="{Binding SearchCommand}" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="2"  ItemsSource="{Binding DisplayedSalesCommissions}" SelectedItem="{Binding SelectedLine}" IsReadOnly="True">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSalesCommissions}" SelectedItem="{Binding SelectedLine}" IsReadOnly="True">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Edit" Command="{Binding EditCommand}" />

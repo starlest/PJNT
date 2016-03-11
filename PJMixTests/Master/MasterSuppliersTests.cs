@@ -3,11 +3,11 @@
 namespace PJMixTests.Master
 {
     using System.Linq;
+    using Database.Supplier;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using PutraJayaNT.Utilities;
     using PutraJayaNT.ViewModels.Master.Suppliers;
     using PutraJayaNT.Models;
-    using PutraJayaNT.Utilities.Database.Supplier;
 
     [TestClass]
     public class MasterSuppliersTests

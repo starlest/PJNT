@@ -1,6 +1,4 @@
-﻿using PutraJayaNT.Utilities;
-
-namespace PutraJayaNT.ViewModels.Master.Salesmans
+﻿namespace PutraJayaNT.ViewModels.Master.Salesmans
 {
     using System.Windows;
     using System.Windows.Input;

@@ -1,14 +1,14 @@
 ﻿namespace PJMixTests.Master
 {
-    using PutraJayaNT.Utilities.Database.Supplier;
     using PutraJayaNT.Utilities.ModelHelpers;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using Database.Item;
+    using Database.Supplier;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using PutraJayaNT.Models;
     using PutraJayaNT.Models.Inventory;
     using PutraJayaNT.Utilities;
-    using PutraJayaNT.Utilities.Database.Item;
     using PutraJayaNT.ViewModels.Master.Inventory;
 
     [TestClass]

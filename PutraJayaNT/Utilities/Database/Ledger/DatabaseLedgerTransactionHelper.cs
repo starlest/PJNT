@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using PutraJayaNT.Models.Accounting;
-
-namespace PutraJayaNT.Utilities.Database.Ledger
+﻿namespace PutraJayaNT.Utilities.Database.Ledger
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Models.Accounting;
+    using Utilities;
+
     public static class DatabaseLedgerTransactionHelper
     {
         public static IEnumerable<LedgerTransaction> GetAll()
@@ -25,10 +26,12 @@ namespace PutraJayaNT.Utilities.Database.Ledger
                 return context.Ledger_Transactions.Include("LedgerTransactionLines").Where(condition).FirstOrDefault();
         }
 
-        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref LedgerTransaction ledgerTransactionToBeAttached)
+        public static void AttachToObjectFromDatabaseContext(ERPContext context,
+            ref LedgerTransaction ledgerTransactionToBeAttached)
         {
             var ledgerTransactionID = ledgerTransactionToBeAttached.ID;
-            ledgerTransactionToBeAttached = context.Ledger_Transactions.First(transaction => transaction.ID.Equals(ledgerTransactionID));
+            ledgerTransactionToBeAttached =
+                context.Ledger_Transactions.First(transaction => transaction.ID.Equals(ledgerTransactionID));
         }
 
         public static IEnumerable<LedgerTransaction> GetWithoutLines(Func<LedgerTransaction, bool> condition)

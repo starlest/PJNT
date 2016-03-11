@@ -6,6 +6,7 @@ using PutraJayaNT.Models.Sales;
 namespace PutraJayaNT.Models.Customer
 {
     [Table("Customers")]
+    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class Customer
     {
         public Customer()
@@ -40,5 +41,11 @@ namespace PutraJayaNT.Models.Customer
         public bool Active { get; set; }
 
         public virtual List<SalesTransaction> SalesTransactions { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var customer = obj as Customer;
+            return customer != null && ID.Equals(customer.ID);
+        }
     }
 }

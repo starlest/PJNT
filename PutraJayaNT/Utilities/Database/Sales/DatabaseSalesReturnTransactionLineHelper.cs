@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Models.Sales;
+    using Utilities;
 
     public static class DatabaseSalesReturnTransactionLineHelper
     {

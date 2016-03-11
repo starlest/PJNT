@@ -4,18 +4,12 @@
     using PutraJayaNT.Reports.Windows;
     using Utilities;
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
     using Inventory;
     using Models.Inventory;
-    using Utilities.Database.Item;
-    using Utilities.Database.Purchase;
-    using Utilities.Database.Sales;
-    using Utilities.Database.Stock;
-    using Utilities.Database.Warehouse;
 
     public class StockCardReportVM : ViewModelBase
     {
@@ -160,9 +154,12 @@
             var oldSelectedProduct = _selectedProduct;
 
             Products.Clear();
-            var productsFromDatabase = DatabaseItemHelper.GetAll();
-            foreach (var product in productsFromDatabase)
-                Products.Add(new ItemVM { Model = product });
+            using (var context = new ERPContext())
+            {
+                var productsFromDatabase = context.Inventory.OrderBy(item => item.Name);
+                foreach (var product in productsFromDatabase)
+                    Products.Add(new ItemVM { Model = product });
+            }
 
             UpdateSelectedProduct(oldSelectedProduct);
         }
@@ -176,9 +173,12 @@
         private void UpdateWarehouses()
         {
             Warehouses.Clear();
-            var warehousesFromDatabase = DatabaseWarehouseHelper.GetAll();
-            foreach (var warehouse in warehousesFromDatabase)
-                Warehouses.Add(new WarehouseVM { Model = warehouse });
+            using (var context = new ERPContext())
+            {
+                var warehousesFromDatabase = context.Warehouses.OrderBy(warehouse => warehouse.Name);
+                foreach (var warehouse in warehousesFromDatabase)
+                    Warehouses.Add(new WarehouseVM {Model = warehouse});
+            }
         }
 
         private void SetBeginningBalance()
@@ -320,24 +320,27 @@
         private void UpdateDisplayedLines()
         {
             DisplayedLines.Clear();
-            LoadPeriodPurchaseTransactionLinesIntoDisplayedLines();
-            LoadPeriodPurchaseReturnTransactionLinesIntoDisplayedLines();
-            LoadPeriodSalesTransactionLinesIntoDisplayedLines();
-            LoadPeriodSalesReturnTransactionLinesIntoDisplayedLines();
-            LoadPeriodStockAdjustmentTransactionLinesIntoDisplayedLines();
-            LoadPeriodStockMovementTransactionLinesIntoDisplayedLines();
+            using (var context = new ERPContext())
+            {
+                LoadPeriodPurchaseTransactionLinesIntoDisplayedLines(context);
+                LoadPeriodPurchaseReturnTransactionLinesIntoDisplayedLines(context);
+                LoadPeriodSalesTransactionLinesIntoDisplayedLines(context);
+                LoadPeriodSalesReturnTransactionLinesIntoDisplayedLines(context);
+                LoadPeriodStockAdjustmentTransactionLinesIntoDisplayedLines(context);
+                LoadPeriodStockMovementTransactionLinesIntoDisplayedLines(context);
+            }
             SortDisplayedLinesAccordingToDate();            
         }
 
-        private void LoadPeriodPurchaseTransactionLinesIntoDisplayedLines()
+        private void LoadPeriodPurchaseTransactionLinesIntoDisplayedLines(ERPContext context)
         {
             foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
             {
                 var purchaseLinesFromDatabase =
-                    DatabasePurchaseTransactionLineHelper.Get(
+                    context.PurchaseTransactionLines.Where(
                         line => line.ItemID.Equals(_selectedProduct.ID) && line.WarehouseID.Equals(warehouse.ID) &&
-                        line.PurchaseTransaction.Date >= _fromDate && line.PurchaseTransaction.Date <= _toDate &&
-                        !line.PurchaseTransactionID.Substring(0, 2).Equals("SA"));
+                                line.PurchaseTransaction.Date >= _fromDate && line.PurchaseTransaction.Date <= _toDate &&
+                                !line.PurchaseTransactionID.Substring(0, 2).Equals("SA"));
 
                 foreach (var purchaseLineVM in purchaseLinesFromDatabase.Select(purchaseLine => new StockCardLineVM
                 {
@@ -354,14 +357,15 @@
             }
         }
 
-        private void LoadPeriodPurchaseReturnTransactionLinesIntoDisplayedLines()
+        private void LoadPeriodPurchaseReturnTransactionLinesIntoDisplayedLines(ERPContext context)
         {
             foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
             {
                 var purchaseReturnLinesFromDatabase =
-                    DatabasePurchaseReturnTransactionLineHelper.Get(
+                    context.PurchaseReturnTransactionLines.Where(
                         line => line.ItemID.Equals(_selectedProduct.ID) && line.WarehouseID.Equals(warehouse.ID)
-                        && line.PurchaseReturnTransaction.Date >= _fromDate && line.PurchaseReturnTransaction.Date <= _toDate);
+                                && line.PurchaseReturnTransaction.Date >= _fromDate &&
+                                line.PurchaseReturnTransaction.Date <= _toDate);
 
                 foreach (var vm in purchaseReturnLinesFromDatabase.Select(purchaseReturnLine => new StockCardLineVM
                 {
@@ -378,13 +382,14 @@
             }
         }
 
-        private void LoadPeriodSalesTransactionLinesIntoDisplayedLines()
+        private void LoadPeriodSalesTransactionLinesIntoDisplayedLines(ERPContext context)
         {
             foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
             {
-                var salesLinesFromDatabase = DatabaseSalesTransactionLineHelper.Get(
-                    line => line.ItemID.Equals(_selectedProduct.ID) && line.WarehouseID.Equals(warehouse.ID)
-                    && line.SalesTransaction.Date >= _fromDate && line.SalesTransaction.Date <= _toDate);
+                var salesLinesFromDatabase =
+                    context.SalesTransactionLines.Where(
+                        line => line.ItemID.Equals(_selectedProduct.ID) && line.WarehouseID.Equals(warehouse.ID)
+                                && line.SalesTransaction.Date >= _fromDate && line.SalesTransaction.Date <= _toDate);
 
                 foreach (var vm in salesLinesFromDatabase.Select(salesLine => new StockCardLineVM
                 {
@@ -401,38 +406,37 @@
             }
         }
 
-        private void LoadPeriodSalesReturnTransactionLinesIntoDisplayedLines()
+        private void LoadPeriodSalesReturnTransactionLinesIntoDisplayedLines(ERPContext context)
         {
             foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
             {
                 var salesReturnLinesFromDatabase =
-                    DatabaseSalesReturnTransactionLineHelper.Get(
+                    context.SalesReturnTransactionLines.Where(
                         line => line.ItemID.Equals(_selectedProduct.ID) && line.WarehouseID.Equals(warehouse.ID)
-                        && line.SalesReturnTransaction.Date >= _fromDate &&
-                        line.SalesReturnTransaction.Date <= _toDate);
+                                && line.SalesReturnTransaction.Date >= _fromDate &&
+                                line.SalesReturnTransaction.Date <= _toDate);
 
-                foreach (var salesReturnline in salesReturnLinesFromDatabase)
+                foreach (var vm in salesReturnLinesFromDatabase.Select(salesReturnLine => new StockCardLineVM
                 {
-                    var vm = new StockCardLineVM
-                    {
-                        Item = salesReturnline.Item,
-                        Date = salesReturnline.SalesReturnTransaction.Date,
-                        Documentation = salesReturnline.SalesReturnTransaction.SalesReturnTransactionID,
-                        Description = "Sales Return",
-                        CustomerSupplier = salesReturnline.SalesReturnTransaction.SalesTransaction.Customer.Name,
-                        Amount = +salesReturnline.Quantity,
-                    };
+                    Item = salesReturnLine.Item,
+                    Date = salesReturnLine.SalesReturnTransaction.Date,
+                    Documentation = salesReturnLine.SalesReturnTransaction.SalesReturnTransactionID,
+                    Description = "Sales Return",
+                    CustomerSupplier = salesReturnLine.SalesReturnTransaction.SalesTransaction.Customer.Name,
+                    Amount = salesReturnLine.Quantity,
+                }))
+                {
                     DisplayedLines.Add(vm);
                 }
             }
         }
 
-        private void LoadPeriodStockAdjustmentTransactionLinesIntoDisplayedLines()
+        private void LoadPeriodStockAdjustmentTransactionLinesIntoDisplayedLines(ERPContext context)
         {
             foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
             {
                 var stockAdjustmentLinesFromDatabase =
-                    DatabaseStockAdjustmentTransactionLineHelper.Get(
+                    context.AdjustStockTransactionLines.Where(
                         line => line.ItemID.Equals(_selectedProduct.ID) && line.WarehouseID.Equals(warehouse.ID)
                                 && line.AdjustStockTransaction.Date >= _fromDate &&
                                 line.AdjustStockTransaction.Date <= _toDate);
@@ -452,15 +456,18 @@
             }
         }
 
-        private void LoadPeriodStockMovementTransactionLinesIntoDisplayedLines()
+        private void LoadPeriodStockMovementTransactionLinesIntoDisplayedLines(ERPContext context)
         {
             foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
             {
                 var moveStockTransactionsFromDatabase =
-                    DatabaseStockMovementTransactionHelper.Get(
-                        e => e.Date >= _fromDate && e.Date <= _toDate
-                        &&  (e.FromWarehouse.ID.Equals(warehouse.ID) 
-                        || e.ToWarehouse.ID.Equals(warehouse.ID)));
+                    context.MoveStockTransactions
+                    .Where(
+                        transaction => 
+                        transaction.Date >= _fromDate && transaction.Date <= _toDate
+                        && (transaction.FromWarehouse.ID.Equals(warehouse.ID)
+                        || transaction.ToWarehouse.ID.Equals(warehouse.ID)))
+                        .ToList();
 
                 foreach (var transaction in moveStockTransactionsFromDatabase)
                 {

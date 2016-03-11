@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using PutraJayaNT.Models.Salesman;
-
-namespace PutraJayaNT.Utilities.Database.Salesman
+﻿namespace PutraJayaNT.Utilities.Database.Salesman
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using Models.Salesman;
+    using Utilities;
 
     public static class DatabaseSalesmanCommisionHelper
     {
@@ -17,13 +17,19 @@ namespace PutraJayaNT.Utilities.Database.Salesman
         public static IEnumerable<SalesCommission> Get(Func<SalesCommission, bool> condition)
         {
             using (var context = new ERPContext())
-                return context.SalesCommissions.Include("Salesman").Include("Category").Where(condition).OrderBy(salesCommision => salesCommision.Salesman.Name).ToList();
+                return
+                    context.SalesCommissions.Include("Salesman")
+                        .Include("Category")
+                        .Where(condition)
+                        .OrderBy(salesCommision => salesCommision.Salesman.Name)
+                        .ToList();
         }
 
         public static SalesCommission FirstOrDefault(Func<SalesCommission, bool> condition)
         {
             using (var context = new ERPContext())
-                return context.SalesCommissions.Include("Salesman").Include("Category").Where(condition).FirstOrDefault();
+                return
+                    context.SalesCommissions.Include("Salesman").Include("Category").Where(condition).FirstOrDefault();
         }
 
 
@@ -31,7 +37,10 @@ namespace PutraJayaNT.Utilities.Database.Salesman
         {
             var salesmanID = salesCommissionToBeAttached.Salesman.ID;
             var categoryID = salesCommissionToBeAttached.Category.ID;
-            salesCommissionToBeAttached = context.SalesCommissions.FirstOrDefault(salesCommision => salesCommision.Salesman_ID.Equals(salesmanID) && salesCommision.Category_ID.Equals(categoryID));
+            salesCommissionToBeAttached =
+                context.SalesCommissions.FirstOrDefault(
+                    salesCommision =>
+                        salesCommision.Salesman_ID.Equals(salesmanID) && salesCommision.Category_ID.Equals(categoryID));
         }
     }
 }

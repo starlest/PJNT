@@ -91,16 +91,28 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\Database\Customer\DatabaseCustomerGroupHelper.cs" />
+    <Compile Include="Utilities\Database\Customer\DatabaseCustomerHelper.cs" />
+    <Compile Include="Utilities\Database\Item\DatabaseItemAlternativeSalesPriceHelper.cs" />
+    <Compile Include="Utilities\Database\Item\DatabaseItemCategoryHelper.cs" />
+    <Compile Include="Utilities\Database\Item\DatabaseItemHelper.cs" />
+    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerAccountHelper.cs" />
+    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionHelper.cs" />
     <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionLineHelper.cs" />
     <Compile Include="Utilities\Database\Purchase\DatabasePurchaseReturnTransactionLineHelper.cs" />
     <Compile Include="Utilities\Database\Purchase\DatabasePurchaseTransactionLineHelper.cs" />
-    <Compile Include="Utilities\Database\Sales\DatabaseSalesReturnTransactionLineHelper.cs" />
+    <Compile Include="Utilities\Database\Salesman\DatabaseSalesCommissionHelper.cs" />
+    <Compile Include="Utilities\Database\Salesman\DatabaseSalesmanHelper.cs" />
     <Compile Include="Utilities\Database\Sales\DatabaseSalesReturnTransactionHelper.cs" />
+    <Compile Include="Utilities\Database\Sales\DatabaseSalesReturnTransactionLineHelper.cs" />
+    <Compile Include="Utilities\Database\Sales\DatabaseSalesTransactionHelper.cs" />
     <Compile Include="Utilities\Database\Sales\DatabaseSalesTransactionLineHelper.cs" />
-    <Compile Include="Utilities\Database\Stock\DatabaseStockBalanceHelper.cs" />
-    <Compile Include="Utilities\Database\Stock\DatabaseStockMovementTransactionHelper.cs" />
     <Compile Include="Utilities\Database\Stock\DatabaseStockAdjustmentTransactionLineHelper.cs" />
+    <Compile Include="Utilities\Database\Stock\DatabaseStockBalanceHelper.cs" />
     <Compile Include="Utilities\Database\Stock\DatabaseStockHelper.cs" />
+    <Compile Include="Utilities\Database\Stock\DatabaseStockMovementTransactionHelper.cs" />
+    <Compile Include="Utilities\Database\Supplier\DatabaseSupplierHelper.cs" />
+    <Compile Include="Utilities\Database\Warehouse\DatabaseWarehouseHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesmanHelper.cs" />
@@ -209,18 +221,6 @@
       <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\DatasetObjects\SalesReturnInvoice.cs" />
-    <Compile Include="Utilities\Database\Customer\DatabaseCustomerGroupHelper.cs" />
-    <Compile Include="Utilities\Database\Customer\DatabaseCustomerHelper.cs" />
-    <Compile Include="Utilities\Database\Item\DatabaseItemAlternativeSalesPriceHelper.cs" />
-    <Compile Include="Utilities\Database\Item\DatabaseItemCategoryHelper.cs" />
-    <Compile Include="Utilities\Database\Item\DatabaseItemHelper.cs" />
-    <Compile Include="Utilities\Database\Supplier\DatabaseSupplierHelper.cs" />
-    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerAccountHelper.cs" />
-    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionHelper.cs" />
-    <Compile Include="Utilities\Database\Salesman\DatabaseSalesCommissionHelper.cs" />
-    <Compile Include="Utilities\Database\Salesman\DatabaseSalesmanHelper.cs" />
-    <Compile Include="Utilities\Database\Sales\DatabaseSalesTransactionHelper.cs" />
-    <Compile Include="Utilities\Database\Warehouse\DatabaseWarehouseHelper.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
     <Compile Include="Models\Inventory\Stock.cs" />
     <Compile Include="Models\Sales\SalesTransaction.cs" />

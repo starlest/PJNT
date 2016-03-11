@@ -79,7 +79,7 @@
             <ComboBox Grid.Column="7" ItemsSource="{Binding Suppliers}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Column="8" Content="Search" Margin="10" Command="{Binding SearchCommand}" />
         </Grid>
-        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedItems}" SelectedItem="{Binding SelectedLine}" IsReadOnly="True">
+        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding DisplayedItems}" SelectedItem="{Binding SelectedLine}" IsReadOnly="True">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Edit" HorizontalAlignment="Left" Command="{Binding EditItemCommand}" />

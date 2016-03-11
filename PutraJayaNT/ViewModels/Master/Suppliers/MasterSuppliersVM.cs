@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Data.Entity;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
@@ -9,9 +10,6 @@
     using Models;
     using Models.Inventory;
     using Utilities;
-    using Utilities.Database;
-    using Utilities.Database.Item;
-    using Utilities.Database.Supplier;
     using ViewModels.Inventory;
     using Views.Master.Suppliers;
     using ViewModels.Suppliers;
@@ -141,7 +139,7 @@
                     if (!IsThereLineSelected() || !IsConfirmationYes()) return;
                     if (_selectedLine.Active) DeactivateSupplierInDatabase(_selectedLine.Model);
                     else ActivateSupplierInDatabase(_selectedLine.Model);
-                    _selectedLine.Active = !_selectedLine.Active;
+                    _selectedLine.Active = !_isActiveChecked;
                 }));
             }
         }
@@ -155,9 +153,12 @@
             Suppliers.Clear();
             var allSupplier = new Supplier { ID = -1, Name = "All" };
             Suppliers.Add(new SupplierVM { Model = allSupplier });
-            var suppliersFromDatabase = DatabaseSupplierHelper.GetAll();
-            foreach (var supplier in suppliersFromDatabase)
-                Suppliers.Add(new SupplierVM { Model = supplier });
+            using (var context = new ERPContext())
+            {
+                var suppliersFromDatabase = context.Suppliers.Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name);
+                foreach (var supplier in suppliersFromDatabase)
+                    Suppliers.Add(new SupplierVM {Model = supplier});
+            }
 
             UpdateSelectedSupplier(oldSelectedSupplier);
         }
@@ -175,9 +176,12 @@
             Categories.Clear();
             var allCategory = new Category { ID = -1, Name = "All" };
             Categories.Add(new CategoryVM { Model = allCategory });
-            var categoriesFromDatabase = DatabaseItemCategoryHelper.GetAll();
-            foreach (var category in categoriesFromDatabase)
-                Categories.Add(new CategoryVM { Model = category });
+            using (var context = new ERPContext())
+            {
+                var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
+                foreach (var category in categoriesFromDatabase)
+                    Categories.Add(new CategoryVM {Model = category});
+            }
 
             UpdateSelectedCategory(oldSelectedCategory);
         }
@@ -193,11 +197,19 @@
             var oldSelectedCategoryItem = _selectedCategoryItem;
 
             CategoryItems.Clear();
-            var allCategoryItem = new Item { ItemID = "-1", Name = "All" };
-            CategoryItems.Add(new ItemVM { Model = allCategoryItem }); 
-            var categoryItemsFromDatabase = _selectedCategory.Name.Equals("All") ? DatabaseItemHelper.GetAll() : DatabaseItemHelper.Get(item => item.Category.ID.Equals(_selectedCategory.ID));
-            foreach (var item in categoryItemsFromDatabase)
-                CategoryItems.Add(new ItemVM { Model = item });
+            var allCategoryItem = new Item {ItemID = "-1", Name = "All"};
+            CategoryItems.Add(new ItemVM {Model = allCategoryItem});
+            using (var context = new ERPContext())
+            {
+                var categoryItemsFromDatabase = _selectedCategory.Name.Equals("All")
+                    ? context.Inventory.Include("Suppliers").OrderBy(item => item.Name)
+                    : context.Inventory.Include("Suppliers")
+                        .Where(item => item.Category.ID.Equals(_selectedCategory.ID))
+                        .OrderBy(item => item.Name);
+
+                foreach (var item in categoryItemsFromDatabase)
+                    CategoryItems.Add(new ItemVM { Model = item });
+            }
 
             UpdateSelectedCategoryItem(oldSelectedCategoryItem);
         }
@@ -237,20 +249,37 @@
         {
             var suppliersFromDatabase = new List<Supplier>();
 
-            if (_selectedCategoryItem.Name.Equals("All") && _selectedCategory.Name.Equals("All"))
-                suppliersFromDatabase = DatabaseSupplierHelper.GetAll().ToList();
-
-            else if (_selectedCategoryItem.Name.Equals("All") && !_selectedCategory.Name.Equals("All"))
+            using (var context = new ERPContext())
             {
-                foreach (var supplier in CategoryItems.Where(item => item.Suppliers != null).SelectMany(item => item.Suppliers.Where(supplier => !suppliersFromDatabase.Contains(supplier))))
-                    suppliersFromDatabase.Add(supplier);
+                if (_selectedCategoryItem.Name.Equals("All") && _selectedCategory.Name.Equals("All"))
+                    suppliersFromDatabase = context.Suppliers.Include("Items").Where(supplier => !supplier.Name.Equals("-")).ToList();
+
+                else if (_selectedCategoryItem.Name.Equals("All") && !_selectedCategory.Name.Equals("All"))
+                {
+                    foreach (
+                        var supplier in
+                            CategoryItems.Where(item => item.Suppliers != null)
+                                .SelectMany(
+                                    item => item.Suppliers.Where(supplier => !suppliersFromDatabase.Contains(supplier)))
+                        )
+                        suppliersFromDatabase.Add(supplier);
+                }
+
+                else
+                {
+                    foreach (var categoryItem in CategoryItems.Where(item => !item.Name.Equals("All")))
+                    {
+                        foreach (var supplier in categoryItem.Suppliers)
+                        {
+                            if (!suppliersFromDatabase.Contains(supplier))
+                                suppliersFromDatabase.Add(supplier);
+                        }
+
+                    }
+                }
             }
 
-            else
-                suppliersFromDatabase =
-                    DatabaseSupplierHelper.Get(supplier => supplier.Items.Contains(_selectedCategoryItem.Model)).ToList();
-
-            foreach (var supplier in suppliersFromDatabase.Where(supplier => supplier.Active.Equals(_isActiveChecked)))
+            foreach (var supplier in suppliersFromDatabase.Where(supplier => supplier.Active.Equals(_isActiveChecked)).OrderBy(supplier => supplier.Name))
                 DisplayedSuppliers.Add(new SupplierVM { Model = supplier });         
         }
 
@@ -269,7 +298,7 @@
         {
             using (var context = new ERPContext())
             {
-                DatabaseSupplierHelper.AttachToDatabaseContext(context, ref supplier);
+                context.Entry(supplier).State = EntityState.Modified;
                 supplier.Active = false;
                 context.SaveChanges();
             }
@@ -279,7 +308,7 @@
         {
             using (var context = new ERPContext())
             {
-                DatabaseSupplierHelper.AttachToDatabaseContext(context, ref supplier);
+                context.Entry(supplier).State = EntityState.Modified;
                 supplier.Active = true;
                 context.SaveChanges();
             }

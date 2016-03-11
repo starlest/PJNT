@@ -1,9 +1,4 @@
-﻿
-
-using PutraJayaNT.Utilities.Database.Customer;
-using PutraJayaNT.Utilities.Database.Sales;
-
-namespace PutraJayaNT.ViewModels.Reports
+﻿namespace PutraJayaNT.ViewModels.Reports
 {
     using MVVMFramework;
     using Models.Sales;
@@ -128,10 +123,12 @@ namespace PutraJayaNT.ViewModels.Reports
             Customers.Clear();
             Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
 
-            var customersFromDatabase = DatabaseCustomerHelper.GetAll();
-
-            foreach (var customer in customersFromDatabase)
-                Customers.Add(new CustomerVM { Model = customer });
+            using (var context = new ERPContext())
+            {
+                var customersFromDatabase = context.Customers.OrderBy(customer => customer.Name);
+                foreach (var customer in customersFromDatabase)
+                    Customers.Add(new CustomerVM {Model = customer});
+            }
 
             UpdateSelectedCustomer(oldSelectedCustomer);
         }
@@ -148,28 +145,36 @@ namespace PutraJayaNT.ViewModels.Reports
             _remaining = 0;
             DisplayedSalesTransactions.Clear();
 
-            Func<SalesTransaction, bool> searchCondition;
-            if (!_selectedCustomer.Name.Equals("All"))
-                searchCondition = salesTransaction =>
-                    salesTransaction.Customer.Name.Equals(_selectedCustomer.Name)
-                    && salesTransaction.Date >= _fromDate && salesTransaction.Date <= _toDate;     
-            else
-                searchCondition = salesTransaction => salesTransaction.Date >= _fromDate && salesTransaction.Date <= _toDate;
-            
+            var searchCondition = GetSearchConditionAccordingToSelectedCustomer();
 
-            var salesTransactionsFromDatabase = DatabaseSalesTransactionHelper.GetWithoutLines(searchCondition)
-                .OrderBy(salesTransaction => salesTransaction.Date)
-                .ThenBy(salesTransaction => salesTransaction.SalesTransactionID)
-                .ThenBy(salesTransaction => salesTransaction.Customer.Name);
-
-            foreach (var salesTransaction in salesTransactionsFromDatabase)
+            using (var context = new ERPContext())
             {
-                DisplayedSalesTransactions.Add(new Sales.SalesTransactionVM { Model = salesTransaction });
-                _total += salesTransaction.NetTotal;
-                _remaining += salesTransaction.NetTotal - salesTransaction.Paid;
+                var salesTransactionsFromDatabase = context.SalesTransactions
+                    .Include("User")
+                    .Include("Customer")
+                    .Where(searchCondition)
+                    .OrderBy(salesTransaction => salesTransaction.Date)
+                    .ThenBy(salesTransaction => salesTransaction.SalesTransactionID);
+
+                foreach (var salesTransaction in salesTransactionsFromDatabase)
+                {
+                    DisplayedSalesTransactions.Add(new Sales.SalesTransactionVM {Model = salesTransaction});
+                    _total += salesTransaction.NetTotal;
+                    _remaining += salesTransaction.NetTotal - salesTransaction.Paid;
+                }
             }
 
             UpdateUITotalAndRemaining();
+        }
+
+        private Func<SalesTransaction, bool> GetSearchConditionAccordingToSelectedCustomer()
+        {
+            if (!_selectedCustomer.Name.Equals("All"))
+                return salesTransaction =>
+                    salesTransaction.Customer.Name.Equals(_selectedCustomer.Name)
+                    && salesTransaction.Date >= _fromDate && salesTransaction.Date <= _toDate;
+
+            return salesTransaction => salesTransaction.Date >= _fromDate && salesTransaction.Date <= _toDate;
         }
 
         private void UpdateUITotalAndRemaining()

@@ -1,12 +1,13 @@
 ﻿namespace PutraJayaNT.ViewModels.Master.Customers
 {
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Input;
     using MVVMFramework;
-    using Utilities.Database.Customer;
     using Customer;
     using Models.Customer;
+    using Utilities;
     using Utilities.ModelHelpers;
 
     public class MasterCustomersNewEntryVM : ViewModelBase
@@ -96,9 +97,12 @@
         private void UpdateNewEntryGroups()
         {
             NewEntryGroups.Clear();
-            var groupsReturnedFromDatabase = DatabaseCustomerGroupHelper.GetAll();
-            foreach (var group in groupsReturnedFromDatabase)
-                NewEntryGroups.Add(new CustomerGroupVM { Model = group });
+            using (var context = new ERPContext())
+            {
+                var groupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
+                foreach (var group in groupsReturnedFromDatabase)
+                    NewEntryGroups.Add(new CustomerGroupVM {Model = group});
+            }
         }
 
         private void ResetEntryFields()

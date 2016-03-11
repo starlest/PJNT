@@ -15,11 +15,15 @@
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext();
-                AddSalesReturnTransactionToDatabaseContext(context, salesReturnTransaction);
-                IncreaseCustomerSalesReturnCreditsInDatabaseContext(context, salesReturnTransaction);
 
-                foreach (var salesReturnTransactionLine in salesReturnTransaction.SalesReturnTransactionLines.ToList())
+                AttachSalesReturnTransactionPropertiesToDatabaseContext(context, ref salesReturnTransaction);
+                salesReturnTransaction.SalesTransaction.Customer.SalesReturnCredits += salesReturnTransaction.NetTotal;
+
+                var lines = salesReturnTransaction.SalesReturnTransactionLines.ToList();
+                salesReturnTransaction.SalesReturnTransactionLines.Clear();
+                foreach (var salesReturnTransactionLine in lines)
                 {
+                    salesReturnTransactionLine.SalesReturnTransaction = salesReturnTransaction;
                     AddSalesReturnTransactionLineToDatabaseContext(context, salesReturnTransactionLine);
                     DecreaseSalesReturnTransactionLineItemSoldOrReturnedInDatabaseContext(context, salesReturnTransactionLine);
                     InceaseSalesReturnTransactionLineItemStockInDatabaseContext(context, salesReturnTransactionLine);
@@ -33,18 +37,13 @@
         }
 
         #region Add Helper Methods
-        private static void AddSalesReturnTransactionToDatabaseContext(ERPContext context, SalesReturnTransaction salesReturnTransaction)
+        private static void AttachSalesReturnTransactionPropertiesToDatabaseContext(ERPContext context,
+            ref SalesReturnTransaction salesReturnTransaction)
         {
             var user = Application.Current.FindResource("CurrentUser") as User;
             salesReturnTransaction.User = context.Users.FirstOrDefault(e => e.Username.Equals(user.Username));
             context.SalesTransactions.Attach(salesReturnTransaction.SalesTransaction);
-            context.SaveChanges();
-        }
-
-        private static void IncreaseCustomerSalesReturnCreditsInDatabaseContext(ERPContext context, SalesReturnTransaction salesReturnTransaction)
-        {
-            var customer = context.Customers.First(e => e.ID.Equals(salesReturnTransaction.SalesTransaction.Customer.ID));
-            customer.SalesReturnCredits += salesReturnTransaction.NetTotal;
+            context.Customers.Attach(salesReturnTransaction.SalesTransaction.Customer);
         }
 
         private static void AddSalesReturnTransactionLineToDatabaseContext(ERPContext context, SalesReturnTransactionLine salesReturnTransactionLine)
@@ -54,24 +53,6 @@
             salesReturnTransactionLine.Item = item;
             salesReturnTransactionLine.Warehouse = warehouse;
             context.SalesReturnTransactionLines.Add(salesReturnTransactionLine);
-        }
-
-        private static void InceaseSalesReturnTransactionLineItemStockInDatabaseContext(ERPContext context, SalesReturnTransactionLine salesReturnTransactionLine)
-        {
-            var stock = context.Stocks
-                .FirstOrDefault(e => e.Item.ItemID.Equals(salesReturnTransactionLine.Item.ItemID) && e.Warehouse.ID.Equals(salesReturnTransactionLine.Warehouse.ID));
-
-            if (stock != null) stock.Pieces += salesReturnTransactionLine.Quantity;
-            else
-            {
-                var s = new Stock
-                {
-                    Item = salesReturnTransactionLine.Item,
-                    Warehouse = salesReturnTransactionLine.Warehouse,
-                    Pieces = salesReturnTransactionLine.Quantity
-                };
-                context.Stocks.Add(s);
-            }
         }
 
         private static void DecreaseSalesReturnTransactionLineItemSoldOrReturnedInDatabaseContext(ERPContext context, SalesReturnTransactionLine salesReturnTransactionLine)
@@ -99,6 +80,24 @@
                 }
             }
             context.SaveChanges();
+        }
+
+        private static void InceaseSalesReturnTransactionLineItemStockInDatabaseContext(ERPContext context, SalesReturnTransactionLine salesReturnTransactionLine)
+        {
+            var stock = context.Stocks
+                .FirstOrDefault(e => e.Item.ItemID.Equals(salesReturnTransactionLine.Item.ItemID) && e.Warehouse.ID.Equals(salesReturnTransactionLine.Warehouse.ID));
+
+            if (stock != null) stock.Pieces += salesReturnTransactionLine.Quantity;
+            else
+            {
+                var s = new Stock
+                {
+                    Item = salesReturnTransactionLine.Item,
+                    Warehouse = salesReturnTransactionLine.Warehouse,
+                    Pieces = salesReturnTransactionLine.Quantity
+                };
+                context.Stocks.Add(s);
+            }
         }
 
         private static void AddSalesReturnTransactionLedgerTransactionsToDatabaseContext(ERPContext context, SalesReturnTransaction salesReturnTransaction)

@@ -47,7 +47,7 @@
                 <DatePicker Grid.Column="6" SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedSalesTransactions}" IsReadOnly="True">
+        <DataGrid Grid.Row="2" RowHeaderWidth="40" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedSalesTransactions}" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Customer" Width="1*" Binding="{Binding Customer.Name}" />
                 <DataGridTextColumn Header="Date" Width="1*" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />

@@ -4,19 +4,29 @@
     using System.Collections.Generic;
     using System.Linq;
     using Models;
+    using Utilities;
 
     public static class DatabaseSupplierHelper
     {
         public static IEnumerable<Supplier> GetAll()
         {
             using (var context = new ERPContext())
-                return context.Suppliers.Include("Items").Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name).ToList();
+                return
+                    context.Suppliers.Include("Items")
+                        .Where(supplier => !supplier.Name.Equals("-"))
+                        .OrderBy(supplier => supplier.Name)
+                        .ToList();
         }
 
         public static IEnumerable<Supplier> Get(Func<Supplier, bool> condition)
         {
             using (var context = new ERPContext())
-                return context.Suppliers.Include("Items").Where(condition).Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name).ToList();
+                return
+                    context.Suppliers.Include("Items")
+                        .Where(condition)
+                        .Where(supplier => !supplier.Name.Equals("-"))
+                        .OrderBy(supplier => supplier.Name)
+                        .ToList();
         }
 
         public static Supplier FirstOrDefault(Func<Supplier, bool> condition)

@@ -7,7 +7,6 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Utilities.Database;
     using Utilities.Database.Item;
     using Utilities.Database.Supplier;
     using ViewModels.Inventory;
@@ -186,11 +185,17 @@
             CategoriesWithAll.Clear(); 
             CategoriesWithAll.Add(new CategoryVM { Model = new Category { Name = "All" } });
 
-            var categoriesFromDatabase = DatabaseItemCategoryHelper.GetAll();
-            foreach (var categoryVM in categoriesFromDatabase.Select(category => new CategoryVM {Model = category}).Where(categoryVM => !CategoriesWithAll.Contains(categoryVM)))
+            using (var context = new ERPContext())
             {
-                CategoriesWithAll.Add(categoryVM);
-                Categories.Add(categoryVM);
+                var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name).ToList();
+                foreach (
+                    var categoryVM in
+                        categoriesFromDatabase.Select(category => new CategoryVM {Model = category})
+                            .Where(categoryVM => !CategoriesWithAll.Contains(categoryVM)))
+                {
+                    CategoriesWithAll.Add(categoryVM);
+                    Categories.Add(categoryVM);
+                }
             }
 
             UpdateSelectedCategory(oldSelectedCategory);
@@ -207,9 +212,14 @@
             var oldSelectedItem = _selectedItem;
 
             Items.Clear();
-            var itemsFromDatabase = DatabaseItemHelper.GetAll().ToList();
-            foreach (var item in itemsFromDatabase)
-                Items.Add(new ItemVM { Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault() });
+
+            using (var context = new ERPContext())
+            {
+                var itemsFromDatabase =
+                    context.Inventory.Include("Suppliers").Include("AlternativeSalesPrices").Include("Category").OrderBy(item => item.Name);
+                foreach (var item in itemsFromDatabase)
+                    Items.Add(new ItemVM {Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault()});
+            }
 
             UpdateSelectedItem(oldSelectedItem);
         }

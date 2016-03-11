@@ -2,13 +2,11 @@
 {
     using System.Collections.ObjectModel;
     using System.Diagnostics;
-    using System.Linq;
     using System.Windows;
     using System.Windows.Input;
     using MVVMFramework;
     using Models;
     using Models.Inventory;
-    using Utilities;
     using Utilities.ModelHelpers;
     using ViewModels.Suppliers;
     using ViewModels.Inventory;
@@ -104,7 +102,6 @@
                     ResetEntryFields();
                     _parentVM.UpdateItems();
                     _parentVM.UpdateDisplayedItems();
-                    MessageBox.Show("Successfully added item!", "Success", MessageBoxButton.OK);
                 }));
             }
         }

@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using PutraJayaNT.Models.Inventory;
-
-namespace PutraJayaNT.Utilities.Database.Item
+﻿namespace PutraJayaNT.Utilities.Database.Item
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Models.Inventory;
+    using Utilities;
+
     public static class DatabaseItemCategoryHelper
     {
         public static IEnumerable<Category> GetAll()

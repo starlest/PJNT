@@ -1,13 +1,12 @@
 ﻿namespace PJMixTests.Customers
 {
+    using System.Data.Entity;
     using System.Linq;
     using System.Transactions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using PutraJayaNT.Models.Accounting;
     using PutraJayaNT.Models.Sales;
     using PutraJayaNT.Utilities;
-    using PutraJayaNT.Utilities.Database.Ledger;
-    using PutraJayaNT.Utilities.Database.Sales;
     using PutraJayaNT.ViewModels.Customers;
 
     [TestClass]
@@ -16,16 +15,27 @@
         [TestMethod]
         public void TestCollect()
         {
-            var testSalesTransaction =
-                DatabaseSalesTransactionHelper.FirstOrDefaultWithoutLines(salesTransaction => salesTransaction.Paid < salesTransaction.NetTotal);
+            SalesTransaction testSalesTransaction;
+            using (var context = new ERPContext())
+            {
+                testSalesTransaction =
+                    context.SalesTransactions.FirstOrDefault(
+                        salesTransaction => salesTransaction.Paid < salesTransaction.NetTotal);
+            }
+
             var remainingAmount = testSalesTransaction.NetTotal - testSalesTransaction.Paid;
             const string paymentMode = "Cash";
+
             SalesCollectVM.Collect(testSalesTransaction, 0, remainingAmount, paymentMode);
-            var result1 = IsSalesTransactionInDatabaseFullyPaid(testSalesTransaction) && IsSalesReceiptLedgerTransactionRecordedInDatabase(testSalesTransaction);
+            var result1 = IsSalesTransactionInDatabaseFullyPaid(testSalesTransaction) &&
+                          IsSalesReceiptLedgerTransactionRecordedInDatabase(testSalesTransaction);
             Assert.AreEqual(result1, true);
+
             RevertCollection(testSalesTransaction, remainingAmount);
-            var result2 = IsSalesTransactionInDatabaseFullyPaid(testSalesTransaction) && IsSalesReceiptLedgerTransactionRecordedInDatabase(testSalesTransaction);
+            var result2 = IsSalesTransactionInDatabaseFullyPaid(testSalesTransaction) &&
+                          IsSalesReceiptLedgerTransactionRecordedInDatabase(testSalesTransaction);
             Assert.AreEqual(result2, false);
+
         }
 
         private static void RevertCollection(SalesTransaction salesTransaction, decimal remainingAmount)
@@ -34,23 +44,26 @@
             {
                 var context = new ERPContext();
 
-                DatabaseSalesTransactionHelper.AttachToDatabaseContext(context, ref salesTransaction);
+                salesTransaction =
+                    context.SalesTransactions
+                        .Single(transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
                 salesTransaction.Paid -= remainingAmount;
 
                 var ledgerTransaction =
-                    DatabaseLedgerTransactionHelper.FirstOrDefault(
+                    context.Ledger_Transactions.SingleOrDefault(
                         transaction =>
                         transaction.Documentation.Equals(salesTransaction.SalesTransactionID) &&
                         transaction.Description.Equals("Sales Transaction Receipt"));
                 RemoveLedgerTransactionFromDatabaseContext(context, ledgerTransaction);
 
+                context.SaveChanges();
                 ts.Complete();
             }
         }
 
         private static void RemoveLedgerTransactionFromDatabaseContext(ERPContext context, LedgerTransaction ledgerTransaction)
         {
-            DatabaseLedgerTransactionHelper.AttachToObjectFromDatabaseContext(context, ref ledgerTransaction);
+            context.Entry(ledgerTransaction).State = EntityState.Modified;
             foreach (var transactionLine in ledgerTransaction.LedgerTransactionLines.ToList())
                 context.Ledger_Transaction_Lines.Remove(transactionLine); 
             context.Ledger_Transactions.Remove(ledgerTransaction);
@@ -59,20 +72,26 @@
 
         private static bool IsSalesTransactionInDatabaseFullyPaid(SalesTransaction salesTransaction)
         {
-            var salesTransactionFromDatabase =
-                DatabaseSalesTransactionHelper.FirstOrDefault(
-                    transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
-            return salesTransactionFromDatabase.NetTotal - salesTransactionFromDatabase.Paid == 0;
+            using (var context = new ERPContext())
+            {
+                var salesTransactionFromDatabase =
+                    context.SalesTransactions.Single(
+                        transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
+                return salesTransactionFromDatabase.NetTotal - salesTransactionFromDatabase.Paid == 0;
+            }
         }
 
         private static bool IsSalesReceiptLedgerTransactionRecordedInDatabase(SalesTransaction salesTransaction)
         {
-            var ledgerTransaction =
-                DatabaseLedgerTransactionHelper.FirstOrDefault(
-                    transaction =>
-                    transaction.Documentation.Equals(salesTransaction.SalesTransactionID) &&
-                    transaction.Description.Equals("Sales Transaction Receipt"));
-            return ledgerTransaction != null;
+            using (var context = new ERPContext())
+            {
+                var ledgerTransaction =
+                    context.Ledger_Transactions.FirstOrDefault(
+                        transaction =>
+                            transaction.Documentation.Equals(salesTransaction.SalesTransactionID) &&
+                            transaction.Description.Equals("Sales Transaction Receipt"));
+                return ledgerTransaction != null;
+            }
         }
     }
 }

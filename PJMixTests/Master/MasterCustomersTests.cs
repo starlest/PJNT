@@ -2,12 +2,13 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PutraJayaNT.Models.Customer;
 using PutraJayaNT.Utilities;
-using PutraJayaNT.Utilities.Database.Customer;
 using PutraJayaNT.Utilities.ModelHelpers;
 using PutraJayaNT.ViewModels.Master.Customers;
 
 namespace PJMixTests.Master
 {
+    using Database.Customer;
+
     [TestClass]
     public class MasterCustomersTests
     {

@@ -1,9 +1,4 @@
-﻿using System;
-using PutraJayaNT.Utilities.Database;
-using PutraJayaNT.Utilities.Database.Item;
-using PutraJayaNT.Utilities.Database.Stock;
-
-namespace PutraJayaNT.ViewModels.Reports
+﻿namespace PutraJayaNT.ViewModels.Reports
 {
     using MVVMFramework;
     using Models;
@@ -15,8 +10,8 @@ namespace PutraJayaNT.ViewModels.Reports
     using System.Windows.Input;
     using Inventory;
     using Suppliers;
-    using Utilities.Database.Supplier;
-    using Utilities.Database.Warehouse;
+    using Utilities;
+    using System;
 
     public class InventoryReportVM : ViewModelBase
     {
@@ -188,13 +183,15 @@ namespace PutraJayaNT.ViewModels.Reports
             var oldSelectedWarehouse = _selectedWarehouse;
 
             Warehouses.Clear();
-
             var allWarehouse = new Warehouse { ID = -1, Name = "All" };
             Warehouses.Add(new WarehouseVM { Model = allWarehouse });
 
-            var warehousesFromDatabase = DatabaseWarehouseHelper.GetAll().OrderBy(warehouse => warehouse.Name);
-            foreach (var warehouse in warehousesFromDatabase)
-                Warehouses.Add(new WarehouseVM { Model = warehouse });
+            using (var context = new ERPContext())
+            {
+                var warehousesFromDatabase = context.Warehouses.OrderBy(warehouse => warehouse.Name);
+                foreach (var warehouse in warehousesFromDatabase)
+                    Warehouses.Add(new WarehouseVM {Model = warehouse});
+            }
 
             UpdateSelectedWarehouse(oldSelectedWarehouse);
         }
@@ -213,9 +210,12 @@ namespace PutraJayaNT.ViewModels.Reports
             var allCategory = new Category {ID = -1, Name = "All"};
             Categories.Add(new CategoryVM { Model = allCategory });
 
-            var categoriesFromDatabase = DatabaseItemCategoryHelper.GetAll();
-            foreach (var category in categoriesFromDatabase)
-                Categories.Add(new CategoryVM { Model = category });
+            using (var context = new ERPContext())
+            {
+                var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
+                foreach (var category in categoriesFromDatabase)
+                    Categories.Add(new CategoryVM {Model = category});
+            }
 
             UpdateSelectedCategory(oldSelectedCategory);
         }
@@ -233,10 +233,15 @@ namespace PutraJayaNT.ViewModels.Reports
             Suppliers.Clear();
             Suppliers.Add(new SupplierVM { Model = new Supplier { ID = -1, Name = "All" } });
 
-            var suppliersFromDatabase = DatabaseSupplierHelper.GetAll();
-            foreach (var supplier in suppliersFromDatabase.Where(supplier => supplier.Active.Equals(_isSupplierActiveChecked)))
-                Suppliers.Add(new SupplierVM {Model = supplier});
-            
+            using (var context = new ERPContext())
+            {
+                var suppliersFromDatabase = context.Suppliers.Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name);
+                foreach (
+                    var supplier in
+                        suppliersFromDatabase.Where(supplier => supplier.Active.Equals(_isSupplierActiveChecked)))
+                    Suppliers.Add(new SupplierVM {Model = supplier});
+            }
+
             UpdateSelectedSupplier(oldSelectedSupplier);
         }
 
@@ -254,9 +259,12 @@ namespace PutraJayaNT.ViewModels.Reports
 
             var searchCondition = _selectedCategory != null ? GetSearchConditionAccordingToSelectedCategory() : GetSearchConditionAccordingToSelectedSupplier();
 
-            var itemsFromDatabase = DatabaseItemHelper.Get(searchCondition);
-            foreach (var item in itemsFromDatabase)
-                ListedItems.Add(new ItemVM { Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault() });
+            using (var context = new ERPContext())
+            {
+                var itemsFromDatabase = context.Inventory.Include("Category").Include("Suppliers").Where(searchCondition).OrderBy(item => item.Name);
+                foreach (var item in itemsFromDatabase)
+                    ListedItems.Add(new ItemVM {Model = item, SelectedSupplier = item.Suppliers.FirstOrDefault()});
+            }
         }
 
         private Func<Item, bool> GetSearchConditionAccordingToSelectedCategory()
@@ -277,55 +285,62 @@ namespace PutraJayaNT.ViewModels.Reports
         {
             DisplayedLines.Clear();
 
-            if (_selectedWarehouse.Name.Equals("All") && _selectedItem.Name.Equals("All"))
-                DisplayAllItems();
+            using (var context = new ERPContext())
+            {
+                if (_selectedWarehouse.Name.Equals("All") && _selectedItem.Name.Equals("All"))
+                    DisplayAllItems(context);
 
-            else if (_selectedWarehouse.Name.Equals("All") && !_selectedItem.Name.Equals("All"))
-                DisplaySelectedItemFromAllWarehouses();
+                else if (_selectedWarehouse.Name.Equals("All") && !_selectedItem.Name.Equals("All"))
+                    DisplaySelectedItemFromAllWarehouses(context);
 
-            else if (!_selectedWarehouse.Name.Equals("All") && _selectedItem.Name.Equals("All"))
-                DisplayListedItemsFromSelectedWarehouse();
+                else if (!_selectedWarehouse.Name.Equals("All") && _selectedItem.Name.Equals("All"))
+                    DisplayListedItemsFromSelectedWarehouse(context);
 
-            else
-                DisplaySelectedItemFromSelectedWarehouse();
+                else
+                    DisplaySelectedItemFromSelectedWarehouse(context);
+            }
 
             UpdateUITotal();
         }
 
-        private void DisplayAllItems()
+        private void DisplayAllItems(ERPContext context)
         {
-            foreach (var item in ListedItems)
-            {
-                if (item.Name.Equals("All")) continue;
-                var line = new InventoryReportLineVM(item.Model);
-                var stocks = DatabaseStockHelper.Get(stock => stock.ItemID.Equals(item.ID)).ToList();
-                if (stocks.Count > 0)
+                foreach (var item in ListedItems)
                 {
-                    foreach (var stock in stocks)
-                        line.Quantity += stock.Pieces;
+                    if (item.Name.Equals("All")) continue;
+                    var line = new InventoryReportLineVM(item.Model);
+
+                    var stocks = context.Stocks.Where(stock => stock.ItemID.Equals(item.ID));
+                    if (stocks.Any())
+                    {
+                        foreach (var stock in stocks)
+                            line.Quantity += stock.Pieces;
+                    }
+
+                    DisplayedLines.Add(line);
                 }
-                DisplayedLines.Add(line);
-            }
         }
 
-        private void DisplaySelectedItemFromAllWarehouses()
+        private void DisplaySelectedItemFromAllWarehouses(ERPContext context)
         {
             var line = new InventoryReportLineVM(_selectedItem.Model);
-            var stocks = DatabaseStockHelper.Get(stock => stock.ItemID.Equals(_selectedItem.ID)).ToList();
-            if (stocks.Count == 0) return;
-            foreach (var stock in stocks)
-                line.Quantity += stock.Pieces;          
+            var stocks = context.Stocks.Where(stock => stock.ItemID.Equals(_selectedItem.ID));
+            if (stocks.Any())
+            {
+                foreach (var stock in stocks)
+                    line.Quantity += stock.Pieces;
+            }
             DisplayedLines.Add(line);
         }
 
-        private void DisplayListedItemsFromSelectedWarehouse()
+        private void DisplayListedItemsFromSelectedWarehouse(ERPContext context)
         {
             foreach (var item in ListedItems)
             {
                 if (item.Name.Equals("All")) continue;
                 var line = new InventoryReportLineVM(item.Model);
-                var stocks = DatabaseStockHelper.Get(stock => stock.ItemID.Equals(item.ID) && stock.WarehouseID.Equals(_selectedWarehouse.ID)).ToList();
-                if (stocks.Count > 0)
+                var stocks = context.Stocks.Where(stock => stock.ItemID.Equals(item.ID) && stock.WarehouseID.Equals(_selectedWarehouse.ID));
+                if (stocks.Any())
                 {
                     foreach (var stock in stocks)
                         line.Quantity += stock.Pieces;
@@ -334,13 +349,15 @@ namespace PutraJayaNT.ViewModels.Reports
             }
         }
 
-        private void DisplaySelectedItemFromSelectedWarehouse()
+        private void DisplaySelectedItemFromSelectedWarehouse(ERPContext context)
         {
             var line = new InventoryReportLineVM(_selectedItem.Model);
-            var stocks = DatabaseStockHelper.Get(stock => stock.ItemID.Equals(_selectedItem.ID) && stock.WarehouseID.Equals(_selectedWarehouse.ID)).ToList();
-            if (stocks.Count == 0) return;
-            foreach (var stock in stocks)
-                line.Quantity += stock.Pieces;
+            var stocks = context.Stocks.Where(stock => stock.ItemID.Equals(_selectedItem.ID) && stock.WarehouseID.Equals(_selectedWarehouse.ID));
+            if (stocks.Any())
+            {
+                foreach (var stock in stocks)
+                    line.Quantity += stock.Pieces;
+            }
             DisplayedLines.Add(line);
         }
 

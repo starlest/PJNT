@@ -1,10 +1,7 @@
-﻿using PutraJayaNT.Utilities.Database.Customer;
-using PutraJayaNT.Utilities.Database.Ledger;
-using PutraJayaNT.Utilities.Database.Sales;
-
-namespace PutraJayaNT.ViewModels.Customers
+﻿namespace PutraJayaNT.ViewModels.Customers
 {
     using System.Collections.ObjectModel;
+    using System.Data.Entity;
     using System.Linq;
     using System.Transactions;
     using System.Windows;
@@ -190,9 +187,12 @@ namespace PutraJayaNT.ViewModels.Customers
             var oldSelectedCustomer = _selectedCustomer;
 
             Customers.Clear();
-            var customersFromDatabase = DatabaseCustomerHelper.GetAll();
-            foreach (var customer in customersFromDatabase)
-                Customers.Add(new CustomerVM { Model = customer });
+            using (var context = new ERPContext())
+            {
+                var customersFromDatabase = context.Customers.OrderBy(customer => customer.Name);
+                foreach (var customer in customersFromDatabase)
+                    Customers.Add(new CustomerVM {Model = customer});
+            }
 
             UpdateSelectedCustomer(oldSelectedCustomer);
         }
@@ -211,11 +211,16 @@ namespace PutraJayaNT.ViewModels.Customers
             PaymentModes.Clear();
             PaymentModes.Add("Cash");
 
-            var banksFromDatabase =
-                DatabaseLedgerAccountHelper.GetWithoutLines(ledgerAccount => ledgerAccount.Name.Contains("Bank") && !ledgerAccount.Name.Contains("Expense"));
+            using (var context = new ERPContext())
+            {
+                var banksFromDatabase =
+                    context.Ledger_Accounts.Where(
+                        ledgerAccount => ledgerAccount.Name.Contains("Bank") && !ledgerAccount.Name.Contains("Expense"))
+                        .OrderBy(account => account.Name);
 
-            foreach (var bank in banksFromDatabase)
-                PaymentModes.Add(bank.Name);
+                foreach (var bank in banksFromDatabase)
+                    PaymentModes.Add(bank.Name);
+            }
 
             UpdateSelectedPaymentMode(oldSelectedPaymentMode);
         }
@@ -291,7 +296,7 @@ namespace PutraJayaNT.ViewModels.Customers
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext();
-                DatabaseSalesTransactionHelper.AttachToDatabaseContext(context, ref salesTransaction);
+                context.Entry(salesTransaction).State = EntityState.Modified;
                 salesTransaction.Paid += collectionAmount + creditsUsed;
                 salesTransaction.Customer.SalesReturnCredits -= creditsUsed;
                 SaveCollectionLedgerTransactionInDatabase(context, salesTransaction, collectionAmount, paymentMode);

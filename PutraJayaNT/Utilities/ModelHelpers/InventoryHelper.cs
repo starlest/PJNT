@@ -2,6 +2,7 @@
 {
     using System.Linq;
     using System.Transactions;
+    using System.Windows;
     using Database.Item;
     using Database.Supplier;
     using Models.Inventory;
@@ -10,10 +11,22 @@
     {
         public static void AddItemToDatabase(Item item)
         {
-            using (var context = new ERPContext())
+            var success = true;
+            var context = new ERPContext();
+            try
             {
                 AddItemToDatabaseContext(context, item);
                 context.SaveChanges();
+            }
+            catch
+            {
+                success = false;
+                MessageBox.Show("The item ID is already being used.", "Invalid ID", MessageBoxButton.OK);
+            }
+            finally
+            {
+                if (success)
+                    MessageBox.Show("Successfully added item!", "Success", MessageBoxButton.OK);
             }
         }
 
