@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Utilities.Database.Item
+﻿namespace PJMixTests.Database.Item
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Models.Inventory;
-    using Utilities;
+    using PutraJayaNT.Models.Inventory;
+    using PutraJayaNT.Utilities;
 
     public static class DatabaseItemCategoryHelper
     {

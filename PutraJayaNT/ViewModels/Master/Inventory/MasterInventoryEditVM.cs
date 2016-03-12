@@ -8,8 +8,6 @@
     using Models;
     using Models.Inventory;
     using Utilities;
-    using Utilities.Database.Customer;
-    using Utilities.Database.Item;
     using Customer;
     using ViewModels.Inventory;
     using Item;
@@ -201,10 +199,7 @@
         {
             EditID = EditingItem.ID;
             EditName = EditingItem.Name;
-            EditCategory = new CategoryVM
-            {
-                Model = DatabaseItemCategoryHelper.FirstOrDefault(category => category.ID.Equals(EditingItem.Category.ID))
-            };
+            EditCategory = Categories.SingleOrDefault(category => category.ID.Equals(EditingItem.Category.ID));
             EditSalesPrice = EditingItem.SalesPrice;
             EditPurchasePrice = EditingItem.PurchasePrice;
             EditUnitName = EditingItem.UnitName;
@@ -217,18 +212,24 @@
 
         private void UpdateCustomerGroups()
         {
-            var customerGroupsFromDatabase = DatabaseCustomerGroupHelper.GetAll();
             CustomerGroups.Clear();
-            foreach (var group in customerGroupsFromDatabase)
-                CustomerGroups.Add(new CustomerGroupVM { Model= group });
+            using (var context = new ERPContext())
+            {
+                var customerGroupsFromDatabase = context.CustomerGroups;
+                foreach (var group in customerGroupsFromDatabase)
+                    CustomerGroups.Add(new CustomerGroupVM {Model = group});
+            }
         }
 
         private void UpdateCategories()
         {
-            var categoriesFromDatabase = DatabaseItemCategoryHelper.GetAll();
             Categories.Clear();
-            foreach (var category in categoriesFromDatabase)
-                Categories.Add(new CategoryVM { Model = category });
+            using (var context = new ERPContext())
+            {
+                var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
+                foreach (var category in categoriesFromDatabase)
+                    Categories.Add(new CategoryVM {Model = category});
+            }
         }
 
         private void UpdateEditSuppliers()
@@ -240,10 +241,14 @@
 
         private void UpdateEditAlternativeSalesPrices()
         {
-            var editItemAlternativeSalesPrices = DatabaseItemAlternativeSalesPriceHelper.Get(altSalesPrice => altSalesPrice.ItemID.Equals(EditingItem.ID));
             EditAlternativeSalesPrices.Clear();
-            foreach (var alternateSalesPrice in editItemAlternativeSalesPrices)
-                EditAlternativeSalesPrices.Add(new AlternativeSalesPriceVM { Model = alternateSalesPrice });
+            using (var context = new ERPContext())
+            {
+                var editItemAlternativeSalesPrices = context.AlternativeSalesPrices
+                    .Where(altSalesPrice => altSalesPrice.ItemID.Equals(EditingItem.ID));
+                foreach (var alternateSalesPrice in editItemAlternativeSalesPrices)
+                    EditAlternativeSalesPrices.Add(new AlternativeSalesPriceVM {Model = alternateSalesPrice});
+            }
         }
 
         private bool IsEditAlternativeSalesPriceSelected()
@@ -289,7 +294,7 @@
         {
             var editedItem = MakeEditedItem();
             var itemTo = EditingItem.Model;
-            InventoryHelper.DeepCopyItemProperties(editedItem, ref itemTo);
+            InventoryHelper.DeepCopyItemProperties(editedItem, itemTo);
             EditingItem.Suppliers.Clear();
             foreach (var supplier in EditSuppliers)
                 EditingItem.Suppliers.Add(supplier.Model);

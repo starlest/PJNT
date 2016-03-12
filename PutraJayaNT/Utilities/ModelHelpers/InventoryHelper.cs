@@ -40,7 +40,7 @@
             }
         }
 
-        public static void DeepCopyItemProperties(Item fromItem, ref Item toItem)
+        public static void DeepCopyItemProperties(Item fromItem, Item toItem)
         {
             toItem.Name = fromItem.Name;
             toItem.Category = fromItem.Category;
@@ -76,22 +76,10 @@
         #region Edit Item Helper Methods
         private static void SaveItemEditsToDatabaseContext(ERPContext context, Item editingItem, Item editedItem)
         {
-            DatabaseItemHelper.AttachToObjectFromDatabaseContext(context, ref editingItem);
-
-            DeepCopyItemProperties(editedItem, ref editingItem);
-            var categoryToBeAttached = editingItem.Category;
-            DatabaseItemCategoryHelper.AttachToObjectFromDatabaseContext(context, ref categoryToBeAttached);
-            editingItem.Category = categoryToBeAttached;
-
-            // Assign and attach to Database Context editedItem's suppliers to editingItem's 
-            var editingSuppliers = editingItem.Suppliers;
-            editingItem.Suppliers.ToList().ForEach(supplier => editingSuppliers.Remove(supplier));
-            foreach (var supplier in editedItem.Suppliers.ToList())
-            {
-                var supplierToBeAttached = supplier;
-                DatabaseSupplierHelper.AttachToDatabaseContext(context, ref supplierToBeAttached);
-                editingItem.Suppliers.Add(supplierToBeAttached);
-            }
+            editingItem = context.Inventory.First(item => item.ItemID.Equals(editingItem.ItemID));
+            DeepCopyItemProperties(editedItem, editingItem);
+            editingItem.Category = context.ItemCategories.First(category => category.ID.Equals(editingItem.Category.ID));
+            AssignEditedItemSuppliersToEditingSupplier(context, editingItem, editedItem);         
 
             // Assign and attach to Database Context editedItem's alternativeSalesPrices to editingItem's 
             var editingSalesPrices = editingItem.AlternativeSalesPrices;
@@ -104,6 +92,17 @@
 
             context.SaveChanges();
         }
+
+        private static void AssignEditedItemSuppliersToEditingSupplier(ERPContext context, Item editingItem, Item editedItem)
+        {
+            // Assign editedItem's suppliers to editingItem's 
+            var editingSuppliers = editingItem.Suppliers;
+            editingItem.Suppliers.ToList().ForEach(supplier => editingSuppliers.Remove(supplier));
+            foreach (var attachedSupplier in editedItem.Suppliers.ToList()
+                .Select(supplierToBeAdded => context.Suppliers.First(supplier => supplier.ID.Equals(supplierToBeAdded.ID))))
+                editingItem.Suppliers.Add(attachedSupplier);
+        }
+
         #endregion
     }
 }

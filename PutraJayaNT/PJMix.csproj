@@ -91,10 +91,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\Database\Customer\DatabaseCustomerGroupHelper.cs" />
-    <Compile Include="Utilities\Database\Customer\DatabaseCustomerHelper.cs" />
-    <Compile Include="Utilities\Database\Item\DatabaseItemAlternativeSalesPriceHelper.cs" />
-    <Compile Include="Utilities\Database\Item\DatabaseItemCategoryHelper.cs" />
     <Compile Include="Utilities\Database\Item\DatabaseItemHelper.cs" />
     <Compile Include="Utilities\Database\Ledger\DatabaseLedgerAccountHelper.cs" />
     <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionHelper.cs" />

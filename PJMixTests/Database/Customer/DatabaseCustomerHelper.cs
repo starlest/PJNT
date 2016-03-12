@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Utilities.Database.Customer
+﻿namespace PJMixTests.Database.Customer
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Models.Customer;
-    using Utilities;
+    using PutraJayaNT.Models.Customer;
+    using PutraJayaNT.Utilities;
 
     public static class DatabaseCustomerHelper
     {
@@ -20,19 +20,18 @@
                 return context.Customers.Include("Group").Where(condition).OrderBy(customer => customer.Name).ToList();
         }
 
-        public static Customer FirstOrDefault(Func<Customer, bool> condition)
+        public static PutraJayaNT.Models.Customer.Customer FirstOrDefault(Func<Customer, bool> condition)
         {
             using (var context = new ERPContext())
                 return context.Customers.Include("Group").Where(condition).FirstOrDefault();
         }
 
-        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref Customer customerToBeAttached)
+        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref PutraJayaNT.Models.Customer.Customer customerToBeAttached)
         {
             var customerID = customerToBeAttached.ID;
             var customerGroupID = customerToBeAttached.Group.ID;
             customerToBeAttached = context.Customers.First(customer => customer.ID.Equals(customerID));
-            customerToBeAttached.Group =
-                context.CustomerGroups.First(customerGroup => customerGroup.ID.Equals(customerGroupID));
+            customerToBeAttached.Group = context.CustomerGroups.First(customerGroup => customerGroup.ID.Equals(customerGroupID));
         }
     }
 }
