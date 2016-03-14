@@ -1,21 +1,17 @@
-﻿namespace PutraJayaNT.Utilities.Database.Salesman
+﻿namespace PJMixTests.Database.Salesman
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Models.Salesman;
-    using Utilities;
+    using PutraJayaNT.Models.Salesman;
+    using PutraJayaNT.Utilities;
 
     public static class DatabaseSalesmanHelper
     {
         public static IEnumerable<Salesman> GetAll()
         {
             using (var context = new ERPContext())
-                return
-                    context.Salesmans.Include("SalesCommissions")
-                        .Where(salesman => !salesman.Name.Equals(" "))
-                        .OrderBy(salesman => salesman.Name)
-                        .ToList();
+                return context.Salesmans.Include("SalesCommissions").Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name).ToList();
         }
 
         public static IEnumerable<Salesman> GetAllIncludingEmptySalesman()
@@ -27,12 +23,7 @@
         public static IEnumerable<Salesman> Get(Func<Salesman, bool> condition)
         {
             using (var context = new ERPContext())
-                return
-                    context.Salesmans.Include("SalesCommissions")
-                        .Where(condition)
-                        .Where(salesman => !salesman.Name.Equals(" "))
-                        .OrderBy(salesman => salesman.Name)
-                        .ToList();
+                return context.Salesmans.Include("SalesCommissions").Where(condition).Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name).ToList();
         }
 
         public static Salesman FirstOrDefault(Func<Salesman, bool> condition)

@@ -3,8 +3,6 @@
     using System.Linq;
     using System.Transactions;
     using System.Windows;
-    using Database.Item;
-    using Database.Supplier;
     using Models.Inventory;
 
     public static class InventoryHelper

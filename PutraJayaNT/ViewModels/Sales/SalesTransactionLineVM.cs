@@ -54,6 +54,7 @@
             set
             {
                 Model.Quantity = value;
+                // TODO Remove this
                 UpdateTotal();
                 OnPropertyChanged("Quantity");
                 OnPropertyChanged("Pieces");
@@ -143,7 +144,7 @@
             return discount;
         }
 
-        private void UpdateTotal()
+        public void UpdateTotal()
         {
             Total = (Model.SalesPrice - Model.Discount) * Model.Quantity;
         }

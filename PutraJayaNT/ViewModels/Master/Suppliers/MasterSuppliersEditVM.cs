@@ -92,7 +92,7 @@
         {
             var editedSupplier = MakeEditedSupplier();
             var supplierTo = _editingSupplier.Model;
-            SupplierHelper.DeepCopySupplierProperties(editedSupplier, ref supplierTo);
+            SupplierHelper.DeepCopySupplierProperties(editedSupplier, supplierTo);
             _editingSupplier.UpdatePropertiesToUI();
         }
         #endregion

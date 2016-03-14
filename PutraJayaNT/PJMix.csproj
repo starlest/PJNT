@@ -91,24 +91,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\Database\Item\DatabaseItemHelper.cs" />
-    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerAccountHelper.cs" />
-    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionHelper.cs" />
-    <Compile Include="Utilities\Database\Ledger\DatabaseLedgerTransactionLineHelper.cs" />
-    <Compile Include="Utilities\Database\Purchase\DatabasePurchaseReturnTransactionLineHelper.cs" />
-    <Compile Include="Utilities\Database\Purchase\DatabasePurchaseTransactionLineHelper.cs" />
-    <Compile Include="Utilities\Database\Salesman\DatabaseSalesCommissionHelper.cs" />
-    <Compile Include="Utilities\Database\Salesman\DatabaseSalesmanHelper.cs" />
-    <Compile Include="Utilities\Database\Sales\DatabaseSalesReturnTransactionHelper.cs" />
-    <Compile Include="Utilities\Database\Sales\DatabaseSalesReturnTransactionLineHelper.cs" />
-    <Compile Include="Utilities\Database\Sales\DatabaseSalesTransactionHelper.cs" />
-    <Compile Include="Utilities\Database\Sales\DatabaseSalesTransactionLineHelper.cs" />
-    <Compile Include="Utilities\Database\Stock\DatabaseStockAdjustmentTransactionLineHelper.cs" />
-    <Compile Include="Utilities\Database\Stock\DatabaseStockBalanceHelper.cs" />
-    <Compile Include="Utilities\Database\Stock\DatabaseStockHelper.cs" />
-    <Compile Include="Utilities\Database\Stock\DatabaseStockMovementTransactionHelper.cs" />
-    <Compile Include="Utilities\Database\Supplier\DatabaseSupplierHelper.cs" />
-    <Compile Include="Utilities\Database\Warehouse\DatabaseWarehouseHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesmanHelper.cs" />
@@ -116,6 +98,7 @@
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionLineHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SupplierHelper.cs" />
     <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
+    <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
     <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
@@ -248,7 +231,7 @@
     <Compile Include="ViewModels\Sales\SalesReturnTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnVM.cs" />
     <Compile Include="ViewModels\Sales\SalesTransactionLineVM.cs" />
-    <Compile Include="ViewModels\Customers\SalesVM.cs" />
+    <Compile Include="ViewModels\Customers\Sales\SalesVM.cs" />
     <Compile Include="ViewModels\Customer\CustomerVM.cs" />
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionLineVM.cs" />
     <Compile Include="ViewModels\Inventory\AdjustStockTransactionVM.cs" />
@@ -330,8 +313,8 @@
     <Compile Include="Views\Customers\SalesReturnView.xaml.cs">
       <DependentUpon>SalesReturnView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Customers\SalesTransactionView.xaml.cs">
-      <DependentUpon>SalesTransactionView.xaml</DependentUpon>
+    <Compile Include="Views\Customers\SalesView.xaml.cs">
+      <DependentUpon>SalesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Inventory\CloseStockView.xaml.cs">
       <DependentUpon>CloseStockView.xaml</DependentUpon>
@@ -534,7 +517,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Customers\SalesTransactionView.xaml">
+    <Page Include="Views\Customers\SalesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

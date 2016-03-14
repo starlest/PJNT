@@ -14,7 +14,7 @@
     using PutraJayaNT.Reports.Windows;
     using Salesman;
     using Utilities;
-    using Sales;
+    using ViewModels.Sales;
 
     public class SalesCollectionListVM : ViewModelBase
     {

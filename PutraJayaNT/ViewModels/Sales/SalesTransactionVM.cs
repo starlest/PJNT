@@ -5,13 +5,12 @@
     using Models;
     using Models.Sales;
     using Utilities;
-    using Utilities.Database.Sales;
-    using Utilities.Database.Salesman;
     using Models.Salesman;
     using Models.Customer;
     using System.Collections.ObjectModel;
+    using System.Linq;
 
-    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class SalesTransactionVM : ViewModelBase<SalesTransaction>
     {
         private bool _isSelected;
@@ -66,20 +65,21 @@
 
         private void UpdateCollectionSalesmans()
         {
-            var collectionSalesmansFromDatabase = DatabaseSalesmanHelper.GetAllIncludingEmptySalesman();
-            foreach (var salesman in collectionSalesmansFromDatabase)
-                CollectionSalesmans.Add(salesman);
+            using (var context = new ERPContext())
+            {
+                var collectionSalesmansFromDatabase = context.Salesmans.OrderBy(salesman => salesman.Name);
+                foreach (var salesman in collectionSalesmansFromDatabase)
+                    CollectionSalesmans.Add(salesman);
+            }
         }
 
         private void SaveCollectionSalesmanToTransactionInDatabase()
         {
             using (var context = new ERPContext())
             {
-                var transaction = Model;
-                var collectionSalesmanToBeAttached = Model.CollectionSalesman;
-                DatabaseSalesTransactionHelper.AttachToDatabaseContext(context, ref transaction);
-                DatabaseSalesmanHelper.AttachToDatabaseContext(context, ref collectionSalesmanToBeAttached);
-                transaction.CollectionSalesman = collectionSalesmanToBeAttached;
+                var transactionFromDatabase = context.SalesTransactions.Single(transaction => transaction.SalesTransactionID.Equals(Model.SalesTransactionID));
+                context.Salesmans.Attach(CollectionSalesman);
+                transactionFromDatabase.CollectionSalesman = CollectionSalesman;
                 context.SaveChanges();
             }
         }

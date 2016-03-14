@@ -4,11 +4,12 @@ using System.Windows.Input;
 using MVVMFramework;
 using PutraJayaNT.Models.Salesman;
 using PutraJayaNT.Utilities;
-using PutraJayaNT.Utilities.Database.Salesman;
 using PutraJayaNT.ViewModels.Salesman;
 
 namespace PutraJayaNT.ViewModels.Master.Salesmans
 {
+    using System.Linq;
+
     public class MasterSalesmansEditVM : ViewModelBase
     {
         private decimal _editPercentage;
@@ -72,15 +73,19 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
             };
         }
 
-        private static void DeepCopySalesCommissionProperties(SalesCommission fromSalesCommission, ref SalesCommission toSalesCommission)
+        private static void DeepCopySalesCommissionProperties(SalesCommission fromSalesCommission, SalesCommission toSalesCommission)
         {
             toSalesCommission.Percentage = fromSalesCommission.Percentage;
         }
 
         private static void SaveSalesCommissionEditsToDatabaseContext(ERPContext context, SalesCommission editingSalesCommission, SalesCommission editedSalesCommission)
         {
-            DatabaseSalesmanCommisionHelper.AttachToDatabaseContext(context, ref editingSalesCommission);
-            if (editingSalesCommission != null) DeepCopySalesCommissionProperties(editedSalesCommission, ref editingSalesCommission);
+            editingSalesCommission =
+                context.SalesCommissions.SingleOrDefault(
+                    commission =>
+                        commission.Salesman_ID.Equals(editingSalesCommission.Salesman.ID) &&
+                        commission.Category_ID.Equals(editingSalesCommission.Category.ID));
+            if (editingSalesCommission != null) DeepCopySalesCommissionProperties(editedSalesCommission, editingSalesCommission);
             else context.SalesCommissions.Add(editedSalesCommission);
             context.SaveChanges();
         }
@@ -99,7 +104,7 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
         {
             var editedSalesCommission = MakeEditedSalesCommission();
             var salesCommissionTo = EditingSalesCommission.Model;
-            DeepCopySalesCommissionProperties(editedSalesCommission, ref salesCommissionTo);
+            DeepCopySalesCommissionProperties(editedSalesCommission, salesCommissionTo);
             EditingSalesCommission.UpdatePropertiesToUI();
         }
         #endregion

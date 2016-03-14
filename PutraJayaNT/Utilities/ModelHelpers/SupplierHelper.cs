@@ -1,11 +1,12 @@
 ﻿using System.Transactions;
 using PutraJayaNT.Models;
 using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities.Database.Supplier;
 using System.Linq;
 
 namespace PutraJayaNT.Utilities.ModelHelpers
 {
+    using System.Data.Entity;
+
     public static class SupplierHelper
     {
         public static void AddSupplierAlongWithItsLedgerToDatabase(Supplier supplier)
@@ -30,7 +31,7 @@ namespace PutraJayaNT.Utilities.ModelHelpers
             }
         }
 
-        public static void DeepCopySupplierProperties(Supplier fromSupplier, ref Supplier toSupplier)
+        public static void DeepCopySupplierProperties(Supplier fromSupplier, Supplier toSupplier)
         {
             toSupplier.Active = fromSupplier.Active;
             toSupplier.Name = fromSupplier.Name;
@@ -103,8 +104,8 @@ namespace PutraJayaNT.Utilities.ModelHelpers
         private static void SaveSupplierEditsToDatabaseContext(ERPContext context, Supplier editingSupplier,
             Supplier editedSupplier)
         {
-            DatabaseSupplierHelper.AttachToDatabaseContext(context, ref editingSupplier);
-            DeepCopySupplierProperties(editedSupplier, ref editingSupplier);
+            context.Entry(editingSupplier).State = EntityState.Modified;
+            DeepCopySupplierProperties(editedSupplier, editingSupplier);
             context.SaveChanges();
         }
         #endregion

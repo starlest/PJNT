@@ -4,11 +4,10 @@
     using Models.Inventory;
     using Utilities;
     using System.Collections.ObjectModel;
+    using System.Data.Entity;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Utilities.Database.Item;
-    using Utilities.Database.Supplier;
     using ViewModels.Inventory;
     using ViewModels.Suppliers;
     using Views.Master.Inventory;
@@ -139,7 +138,7 @@
                     if (!IsThereLineSelected() || !IsConfirmationYes()) return;
                     if (_selectedLine.Active) DeactivateItemInDatabase(_selectedLine.Model);
                     else ActivateItemInDatabase(_selectedLine.Model);
-                    _selectedLine.Active = !_selectedLine.Active;
+                    _selectedLine.Active = !IsActiveChecked;
                 }));
             }
         }
@@ -235,9 +234,13 @@
             var oldSelectedSupplier = _selectedSupplier;
 
             Suppliers.Clear();
-            var suppliersFromDatabase = DatabaseSupplierHelper.GetAll();
-            foreach (var supplier in suppliersFromDatabase)
-                Suppliers.Add(new SupplierVM { Model= supplier });
+            using (var context = new ERPContext())
+            {
+                var suppliersFromDatabase =
+                    context.Suppliers.Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name);
+                foreach (var supplier in suppliersFromDatabase)
+                    Suppliers.Add(new SupplierVM {Model = supplier});
+            }
 
             UpdateSelectedSupplier(oldSelectedSupplier);
         }
@@ -289,7 +292,7 @@
         {
             using (var context = new ERPContext())
             {
-                DatabaseItemHelper.AttachToObjectFromDatabaseContext(context, ref item);
+                context.Entry(item).State = EntityState.Modified;
                 item.Active = false;
                 context.SaveChanges();
             }
@@ -299,7 +302,7 @@
         {
             using (var context = new ERPContext())
             {
-                DatabaseItemHelper.AttachToObjectFromDatabaseContext(context, ref item);
+                context.Entry(item).State = EntityState.Modified;
                 item.Active = true;
                 context.SaveChanges();
             }

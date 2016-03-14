@@ -1,14 +1,11 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Input;
-using MVVMFramework;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.Utilities.Database;
-
-namespace PutraJayaNT.ViewModels.Master.Inventory
+﻿namespace PutraJayaNT.ViewModels.Master.Inventory
 {
-    using Utilities.Database.Supplier;
     using ViewModels.Suppliers;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows.Input;
+    using MVVMFramework;
+    using Utilities;
 
     public class MasterInventoryEditAddSupplierVM : ViewModelBase
     {
@@ -47,13 +44,19 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
         #region Helper Methods
         private void LoadSuppliersAvailableForAddition()
         {
-            var allSuppliersFromDatabase = DatabaseSupplierHelper.GetAll();
             SuppliersAvailableForAddition.Clear();
-            foreach (var supplier in from supplier in allSuppliersFromDatabase
-                                     let supplierVM = new SupplierVM { Model = supplier }
-                                     where !_editSuppliers.Contains(supplierVM)
-                                     select supplier)
-                SuppliersAvailableForAddition.Add(new SupplierVM { Model = supplier }); 
+            using (var context = new ERPContext())
+            {
+                var allSuppliersFromDatabase = context.Suppliers.Where(
+                    supplier => !supplier.Name.Equals("-"))
+                    .OrderBy(supplier => supplier.Name)
+                    .ToList();
+                foreach (var supplier in from supplier in allSuppliersFromDatabase
+                    let supplierVM = new SupplierVM {Model = supplier}
+                    where !_editSuppliers.Contains(supplierVM)
+                    select supplier)
+                    SuppliersAvailableForAddition.Add(new SupplierVM { Model = supplier });
+            }
         }
         #endregion
     }

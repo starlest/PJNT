@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Utilities.Database.Purchase
+﻿namespace PJMixTests.Database.Purchase
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Models.Purchase;
-    using Utilities;
+    using PutraJayaNT.Models.Purchase;
+    using PutraJayaNT.Utilities;
 
     public static class DatabasePurchaseTransactionLineHelper
     {

@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Utilities.Database.Warehouse
+﻿namespace PJMixTests.Database.Warehouse
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Models.Inventory;
-    using Utilities;
+    using PutraJayaNT.Models.Inventory;
+    using PutraJayaNT.Utilities;
 
     public static class DatabaseWarehouseHelper
     {

@@ -13,6 +13,7 @@
     using Customer;
     using Sales;
     using Utilities.ModelHelpers;
+    using ViewModels.Sales;
 
     public class SalesCollectVM : ViewModelBase
     {

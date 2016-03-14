@@ -8,6 +8,7 @@
     using System.Linq;
     using Utilities;
     using Utilities.ModelHelpers;
+    using ViewModels.Sales;
 
     public class SalesReturnNewEntryVM : ViewModelBase
     {

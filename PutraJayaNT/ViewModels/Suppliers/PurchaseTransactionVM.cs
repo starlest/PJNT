@@ -13,16 +13,14 @@
     using Models;
     using Models.Purchase;
     using System.Collections.Generic;
-    using Utilities.Database;
-    using Utilities.Database.Supplier;
     using Utilities.ModelHelpers;
 
     class PurchaseTransactionVM : ViewModelBase<PurchaseTransaction>
     {
-        ObservableCollection<PurchaseTransactionLineVM> _lines;
-        ObservableCollection<Supplier> _suppliers;
-        ObservableCollection<Item> _supplierItems;
-        ObservableCollection<Warehouse> _warehouses;
+        readonly ObservableCollection<PurchaseTransactionLineVM> _lines;
+        readonly ObservableCollection<Supplier> _suppliers;
+        readonly ObservableCollection<Item> _supplierItems;
+        readonly ObservableCollection<Warehouse> _warehouses;
 
         bool _notEditMode;
         bool _isTransactionNotPaid;
@@ -612,9 +610,15 @@
         private void UpdateSuppliers()
         {
             _suppliers.Clear();
-            var suppliers = DatabaseSupplierHelper.GetAll();
-            foreach (var supplier in suppliers)
-                _suppliers.Add(supplier);
+
+            using (var context = new ERPContext())
+            {
+                var suppliersFromDatabase = context.Suppliers.Where(
+                    supplier => !supplier.Name.Equals("-"))
+                    .OrderBy(supplier => supplier.Name);
+                foreach (var supplier in suppliersFromDatabase)
+                    _suppliers.Add(supplier);
+            }
         }
 
         private void UpdateWarehouses()

@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Utilities.Database.Sales
+﻿namespace PJMixTests.Database.Sales
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Models.Sales;
-    using Utilities;
+    using PutraJayaNT.Models.Sales;
+    using PutraJayaNT.Utilities;
 
     public static class DatabaseSalesReturnTransactionHelper
     {
@@ -27,7 +27,7 @@
                 return context.SalesReturnTransactions
                     .Include("SalesTransaction")
                     .Include("SalesTransaction.Customer")
-                    .Include("SalesReturnTransactionLines")
+                    .Include("SalesReturnTransactionLines") 
                     .Include("SalesReturnTransactionLines.Warehouse")
                     .Include("SalesReturnTransactionLines.Item")
                     .Where(condition)

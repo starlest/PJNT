@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Utilities.Database.Ledger
+﻿namespace PJMixTests.Database.Ledger
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Models.Accounting;
-    using Utilities;
+    using PutraJayaNT.Models.Accounting;
+    using PutraJayaNT.Utilities;
 
     public static class DatabaseLedgerTransactionHelper
     {
@@ -26,12 +26,10 @@
                 return context.Ledger_Transactions.Include("LedgerTransactionLines").Where(condition).FirstOrDefault();
         }
 
-        public static void AttachToObjectFromDatabaseContext(ERPContext context,
-            ref LedgerTransaction ledgerTransactionToBeAttached)
+        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref LedgerTransaction ledgerTransactionToBeAttached)
         {
             var ledgerTransactionID = ledgerTransactionToBeAttached.ID;
-            ledgerTransactionToBeAttached =
-                context.Ledger_Transactions.First(transaction => transaction.ID.Equals(ledgerTransactionID));
+            ledgerTransactionToBeAttached = context.Ledger_Transactions.First(transaction => transaction.ID.Equals(ledgerTransactionID));
         }
 
         public static IEnumerable<LedgerTransaction> GetWithoutLines(Func<LedgerTransaction, bool> condition)

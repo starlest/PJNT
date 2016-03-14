@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Utilities.Database.Ledger
+﻿namespace PJMixTests.Database.Ledger
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Models.Accounting;
-    using Utilities;
+    using PutraJayaNT.Models.Accounting;
+    using PutraJayaNT.Utilities;
 
     public static class DatabaseLedgerAccountHelper
     {
@@ -17,12 +17,7 @@
         public static IEnumerable<LedgerAccount> Get(Func<LedgerAccount, bool> condition)
         {
             using (var context = new ERPContext())
-                return
-                    context.Ledger_Accounts.Include("LedgerGeneral")
-                        .Include("LedgerAccountBalances")
-                        .Include("LedgerTransactionLines")
-                        .Where(condition)
-                        .ToList();
+                return context.Ledger_Accounts.Include("LedgerGeneral").Include("LedgerAccountBalances").Include("LedgerTransactionLines").Where(condition).ToList();
         }
 
         public static LedgerTransaction FirstOrDefault(Func<LedgerTransaction, bool> condition)
@@ -34,11 +29,7 @@
         public static IEnumerable<LedgerAccount> GetWithoutLines(Func<LedgerAccount, bool> condition)
         {
             using (var context = new ERPContext())
-                return
-                    context.Ledger_Accounts.Include("LedgerGeneral")
-                        .Include("LedgerAccountBalances")
-                        .Where(condition)
-                        .ToList();
+                return context.Ledger_Accounts.Include("LedgerGeneral").Include("LedgerAccountBalances").Where(condition).ToList();
         }
     }
 }
