@@ -384,7 +384,6 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     .Include("Warehouse")
                     .Include("PurchaseTransaction.Supplier")
                     .Include("Item")
-                    .Include("Item.Stocks")
                     .ToList();
 
                 if (lines.Count > 0) found = true;

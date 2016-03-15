@@ -1,12 +1,11 @@
-﻿using PutraJayaNT.Models.Sales;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PutraJayaNT.Models.Inventory
 {
     [Table("Inventory")]
+    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class Item
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -36,24 +35,12 @@ namespace PutraJayaNT.Models.Inventory
 
         public bool Active { get; set; }
 
-        public virtual ObservableCollection<Stock> Stocks { get; set; }
-
-        public virtual ICollection<SalesTransactionLine> SalesTransactionLines { get; set; }
-
-        public virtual ICollection<SalesReturnTransactionLine> SalesReturnTransactionLines { get; set; }
-
         public virtual ObservableCollection<AlternativeSalesPrice> AlternativeSalesPrices { get; set; }
 
         public override bool Equals(object obj)
         {
             var item = obj as Item;
-            if (item == null) return false;
-            else return this.ItemID.Equals(item.ItemID);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return item != null && ItemID.Equals(item.ItemID);
         }
     }
 }

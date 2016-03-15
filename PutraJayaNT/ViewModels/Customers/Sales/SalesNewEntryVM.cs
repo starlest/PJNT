@@ -256,7 +256,6 @@
             {
                 var stocks = context.Stocks
                     .Include("Item")
-                    .Include("Item.Stocks")
                     .Include("Warehouse")
                     .Where(item => item.Pieces > 0 && item.WarehouseID.Equals(_newEntryWarehouse.ID))
                     .OrderBy(item => item.Item.Name)

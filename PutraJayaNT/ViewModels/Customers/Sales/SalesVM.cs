@@ -801,7 +801,6 @@
                     .Include("SalesTransactionLines.Salesman")
                     .Include("SalesTransactionLines.Item")
                     .Include("SalesTransactionLines.Warehouse")
-                    .Include("SalesTransactionLines.Item.Stocks")
                     .SingleOrDefault(e => e.SalesTransactionID.Equals(salesTransactionID));
             }
         }
@@ -923,6 +922,9 @@
             var user = Application.Current.FindResource("CurrentUser") as User;
             Model.User = user;
 
+            foreach (var line in Model.SalesTransactionLines.ToList())
+                Model.SalesTransactionLines.Remove(line);
+
             foreach (var line in SalesTransactionLines)
                 Model.SalesTransactionLines.Add(line.Model);
         }
@@ -940,185 +942,72 @@
 
         private void SaveInvoiceNotIssuedEditedTransaction()
         {
-                using (var ts = new TransactionScope())
+            using (var ts = new TransactionScope())
+            {
+                var context = new ERPContext();
+
+                var originalTransaction = context.SalesTransactions
+                    .Include("Customer")
+                    .Include("SalesTransactionLines")
+                    .Include("SalesTransactionLines.Salesman")
+                    .Include("SalesTransactionLines.Warehouse")
+                    .Include("SalesTransactionLines.Item")
+                    .Single(e => e.SalesTransactionID.Equals(_transactionID));
+
+                var originalTransactionLines = originalTransaction.SalesTransactionLines.ToList();
+
+                originalTransaction.Date = Model.Date;
+                originalTransaction.DueDate = Model.DueDate;
+                originalTransaction.Customer = context.Customers.Single(customer => customer.ID.Equals(Model.Customer.ID));
+                originalTransaction.Notes = Model.Notes;
+                originalTransaction.Discount = Model.Discount;
+                originalTransaction.SalesExpense = Model.SalesExpense;
+                originalTransaction.GrossTotal = Model.GrossTotal;
+                originalTransaction.NetTotal = Model.NetTotal;
+                originalTransaction.InvoiceIssued = Model.InvoiceIssued;
+                originalTransaction.User = context.Users.Single(user => user.Username.Equals(Model.User.Username));
+
+                // Remove the original transaction lines
+                foreach (var line in originalTransactionLines)
                 {
-                    var context = new ERPContext();
+                    originalTransaction.SalesTransactionLines.Remove(line);
 
-                    var transaction = context.SalesTransactions
-                        .Include("Customer")
-                        .Include("SalesTransactionLines")
-                        .Include("SalesTransactionLines.Salesman")
-                        .Include("SalesTransactionLines.Warehouse")
-                        .Include("SalesTransactionLines.Item")
-                        .Single(e => e.SalesTransactionID.Equals(_transactionID));
-
-                    var originalTransactionLines = transaction.SalesTransactionLines.ToList();
-
-                    foreach (var line in SalesTransactionLines)
+                    // Retrieve the item's current stock from the database
+                    var stock = context.Stocks.SingleOrDefault(
+                        e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID));
+                    if (stock != null) stock.Pieces += line.Quantity;
+                    else
                     {
-                        var item = context.Inventory
-                        .Include("SalesTransactionLines")
-                        .Include("SalesTransactionLines.Item")
-                        .Include("Category")
-                        .Single(e => e.ItemID.Equals(line.Item.ItemID));
-
-                        line.Warehouse = context.Warehouses.SingleOrDefault(e => e.ID.Equals(line.Warehouse.ID));
-                        line.Item = item;
-                        line.Salesman = context.Salesmans.SingleOrDefault(e => e.ID.Equals(line.Salesman.ID));
-
-                        // Retrieve the item's current stock from the database
-                        var stock = context.Stocks.SingleOrDefault(
-                            e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID));
-
-                        var found = false;
-                        // Check if the line exists in the original transaction
-                        foreach (var l in originalTransactionLines)
+                        var newStock = new Stock
                         {
-                            if (!CompareLines(line.Model, l)) continue;
-                            found = true;
-                            var originalQuantity = l.Quantity;
-
-                            // If there are more quantity than the original, minus the additional quantity from stock
-                            if (line.Quantity > originalQuantity)
-                            {
-                                if (stock != null) stock.Pieces -= line.Quantity - originalQuantity;
-                            }
-
-                            // If there are lesser quantity than the original, add the additional quantity to stock
-                            else if (line.Quantity < originalQuantity)
-                            {
-                                if (stock != null) stock.Pieces += (originalQuantity - line.Quantity);
-                                else
-                                {
-                                    var s = new Stock
-                                    {
-                                        Item = line.Item,
-                                        Warehouse = line.Warehouse,
-                                        Pieces = originalQuantity - line.Quantity
-                                    };
-                                    context.Stocks.Add(s);
-                                }
-                            }
-
-                            l.Quantity = line.Quantity;
-                            l.SalesPrice = line.SalesPrice / line.Item.PiecesPerUnit;
-                            l.Discount = line.Discount / line.Item.PiecesPerUnit;
-                            l.Total = l.Quantity * (l.SalesPrice - l.Discount);
-                            l.Salesman = context.Salesmans.Single(e => e.ID.Equals(line.Salesman.ID));
-
-                            context.SaveChanges();
-                            break;
-                        }
-
-                        // If not found, minus stock and add the line to the transaction
-                        if (!found)
-                        {
-                            if (stock != null)
-                            {
-                                if (GetAvailableQuantity(line.Item, line.Warehouse) < 0)
-                                {
-                                    MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces left.",
-                                        item.Name, (stock.Pieces / item.PiecesPerUnit), (stock.Pieces % item.PiecesPerUnit)),
-                                        "Insufficient Stock", MessageBoxButton.OK);
-                                    return;
-                                }
-
-                                stock.Pieces -= line.Quantity;
-                                line.SalesTransaction = transaction;
-                                context.SalesTransactionLines.Add(line.Model);
-                            }
-
-                            else
-                            {
-                                var s = new Stock
-                                {
-                                    Item = line.Item,
-                                    Warehouse = line.Warehouse,
-                                    Pieces = -line.Quantity
-                                };
-                                context.Stocks.Add(s);
-                                line.SalesTransaction = transaction;
-                                context.SalesTransactionLines.Add(line.Model);
-                            }
-                            context.SaveChanges();
-                        }
-
-                        // Remove the stock entry if it is 0
-                        if (stock != null && stock.Pieces == 0)
-                        {
-                            context.Stocks.Remove(stock);
-                            context.SaveChanges();
-                        }
+                            Item = context.Inventory.Single(item => item.ItemID.Equals(line.Item.ItemID)),
+                            Warehouse = context.Warehouses.Single(warehouse => warehouse.ID.Equals(line.Warehouse.ID)),
+                            Pieces = line.Quantity
+                        };
+                        context.Stocks.Add(newStock);
                     }
-
-                    // Check if there are items deleted
-                    foreach (var line in _deletedLines)
-                    {
-                        var item = context.Inventory.Single(e => e.ItemID.Equals(line.Item.ItemID));
-
-                        var stock = context.Stocks.SingleOrDefault(
-                            e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID));
-
-                        var deleted = true;
-                        foreach (var l in SalesTransactionLines)
-                        {
-                            if (CompareLines(line.Model, l.Model))
-                            {
-                                deleted = false;
-                                break;
-                            }
-                        }
-
-                        // If item has been deleted, delete transaction line as well as increasing the item's stock
-                        if (deleted)
-                        {
-                            // Make sure we delete the original line only
-                            foreach (var li in originalTransactionLines)
-                            {
-                                if (line.StockDeducted == 0) continue;
-
-                                if (CompareLines(line.Model, li))
-                                {
-                                    if (stock != null) stock.Pieces += line.StockDeducted;
-                                    else
-                                    {
-                                        line.Item = item;
-                                        line.Warehouse = context.Warehouses.Single(e => e.ID.Equals(line.Warehouse.ID));
-                                        var s = new Stock
-                                        {
-                                            Item = line.Item,
-                                            Warehouse = line.Warehouse,
-                                            Pieces = line.StockDeducted
-                                        };
-                                        context.Stocks.Add(s);
-                                    }
-
-                                    context.SaveChanges();
-
-                                    transaction.SalesTransactionLines.Remove(li);
-                                    context.SaveChanges();
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    transaction.Date = Model.Date;
-                    transaction.DueDate = Model.DueDate;
-                    transaction.Customer = context.Customers.Single(customer => customer.ID.Equals(_transactionCustomer.Model.ID));
-                    transaction.Notes = Model.Notes;
-                    transaction.Discount = Model.Discount;
-                    transaction.SalesExpense = Model.SalesExpense;
-                    transaction.GrossTotal = Model.GrossTotal;
-                    transaction.NetTotal = Model.NetTotal;
-                    transaction.InvoiceIssued = Model.InvoiceIssued;
-                    transaction.User = context.Users.Single(user => user.Username.Equals(Model.User.Username));
-
-                    context.SaveChanges();
-                    ts.Complete();
                 }
-            
+                context.SaveChanges();
+
+                // Add the edited transaction lines
+                foreach (var line in Model.SalesTransactionLines.ToList())
+                {
+                    line.SalesTransaction = originalTransaction;
+                    line.Item = context.Inventory.Single(item => item.ItemID.Equals(line.Item.ItemID));
+                    line.Warehouse = context.Warehouses.Single(warehouse => warehouse.ID.Equals(line.Warehouse.ID));
+                    line.Salesman = context.Salesmans.Single(salesman => salesman.ID.Equals(line.Salesman.ID));
+                    context.SalesTransactionLines.Add(line);
+
+                    // Retrieve the item's current stock from the database
+                    var stock = context.Stocks.Single(
+                        e => e.Item.ItemID.Equals(line.Item.ItemID) && e.Warehouse.ID.Equals(line.Warehouse.ID));
+                    stock.Pieces -= line.Quantity;
+                }
+
+                context.SaveChanges();
+                ts.Complete();
+            }
+
         }
 
         private void SaveInvoiceIssuedEditedTransaction()
@@ -1228,19 +1117,27 @@
 
             var month = _transactionDate.Month;
             var year = _transactionDate.Year;
-            _transactionID = "M" + ((long)((year - 2000) * 100 + month) * 1000000).ToString();
+            var leadingIDString = "M" + (long) ((year - 2000)*100 + month) + "-";
+            var endingIDString = 0.ToString().PadLeft(4, '0');
+            _transactionID = leadingIDString + endingIDString;
 
             string lastTransactionID = null;
             using (var context = new ERPContext())
             {
-                var IDs = (from SalesTransaction in context.SalesTransactions
-                           where SalesTransaction.SalesTransactionID.CompareTo(_transactionID) >= 0
-                           orderby SalesTransaction.SalesTransactionID descending
-                           select SalesTransaction.SalesTransactionID);
+                var IDs = from SalesTransaction in context.SalesTransactions
+                    where SalesTransaction.SalesTransactionID.Substring(0, 6).Equals(leadingIDString)
+                    && string.Compare(SalesTransaction.SalesTransactionID, _transactionID, StringComparison.Ordinal) >= 0
+                    orderby SalesTransaction.SalesTransactionID descending
+                    select SalesTransaction.SalesTransactionID;
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
-            if (lastTransactionID != null) _transactionID = "M" + (Convert.ToInt64(lastTransactionID.Substring(1)) + 1).ToString();
+            if (lastTransactionID != null)
+            {
+                var newIDIndex = Convert.ToInt64(lastTransactionID.Substring(6, 4)) + 1;
+                endingIDString = newIDIndex.ToString().PadLeft(4, '0');
+                _transactionID = leadingIDString + endingIDString;
+            }
 
             Model.SalesTransactionID = _transactionID;
             OnPropertyChanged("TransactionID");

@@ -230,16 +230,11 @@
 
         public int GetStock()
         {
-            int s = 0;
-            foreach (var stock in Model.Item.Stocks)
+            using (var context = new ERPContext())
             {
-                if (stock.Warehouse.Equals(Model.Warehouse))
-                {
-                    s = stock.Pieces;
-                    break;
-                }
+                var itemStock = context.Stocks.FirstOrDefault(stock => stock.ItemID.Equals(Model.Item.ItemID) && stock.WarehouseID.Equals(Model.Warehouse.ID));
+                return itemStock?.Pieces ?? 0;
             }
-            return s;
         }
     }
 }

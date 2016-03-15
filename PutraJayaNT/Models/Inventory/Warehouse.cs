@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.Models.Inventory
 {
+    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class Warehouse
     {
         public int ID { get; set; }
@@ -9,13 +10,7 @@
         public override bool Equals(object obj)
         {
             var warehouse = obj as Warehouse;
-            if (warehouse == null) return false;
-            else return this.ID.Equals(warehouse.ID);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return warehouse != null && ID.Equals(warehouse.ID);
         }
     }
 }

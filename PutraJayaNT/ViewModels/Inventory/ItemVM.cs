@@ -100,16 +100,6 @@
 
         public ObservableCollection<Supplier> Suppliers => Model.Suppliers;
 
-        public ObservableCollection<Stock> Stocks
-        {
-            get { return Model.Stocks; }
-            set
-            {
-                Model.Stocks = value;
-                OnPropertyChanged("Stocks");
-            }
-        }
-
         public ObservableCollection<AlternativeSalesPrice> AlternativeSalesPrices
         {
             get { return Model.AlternativeSalesPrices; }

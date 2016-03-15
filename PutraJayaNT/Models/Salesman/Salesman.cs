@@ -12,8 +12,6 @@ namespace PutraJayaNT.Models.Salesman
         [Required, MaxLength(100), Index(IsUnique = true)]
         public string Name { get; set; }
 
-        public virtual ObservableCollection<SalesTransactionLine> SalesTransactionLines { get; set; }
-
         public virtual ObservableCollection<SalesCommission> SalesCommissions { get; set; } 
 
         public override bool Equals(object obj)

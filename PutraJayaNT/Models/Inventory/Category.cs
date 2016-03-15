@@ -4,6 +4,7 @@ using MVVMFramework;
 namespace PutraJayaNT.Models.Inventory
 {
     // TODO rename to Category
+    #pragma warning disable CS0659
     public class Category : ObservableObject
     {
         public int ID { get; set; }
@@ -15,13 +16,7 @@ namespace PutraJayaNT.Models.Inventory
         public override bool Equals(object obj)
         {
             var category = obj as Category;
-            if (category == null) return false;
-            return ID.Equals(category.ID);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return category != null && ID.Equals(category.ID);
         }
     }
 }
