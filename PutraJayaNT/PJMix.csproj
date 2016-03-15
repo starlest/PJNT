@@ -97,6 +97,7 @@
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionLineHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SupplierHelper.cs" />
+    <Compile Include="Utilities\SalesTransactionHelper.cs" />
     <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
     <Compile Include="Views\LoginWindow.xaml.cs">
