@@ -85,7 +85,6 @@
                     ResetEntryFields();
                     _parentVM.UpdateListedCustomers();
                     _parentVM.UpdateDisplayedCustomers();
-                    MessageBox.Show("Successfully added customer!", "Success", MessageBoxButton.OK);
                 }));
             }
         }

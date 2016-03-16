@@ -27,11 +27,10 @@
                     AddSalesReturnTransactionLineToDatabaseContext(context, salesReturnTransactionLine);
                     DecreaseSalesReturnTransactionLineItemSoldOrReturnedInDatabaseContext(context, salesReturnTransactionLine);
                     InceaseSalesReturnTransactionLineItemStockInDatabaseContext(context, salesReturnTransactionLine);
+                    context.SaveChanges();
                 }
 
                 AddSalesReturnTransactionLedgerTransactionsToDatabaseContext(context, salesReturnTransaction);
-
-                context.SaveChanges();
                 ts.Complete();
             }
         }

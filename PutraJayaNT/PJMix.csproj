@@ -97,7 +97,8 @@
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionLineHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SupplierHelper.cs" />
-    <Compile Include="Utilities\SalesTransactionHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SalesTransactionHelper.cs" />
+    <Compile Include="Utilities\PrintHelpers\SalesTransactionPrintHelper.cs" />
     <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
     <Compile Include="Views\LoginWindow.xaml.cs">
@@ -188,8 +189,8 @@
     <Compile Include="Reports\Windows\StockCardReportWindow.xaml.cs">
       <DependentUpon>StockCardReportWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\Windows\SalesDOWindow.xaml.cs">
-      <DependentUpon>SalesDOWindow.xaml</DependentUpon>
+    <Compile Include="Reports\Windows\SalesTransactionDOReportWindow.xaml.cs">
+      <DependentUpon>SalesTransactionDOReportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Windows\CollectionReportPerCityWindow.xaml.cs">
       <DependentUpon>CollectionReportPerCityWindow.xaml</DependentUpon>
@@ -197,8 +198,8 @@
     <Compile Include="Reports\Windows\SalesReturnInvoiceWindow.xaml.cs">
       <DependentUpon>SalesReturnInvoiceWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\Windows\SalesInvoiceWindow.xaml.cs">
-      <DependentUpon>SalesInvoiceWindow.xaml</DependentUpon>
+    <Compile Include="Reports\Windows\SalesInvoiceReportWindow.xaml.cs">
+      <DependentUpon>SalesInvoiceReportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\DatasetObjects\SalesReturnInvoice.cs" />
     <Compile Include="Utilities\ERPContext.cs" />
@@ -450,7 +451,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Reports\Windows\SalesDOWindow.xaml">
+    <Page Include="Reports\Windows\SalesTransactionDOReportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -462,7 +463,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Reports\Windows\SalesInvoiceWindow.xaml">
+    <Page Include="Reports\Windows\SalesInvoiceReportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

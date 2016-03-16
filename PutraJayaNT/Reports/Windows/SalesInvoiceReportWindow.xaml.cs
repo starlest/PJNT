@@ -1,5 +1,4 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
+﻿using Microsoft.Reporting.WinForms;
 using PutraJayaNT.Models.Sales;
 using System;
 using System.Data;
@@ -8,13 +7,13 @@ using System.Windows;
 namespace PutraJayaNT.Reports.Windows
 {
     /// <summary>
-    /// Interaction logic for SalesInvoiceWindow.xaml
+    /// Interaction logic for SalesInvoiceReportWindow.xaml
     /// </summary>
-    public partial class SalesInvoiceWindow : ModernWindow
+    public partial class SalesInvoiceReportWindow
     {
-        SalesTransaction _salesTransaction;
+        readonly SalesTransaction _salesTransaction;
 
-        public SalesInvoiceWindow(SalesTransaction transaction)
+        public SalesInvoiceReportWindow(SalesTransaction transaction)
         {
             InitializeComponent();
             _salesTransaction = transaction;
@@ -27,8 +26,8 @@ namespace PutraJayaNT.Reports.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            DataTable dt1 = new DataTable();
-            DataTable dt2 = new DataTable();
+            var dt1 = new DataTable();
+            var dt2 = new DataTable();
 
             dt1.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             dt1.Columns.Add(new DataColumn("ItemID", typeof(string)));
@@ -40,10 +39,10 @@ namespace PutraJayaNT.Reports.Windows
             dt1.Columns.Add(new DataColumn("Discount", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
 
-            int count = 1;
+            var count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines)
             {
-                DataRow dr = dt1.NewRow();
+                var dr = dt1.NewRow();
                 dr["LineNumber"] = count++;
                 dr["ItemID"] = line.Item.ItemID;
                 dr["ItemName"] = line.Item.Name;
@@ -78,7 +77,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
-            dr2["Copy"] = _salesTransaction.InvoicePrinted == true ? "Copy" : "";
+            dr2["Copy"] = _salesTransaction.InvoicePrinted ? "Copy" : "";
 
             dt2.Rows.Add(dr2);
 

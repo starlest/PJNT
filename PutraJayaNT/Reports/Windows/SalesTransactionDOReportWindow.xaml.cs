@@ -1,6 +1,5 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using Microsoft.Reporting.WinForms;
-using PutraJayaNT.ViewModels.Customers;
 using System;
 using System.Data;
 using System.Windows;
@@ -13,14 +12,14 @@ namespace PutraJayaNT.Reports.Windows
     /// <summary>
     /// Interaction logic for SalesInvoiceWindow.xaml
     /// </summary>
-    public partial class SalesDOWindow : ModernWindow
+    public partial class SalesTransactionDOReportWindow : ModernWindow
     {
-        SalesTransaction _salesTransaction;
-        DataTable dt1;
-        DataTable dt2;
-        string reportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\SalesDOReport.rdlc");
+        readonly SalesTransaction _salesTransaction;
+        private DataTable dt1;
+        private DataTable dt2;
+        private readonly string reportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\SalesDOReport.rdlc");
 
-        public SalesDOWindow(SalesTransaction transaction)
+        public SalesTransactionDOReportWindow(SalesTransaction transaction)
         {
             InitializeComponent();
             _salesTransaction = transaction;

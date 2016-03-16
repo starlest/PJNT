@@ -41,7 +41,7 @@
                 <Button Grid.Column="1" Content="(F7) Browse" Command="{Binding BrowseCommand}" />
                 <Button Grid.Column="2" Content="(F4) Issue Invoice" Command="{Binding IssueInvoiceCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
                 <Button Grid.Column="3" Content="Delete" Command="{Binding DeleteTransactionCommand}" IsEnabled="{Binding InvoiceNotIssued}" Foreground="Red" />
-                <Button Grid.Column="4" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding InvoiceNotIssued}" Foreground="Red"  />
+                <Button Grid.Column="4" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding IsSaveAllowed}" Foreground="Red"  />
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -84,8 +84,8 @@
                                 IsEnabled="{Binding InvoiceNotIssued}"/>
                 </Grid>
             </Border>
-            <Border Grid.Row="3" BorderBrush="Blue" BorderThickness="2">
-                <Grid IsEnabled="{Binding InvoiceNotIssued}" DataContext="{Binding NewEntryVM}">
+            <Border Grid.Row="3" BorderBrush="Blue" BorderThickness="2" IsEnabled="{Binding InvoiceNotIssued}">
+                <Grid DataContext="{Binding NewEntryVM}">
                     <Grid.Style>
                         <Style>
                             <Style.Triggers>
@@ -173,7 +173,7 @@
                       ItemsSource="{Binding SalesTransactionLines}" SelectedItem="{Binding SelectedLine}" SelectedIndex="{Binding SelectedIndex}" >
                 <DataGrid.ContextMenu>
                     <ContextMenu >
-                        <MenuItem Header="Edit" HorizontalAlignment="Left" Command="{Binding EditLineCommand}" IsEnabled="{Binding SalesNotReturned}" />
+                        <MenuItem Header="Edit" HorizontalAlignment="Left" Command="{Binding EditLineCommand}" IsEnabled="{Binding IsSaveAllowed}" />
                         <MenuItem Header="Delete" HorizontalAlignment="Left" Command="{Binding DeleteLineCommand}" IsEnabled="{Binding InvoiceNotIssued}" />
                     </ContextMenu>
                 </DataGrid.ContextMenu>
@@ -190,7 +190,7 @@
                     <DataGridTextColumn Header="Salesman" Width="1*" Binding="{Binding Salesman.Name}" />
                 </DataGrid.Columns>
             </DataGrid>
-            <Grid Grid.Row="5"  IsEnabled="{Binding InvoiceNotIssued}">
+            <Grid Grid.Row="5"  IsEnabled="{Binding IsSaveAllowed}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />

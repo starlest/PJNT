@@ -3,17 +3,31 @@ using System.Transactions;
 using PutraJayaNT.Models.Accounting;
 namespace PutraJayaNT.Utilities.ModelHelpers
 {
+    using System.Windows;
     using Models.Customer;
 
     public static class CustomerHelper
     {
         public static void AddCustomerAlongWithItsLedgerToDatabase(Customer customer)
         {
-            using (var context = new ERPContext())
+            var context = new ERPContext();
+            var success = true;
+            try
             {
                 AddCustomerToDatabaseContext(context, customer);
                 CreateAndAddCustomerLedgerToDatabaseContext(context, customer);
                 context.SaveChanges();
+            }
+            catch
+            {
+                MessageBox.Show("The customer's name is already being used.", "Invalid ID", MessageBoxButton.OK);
+                success = false;
+            }
+            finally
+            {
+                if (success)
+                    MessageBox.Show("Successfully added customer!", "Success", MessageBoxButton.OK);
+                context.Dispose();
             }
         }
 

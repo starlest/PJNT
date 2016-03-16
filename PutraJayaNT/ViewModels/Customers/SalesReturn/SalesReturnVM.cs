@@ -10,7 +10,6 @@
     using Microsoft.Reporting.WinForms;
     using Models.Sales;
     using MVVMFramework;
-    using Sales;
     using Utilities;
     using Utilities.ModelHelpers;
     using ViewModels.Sales;
@@ -213,7 +212,7 @@
         private static bool IsSalesTransactionInDatabase(SalesTransaction salesTransaction)
         {
             if (salesTransaction != null) return true;
-            MessageBox.Show("Please check if the transaction exists.", "Invalid Sales Transaction", MessageBoxButton.OK);
+            MessageBox.Show("Please check if the transaction has been issued or exists.", "Invalid Sales Transaction", MessageBoxButton.OK);
             return false;
         }
 

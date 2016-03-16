@@ -25,6 +25,7 @@
             {
                 if (success)
                     MessageBox.Show("Successfully added item!", "Success", MessageBoxButton.OK);
+                context.Dispose();
             }
         }
 

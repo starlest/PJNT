@@ -6,16 +6,30 @@ using System.Linq;
 namespace PutraJayaNT.Utilities.ModelHelpers
 {
     using System.Data.Entity;
+    using System.Windows;
 
     public static class SupplierHelper
     {
         public static void AddSupplierAlongWithItsLedgerToDatabase(Supplier supplier)
         {
-            using (var context = new ERPContext())
+            var context = new ERPContext();
+            var success = true;
+            try
             {
                 context.Suppliers.Add(supplier);
                 CreateAndAddSupplierLedgerToDatabaseContext(context, supplier);
                 context.SaveChanges();
+            }
+            catch
+            {
+                MessageBox.Show("The supplier's name is already being used.", "Invalid ID", MessageBoxButton.OK);
+                success = false;
+            }
+            finally
+            {
+                if (success)
+                    MessageBox.Show("Successfully added supplier!", "Success", MessageBoxButton.OK);
+                context.Dispose();
             }
         }
 
