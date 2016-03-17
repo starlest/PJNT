@@ -6,15 +6,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PutraJayaNT.Models.StockCorrection
 {
-    public class MoveStockTransaction
+    public class StockMovementTransaction
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string MoveStrockTransactionID { get; set; }
+        public string StockMovementTransactionID { get; set; }
 
         public DateTime Date { get; set; }
 
-        public virtual ObservableCollection<MoveStockTransactionLine> MoveStockTransactionLines { get; set; }
+        public virtual ObservableCollection<StockMovementTransactionLine> StockMovementTransactionLines { get; set; }
 
         public virtual User User { get; set; }
 

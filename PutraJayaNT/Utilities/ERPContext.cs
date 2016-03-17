@@ -29,10 +29,10 @@ namespace PutraJayaNT.Utilities
         public virtual DbSet<Salesman> Salesmans { get; set; }
         public virtual DbSet<SalesCommission> SalesCommissions { get; set; }
 
-        public virtual DbSet<AdjustStockTransaction> AdjustStockTransactions {get; set; }
-        public virtual DbSet<AdjustStockTransactionLine> AdjustStockTransactionLines { get; set; }
-        public virtual DbSet<MoveStockTransaction> MoveStockTransactions { get; set; }
-        public virtual DbSet<MoveStockTransactionLine> MoveStockTransactionLines { get; set; }
+        public virtual DbSet<StockAdjustmentTransaction> StockAdjustmentTransactions {get; set; }
+        public virtual DbSet<StockAdjustmentTransactionLine> StockAdjustmentTransactionLines { get; set; }
+        public virtual DbSet<StockMovementTransaction> StockMovementTransactions { get; set; }
+        public virtual DbSet<StockMovementTransactionLine> StockMovementTransactionLines { get; set; }
 
         public virtual DbSet<SalesTransactionLine> SalesTransactionLines { get; set; }
         public virtual DbSet<SalesTransaction> SalesTransactions { get; set; }

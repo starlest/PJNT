@@ -1,42 +1,33 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-
-namespace PutraJayaNT.ViewModels.Customers
+﻿namespace PutraJayaNT.ViewModels.Customers.Sales
 {
-    class PrintListVM : ViewModelBase
-    {
-        ObservableCollection<SalesTransaction> _salesTransactions;
-        ObservableCollection<string> _modes;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows;
+    using Models.Sales;
+    using MVVMFramework;
+    using Utilities;
 
-        string _selectedMode;
-        DateTime _fromDate;
-        DateTime _toDate;
+    internal class PrintListVM : ViewModelBase
+    {
+        private string _selectedMode;
+        private DateTime _fromDate;
+        private DateTime _toDate;
 
         public PrintListVM()
         {
-            _salesTransactions = new ObservableCollection<SalesTransaction>();
-            _modes = new ObservableCollection<string> { "Printed", "Not Printed" };
+            SalesTransactions = new ObservableCollection<SalesTransaction>();
+            Modes = new ObservableCollection<string> { "Printed", "Not Printed" };
             _fromDate = UtilityMethods.GetCurrentDate().Date;
             _toDate = UtilityMethods.GetCurrentDate().Date;
 
-            SelectedMode = _modes.FirstOrDefault();
+            SelectedMode = Modes.FirstOrDefault();
         }
 
-        public ObservableCollection<SalesTransaction> SalesTransactions
-        {
-            get { return _salesTransactions; }
-        }
+        public ObservableCollection<SalesTransaction> SalesTransactions { get; }
 
-        public ObservableCollection<string> Modes
-        {
-            get { return _modes; }
-        }
+        public ObservableCollection<string> Modes { get; }
 
         public string SelectedMode
         {
@@ -85,10 +76,10 @@ namespace PutraJayaNT.ViewModels.Customers
         #region Helper methods
         private void UpdateSalesTransactions()
         {
-            _salesTransactions.Clear();
+            SalesTransactions.Clear();
             using (var context = new ERPContext())
             {
-                List<SalesTransaction> salesTransactions;
+                IEnumerable<SalesTransaction> salesTransactions;
 
                 if (_selectedMode.Equals("Printed"))
                 {
@@ -97,8 +88,7 @@ namespace PutraJayaNT.ViewModels.Customers
                         .Include("Customer")
                         .Where(e => e.InvoicePrinted && e.Date >= _fromDate && e.Date <= _toDate)
                         .OrderBy(e => e.Date)
-                        .ThenBy(e => e.SalesTransactionID)
-                        .ToList();
+                        .ThenBy(e => e.SalesTransactionID);
                 }
 
                 else
@@ -108,12 +98,11 @@ namespace PutraJayaNT.ViewModels.Customers
                         .Include("Customer")
                         .Where(e => !e.InvoicePrinted && e.Date >= _fromDate && e.Date <= _toDate)
                         .OrderBy(e => e.Date)
-                        .ThenBy(e => e.SalesTransactionID)
-                        .ToList();
+                        .ThenBy(e => e.SalesTransactionID);
                 }
 
-                foreach (var t in salesTransactions)
-                    _salesTransactions.Add(t);
+                foreach (var salesTransaction in salesTransactions)
+                    SalesTransactions.Add(salesTransaction);
             }
         }
         #endregion

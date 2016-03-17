@@ -12,6 +12,7 @@
     using MVVMFramework;
     using Utilities;
     using Utilities.ModelHelpers;
+    using Utilities.PrintHelpers;
     using ViewModels.Sales;
 
     public class SalesReturnVM : ViewModelBase<SalesReturnTransaction>

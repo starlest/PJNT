@@ -263,7 +263,7 @@
                             var salesLines = context.SalesTransactionLines.Where(e => e.SalesTransaction.InvoiceIssued != null && e.ItemID.Equals(item.ItemID)).ToList();
                             var salesReturnLines = context.SalesReturnTransactionLines.Where(e => e.ItemID.Equals(item.ItemID)).ToList();
                             var purchaseReturnLines = context.PurchaseReturnTransactionLines.Where(e => e.ItemID.Equals(item.ItemID)).ToList();
-                            var adjustmentLines = context.AdjustStockTransactionLines.Where(e => e.AdjustStockTransactionID.Substring(0, 2).Equals("SA") && e.ItemID.Equals(item.ItemID) && e.Quantity < 0).ToList();
+                            var adjustmentLines = context.StockAdjustmentTransactionLines.Where(e => e.StockAdjustmentTransactionID.Substring(0, 2).Equals("SA") && e.ItemID.Equals(item.ItemID) && e.Quantity < 0).ToList();
                             var soldOrReturnedQuantity = 0;
 
                             foreach (var line in salesLines)
@@ -611,16 +611,16 @@
                     .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.SalesReturnTransaction.Date >= monthDate && e.SalesReturnTransaction.Date <= fromDate)
                     .ToList();
 
-                var stockAdjustmentLines = context.AdjustStockTransactionLines
-                    .Include("AdjustStockTransaction")
-                    .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.AdjustStockTransaction.Date >= monthDate && e.AdjustStockTransaction.Date <= fromDate)
+                var stockAdjustmentLines = context.StockAdjustmentTransactionLines
+                    .Include("StockAdjustmentTransaction")
+                    .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.StockAdjustmentTransaction.Date >= monthDate && e.StockAdjustmentTransaction.Date <= fromDate)
                     .ToList();
 
-                var moveStockTransactions = context.MoveStockTransactions
+                var moveStockTransactions = context.StockMovementTransactions
                     .Include("FromWarehouse")
                     .Include("ToWarehouse")
-                    .Include("MoveStockTransactionLines")
-                    .Include("MoveStockTransactionLines.Item")
+                    .Include("StockMovementTransactionLines")
+                    .Include("StockMovementTransactionLines.Item")
                     .Where(e => e.Date >= monthDate && e.Date <= fromDate
                     && (e.FromWarehouse.ID.Equals(warehouse.ID) || e.ToWarehouse.ID.Equals(warehouse.ID)))
                     .ToList();
@@ -642,7 +642,7 @@
 
                 foreach (var transaction in moveStockTransactions)
                 {
-                    foreach (var line in transaction.MoveStockTransactionLines)
+                    foreach (var line in transaction.StockMovementTransactionLines)
                     {
                         if (line.ItemID.Equals(item.ItemID))
                         {

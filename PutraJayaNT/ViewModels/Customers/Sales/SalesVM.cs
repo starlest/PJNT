@@ -1,32 +1,26 @@
 ﻿namespace PutraJayaNT.ViewModels.Customers.Sales
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Data;
     using System.Data.Entity;
     using System.Linq;
-    using System.Transactions;
     using System.Windows;
     using System.Windows.Input;
     using Customer;
-    using Microsoft.Reporting.WinForms;
     using Models;
-    using Models.Accounting;
     using Models.Inventory;
     using Models.Sales;
-    using Models.Salesman;
     using MVVMFramework;
     using PutraJayaNT.Reports.Windows;
     using Utilities;
     using Utilities.ModelHelpers;
     using Utilities.PrintHelpers;
     using ViewModels.Sales;
-    using Views.Customers;
+    using Views.Customers.Sales;
 
     public class SalesVM : ViewModelBase<SalesTransaction>
     {
-        private readonly ObservableCollection<SalesTransactionLineVM> _deletedLines;
+        private SalesTransactionLineVM _selectedLine;
 
         #region Transaction Backing Fields
         private string _transactionID;
@@ -45,6 +39,8 @@
         #endregion
 
         #region Command Backing Fields
+        private ICommand _editLineCommand;
+        private ICommand _deleteLineCommand;
         private ICommand _browseCommand;
         private ICommand _printListCommand;
         private ICommand _printDOCommand;
@@ -52,22 +48,6 @@
         private ICommand _previewInvoiceCommand;
         private ICommand _previewDOCommand;
         private ICommand _issueInvoiceCommand;
-        #endregion
-
-        #region Edit Line Properties
-        SalesTransactionLineVM _selectedLine;
-        int _selectedIndex;
-        ICommand _editLineCommand;
-        int _editLineUnits;
-        int _editLinePieces;
-        decimal _editLineDiscount;
-        decimal _editLineSalesPrice;
-        Salesman _editLineSalesman;
-        ICommand _editConfirmCommand;
-        ICommand _editCancelCommand;
-        bool _isEditWindowNotOpen;
-        Visibility _editWindowVisibility;
-        ICommand _deleteLineCommand;
         #endregion
 
         private bool _editMode;
@@ -79,12 +59,9 @@
         public SalesVM()
         {
             NewEntryVM = new SalesNewEntryVM(this);
-            _isEditWindowNotOpen = true;
-            _editWindowVisibility = Visibility.Hidden;
 
             Customers = new ObservableCollection<CustomerVM>();
-            SalesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
-            _deletedLines = new ObservableCollection<SalesTransactionLineVM>();
+            DisplayedSalesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
 
             Model = new SalesTransaction();
             _transactionDate = UtilityMethods.GetCurrentDate().Date;
@@ -124,8 +101,14 @@
         #region Collections
         public ObservableCollection<CustomerVM> Customers { get; }
 
-        public ObservableCollection<SalesTransactionLineVM> SalesTransactionLines { get; }
+        public ObservableCollection<SalesTransactionLineVM> DisplayedSalesTransactionLines { get; }
         #endregion
+
+        public SalesTransactionLineVM SelectedLine
+        {
+            get { return _selectedLine; }
+            set { SetProperty(ref _selectedLine, value, () => SelectedLine); }
+        }
 
         #region Transaction Properties
         public string TransactionID
@@ -146,13 +129,13 @@
                 SetEditMode();
             }
         }
-        
+
         public CustomerVM TransactionCustomer
         {
             get { return _transactionCustomer; }
             set
             {
-                if (value != null && ((_editCustomer == null  && !value.Name.Equals("Kontan")) || (_editCustomer != null && !value.ID.Equals(_editCustomer.ID))))
+                if (value != null && ((_editCustomer == null && !value.Name.Equals("Kontan")) || (_editCustomer != null && !value.ID.Equals(_editCustomer.ID))))
                 {
                     if (DoesCustomerHasMaximumNumberOfInvoices(value) && DoesCustomerHasOverduedInvoices(value))
                     {
@@ -250,7 +233,7 @@
             get
             {
                 _transactionGrossTotal = 0;
-                foreach (var line in SalesTransactionLines)
+                foreach (var line in DisplayedSalesTransactionLines)
                     _transactionGrossTotal += line.Total;
 
                 OnPropertyChanged("TransactionNetTotal");
@@ -307,164 +290,25 @@
                     else
                         SaveNewTransaction();
                     MessageBox.Show("Successfully saved transaction.", "Success", MessageBoxButton.OK);
-                    Model = GetSalesTransactionFromDatabase(_transactionID); 
+                    Model = GetSalesTransactionFromDatabase(_transactionID);
                     SetEditMode();
                 }));
             }
         }
         #endregion
 
-        #region Line Properties
-        public SalesTransactionLineVM SelectedLine
-        {
-            get { return _selectedLine; }
-            set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
-        }
-
-        public int SelectedIndex
-        {
-            get { return _selectedIndex; }
-            set { SetProperty(ref _selectedIndex, value, "SelectedIndex"); }
-        }
-
+        #region Other Commands
         public ICommand EditLineCommand
         {
             get
             {
                 return _editLineCommand ?? (_editLineCommand = new RelayCommand(() =>
                 {
-                    if (_selectedLine != null)
-                    {
-                        IsEditWindowNotOpen = false;
-                        EditWindowVisibility = Visibility.Visible;
-
-                        EditLineUnits = _selectedLine.Units;
-                        EditLinePieces = _selectedLine.Pieces;
-                        EditLineDiscount = _selectedLine.Discount;
-                        EditLineSalesPrice = _selectedLine.SalesPrice;
-                        EditLineSalesman = _selectedLine.Salesman;
-                    }
+                    if (!IsThereLineSelected()) return;
+                    ShowEditLineWindow();
                 }));
             }
         }
-
-        #region Edit Properties
-        public int EditLineUnits
-        {
-            get { return _editLineUnits; }
-            set { SetProperty(ref _editLineUnits, value, "EditLineUnits"); }
-        }
-
-        public int EditLinePieces
-        {
-            get { return _editLinePieces; }
-            set { SetProperty(ref _editLinePieces, value, "EditLinePieces"); }
-        }
-
-        public decimal EditLineDiscount
-        {
-            get { return _editLineDiscount; }
-            set { SetProperty(ref _editLineDiscount, value, "EditLineDiscount"); }
-        }
-
-        public decimal EditLineSalesPrice
-        {
-            get { return _editLineSalesPrice; }
-            set { SetProperty(ref _editLineSalesPrice, value, "EditLineSalesPrice"); }
-        }
-
-        public Salesman EditLineSalesman
-        {
-            get { return _editLineSalesman; }
-            set { SetProperty(ref _editLineSalesman, value, "EditLineSalesman"); }
-        }
-
-        public bool IsEditWindowNotOpen
-        {
-            get { return _isEditWindowNotOpen; }
-            set { SetProperty(ref _isEditWindowNotOpen, value, "IsEditWindowNotOpen"); }
-        }
-
-        public Visibility EditWindowVisibility
-        {
-            get { return _editWindowVisibility; }
-            set { SetProperty(ref _editWindowVisibility, value, "EditWindowVisibility"); }
-        }
-
-        public ICommand EditConfirmCommand
-        {
-            get
-            {
-                return _editConfirmCommand ?? (_editConfirmCommand = new RelayCommand(() =>
-                {
-                    var oldQuantity = (_selectedLine.Units * _selectedLine.Item.PiecesPerUnit) + _selectedLine.Pieces;
-                    var newQuantity = (_editLineUnits * _selectedLine.Item.PiecesPerUnit) + _editLinePieces;
-                    var quantityDifference = newQuantity - oldQuantity;
-
-                    var availableQuantity = GetAvailableQuantity(_selectedLine.Item, _selectedLine.Warehouse);
-
-                    if (availableQuantity - quantityDifference < 0)
-                    {
-                        MessageBox.Show(string.Format("{0} has only {1} units, {2} pieces available.",
-                            _selectedLine.Item.Name, (availableQuantity / _selectedLine.Item.PiecesPerUnit) + _selectedLine.Units,
-                            (availableQuantity % _selectedLine.Item.PiecesPerUnit) + _selectedLine.Pieces),
-                            "Insufficient Stock", MessageBoxButton.OK);
-                        return;
-                    }
-
-                    var oldDiscount = _selectedLine.Discount;
-                    var oldSalesPrice = _selectedLine.SalesPrice;
-                    var oldSalesman = _selectedLine.Salesman;
-
-
-                    if (oldDiscount != _editLineDiscount || oldSalesPrice != _editLineSalesPrice)
-                    {
-                        var deletedLine = _selectedLine.Clone();
-                        _deletedLines.Add(deletedLine);
-                    }
-
-                    _selectedLine.Quantity = _editLineUnits * _selectedLine.Item.PiecesPerUnit + _editLinePieces;
-                    _selectedLine.Discount = _editLineDiscount;
-                    _selectedLine.SalesPrice = _editLineSalesPrice;
-                    _selectedLine.Salesman = _editLineSalesman;
-
-                    // Run a check to see if this line can be combined with another line of the same in transaction
-                    for (int i = 0; i < SalesTransactionLines.Count; i++)
-                    {
-                        var line = SalesTransactionLines[i];
-                        if (CompareLines(line.Model, _selectedLine.Model) && i != _selectedIndex)
-                        {
-                            line.Quantity += _selectedLine.Quantity;
-                            line.StockDeducted += _selectedLine.StockDeducted;
-
-                            // Some operations for the removal to be correct
-                            _selectedLine.Discount = oldDiscount;
-                            _selectedLine.SalesPrice = oldSalesPrice;
-                            _selectedLine.Salesman = oldSalesman;
-                            SalesTransactionLines.Remove(_selectedLine);
-                            break;
-                        }
-                    }
-
-                    IsEditWindowNotOpen = true;
-                    EditWindowVisibility = Visibility.Hidden;
-                    OnPropertyChanged("TransactionGrossTotal");
-                }));
-            }
-        }
-
-        public ICommand EditCancelCommand
-        {
-            get
-            {
-                return _editCancelCommand ?? (_editCancelCommand = new RelayCommand(() =>
-                {
-                    IsEditWindowNotOpen = true;
-                    EditWindowVisibility = Visibility.Hidden;
-                }));
-            }
-        }
-        #endregion
 
         public ICommand DeleteLineCommand
         {
@@ -472,20 +316,15 @@
             {
                 return _deleteLineCommand ?? (_deleteLineCommand = new RelayCommand(() =>
                 {
-                    if (_selectedLine != null && MessageBox.Show("Confirm Deletion?", "Confirmation", MessageBoxButton.YesNo)
-                     == MessageBoxResult.Yes)
-                    {
-                        _deletedLines.Add(_selectedLine);
-                        SalesTransactionLines.Remove(_selectedLine);
-                    }
-
-                    OnPropertyChanged("TransactionGrossTotal");
+                    if (_selectedLine != null &&
+                        MessageBox.Show("Confirm Deletion?", "Confirmation", MessageBoxButton.YesNo)
+                        == MessageBoxResult.No) return;
+                    DisplayedSalesTransactionLines.Remove(_selectedLine);
+                    UpdateTransactionTotal();
                 }));
             }
         }
-        #endregion
 
-        #region Other Commands
         public ICommand BrowseCommand => _browseCommand ?? (_browseCommand = new RelayCommand(ShowBroseSalesTransactionsWindow));
 
         public ICommand PrintListCommand => _printListCommand ?? (_printListCommand = new RelayCommand(ShowPrintListWindow));
@@ -496,7 +335,7 @@
             {
                 return _previewDOCommand ?? (_previewDOCommand = new RelayCommand(() =>
                 {
-                    if (SalesTransactionLines.Count == 0) return;
+                    if (DisplayedSalesTransactionLines.Count == 0) return;
 
                     var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
 
@@ -517,7 +356,7 @@
             {
                 return _previewInvoiceCommand ?? (_previewInvoiceCommand = new RelayCommand(() =>
                 {
-                    if (SalesTransactionLines.Count == 0) return;
+                    if (DisplayedSalesTransactionLines.Count == 0) return;
 
                     var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
 
@@ -538,7 +377,7 @@
             {
                 return _printDOCommand ?? (_printDOCommand = new RelayCommand(() =>
                 {
-                    if (SalesTransactionLines.Count == 0) return;
+                    if (DisplayedSalesTransactionLines.Count == 0) return;
 
                     if (MessageBox.Show("Confirm printing?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
 
@@ -547,7 +386,8 @@
                         if (!UtilityMethods.GetVerification()) return;
                     }
 
-                    PrintDO();
+                    SalesTransactionPrintHelper.PrintSalesTransactionFromDatabaseDO(Model);
+                    Model.DOPrinted = true;
                 }));
             }
         }
@@ -558,7 +398,7 @@
             {
                 return _printInvoiceCommand ?? (_printInvoiceCommand = new RelayCommand(() =>
                 {
-                    if (SalesTransactionLines.Count == 0) return;
+                    if (DisplayedSalesTransactionLines.Count == 0) return;
 
                     if (MessageBox.Show("Confirm printing?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
 
@@ -567,44 +407,7 @@
                         if (!UtilityMethods.GetVerification()) return;
                     }
 
-                    using (var context = new ERPContext())
-                    {
-                        var transaction = context.SalesTransactions
-                            .Include("SalesTransactionLines")
-                            .Include("SalesTransactionLines.Item")
-                            .Include("SalesTransactionLines.Warehouse")
-                            .Include("Customer")
-                            .FirstOrDefault(e => e.SalesTransactionID
-                                .Equals(Model.SalesTransactionID));
-
-                        if (transaction == null)
-                        {
-                            MessageBox.Show("Transaction not found.", "Invalid Command", MessageBoxButton.OK);
-                            return;
-                        }
-
-                        LocalReport localReport = CreateSalesTransactionInvoiceLocalReport(transaction);
-                        PrintHelper printHelper = new PrintHelper();
-                        try
-                        {
-                            printHelper.Run(localReport);
-                        }
-
-                        catch (Exception e)
-                        {
-                            MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK);
-                        }
-
-                        finally
-                        {
-                            printHelper.Dispose();
-                        }
-
-                        if (transaction.InvoicePrinted) return;
-                        transaction.InvoicePrinted = true;
-                        Model.InvoicePrinted = true;
-                        context.SaveChanges();
-                    }
+                    SalesTransactionPrintHelper.PrintSalesTransactionFromDatabaseInvoice(Model);
                 }));
             }
         }
@@ -621,56 +424,19 @@
                         return;
                     }
 
-                    if (Model.InvoiceIssued != null)
-                    {
-                        MessageBox.Show("Invoice has been issued.", "Invalid Command", MessageBoxButton.OK);
-                        return;
-                    }
+                    if (MessageBox.Show("Please save any changes before proceeding. \n \n Confirm issuing invoice?", "Confirmation", MessageBoxButton.YesNo) ==
+                        MessageBoxResult.No) return;
 
-                    if (MessageBox.Show("Confirm issuing invoice?", "Confirmation", MessageBoxButton.YesNo) ==
-                    MessageBoxResult.Yes)
-                    {
-                        using (var ts = new TransactionScope())
-                        {
-                            var context = new ERPContext();
-
-                            var transaction = context.SalesTransactions.Include("Customer").Single(
-                                salesTransaction => salesTransaction.SalesTransactionID.Equals(Model.SalesTransactionID));
-
-                            transaction.InvoiceIssued = UtilityMethods.GetCurrentDate().Date;
-                            var user = Application.Current.TryFindResource("CurrentUser") as User;
-                            if (user != null) transaction.User = context.Users.Single(e => e.Username.Equals(user.Username));
-                            Model = transaction;
-
-                            var costOfGoodsSoldAmount = CalculateCOGS(context, transaction.SalesTransactionLines.ToList());
-
-                            // Recognise revenue recognitition at this point and record the corresponding journal entries
-                            var transaction1 = new LedgerTransaction();
-                            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction1, UtilityMethods.GetCurrentDate().Date, transaction.SalesTransactionID, "Sales Revenue")) return;
-                            context.SaveChanges();
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction1, string.Format("{0} Accounts Receivable", transaction.Customer.Name), "Debit", Model.NetTotal);
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction1, "Sales Revenue", "Credit", Model.NetTotal);
-                            context.SaveChanges();
-
-                            var transaction2 = new LedgerTransaction();
-                            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction2, UtilityMethods.GetCurrentDate().Date, transaction.SalesTransactionID, "Cost of Goods Sold")) return;
-                            context.SaveChanges();
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction2, "Cost of Goods Sold", "Debit", costOfGoodsSoldAmount);
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction2, "Inventory", "Credit", costOfGoodsSoldAmount);
-                            context.SaveChanges();
-
-                            ts.Complete();
-                        }
-
-                        MessageBox.Show("Invoice has been successfully issued.", "Success", MessageBoxButton.OK);
-                        InvoiceNotIssued = false;
-                    }
+                    SalesTransactionHelper.IssueSalesTransactionInvoice(Model);
+                    Model.InvoiceIssued = UtilityMethods.GetCurrentDate().Date;
+                    InvoiceNotIssued = false;
+                    MessageBox.Show("Invoice has been successfully issued.", "Success", MessageBoxButton.OK);
                 }));
             }
         }
         #endregion
 
-        #region Collections Helper Methods
+        #region Helper Methods
         private void UpdateCustomers()
         {
             Customers.Clear();
@@ -686,6 +452,123 @@
                 foreach (var customer in customers)
                     Customers.Add(new CustomerVM { Model = customer });
             }
+        }
+
+        private void SetTransactionID()
+        {
+            InvoiceNotIssued = true;
+
+            var month = _transactionDate.Month;
+            var year = _transactionDate.Year;
+            var leadingIDString = "M" + (long)((year - 2000) * 100 + month) + "-";
+            var endingIDString = 0.ToString().PadLeft(4, '0');
+            _transactionID = leadingIDString + endingIDString;
+
+            string lastTransactionID = null;
+            using (var context = new ERPContext())
+            {
+                var IDs = from SalesTransaction in context.SalesTransactions
+                          where SalesTransaction.SalesTransactionID.Substring(0, 6).Equals(leadingIDString)
+                          && string.Compare(SalesTransaction.SalesTransactionID, _transactionID, StringComparison.Ordinal) >= 0
+                          orderby SalesTransaction.SalesTransactionID descending
+                          select SalesTransaction.SalesTransactionID;
+                if (IDs.Count() != 0) lastTransactionID = IDs.First();
+            }
+
+            if (lastTransactionID != null)
+            {
+                var newIDIndex = Convert.ToInt64(lastTransactionID.Substring(6, 4)) + 1;
+                endingIDString = newIDIndex.ToString().PadLeft(4, '0');
+                _transactionID = leadingIDString + endingIDString;
+            }
+
+            Model.SalesTransactionID = _transactionID;
+            OnPropertyChanged("TransactionID");
+        }
+
+        private void ResetTransaction()
+        {
+            _editCustomer = null;
+
+            EditMode = false;
+            InvoiceNotIssued = true;
+            SalesNotReturned = true;
+            IsSaveAllowed = true;
+
+            Model = new SalesTransaction();
+            DisplayedSalesTransactionLines.Clear();
+            NewEntryVM.ResetEntryFields();
+            NewEntryVM.NewEntryWarehouse = null;
+            SetTransactionID();
+            TransactionNotes = null;
+            TransactionDiscount = 0;
+            TransactionSalesExpense = 0;
+            TransactionCustomer = null;
+            TransactionCustomerCity = null;
+            TransactionDate = UtilityMethods.GetCurrentDate().Date;
+            UpdateCustomers();
+        }
+
+        private void SetEditMode()
+        {
+            _editCustomer = new CustomerVM { Model = Model.Customer };
+
+            EditMode = true;
+            InvoiceNotIssued = Model.InvoiceIssued == null;
+            SalesNotReturned = Model.SalesReturnTransactions.Count == 0;
+            IsSaveAllowed = Model.Paid == 0 && Model.SalesReturnTransactions.Count == 0;
+
+            TransactionDate = Model.Date;
+            TransactionCustomer = new CustomerVM { Model = Model.Customer };
+            TransactionNotes = Model.Notes;
+
+            DisplayedSalesTransactionLines.Clear();
+            foreach (var salesTransactionLineVM in Model.SalesTransactionLines.Select(line => new SalesTransactionLineVM { Model = line }))
+                DisplayedSalesTransactionLines.Add(salesTransactionLineVM);
+
+            OnPropertyChanged("TransactionGrossTotal");
+            TransactionSalesExpense = Model.SalesExpense;
+            TransactionDiscount = Model.Discount;
+
+            NewEntryVM.ResetEntryFields();
+            NewEntryVM.NewEntryWarehouse = null;
+        }
+
+        private static int GetStock(Item item, Warehouse warehouse)
+        {
+            int s;
+            using (var context = new ERPContext())
+            {
+                var stock = context
+                    .Stocks
+                    .FirstOrDefault(e => e.Item.ItemID.Equals(item.ItemID) && e.Warehouse.ID.Equals(warehouse.ID));
+                s = stock?.Pieces ?? 0;
+            }
+            return s;
+        }
+
+        public int GetAvailableQuantity(Item item, Warehouse warehouse)
+        {
+            var availableQuantity = GetStock(item, warehouse);
+            var salesTransactionFromDatabae = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
+
+            availableQuantity = DisplayedSalesTransactionLines.Where(
+                line => line.Item.ItemID.Equals(item.ItemID) && line.Warehouse.ID.Equals(warehouse.ID))
+                .Aggregate(availableQuantity, (current, line) => current - line.Quantity);
+
+            if (salesTransactionFromDatabae != null)
+            {
+                availableQuantity += salesTransactionFromDatabae.SalesTransactionLines.ToList().Where(
+                    line => line.Item.ItemID.Equals(item.ItemID) && line.Warehouse.ID.Equals(warehouse.ID))
+                    .Sum(line => line.Quantity);
+            }
+
+            return availableQuantity;
+        }
+
+        public void UpdateTransactionTotal()
+        {
+            OnPropertyChanged("TransactionGrossTotal");
         }
         #endregion
 
@@ -790,7 +673,7 @@
 
         private bool AreThereEnoughStockForAllTransactionItems()
         {
-            foreach (var line in SalesTransactionLines)
+            foreach (var line in DisplayedSalesTransactionLines)
             {
                 var availableQuantity = GetAvailableQuantity(line.Item, line.Warehouse);
                 if (availableQuantity >= 0) continue;
@@ -826,7 +709,7 @@
             foreach (var line in Model.SalesTransactionLines.ToList())
                 Model.SalesTransactionLines.Remove(line);
 
-            foreach (var line in SalesTransactionLines)
+            foreach (var line in DisplayedSalesTransactionLines)
                 Model.SalesTransactionLines.Add(line.Model);
         }
 
@@ -842,13 +725,31 @@
                 return;
             }
             if (Model.InvoiceIssued == null)
-                SalesTransactionHelper.EditNotIssuedInvoiceTransaction(Model);    
+                SalesTransactionHelper.EditNotIssuedInvoiceTransaction(Model);
             else
-                SalesTransactionHelper.EditIssuedInvoiceTransaction(Model);       
+                SalesTransactionHelper.EditIssuedInvoiceTransaction(Model);
         }
         #endregion
 
         #region Other Commands Helper Methods
+        private void ShowEditLineWindow()
+        {
+            var vm = new SalesEditVM(this);
+            var editWindow = new SalesEditView(vm)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            editWindow.ShowDialog();
+        }
+
+        private bool IsThereLineSelected()
+        {
+            if (_selectedLine != null) return true;
+            MessageBox.Show("Please select a line.", "No Selection", MessageBoxButton.OK);
+            return false;
+        }
+
         private static void ShowBroseSalesTransactionsWindow()
         {
             var browseWindow = new BrowseSalesTransactionsView
@@ -887,340 +788,6 @@
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
             salesInvoiceReportWindow.ShowDialog();
-        }
-
-        private void SetSalesTransactionDOPrintedStatusToTrue()
-        {
-            using (var context = new ERPContext())
-            {
-                var salesTransactionFromDatabase = context.SalesTransactions
-                    .Include("SalesTransactionLines")
-                    .Include("SalesTransactionLines.Item")
-                    .Include("SalesTransactionLines.Warehouse")
-                    .Include("Customer")
-                    .Single(e => e.SalesTransactionID.Equals(Model.SalesTransactionID));
-
-                if (salesTransactionFromDatabase == null)
-                {
-                    MessageBox.Show("Sales transaction could not be found.", "Invalid Command", MessageBoxButton.OK);
-                    return;
-                }
-
-                if (!salesTransactionFromDatabase.DOPrinted)
-                {
-                    salesTransactionFromDatabase.DOPrinted = true;
-                    Model.DOPrinted = true;
-                    context.SaveChanges();
-                }
-            }
-        }
-
-        private void PrintDO()
-        {
-            SetSalesTransactionDOPrintedStatusToTrue();
-            var salesTransactiomFromDatabase = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
-            var localReports = CreateSalesInvoiceDOLocalReports(salesTransactiomFromDatabase);
-            PrintDOLocalReports(localReports);
-        }
-
-        private static void PrintDOLocalReports(IEnumerable<LocalReport> localReports)
-        {
-            var printHelper = new PrintHelper();
-            try
-            {
-                foreach (var report in localReports)
-                {
-                    printHelper.Run(report);
-                }
-            }
-
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK);
-            }
-
-            finally
-            {
-                printHelper.Dispose();
-            }
-        }
-
-        private IEnumerable<LocalReport> CreateSalesInvoiceDOLocalReports(SalesTransaction salesTransaction)
-        {
-            var reports = new List<LocalReport>();
-            using (var context = new ERPContext())
-            {
-                var warehouses = context.Warehouses;
-                foreach (var warehouse in warehouses)
-                {
-                    if (IsThereSalesTransactionItemFromThisWarehouse(warehouse))
-                        reports.Add(SalesTransactionPrintHelper.CreateDOLocalReport(salesTransaction, warehouse));       
-                }
-            }
-            return reports;
-        }
-
-        private static LocalReport CreateSalesTransactionInvoiceLocalReport(SalesTransaction salesTransaction)
-        {
-            var dt1 = new DataTable();
-            var dt2 = new DataTable();
-
-            dt1.Columns.Add(new DataColumn("LineNumber", typeof(int)));
-            dt1.Columns.Add(new DataColumn("ItemID", typeof(string)));
-            dt1.Columns.Add(new DataColumn("ItemName", typeof(string)));
-            dt1.Columns.Add(new DataColumn("Unit", typeof(string)));
-            dt1.Columns.Add(new DataColumn("Units", typeof(int)));
-            dt1.Columns.Add(new DataColumn("Pieces", typeof(int)));
-            dt1.Columns.Add(new DataColumn("SalesPrice", typeof(decimal)));
-            dt1.Columns.Add(new DataColumn("Discount", typeof(decimal)));
-            dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
-
-            int count = 1;
-            foreach (var line in salesTransaction.SalesTransactionLines)
-            {
-                var dr1 = dt1.NewRow();
-                dr1["LineNumber"] = count++;
-                dr1["ItemID"] = line.Item.ItemID;
-                dr1["ItemName"] = line.Item.Name;
-                dr1["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                dr1["Units"] = line.Quantity / line.Item.PiecesPerUnit;
-                dr1["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
-                dr1["SalesPrice"] = line.SalesPrice * line.Item.PiecesPerUnit;
-                dr1["Discount"] = line.Discount * line.Item.PiecesPerUnit;
-                dr1["Total"] = line.Total;
-                dt1.Rows.Add(dr1);
-            }
-
-            var dr2 = dt2.NewRow();
-            dt2.Columns.Add(new DataColumn("InvoiceGrossTotal", typeof(decimal)));
-            dt2.Columns.Add(new DataColumn("InvoiceDiscount", typeof(decimal)));
-            dt2.Columns.Add(new DataColumn("InvoiceSalesExpense", typeof(decimal)));
-            dt2.Columns.Add(new DataColumn("InvoiceNetTotal", typeof(decimal)));
-            dt2.Columns.Add(new DataColumn("Customer", typeof(string)));
-            dt2.Columns.Add(new DataColumn("Address", typeof(string)));
-            dt2.Columns.Add(new DataColumn("InvoiceNumber", typeof(string)));
-            dt2.Columns.Add(new DataColumn("Date", typeof(string)));
-            dt2.Columns.Add(new DataColumn("DueDate", typeof(string)));
-            dt2.Columns.Add(new DataColumn("Notes", typeof(string)));
-            dt2.Columns.Add(new DataColumn("Copy", typeof(string)));
-            dr2["InvoiceGrossTotal"] = salesTransaction.GrossTotal;
-            dr2["InvoiceDiscount"] = salesTransaction.Discount;
-            dr2["InvoiceSalesExpense"] = salesTransaction.SalesExpense;
-            dr2["InvoiceNetTotal"] = salesTransaction.NetTotal;
-            dr2["Customer"] = salesTransaction.Customer.Name;
-            dr2["Address"] = salesTransaction.Customer.City;
-            dr2["InvoiceNumber"] = salesTransaction.SalesTransactionID;
-            dr2["Date"] = salesTransaction.Date.ToString("dd-MM-yyyy");
-            dr2["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");
-            dr2["Notes"] = salesTransaction.Notes;
-            dr2["Copy"] = salesTransaction.InvoicePrinted ? "Copy" : "";
-
-            dt2.Rows.Add(dr2);
-
-            ReportDataSource reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
-            ReportDataSource reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
-
-            LocalReport localReport = new LocalReport
-            {
-                ReportPath =
-                    System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\SalesInvoiceReport.rdlc")
-            };
-            // Path of the rdlc file
-            localReport.DataSources.Add(reportDataSource1);
-            localReport.DataSources.Add(reportDataSource2);
-
-            return localReport;
-        }
-        #endregion
-
-        #region Helper Methods
-        private void SetTransactionID()
-        {
-            InvoiceNotIssued = true;
-
-            var month = _transactionDate.Month;
-            var year = _transactionDate.Year;
-            var leadingIDString = "M" + (long) ((year - 2000)*100 + month) + "-";
-            var endingIDString = 0.ToString().PadLeft(4, '0');
-            _transactionID = leadingIDString + endingIDString;
-
-            string lastTransactionID = null;
-            using (var context = new ERPContext())
-            {
-                var IDs = from SalesTransaction in context.SalesTransactions
-                    where SalesTransaction.SalesTransactionID.Substring(0, 6).Equals(leadingIDString)
-                    && string.Compare(SalesTransaction.SalesTransactionID, _transactionID, StringComparison.Ordinal) >= 0
-                    orderby SalesTransaction.SalesTransactionID descending
-                    select SalesTransaction.SalesTransactionID;
-                if (IDs.Count() != 0) lastTransactionID = IDs.First();
-            }
-
-            if (lastTransactionID != null)
-            {
-                var newIDIndex = Convert.ToInt64(lastTransactionID.Substring(6, 4)) + 1;
-                endingIDString = newIDIndex.ToString().PadLeft(4, '0');
-                _transactionID = leadingIDString + endingIDString;
-            }
-
-            Model.SalesTransactionID = _transactionID;
-            OnPropertyChanged("TransactionID");
-        }
-
-        private void ResetTransaction()
-        {
-            _editCustomer = null;
-
-            EditMode = false;
-            InvoiceNotIssued = true;
-            SalesNotReturned = true;
-            IsSaveAllowed = true;
-
-            Model = new SalesTransaction();
-            SalesTransactionLines.Clear();
-            _deletedLines.Clear();
-            NewEntryVM.ResetEntryFields();
-            NewEntryVM.NewEntryWarehouse = null;
-            SetTransactionID();
-            TransactionNotes = null;
-            TransactionDiscount = 0;
-            TransactionSalesExpense = 0;
-            TransactionCustomer = null;
-            TransactionCustomerCity = null;
-            TransactionDate = UtilityMethods.GetCurrentDate().Date;
-            UpdateCustomers();
-        }
-
-        private void SetEditMode()
-        {
-            _editCustomer = new CustomerVM { Model = Model.Customer };
-
-            EditMode = true;
-            InvoiceNotIssued = Model.InvoiceIssued == null;
-            SalesNotReturned = Model.SalesReturnTransactions.Count == 0;
-            IsSaveAllowed = Model.Paid == 0 && Model.SalesReturnTransactions.Count == 0;
-
-            TransactionDate = Model.Date;
-            TransactionCustomer = new CustomerVM { Model = Model.Customer };
-            TransactionNotes = Model.Notes;
-
-            SalesTransactionLines.Clear();
-            _deletedLines.Clear();
-            foreach (var salesTransactionLineVM in Model.SalesTransactionLines.Select(line => new SalesTransactionLineVM { Model = line, StockDeducted = line.Quantity }))
-                SalesTransactionLines.Add(salesTransactionLineVM);
-            
-            OnPropertyChanged("TransactionGrossTotal");
-            TransactionSalesExpense = Model.SalesExpense;
-            TransactionDiscount = Model.Discount;
-
-            NewEntryVM.ResetEntryFields();
-            NewEntryVM.NewEntryWarehouse = null;
-        }
-
-        private static decimal CalculateCOGS(ERPContext context, List<SalesTransactionLine> lines)
-        {
-            var costOfGoodsSoldAmount = 0m;
-
-            // Determine the COGS for each line
-            foreach (var line in lines)
-            {
-                var itemID = line.Item.ItemID;
-
-                var purchases = context.PurchaseTransactionLines
-                .Include("PurchaseTransaction")
-                .Where(e => e.ItemID == itemID && e.SoldOrReturned < e.Quantity)
-                .OrderBy(e => e.PurchaseTransactionID)
-                .ThenByDescending(transaction => transaction.Quantity - transaction.SoldOrReturned)
-                .ThenByDescending(transaction => transaction.PurchasePrice)
-                .ThenByDescending(transaction => transaction.Discount)
-                .ThenByDescending(transaction => transaction.WarehouseID)
-                .ToList();
-
-                var tracker = line.Quantity;
-
-                foreach (var purchase in purchases)
-                {
-                    var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
-                    var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
-
-                    if (tracker <= availableQuantity)
-                    {
-                        purchase.SoldOrReturned += tracker;
-                        if (purchaseLineNetTotal == 0) break;
-                        var fractionOfTransactionDiscount = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                        var fractionOfTransactionTax = (tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
-                        costOfGoodsSoldAmount += (tracker * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
-                        break;
-                    }
-                    else if (tracker > availableQuantity)
-                    {
-                        purchase.SoldOrReturned += availableQuantity;
-                        tracker -= availableQuantity;
-                        if (purchaseLineNetTotal == 0) continue;
-                        var fractionOfTransactionDiscount = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                        var fractionOfTransactionTax = (availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
-                        costOfGoodsSoldAmount += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
-                    }
-                }
-            }
-
-            return costOfGoodsSoldAmount;
-        }
-
-        private static int GetStock(Item item, Warehouse warehouse)
-        {
-            int s;
-            using (var context = new ERPContext())
-            {
-                var stock = context
-                    .Stocks
-                    .FirstOrDefault(e => e.Item.ItemID.Equals(item.ItemID) && e.Warehouse.ID.Equals(warehouse.ID));
-                s = stock?.Pieces ?? 0;
-            }
-            return s;
-        }
-
-        public int GetAvailableQuantity(Item item, Warehouse warehouse)
-        {
-            var availableQuantity = GetStock(item, warehouse);
-
-            // Decrease availableQuantity by the number of items from the same warehouse that are already in the transaction
-            foreach (var line in SalesTransactionLines.Where(line => line.Item.ItemID.Equals(item.ItemID) && line.Warehouse.ID.Equals(warehouse.ID)))
-            {
-                availableQuantity += line.StockDeducted;
-                availableQuantity -= line.Quantity;
-            }
-
-            availableQuantity += _deletedLines.Where(
-                line => line.Item.ItemID.Equals(item.ItemID) && line.Warehouse.ID.Equals(warehouse.ID))
-                .Sum(line => line.StockDeducted);
-
-            return availableQuantity;
-        }
-
-        private bool IsThereSalesTransactionItemFromThisWarehouse(Warehouse warehouse)
-        {
-            return SalesTransactionLines.Any(line => line.Warehouse.ID.Equals(warehouse.ID));
-        }
-
-        private static bool CompareLines(SalesTransactionLine l1, SalesTransactionLine l2)
-        {
-            using (var context = new ERPContext())
-            {
-                if (l1.Item == null) l1.Item = context.Inventory.Single(e => e.ItemID.Equals(l1.ItemID));
-                if (l2.Item == null) l2.Item = context.Inventory.Single(e => e.ItemID.Equals(l2.ItemID));
-
-                if (l1.Warehouse == null) l1.Warehouse = context.Warehouses.Single(e => e.ID.Equals(l1.WarehouseID));
-                if (l2.Warehouse == null) l2.Warehouse = context.Warehouses.Single(e => e.ID.Equals(l2.WarehouseID));
-
-            }
-            return l1.Item.ItemID.Equals(l2.Item.ItemID) && l1.Warehouse.ID.Equals(l2.Warehouse.ID)
-                && l1.SalesPrice.Equals(l2.SalesPrice)
-                && l1.Discount.Equals(l2.Discount);
-        }
-
-        public void UpdateTransactionTotal()
-        {
-            OnPropertyChanged("TransactionGrossTotal");
         }
         #endregion
     }

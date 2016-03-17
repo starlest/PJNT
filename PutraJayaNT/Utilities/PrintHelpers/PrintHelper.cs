@@ -1,15 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Drawing.Imaging;
-using System.Drawing.Printing;
-using System.Collections.Generic;
-using Microsoft.Reporting.WinForms;
-using System.Drawing;
-
-namespace PutraJayaNT.Utilities
+﻿namespace PutraJayaNT.Utilities.PrintHelpers
 {
-    class PrintHelper
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Imaging;
+    using System.Drawing.Printing;
+    using System.IO;
+    using System.Text;
+    using Microsoft.Reporting.WinForms;
+
+    internal class PrintHelper
     {
         private int m_currentPageIndex;
         private IList<Stream> m_streams;

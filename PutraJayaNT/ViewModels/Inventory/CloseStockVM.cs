@@ -10,39 +10,30 @@
     using System.Linq;
     using System.Windows;
 
-    class CloseStockVM : ViewModelBase
+    internal class CloseStockVM : ViewModelBase
     {
-        ObservableCollection<int> _periodYears;
-        ObservableCollection<int> _periods;
-
-        List<Warehouse> _warehouses;
+        readonly List<Warehouse> _warehouses;
         int _periodYear;
         int _period;
-        DateTime _beginningDate;
-        DateTime _endingDate;
 
         public CloseStockVM()
         {
             using (var context = new ERPContext())
             {
-                _periodYears = new ObservableCollection<int> { DateTime.Now.Year - 1, DateTime.Now.Year };
-                _periodYear = context.Ledger_General.FirstOrDefault().PeriodYear;
-                _periods = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+                PeriodYears = new ObservableCollection<int> { DateTime.Now.Year - 1, DateTime.Now.Year };
+                var firstOrDefault = context.Ledger_General.FirstOrDefault();
+                if (firstOrDefault != null)
+                    _periodYear = firstOrDefault.PeriodYear;
+                Periods = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
                 _period = UtilityMethods.GetCurrentDate().Month;
 
                 _warehouses = context.Warehouses.ToList();
             }
         }
 
-        public ObservableCollection<int> PeriodYears
-        {
-            get { return _periodYears; }
-        }
+        public ObservableCollection<int> PeriodYears { get; }
 
-        public ObservableCollection<int> Periods
-        {
-            get { return _periods; }
-        }
+        public ObservableCollection<int> Periods { get; }
 
         public int PeriodYear
         {
@@ -61,9 +52,6 @@
 
         public void Close(BackgroundWorker worker)
         {
-            _beginningDate = new DateTime(_periodYear, _period, 1, 0, 0, 0);
-            _endingDate = _beginningDate.AddMonths(1).AddDays(-1);
-
             using (var context = new ERPContext())
             {
                 var items = context.Inventory.ToList();
@@ -71,8 +59,6 @@
                 var index = 1;
                 foreach (var item in items)
                 {
-                    var stocks = context.Stocks.Include("Item").Include("Warehouse").Where(e => e.ItemID.Equals(item.ItemID)).ToList();
-
                     foreach (var warehouse in _warehouses)
                     {
                         var beginningBalance = GetBeginningBalance(context, warehouse, item);
@@ -160,26 +146,17 @@
                 e.SalesReturnTransaction.Date.Month == _period && e.SalesReturnTransaction.Date.Year == _periodYear)
                 .ToList();
 
-            var stockAdjustmentLines = context.AdjustStockTransactionLines
-                .Include("AdjustStockTransaction")
+            var stockAdjustmentLines = context.StockAdjustmentTransactionLines
+                .Include("StockAdjustmentTransaction")
                 .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
-                e.AdjustStockTransaction.Date.Month == _period && e.AdjustStockTransaction.Date.Year == _periodYear)
+                e.StockAdjustmentTransaction.Date.Month == _period && e.StockAdjustmentTransaction.Date.Year == _periodYear)
                 .ToList();
 
-            var stockMovementLines = context.MoveStockTransactionLines
-                .Include("MoveStockTransaction")
-                .Include("MoveStockTransaction.FromWarehouse")
-                .Include("MoveStockTransaction.ToWarehouse")
-                .Where(e => e.ItemID.Equals(item.ItemID) &&
-                (e.MoveStockTransaction.FromWarehouse.ID.Equals(warehouse.ID) || e.MoveStockTransaction.ToWarehouse.ID.Equals(warehouse.ID))
-                && e.MoveStockTransaction.Date.Month == _period && e.MoveStockTransaction.Date.Year == _periodYear)
-                .ToList();
-
-            var moveStockTransactions = context.MoveStockTransactions
+            var moveStockTransactions = context.StockMovementTransactions
                 .Include("FromWarehouse")
                 .Include("ToWarehouse")
-                .Include("MoveStockTransactionLines")
-                .Include("MoveStockTransactionLines.Item")
+                .Include("StockMovementTransactionLines")
+                .Include("StockMovementTransactionLines.Item")
                 .Where(e => e.Date.Month == _period && e.Date.Year == _periodYear
                 && (e.FromWarehouse.ID.Equals(warehouse.ID) || e.ToWarehouse.ID.Equals(warehouse.ID)))
                 .ToList();
@@ -201,7 +178,7 @@
 
             foreach (var transaction in moveStockTransactions)
             {
-                foreach (var line in transaction.MoveStockTransactionLines)
+                foreach (var line in transaction.StockMovementTransactionLines)
                 {
                     if (line.ItemID.Equals(item.ItemID))
                     {

@@ -8,7 +8,7 @@ namespace PutraJayaNT.Views.Inventory
     /// <summary>
     /// Interaction logic for AdjustStockView.xaml
     /// </summary>
-    public partial class AdjustStockView : UserControl
+    public partial class AdjustStockView
     {
         public AdjustStockView()
         {

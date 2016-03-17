@@ -16,7 +16,7 @@ namespace PutraJayaNT.ViewModels.Inventory
 {
     using Utilities.ModelHelpers;
 
-    class AdjustStockTransactionVM : ViewModelBase<AdjustStockTransaction>
+    class AdjustStockTransactionVM : ViewModelBase<StockAdjustmentTransaction>
     {
         #region Collections Backing Fields
         ObservableCollection<WarehouseVM> _warehouses;
@@ -49,8 +49,8 @@ namespace PutraJayaNT.ViewModels.Inventory
 
         public AdjustStockTransactionVM()
         {
-            Model = new AdjustStockTransaction();
-            Model.AdjustStockTransactionLines = new ObservableCollection<AdjustStockTransactionLine>();
+            Model = new StockAdjustmentTransaction();
+            Model.AdjustStockTransactionLines = new ObservableCollection<StockAdjustmentTransactionLine>();
 
             _warehouses = new ObservableCollection<WarehouseVM>();
             _products = new ObservableCollection<ItemVM>();
@@ -245,7 +245,7 @@ namespace PutraJayaNT.ViewModels.Inventory
                         // Add the transaction to the database
                         Model.Date = UtilityMethods.GetCurrentDate().Date;
                         Model.User = _user;
-                        context.AdjustStockTransactions.Add(Model);
+                        context.StockAdjustmentTransactions.Add(Model);
 
                         // Add the journal entries for this transaction
                         if (decreaseAdjustment)
@@ -367,9 +367,9 @@ namespace PutraJayaNT.ViewModels.Inventory
 
                     var newEntry = new AdjustStockTransactionLineVM
                     {
-                        Model = new AdjustStockTransactionLine
+                        Model = new StockAdjustmentTransactionLine
                         {
-                            AdjustStockTransaction = this.Model,
+                            StockAdjustmentTransaction = this.Model,
                             Item = _newEntryProduct.Model,
                             Warehouse = _newEntryWarehouse.Model,
                             Quantity = quantity
@@ -448,7 +448,7 @@ namespace PutraJayaNT.ViewModels.Inventory
         {
             using (var context = new ERPContext())
             {
-                var transaction = context.AdjustStockTransactions.Where(e => e.AdjustStrockTransactionID.Equals(id)).FirstOrDefault();
+                var transaction = context.StockAdjustmentTransactions.Where(e => e.StockAdjustmentTransactionID.Equals(id)).FirstOrDefault();
                 return transaction != null;
             }
         }
@@ -461,10 +461,10 @@ namespace PutraJayaNT.ViewModels.Inventory
 
             using (var context = new ERPContext())
             {
-                var lines = context.AdjustStockTransactionLines
+                var lines = context.StockAdjustmentTransactionLines
                     .Include("Item")
                     .Include("Warehouse")
-                    .Where(e => e.AdjustStockTransactionID.Equals(_newTransactionID))
+                    .Where(e => e.StockAdjustmentTransactionID.Equals(_newTransactionID))
                     .ToList();
 
                 foreach (var line in lines)
@@ -481,16 +481,16 @@ namespace PutraJayaNT.ViewModels.Inventory
             string lastTransactionID = null;
             using (var context = new ERPContext())
             {
-                var IDs = (from AdjustStockTransaction in context.AdjustStockTransactions
-                           where AdjustStockTransaction.AdjustStrockTransactionID.CompareTo(_newTransactionID) >= 0 && AdjustStockTransaction.AdjustStrockTransactionID.Substring(0, 2).Equals("SA")
-                           orderby AdjustStockTransaction.AdjustStrockTransactionID descending
-                           select AdjustStockTransaction.AdjustStrockTransactionID);
+                var IDs = (from StockAdjustmentTransaction in context.StockAdjustmentTransactions
+                           where StockAdjustmentTransaction.StockAdjustmentTransactionID.CompareTo(_newTransactionID) >= 0 && StockAdjustmentTransaction.StockAdjustmentTransactionID.Substring(0, 2).Equals("SA")
+                           orderby StockAdjustmentTransaction.StockAdjustmentTransactionID descending
+                           select StockAdjustmentTransaction.StockAdjustmentTransactionID);
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
             if (lastTransactionID != null) _newTransactionID = "SA" + (Convert.ToInt64(lastTransactionID.Substring(2)) + 1).ToString();
 
-            Model.AdjustStrockTransactionID = _newTransactionID;
+            Model.StockAdjustmentTransactionID = _newTransactionID;
             OnPropertyChanged("NewTransactionID");
         }
 
@@ -510,8 +510,8 @@ namespace PutraJayaNT.ViewModels.Inventory
             NewEntryWarehouse = null;
             ResetEntryFields();
             _lines.Clear();
-            Model = new AdjustStockTransaction();
-            Model.AdjustStockTransactionLines = new ObservableCollection<AdjustStockTransactionLine>();
+            Model = new StockAdjustmentTransaction();
+            Model.AdjustStockTransactionLines = new ObservableCollection<StockAdjustmentTransactionLine>();
             SetTransactionID();
         }
         #endregion

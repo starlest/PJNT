@@ -1,15 +1,83 @@
 ﻿namespace PutraJayaNT.Utilities.PrintHelpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Windows;
     using Microsoft.Reporting.WinForms;
     using Models.Inventory;
     using Models.Sales;
 
     public static class SalesTransactionPrintHelper
     {
-        public static LocalReport CreateDOLocalReport(SalesTransaction salesTransaction, Warehouse warehouse)
+        public static void PrintSalesTransactionFromDatabaseDO(SalesTransaction salesTransaction)
+        {
+            var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(salesTransaction);
+            var localReports = CreateSalesInvoiceDOLocalReports(salesTransactionFromDatabase);
+            PrintDOLocalReports(localReports);
+            SetSalesTransactionDOPrintedStatusToTrue(salesTransaction);
+        }
+
+        public static void PrintSalesTransactionFromDatabaseInvoice(SalesTransaction salesTransaction)
+        {
+            var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(salesTransaction);
+            var localReport = CreateSalesTransactionInvoiceLocalReport(salesTransactionFromDatabase);
+            PrintInvoiceLocalReport(localReport);
+            SetSalesTransactionInvoicePrintedStatusToTrue(salesTransaction);
+        }
+
+        private static SalesTransaction GetSalesTransactionFromDatabase(SalesTransaction salesTransaction)
+        {
+            using (var context = new ERPContext())
+            {
+                return context.SalesTransactions
+                    .Include("Customer")
+                    .Include("CollectionSalesman")
+                    .Include("SalesReturnTransactions")
+                    .Include("SalesTransactionLines")
+                    .Include("SalesTransactionLines.Salesman")
+                    .Include("SalesTransactionLines.Item")
+                    .Include("SalesTransactionLines.Warehouse")
+                    .SingleOrDefault(e => e.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
+            }
+        }
+
+        #region Print DO Local Report Helper Methods
+        private static void SetSalesTransactionDOPrintedStatusToTrue(SalesTransaction salesTransaction)
+        {
+            using (var context = new ERPContext())
+            {
+                var salesTransactionFromDatabase = context.SalesTransactions.Single(
+                    transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
+
+                if (salesTransactionFromDatabase.DOPrinted) return;
+                salesTransactionFromDatabase.DOPrinted = true;
+                context.SaveChanges();
+            }
+        }
+
+        private static IEnumerable<LocalReport> CreateSalesInvoiceDOLocalReports(SalesTransaction salesTransaction)
+        {
+            var reports = new List<LocalReport>();
+            using (var context = new ERPContext())
+            {
+                var warehouses = context.Warehouses;
+                foreach (var warehouse in warehouses)
+                {
+                    if (IsThereSalesTransactionItemFromThisWarehouse(salesTransaction, warehouse))
+                        reports.Add(CreateSalesInvoiceDOLocalReport(salesTransaction, warehouse));
+                }
+            }
+            return reports;
+        }
+
+        private static bool IsThereSalesTransactionItemFromThisWarehouse(SalesTransaction salesTransaction, Warehouse warehouse)
+        {
+            return salesTransaction.SalesTransactionLines.ToList().Any(line => line.Warehouse.ID.Equals(warehouse.ID));
+        }
+
+        public static LocalReport CreateSalesInvoiceDOLocalReport(SalesTransaction salesTransaction, Warehouse warehouse)
         {
             var salesDODataTable = new DataTable();
             var salesDOLinesDataTable = new DataTable();
@@ -18,17 +86,17 @@
             LoadSalesDODatable(salesTransaction, warehouse, salesDODataTable);
             LoadSalesDOLinesDataTable(salesTransaction, warehouse, salesDOLinesDataTable);
 
-            var localReport = new LocalReport
+            var salesInvoiceDOLocalReport = new LocalReport
             {
                 ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\SalesDOReport.rdlc")
             };
 
             var salesDODataSource = new ReportDataSource("SalesInvoiceDataSet", salesDODataTable);
             var salesDOLineDataSetDataSource = new ReportDataSource("SalesInvoiceLineDataSet", salesDOLinesDataTable);
-            localReport.DataSources.Add(salesDODataSource);
-            localReport.DataSources.Add(salesDOLineDataSetDataSource);
+            salesInvoiceDOLocalReport.DataSources.Add(salesDODataSource);
+            salesInvoiceDOLocalReport.DataSources.Add(salesDOLineDataSetDataSource);
 
-            return localReport;
+            return salesInvoiceDOLocalReport;
         }
 
         private static void LoadSalesDOLinesDataTable(SalesTransaction salesTransaction, Warehouse warehouse, DataTable salesTransactionLinesDataTable)
@@ -93,5 +161,152 @@
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("Discount", typeof(decimal)));
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("Total", typeof(decimal)));
         }
+
+        public static void PrintDOLocalReports(IEnumerable<LocalReport> localReports)
+        {
+            var printHelper = new PrintHelper();
+            try
+            {
+                foreach (var report in localReports)
+                {
+                    printHelper.Run(report);
+                }
+            }
+
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK);
+            }
+
+            finally
+            {
+                printHelper.Dispose();
+            }
+        }
+        #endregion
+
+        #region Print Invoice Helper Methods
+        private static void SetSalesTransactionInvoicePrintedStatusToTrue(SalesTransaction salesTransaction)
+        {
+            using (var context = new ERPContext())
+            {
+                var salesTransactionFromDatabase = context.SalesTransactions.Single(
+                    transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
+
+                if (salesTransactionFromDatabase.InvoicePrinted) return;
+                salesTransactionFromDatabase.InvoicePrinted = true;
+                context.SaveChanges();
+            }
+        }
+
+        public static LocalReport CreateSalesTransactionInvoiceLocalReport(SalesTransaction salesTransaction)
+        {
+            var salesInvoiceDataTable = new DataTable();
+            var salesInvoiceLinesDataTable = new DataTable();
+            SetupSalesInvoiceDataTable(salesInvoiceDataTable);
+            SetupSalesInvoiceLinesDataTable(salesInvoiceLinesDataTable);
+            LoadSalesInvoiceDataTable(salesInvoiceDataTable, salesTransaction);
+            LoadSalesInvoiceLinesDataTable(salesInvoiceLinesDataTable, salesTransaction);
+
+            var salesTransactionInvoiceLocalReport = new LocalReport
+            {
+                ReportPath =
+                    System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\SalesInvoiceReport.rdlc")
+            };
+
+            var salesInvoiceDataSource = new ReportDataSource("SalesInvoiceDataSet", salesInvoiceDataTable);
+            var salesInvoiceLinesDataSource = new ReportDataSource("SalesInvoiceLineDataSet", salesInvoiceLinesDataTable);
+            salesTransactionInvoiceLocalReport.DataSources.Add(salesInvoiceLinesDataSource);
+            salesTransactionInvoiceLocalReport.DataSources.Add(salesInvoiceDataSource);
+
+            return salesTransactionInvoiceLocalReport;
+        }
+
+        private static void LoadSalesInvoiceDataTable(DataTable salesInvoiceDataTable, SalesTransaction salesTransaction)
+        {
+
+            var dr2 = salesInvoiceDataTable.NewRow();
+
+            dr2["InvoiceGrossTotal"] = salesTransaction.GrossTotal;
+            dr2["InvoiceDiscount"] = salesTransaction.Discount;
+            dr2["InvoiceSalesExpense"] = salesTransaction.SalesExpense;
+            dr2["InvoiceNetTotal"] = salesTransaction.NetTotal;
+            dr2["Customer"] = salesTransaction.Customer.Name;
+            dr2["Address"] = salesTransaction.Customer.City;
+            dr2["InvoiceNumber"] = salesTransaction.SalesTransactionID;
+            dr2["Date"] = salesTransaction.Date.ToString("dd-MM-yyyy");
+            dr2["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");
+            dr2["Notes"] = salesTransaction.Notes;
+            dr2["Copy"] = salesTransaction.InvoicePrinted ? "Copy" : "";
+
+            salesInvoiceDataTable.Rows.Add(dr2);
+        }
+
+        private static void SetupSalesInvoiceLinesDataTable(DataTable salesInvoiceLinesDataTable)
+        {
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("LineNumber", typeof(int)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("ItemID", typeof(string)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("ItemName", typeof(string)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Unit", typeof(string)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Units", typeof(int)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Pieces", typeof(int)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("SalesPrice", typeof(decimal)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Discount", typeof(decimal)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Total", typeof(decimal)));
+        }
+
+        private static void SetupSalesInvoiceDataTable(DataTable salesInvoiceDataTable)
+        {
+            salesInvoiceDataTable.Columns.Add(new DataColumn("InvoiceGrossTotal", typeof(decimal)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("InvoiceDiscount", typeof(decimal)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("InvoiceSalesExpense", typeof(decimal)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("InvoiceNetTotal", typeof(decimal)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("Customer", typeof(string)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("Address", typeof(string)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("InvoiceNumber", typeof(string)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("Date", typeof(string)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("DueDate", typeof(string)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("Notes", typeof(string)));
+            salesInvoiceDataTable.Columns.Add(new DataColumn("Copy", typeof(string)));
+        }
+
+        private static void LoadSalesInvoiceLinesDataTable(DataTable salesInvoiceLinesDataTable, SalesTransaction salesTransaction)
+        {
+            var count = 1;
+            foreach (var line in salesTransaction.SalesTransactionLines)
+            {
+                var row = salesInvoiceLinesDataTable.NewRow();
+                row["LineNumber"] = count++;
+                row["ItemID"] = line.Item.ItemID;
+                row["ItemName"] = line.Item.Name;
+                row["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
+                row["Units"] = line.Quantity / line.Item.PiecesPerUnit;
+                row["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
+                row["SalesPrice"] = line.SalesPrice * line.Item.PiecesPerUnit;
+                row["Discount"] = line.Discount * line.Item.PiecesPerUnit;
+                row["Total"] = line.Total;
+                salesInvoiceLinesDataTable.Rows.Add(row);
+            }
+        }
+
+        private static void PrintInvoiceLocalReport(LocalReport localReport)
+        {
+            var printHelper = new PrintHelper();
+            try
+            {
+                printHelper.Run(localReport);
+            }
+
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK);
+            }
+
+            finally
+            {
+                printHelper.Dispose();
+            }
+        }
+        #endregion
     }
 }

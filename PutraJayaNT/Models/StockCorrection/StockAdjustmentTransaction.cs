@@ -5,17 +5,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PutraJayaNT.Models.StockCorrection
 {
-    public class AdjustStockTransaction
+    public class StockAdjustmentTransaction
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string AdjustStrockTransactionID { get; set; }
+        public string StockAdjustmentTransactionID { get; set; }
 
         public DateTime Date { get; set; }
 
         public string Description { get; set; }
 
-        public virtual ObservableCollection<AdjustStockTransactionLine> AdjustStockTransactionLines { get; set; }
+        public virtual ObservableCollection<StockAdjustmentTransactionLine> AdjustStockTransactionLines { get; set; }
 
         public virtual User User { get; set; }
     }

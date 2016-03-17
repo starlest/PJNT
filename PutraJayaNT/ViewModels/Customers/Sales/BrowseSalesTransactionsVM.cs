@@ -1,38 +1,33 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Sales;
-using PutraJayaNT.Reports.Windows;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-
-namespace PutraJayaNT.ViewModels.Customers
+﻿namespace PutraJayaNT.ViewModels.Customers.Sales
 {
-    class BrowseSalesTransactionsVM : ViewModelBase
-    {
-        ObservableCollection<SalesTransaction> _salesTransactions;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
+    using Models.Sales;
+    using MVVMFramework;
+    using PutraJayaNT.Reports.Windows;
+    using Utilities;
 
-        DateTime _fromDate;
-        DateTime _toDate;
-        decimal _total;
+    internal class BrowseSalesTransactionsVM : ViewModelBase
+    {
+        private DateTime _fromDate;
+        private DateTime _toDate;
+        private decimal _total;
 
         ICommand _printCommand;
 
         public BrowseSalesTransactionsVM()
         {
-            _salesTransactions = new ObservableCollection<SalesTransaction>();
+            SalesTransactions = new ObservableCollection<SalesTransaction>();
             _fromDate = UtilityMethods.GetCurrentDate().Date;
             _toDate = UtilityMethods.GetCurrentDate().Date;
 
             UpdateSalesTransactions();
         }
 
-        public ObservableCollection<SalesTransaction> SalesTransactions
-        {
-            get { return _salesTransactions; }
-        }
+        public ObservableCollection<SalesTransaction> SalesTransactions { get; }
 
         public DateTime FromDate
         {
@@ -78,11 +73,13 @@ namespace PutraJayaNT.ViewModels.Customers
             {
                 return _printCommand ?? (_printCommand = new RelayCommand(() =>
                 {
-                    if (_salesTransactions.Count == 0) return;
+                    if (SalesTransactions.Count == 0) return;
 
-                    var salesTransactionsReportWindow = new SalesTransactionsReportWindow(_salesTransactions);
-                    salesTransactionsReportWindow.Owner = App.Current.MainWindow;
-                    salesTransactionsReportWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    var salesTransactionsReportWindow = new SalesTransactionsReportWindow(SalesTransactions)
+                    {
+                        Owner = Application.Current.MainWindow,
+                        WindowStartupLocation = WindowStartupLocation.CenterOwner
+                    };
                     salesTransactionsReportWindow.Show();
                 }));
             }
@@ -92,7 +89,7 @@ namespace PutraJayaNT.ViewModels.Customers
         private void UpdateSalesTransactions()
         {
             _total = 0;
-            _salesTransactions.Clear();
+            SalesTransactions.Clear();
             using (var context = new ERPContext())
             {
                 var salesTransactions = context.SalesTransactions
@@ -100,12 +97,11 @@ namespace PutraJayaNT.ViewModels.Customers
                     .Include("Customer")
                     .Where(e => e.Date >= _fromDate && e.Date <= _toDate)
                     .OrderBy(e => e.Date)
-                    .ThenBy(e => e.SalesTransactionID)
-                    .ToList();
+                    .ThenBy(e => e.SalesTransactionID);
 
                 foreach (var t in salesTransactions)
                 {
-                    _salesTransactions.Add(t);
+                    SalesTransactions.Add(t);
                     _total += t.NetTotal;
                 }
             }

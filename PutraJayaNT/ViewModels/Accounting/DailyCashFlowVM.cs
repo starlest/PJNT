@@ -12,8 +12,6 @@ namespace PutraJayaNT.ViewModels.Accounting
 {
     public class DailyCashFlowVM : ViewModelBase
     {
-        ObservableCollection<LedgerTransactionLineVM> _lines;
-
         DateTime _date;
         decimal _beginningBalance;
         decimal _endingBalance;
@@ -22,15 +20,12 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         public DailyCashFlowVM()
         {
-            _lines = new ObservableCollection<LedgerTransactionLineVM>();
+            Lines = new ObservableCollection<LedgerTransactionLineVM>();
             _date = UtilityMethods.GetCurrentDate().Date;
             UpdateLines();
         }
 
-        public ObservableCollection<LedgerTransactionLineVM> Lines
-        {
-            get { return _lines; }
-        }
+        public ObservableCollection<LedgerTransactionLineVM> Lines { get; }
 
         public DateTime Date
         {
@@ -60,7 +55,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 return _printCommand ?? (_printCommand = new RelayCommand(() =>
                 {
-                    if (_lines.Count == 0) return;
+                    if (Lines.Count == 0) return;
 
                     var dailyCashFlowReportWindow = new DailyCashFlowReportWindow(this);
                     dailyCashFlowReportWindow.Owner = App.Current.MainWindow;
@@ -73,7 +68,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         #region Helper Methods
         private void UpdateLines()
         {
-            _lines.Clear();
+            Lines.Clear();
             SetBeginningBalance();
             _endingBalance = _beginningBalance;
             using (var context = new ERPContext())
@@ -96,7 +91,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                         if (!l.Description.Equals("Sales Transaction Receipt"))
                         {
                             if (line.Seq == "Credit") l.Amount = -l.Amount;
-                            _lines.Add(new LedgerTransactionLineVM { Model = l.Model, Balance = _endingBalance + l.Amount });
+                            Lines.Add(new LedgerTransactionLineVM { Model = l.Model, Balance = _beginningBalance + l.Amount });
                         }
 
                         else
@@ -107,7 +102,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                         l.Balance = _endingBalance;
                     }
                 }
-                _lines.Add(new LedgerTransactionLineVM { Model = srLine, Balance = _endingBalance });
+                Lines.Add(new LedgerTransactionLineVM { Model = srLine, Balance = _endingBalance });
             }
 
             OnPropertyChanged("EndingBalance");
@@ -119,8 +114,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 var balances = context.Ledger_Account_Balances
                     .Include("LedgerAccount")
-                    .Where(e => e.LedgerAccount.Name.Equals("Cash") && e.PeriodYear == _date.Year)
-                    .FirstOrDefault();
+                    .FirstOrDefault(e => e.LedgerAccount.Name.Equals("Cash") && e.PeriodYear == _date.Year);
 
                 if (balances == null)
                 {

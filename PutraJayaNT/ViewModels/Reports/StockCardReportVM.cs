@@ -258,10 +258,10 @@
             DateTime fromDate)
         {
             var beginningPeriodDate = fromDate.AddDays(-fromDate.Date.Day + 1);
-            var stockAdjustmentTransactionLinesFromDatabase = context.AdjustStockTransactionLines.Where(
+            var stockAdjustmentTransactionLinesFromDatabase = context.StockAdjustmentTransactionLines.Where(
                 line => line.ItemID.Equals(_selectedProduct.ID) && line.WarehouseID.Equals(warehouse.ID) 
-                && line.AdjustStockTransaction.Date >= beginningPeriodDate 
-                && line.AdjustStockTransaction.Date < fromDate)
+                && line.StockAdjustmentTransaction.Date >= beginningPeriodDate 
+                && line.StockAdjustmentTransaction.Date < fromDate)
                 .ToList();
             return stockAdjustmentTransactionLinesFromDatabase.Sum(line => line.Quantity);
         }
@@ -436,18 +436,18 @@
             foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
             {
                 var stockAdjustmentLinesFromDatabase =
-                    context.AdjustStockTransactionLines.Where(
+                    context.StockAdjustmentTransactionLines.Where(
                         line => line.ItemID.Equals(_selectedProduct.ID) && line.WarehouseID.Equals(warehouse.ID)
-                                && line.AdjustStockTransaction.Date >= _fromDate &&
-                                line.AdjustStockTransaction.Date <= _toDate);
+                                && line.StockAdjustmentTransaction.Date >= _fromDate &&
+                                line.StockAdjustmentTransaction.Date <= _toDate);
 
                 foreach (var vm in stockAdjustmentLinesFromDatabase.Select(line => new StockCardLineVM
                 {
                     Item = line.Item,
-                    Date = line.AdjustStockTransaction.Date,
-                    Documentation = line.AdjustStockTransaction.AdjustStrockTransactionID,
+                    Date = line.StockAdjustmentTransaction.Date,
+                    Documentation = line.StockAdjustmentTransaction.StockAdjustmentTransactionID,
                     Description = "Stock Adjustment",
-                    CustomerSupplier = line.AdjustStockTransaction.User.Username,
+                    CustomerSupplier = line.StockAdjustmentTransaction.User.Username,
                     Amount = line.Quantity,
                 }))
                 {
@@ -461,7 +461,7 @@
             foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
             {
                 var moveStockTransactionsFromDatabase =
-                    context.MoveStockTransactions
+                    context.StockMovementTransactions
                     .Where(
                         transaction => 
                         transaction.Date >= _fromDate && transaction.Date <= _toDate
@@ -471,7 +471,7 @@
 
                 foreach (var transaction in moveStockTransactionsFromDatabase)
                 {
-                    foreach (var line in transaction.MoveStockTransactionLines)
+                    foreach (var line in transaction.StockMovementTransactionLines)
                     {
                         if (!line.ItemID.Equals(_selectedProduct.ID)) continue;
 
@@ -480,8 +480,8 @@
                             var vm = new StockCardLineVM
                             {
                                 Item = line.Item,
-                                Date = line.MoveStockTransaction.Date,
-                                Documentation = transaction.MoveStrockTransactionID,
+                                Date = line.StockMovementTransaction.Date,
+                                Documentation = transaction.StockMovementTransactionID,
                                 Description = transaction.FromWarehouse.Name + " => " + transaction.ToWarehouse.Name,
                                 CustomerSupplier = transaction.User.Username,
                                 Amount = -line.Quantity,
@@ -495,8 +495,8 @@
                             var vm = new StockCardLineVM
                             {
                                 Item = line.Item,
-                                Date = line.MoveStockTransaction.Date,
-                                Documentation = transaction.MoveStrockTransactionID,
+                                Date = line.StockMovementTransaction.Date,
+                                Documentation = transaction.StockMovementTransactionID,
                                 Description = transaction.FromWarehouse.Name + " => " + transaction.ToWarehouse.Name,
                                 CustomerSupplier = transaction.User.Username,
                                 Amount = line.Quantity,

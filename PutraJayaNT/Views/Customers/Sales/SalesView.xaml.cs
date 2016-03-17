@@ -1,9 +1,7 @@
-﻿using PutraJayaNT.ViewModels.Customers;
-using System.Windows.Controls;
-using System.Windows.Input;
-
-namespace PutraJayaNT.Views.Customers
+﻿namespace PutraJayaNT.Views.Customers.Sales
 {
+    using System.Windows.Controls;
+    using System.Windows.Input;
     using ViewModels.Customers.Sales;
 
     /// <summary>

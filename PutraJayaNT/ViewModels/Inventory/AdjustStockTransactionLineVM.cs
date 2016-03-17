@@ -4,14 +4,14 @@
     using Models.Inventory;
     using Models.StockCorrection;
 
-    class AdjustStockTransactionLineVM : ViewModelBase<AdjustStockTransactionLine>
+    class AdjustStockTransactionLineVM : ViewModelBase<StockAdjustmentTransactionLine>
     {
         int _units;
         int _pieces;
 
-        public AdjustStockTransaction AdjustStockTransaction
+        public StockAdjustmentTransaction StockAdjustmentTransaction
         {
-            get { return Model.AdjustStockTransaction; }
+            get { return Model.StockAdjustmentTransaction; }
         }
 
         public Item Item

@@ -13,7 +13,7 @@
     using System.Windows;
     using System.Windows.Input;
 
-    public class MoveStockVM : ViewModelBase<MoveStockTransaction>
+    public class MoveStockVM : ViewModelBase<StockMovementTransaction>
     {
         ObservableCollection<ItemVM> _products;
         ObservableCollection<WarehouseVM> _warehouses;
@@ -43,8 +43,8 @@
 
         public MoveStockVM()
         {
-            Model = new MoveStockTransaction();
-            Model.MoveStockTransactionLines = new ObservableCollection<MoveStockTransactionLine>();
+            Model = new StockMovementTransaction();
+            Model.StockMovementTransactionLines = new ObservableCollection<StockMovementTransactionLine>();
 
             _products = new ObservableCollection<ItemVM>();
             _warehouses = new ObservableCollection<WarehouseVM>();
@@ -165,9 +165,9 @@
                             line.Quantity += quantity;
                     }
 
-                    var newEntry = new MoveStockTransactionLine
+                    var newEntry = new StockMovementTransactionLine
                     {
-                        MoveStockTransaction = this.Model,
+                        StockMovementTransaction = this.Model,
                         Item = _newEntryProduct.Model,
                         Quantity = quantity
                     };
@@ -282,7 +282,7 @@
 
                             line.Item = item;
 
-                            Model.MoveStockTransactionLines.Add(line.Model);
+                            Model.StockMovementTransactionLines.Add(line.Model);
 
                             // Adjust the stock for the affected warehouses
                             var fromStock = context.Stocks.Where(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(fromWarehouse.ID)).FirstOrDefault();
@@ -311,7 +311,7 @@
                         var user = App.Current.TryFindResource("CurrentUser") as User;
                         var _user = context.Users.Where(e => e.Username.Equals(user.Username)).FirstOrDefault();
                         Model.User = _user;
-                        context.MoveStockTransactions.Add(Model);
+                        context.StockMovementTransactions.Add(Model);
                         context.SaveChanges();
                     }
 
@@ -397,7 +397,7 @@
         {
             using (var context = new ERPContext())
             {
-                var transaction = context.MoveStockTransactions.Where(e => e.MoveStrockTransactionID.Equals(id)).FirstOrDefault();
+                var transaction = context.StockMovementTransactions.Where(e => e.StockMovementTransactionID.Equals(id)).FirstOrDefault();
                 return transaction != null;
             }
         }
@@ -411,16 +411,15 @@
             string lastTransactionID = null;
             using (var context = new ERPContext())
             {
-                var IDs = (from MoveStockTransaction in context.MoveStockTransactions
-                           where MoveStockTransaction.MoveStrockTransactionID.CompareTo(_newTransactionID) >= 0
-                           orderby MoveStockTransaction.MoveStrockTransactionID descending
-                           select MoveStockTransaction.MoveStrockTransactionID);
+                var IDs = (from StockMovementTransaction in context.StockMovementTransactions
+                           where StockMovementTransaction.StockMovementTransactionID.CompareTo(_newTransactionID) >= 0
+                           orderby StockMovementTransaction.StockMovementTransactionID descending
+                           select StockMovementTransaction.StockMovementTransactionID);
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
             if (lastTransactionID != null) _newTransactionID = "MS" + (Convert.ToInt64(lastTransactionID.Substring(2)) + 1).ToString();
-
-            Model.MoveStrockTransactionID = _newTransactionID;
+            Model.StockMovementTransactionID = _newTransactionID;
             OnPropertyChanged("NewTransactionID");
         }
 
@@ -437,8 +436,8 @@
             ResetEntryFields();
             _lines.Clear();
             _products.Clear();
-            Model = new MoveStockTransaction();
-            Model.MoveStockTransactionLines = new ObservableCollection<MoveStockTransactionLine>();
+            Model = new StockMovementTransaction();
+            Model.StockMovementTransactionLines = new ObservableCollection<StockMovementTransactionLine>();
             SetTransactionID();
             IsNotEditMode = true;
             NewTransactionFromWarehouse = null;
@@ -457,18 +456,17 @@
 
             using (var context = new ERPContext())
             {
-                var transaction = context.MoveStockTransactions
-                    .Include("MoveStockTransactionLines")
-                    .Include("MoveStockTransactionLines.Item")
+                var transaction = context.StockMovementTransactions
+                    .Include("StockMovementTransactionLines")
+                    .Include("StockMovementTransactionLines.Item")
                     .Include("FromWarehouse")
                     .Include("ToWarehouse")
-                    .Where(e => e.MoveStrockTransactionID.Equals(_newTransactionID))
-                    .FirstOrDefault();
+                    .FirstOrDefault(e => e.StockMovementTransactionID.Equals(_newTransactionID));
 
                 NewTransactionFromWarehouse = new WarehouseVM { Model = transaction.FromWarehouse };
                 NewTransactionToWarehouse = new WarehouseVM { Model = transaction.ToWarehouse };
                 NewTransactionDate = transaction.Date;
-                var lines = transaction.MoveStockTransactionLines.ToList();
+                var lines = transaction.StockMovementTransactionLines.ToList();
 
                 foreach (var line in lines)
                     _lines.Add(new MoveStockTransactionLineVM { Model = line });

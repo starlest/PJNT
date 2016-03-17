@@ -1,8 +1,8 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using PutraJayaNT.ViewModels.Customers;
-
-namespace PutraJayaNT.Views.Customers
+﻿namespace PutraJayaNT.Views.Customers.Sales
 {
+    using FirstFloor.ModernUI.Windows.Controls;
+    using ViewModels.Customers.Sales;
+
     /// <summary>
     /// Interaction logic for BrowseSalesTransactionsView.xaml
     /// </summary>

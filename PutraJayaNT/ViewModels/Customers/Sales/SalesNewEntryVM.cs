@@ -97,6 +97,7 @@
                 SetProperty(ref _newEntrySelectedAlternativeSalesPrice, value, () => NewEntrySelectedAlternativeSalesPrice);
                 if (_newEntrySelectedAlternativeSalesPrice == null) return;
                 NewEntryPrice = _newEntrySelectedAlternativeSalesPrice.SalesPrice;
+                NewEntryDiscount = 0;
             }
         }
 
@@ -133,7 +134,7 @@
             get { return _newEntryDiscount; }
             set
             {
-                if (value != null && (value < 0 || value > _newEntryPrice))
+                if (value < 0 || value > _newEntryPrice)
                 {
                     MessageBox.Show($"Please enter a value from the range of 0 - {_newEntryPrice}.", "Invalid Range", MessageBoxButton.OK);
                     return;
@@ -312,7 +313,7 @@
         private void AddNewEntryToTransaction()
         {
             var newEntryQuantity = (_newEntryPieces ?? 0) + (_newEntryUnits * _newEntryProduct.PiecesPerUnit ?? 0);
-            foreach (var line in _parentVM.SalesTransactionLines)
+            foreach (var line in _parentVM.DisplayedSalesTransactionLines)
             {
                 if (!line.Item.ItemID.Equals(_newEntryProduct.Model.ItemID) ||
                     !line.Warehouse.ID.Equals(_newEntryWarehouse.ID) || !_newEntryPrice.Equals(line.SalesPrice) ||
@@ -324,7 +325,7 @@
                 return;
             }
             var salesTransactionLineVM = MakeNewEntryLineVM();
-            _parentVM.SalesTransactionLines.Add(salesTransactionLineVM);
+            _parentVM.DisplayedSalesTransactionLines.Add(salesTransactionLineVM);
 
         }
 

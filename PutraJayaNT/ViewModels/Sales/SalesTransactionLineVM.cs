@@ -54,7 +54,6 @@
             set
             {
                 Model.Quantity = value;
-                // TODO Remove this
                 UpdateTotal();
                 OnPropertyChanged("Quantity");
                 OnPropertyChanged("Pieces");
@@ -104,8 +103,6 @@
 
         public decimal NetTotal => (SalesPrice - NetDiscount) / Item.PiecesPerUnit * Quantity;
 
-        public int StockDeducted { get; set; }
-
         public override bool Equals(object obj)
         {
             var line = obj as SalesTransactionLineVM;
@@ -130,7 +127,7 @@
                 Total = Model.Total,
                 Salesman = Model.Salesman
             };
-            return new SalesTransactionLineVM { Model = cloneLine, StockDeducted = StockDeducted };
+            return new SalesTransactionLineVM { Model = cloneLine };
         }
 
         public decimal GetNetDiscount()
