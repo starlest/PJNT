@@ -1,0 +1,45 @@
+﻿<mui:ModernWindow x:Class="PutraJayaNT.Views.Customers.Sales.PrintListView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                  xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+                  mc:Ignorable="d" 
+                  d:DesignHeight="900" d:DesignWidth="1440"
+                  Title="Print List"
+                  Style="{StaticResource BlankWindow}">
+    <Window.Resources>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.125*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0" ItemsSource="{Binding Modes}" SelectedItem="{Binding SelectedMode, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Column="1" Text="From:" />
+            <DatePicker Grid.Column="2" SelectedDateFormat="Long" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Column="3" Text="To:" />
+            <DatePicker Grid.Column="4" SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding SalesTransactions}" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="DO Printed" Width="1*" Binding="{Binding DOPrinted}" />
+                <DataGridTextColumn Header="Invoice Printed" Width="1*" Binding="{Binding InvoicePrinted}" />
+                <DataGridTextColumn Header="Date" Width="1*" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding SalesTransactionID}" />
+                <DataGridTextColumn Header="Customer" Width="1*" Binding="{Binding Customer.Name}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</mui:ModernWindow>
