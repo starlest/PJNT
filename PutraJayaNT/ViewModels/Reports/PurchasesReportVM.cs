@@ -10,6 +10,7 @@
     using Models.Inventory;
     using Utilities;
     using Inventory;
+    using Item;
     using Suppliers;
 
     class PurchasesReportVM : ViewModelBase

@@ -4,6 +4,7 @@
     using System.Diagnostics;
     using System.Windows;
     using System.Windows.Input;
+    using Item;
     using MVVMFramework;
     using Models;
     using Models.Inventory;

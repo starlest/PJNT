@@ -12,6 +12,7 @@
     using Suppliers;
     using Utilities;
     using System;
+    using Item;
 
     public class InventoryReportVM : ViewModelBase
     {

@@ -41,8 +41,8 @@
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Inventory">
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Move Stock" Source="/Views/Inventory/MoveStockView.xaml" />
-                <mui:Link DisplayName="Adjust Stock" Source="/Views/Inventory/AdjustStockView.xaml" />
+                <mui:Link DisplayName="Move Stock" Source="/Views/Inventory/StockMovementView.xaml" />
+                <mui:Link DisplayName="Adjust Stock" Source="/Views/Inventory/StockAdjustmentView.xaml" />
                 <mui:Link DisplayName="Close Stock" Source="/Views/Inventory/CloseStockView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>

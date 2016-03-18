@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="PutraJayaNT.Views.Inventory.MoveStockView"
+﻿<UserControl x:Class="PutraJayaNT.Views.Inventory.StockMovementView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -34,7 +34,7 @@
             <Button  Grid.Column="3" Grid.RowSpan="2" Content="(F2) Print" Command="{Binding PrintCommand}"  />
             <Button  Grid.Column="4" Grid.RowSpan="2" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding IsNotEditMode}" />
         </Grid>
-        <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2" >
+        <Border Grid.Row="1" BorderBrush="Red" BorderThickness="2" Margin="0, 0, 0, 10" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.25*" />
@@ -43,15 +43,16 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1.3*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="ID:" />
-                <TextBox Grid.Column="1" Name="TransactionIDTextBox" Text="{Binding NewTransactionID, UpdateSourceTrigger=Explicit}" MaxLength="12" KeyDown="TextBox_KeyDown" />
+                <TextBox Grid.Column="1" Name="TransactionIDTextBox" Text="{Binding TransactionID, UpdateSourceTrigger=Explicit}" MaxLength="12" KeyDown="TextBox_KeyDown" />
                 <TextBlock Grid.Column="2" Text="From Warehouse:" />
                 <ComboBox Grid.Column="3" ItemsSource="{Binding Warehouses, Mode=OneWay}" DisplayMemberPath="Name"
-                          SelectedItem="{Binding NewTransactionFromWarehouse}" IsEnabled="{Binding IsFromWarehouseNotSelected}" />
+                          SelectedItem="{Binding TransactionFromWarehouse}" IsEnabled="{Binding IsFromWarehouseNotSelected}" />
                 <TextBlock Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" Text="To Warehouse:" />
                 <ComboBox  Grid.Column="5" ItemsSource="{Binding Warehouses, Mode=OneWay}" DisplayMemberPath="Name"
-                           SelectedItem="{Binding NewTransactionToWarehouse}" IsEnabled="{Binding IsToWarehouseNotSelected}" />
+                           SelectedItem="{Binding TransactionToWarehouse}" IsEnabled="{Binding IsToWarehouseNotSelected}" />
             </Grid>
         </Border>
         <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2" IsEnabled="{Binding IsNotEditMode}">
@@ -66,14 +67,14 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="0.5*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Product ID:" />
-                <ComboBox Grid.Column="1" ItemsSource="{Binding Products, Mode=OneWay}" DisplayMemberPath="ID" 
+                <ComboBox Grid.Column="1" ItemsSource="{Binding ListedProducts, Mode=OneWay}" DisplayMemberPath="ID" 
                           SelectedItem="{Binding NewEntryProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 <TextBlock Grid.Column="2" Text="Product:" />
-                <ComboBox  Grid.Column="3" ItemsSource="{Binding Products, Mode=OneWay}" DisplayMemberPath="Name"
+                <ComboBox  Grid.Column="3" ItemsSource="{Binding ListedProducts, Mode=OneWay}" DisplayMemberPath="Name"
                            SelectedItem="{Binding NewEntryProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 <TextBlock Grid.Column="4" Text="Units/Pieces:" />
                 <Grid Grid.Column="5">
@@ -85,10 +86,10 @@
                     <TextBox Grid.Column="1" Text="{Binding NewEntryPieces}" />
                 </Grid>
                 <TextBlock Grid.Column="6" Foreground="Red"  Text="{Binding NewEntryRemainingStock}" />
-                <Button Grid.Row="0" Grid.Column="7" Content="Submit" Command="{Binding NewEntrySubmitCommand}" Margin="10" />
+                <Button Grid.Row="0" Grid.Column="8" Content="Submit" Command="{Binding NewEntrySubmitCommand}" Margin="10" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="3" Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding Lines}" 
+        <DataGrid Grid.Row="3" Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding StockMovementTransactionLines}" 
                   SelectedItem="{Binding SelectedLine}" IsEnabled="{Binding IsNotEditMode}" IsReadOnly="True" >
             <DataGrid.ContextMenu>
                 <ContextMenu>

@@ -153,7 +153,7 @@
             {
                 return _saveCommand ?? (_saveCommand = new RelayCommand(() =>
                 {
-                    if (MessageBox.Show("Confirm transaction?", "Confirmation", MessageBoxButton.YesNo) !=
+                    if (DisplayedSalesReturnTransactionLines.Count == 0 || MessageBox.Show("Confirm transaction?", "Confirmation", MessageBoxButton.YesNo) !=
                         MessageBoxResult.Yes) return;
                     SetNewSalesReturnTransactionID();   // To avoid simultaneous input into the same ID
                     SetSalesReturnTransactionModelPropertiesToVMProperties();

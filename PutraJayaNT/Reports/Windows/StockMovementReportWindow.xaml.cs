@@ -13,9 +13,9 @@ namespace PutraJayaNT.Reports.Windows
     /// </summary>
     public partial class StockMovementReportWindow : ModernWindow
     {
-        MoveStockVM _transaction;
+        StockMovementVM _transaction;
 
-        public StockMovementReportWindow(MoveStockVM transaction)
+        public StockMovementReportWindow(StockMovementVM transaction)
         {
             InitializeComponent();
             _transaction = transaction;
@@ -42,7 +42,7 @@ namespace PutraJayaNT.Reports.Windows
             dt2.Columns.Add(new DataColumn("ToWarehouse", typeof(string)));
 
             var index = 1;
-            foreach (var line in _transaction.Lines)
+            foreach (var line in _transaction.StockMovementTransactionLines)
             {
                 DataRow dr1 = dt1.NewRow();
                 dr1["Index"] = index;
@@ -55,10 +55,10 @@ namespace PutraJayaNT.Reports.Windows
             }
 
             DataRow dr2 = dt2.NewRow();
-            dr2["ID"] = _transaction.NewTransactionID;
-            dr2["Date"] = _transaction.NewTransactionDate.ToString("dd-MM-yyyy");
-            dr2["FromWarehouse"] = _transaction.NewTransactionFromWarehouse.Name;
-            dr2["ToWarehouse"] = _transaction.NewTransactionToWarehouse.Name;
+            dr2["ID"] = _transaction.TransactionID;
+            dr2["Date"] = _transaction.TransactionDate.ToString("dd-MM-yyyy");
+            dr2["FromWarehouse"] = _transaction.TransactionFromWarehouse.Name;
+            dr2["ToWarehouse"] = _transaction.TransactionToWarehouse.Name;
             dt2.Rows.Add(dr2);
 
             ReportDataSource reportDataSource1 = new ReportDataSource("StockMovementLineDataSet", dt1);

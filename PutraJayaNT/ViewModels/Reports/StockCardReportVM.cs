@@ -9,6 +9,7 @@
     using System.Windows;
     using System.Windows.Input;
     using Inventory;
+    using Item;
     using Models.Inventory;
 
     public class StockCardReportVM : ViewModelBase

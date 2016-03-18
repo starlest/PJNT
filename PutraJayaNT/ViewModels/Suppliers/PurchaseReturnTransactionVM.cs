@@ -15,6 +15,7 @@ using PutraJayaNT.ViewModels.Inventory;
 
 namespace PutraJayaNT.ViewModels.Suppliers
 {
+    using Item;
     using Utilities.ModelHelpers;
 
     class PurchaseReturnTransactionVM : ViewModelBase<PurchaseReturnTransaction>

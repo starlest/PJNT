@@ -8,12 +8,12 @@ namespace PutraJayaNT.Views.Inventory
     /// <summary>
     /// Interaction logic for DecreaseStockView.xaml
     /// </summary>
-    public partial class MoveStockView : UserControl
+    public partial class StockMovementView : UserControl
     {
-        public MoveStockView()
+        public StockMovementView()
         {
             InitializeComponent();
-            var vm = new MoveStockVM();
+            var vm = new StockMovementVM();
             DataContext = vm;
         }
 

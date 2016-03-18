@@ -23,9 +23,7 @@
             using (var context = new ERPContext())
             {
                 var stock = context.Stocks.FirstOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID));
-
-                if (stock == null) return 0;
-                else return stock.Pieces;
+                return stock?.Pieces ?? 0;
             }
         }
 

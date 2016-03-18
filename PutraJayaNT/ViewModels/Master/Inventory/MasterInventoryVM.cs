@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
+    using Item;
     using ViewModels.Inventory;
     using ViewModels.Suppliers;
     using Views.Master.Inventory;

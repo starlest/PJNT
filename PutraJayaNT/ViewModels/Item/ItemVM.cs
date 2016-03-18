@@ -1,11 +1,12 @@
-﻿namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace PutraJayaNT.ViewModels.Item
 {
     using System.Collections.ObjectModel;
     using System.Linq;
-    using MVVMFramework;
     using Models;
     using Models.Inventory;
+    using MVVMFramework;
 
+    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class ItemVM : ViewModelBase<Item>
     {
         private Supplier _selectedSupplier;
@@ -83,10 +84,7 @@
             }
         }
 
-        public string Unit
-        {
-            get { return Model.UnitName + "/" + Model.PiecesPerUnit; }
-        }
+        public string Unit => Model.UnitName + "/" + Model.PiecesPerUnit;
 
         public decimal SalesExpense
         {
@@ -100,10 +98,7 @@
 
         public ObservableCollection<Supplier> Suppliers => Model.Suppliers;
 
-        public ObservableCollection<AlternativeSalesPrice> AlternativeSalesPrices
-        {
-            get { return Model.AlternativeSalesPrices; }
-        }
+        public ObservableCollection<AlternativeSalesPrice> AlternativeSalesPrices => Model.AlternativeSalesPrices;
 
         public bool Active
         {
@@ -139,14 +134,7 @@
         public override bool Equals(object obj)
         {
             var item = obj as ItemVM;
-
-            if (item == null) return false;
-            else return this.ID.Equals(item.ID);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return item != null && ID.Equals(item.ID);
         }
     }
 }

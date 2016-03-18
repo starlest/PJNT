@@ -4,15 +4,9 @@
     using Models.Inventory;
     using Models.StockCorrection;
 
-    public class MoveStockTransactionLineVM : ViewModelBase<StockMovementTransactionLine>
+    public class StockMovementTransactionLineVM : ViewModelBase<StockMovementTransactionLine>
     {
-        int _units;
-        int _pieces;
-
-        public StockMovementTransaction StockMovementTransaction
-        {
-            get { return Model.StockMovementTransaction; }
-        }
+        public StockMovementTransaction StockMovementTransaction => Model.StockMovementTransaction;
 
         public Item Item
         {
@@ -38,14 +32,11 @@
 
         public int Units
         {
-            get
-            {
-                _units = Model.Quantity / Model.Item.PiecesPerUnit;
-                return _units;
-            }
+            get { return Model.Quantity / Model.Item.PiecesPerUnit; }
             set
             {
-                Model.Quantity = (value * Model.Item.PiecesPerUnit) + _pieces;
+                var pieces = Model.Quantity % Model.Item.PiecesPerUnit;
+                Model.Quantity = value * Model.Item.PiecesPerUnit + pieces;
                 OnPropertyChanged("Units");
                 OnPropertyChanged("Pieces");
             }
@@ -53,22 +44,16 @@
 
         public int Pieces
         {
-            get
-            {
-                _pieces = Model.Quantity % Model.Item.PiecesPerUnit;
-                return _pieces;
-            }
+            get { return Model.Quantity % Model.Item.PiecesPerUnit; }
             set
             {
-                Model.Quantity = (_units * Model.Item.PiecesPerUnit) + value;
+                var units = Model.Quantity / Model.Item.PiecesPerUnit;
+                Model.Quantity = units * Model.Item.PiecesPerUnit + value;
                 OnPropertyChanged("Units");
                 OnPropertyChanged("Pieces");
             }
         }
 
-        public string Unit
-        {
-            get { return Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit; }
-        }
+        public string Unit => Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit;
     }
 }

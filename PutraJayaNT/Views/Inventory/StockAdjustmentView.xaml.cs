@@ -6,14 +6,14 @@ using System.Windows.Input;
 namespace PutraJayaNT.Views.Inventory
 {
     /// <summary>
-    /// Interaction logic for AdjustStockView.xaml
+    /// Interaction logic for  StockAdjustmentView.xaml
     /// </summary>
-    public partial class AdjustStockView
+    public partial class StockAdjustmentView
     {
-        public AdjustStockView()
+        public StockAdjustmentView()
         {
             InitializeComponent();
-            var vm = new AdjustStockTransactionVM();
+            var vm = new StockAdjustmentVM();
             DataContext = vm;
         }
 

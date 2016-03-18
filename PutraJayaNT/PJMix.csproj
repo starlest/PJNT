@@ -112,6 +112,8 @@
     <Compile Include="Utilities\ModelHelpers\SalesmanHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionLineHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\StockAdjustmentHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\StockMovementTransactionHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SupplierHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesTransactionHelper.cs" />
     <Compile Include="Utilities\PrintHelpers\SalesTransactionPrintHelper.cs" />
@@ -245,7 +247,7 @@
     <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
     <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
-    <Compile Include="ViewModels\Inventory\CategoryVM.cs" />
+    <Compile Include="ViewModels\Item\CategoryVM.cs" />
     <Compile Include="ViewModels\Customer\CustomerGroupVM.cs" />
     <Compile Include="ViewModels\Item\AlternativeSalesPriceVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\BrowseSalesTransactionsVM.cs" />
@@ -258,12 +260,12 @@
     <Compile Include="ViewModels\Sales\SalesTransactionLineVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesVM.cs" />
     <Compile Include="ViewModels\Customer\CustomerVM.cs" />
-    <Compile Include="ViewModels\Inventory\AdjustStockTransactionLineVM.cs" />
-    <Compile Include="ViewModels\Inventory\AdjustStockTransactionVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockAdjustmentTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockAdjustmentVM.cs" />
     <Compile Include="ViewModels\Inventory\CloseStockVM.cs" />
-    <Compile Include="ViewModels\Inventory\MoveStockTransactionLineVM.cs" />
-    <Compile Include="ViewModels\Inventory\MoveStockVM.cs" />
-    <Compile Include="ViewModels\Inventory\ItemVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockMovementTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockMovementVM.cs" />
+    <Compile Include="ViewModels\Item\ItemVM.cs" />
     <Compile Include="ViewModels\Accounting\LedgerAccountVM.cs" />
     <Compile Include="ViewModels\Accounting\LedgerTransactionLineVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
@@ -301,7 +303,7 @@
     <Compile Include="ViewModels\Suppliers\SupplierVM.cs" />
     <Compile Include="ViewModels\Test\TestVM.cs" />
     <Compile Include="ViewModels\VerificationVM.cs" />
-    <Compile Include="ViewModels\Inventory\WarehouseVM.cs" />
+    <Compile Include="ViewModels\Item\WarehouseVM.cs" />
     <Compile Include="Views\Accounting\BalanceSheetView.xaml.cs">
       <DependentUpon>BalanceSheetView.xaml</DependentUpon>
     </Compile>
@@ -344,11 +346,11 @@
     <Compile Include="Views\Inventory\CloseStockView.xaml.cs">
       <DependentUpon>CloseStockView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Inventory\MoveStockView.xaml.cs">
-      <DependentUpon>MoveStockView.xaml</DependentUpon>
+    <Compile Include="Views\Inventory\StockMovementView.xaml.cs">
+      <DependentUpon>StockMovementView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Inventory\AdjustStockView.xaml.cs">
-      <DependentUpon>AdjustStockView.xaml</DependentUpon>
+    <Compile Include="Views\Inventory\StockAdjustmentView.xaml.cs">
+      <DependentUpon>StockAdjustmentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Master\Customers\MasterCustomersView.xaml.cs">
       <DependentUpon>MasterCustomersView.xaml</DependentUpon>
@@ -555,11 +557,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Inventory\MoveStockView.xaml">
+    <Page Include="Views\Inventory\StockMovementView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Inventory\AdjustStockView.xaml">
+    <Page Include="Views\Inventory\StockAdjustmentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

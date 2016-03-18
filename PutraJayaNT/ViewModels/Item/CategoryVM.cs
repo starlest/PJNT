@@ -1,9 +1,9 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-
-namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace PutraJayaNT.ViewModels.Item
 {
-    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+    using Models.Inventory;
+    using MVVMFramework;
+
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class CategoryVM : ViewModelBase<Category>
     {
         public int ID => Model.ID;
