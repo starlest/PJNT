@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\PurchaseTransactionHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesmanHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionLineHelper.cs" />
@@ -294,7 +295,7 @@
     <Compile Include="ViewModels\Reports\StockCardReportVM.cs" />
     <Compile Include="ViewModels\Salesman\SalesCommissionVM.cs" />
     <Compile Include="ViewModels\Salesman\SalesmanVM.cs" />
-    <Compile Include="ViewModels\Suppliers\PaymentListVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchasePaymentListVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchasePaymentVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionLineVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionVM.cs" />
@@ -409,11 +410,11 @@
     <Compile Include="Views\Reports\CommissionsReportView.xaml.cs">
       <DependentUpon>CommissionsReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Suppliers\PaymentListView.xaml.cs">
-      <DependentUpon>PaymentListView.xaml</DependentUpon>
+    <Compile Include="Views\Suppliers\PurchasePaymentListView.xaml.cs">
+      <DependentUpon>PurchasePaymentListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Suppliers\PaymentView.xaml.cs">
-      <DependentUpon>PaymentView.xaml</DependentUpon>
+    <Compile Include="Views\Suppliers\PurchasePaymentView.xaml.cs">
+      <DependentUpon>PurchasePaymentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Suppliers\PurchaseReturnView.xaml.cs">
       <DependentUpon>PurchaseReturnView.xaml</DependentUpon>
@@ -641,11 +642,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Suppliers\PaymentListView.xaml">
+    <Page Include="Views\Suppliers\PurchasePaymentListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Suppliers\PaymentView.xaml">
+    <Page Include="Views\Suppliers\PurchasePaymentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

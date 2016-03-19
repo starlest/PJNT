@@ -11,7 +11,6 @@
     using Models.Sales;
     using Utilities;
     using Customer;
-    using Sales;
     using Utilities.ModelHelpers;
     using ViewModels.Sales;
 
@@ -175,7 +174,7 @@
                 return _confirmCollectionCommand ?? (_confirmCollectionCommand = new RelayCommand(() =>
                 {
                     if (!IsPaymentModeSelected() || !IsCollectionConfirmationYes()) return;
-                    Collect(_selectedSalesTransaction, _salesReturnCredits, _collectionAmount, _selectedPaymentMode);
+                    SalesTransactionHelper.Collect(_selectedSalesTransaction, _salesReturnCredits, _collectionAmount, _selectedPaymentMode);
                     MessageBox.Show("Succesfully collected!", "Success", MessageBoxButton.OK);
                     ResetTransaction();
                 }));
@@ -290,34 +289,6 @@
         {
             return MessageBox.Show("Confirm collection?", "Confirmation", MessageBoxButton.YesNo) ==
                    MessageBoxResult.Yes;
-        }
-
-        public static void Collect(SalesTransaction salesTransaction, decimal creditsUsed, decimal collectionAmount, string paymentMode)
-        {
-            using (var ts = new TransactionScope())
-            {
-                var context = new ERPContext();
-                context.Entry(salesTransaction).State = EntityState.Modified;
-                salesTransaction.Paid += collectionAmount + creditsUsed;
-                salesTransaction.Customer.SalesReturnCredits -= creditsUsed;
-                SaveCollectionLedgerTransactionInDatabase(context, salesTransaction, collectionAmount, paymentMode);
-                ts.Complete();
-            }
-        }
-
-        private static void SaveCollectionLedgerTransactionInDatabase(ERPContext context, SalesTransaction salesTransaction, decimal collectionAmount, string paymentMode)
-        {
-            if (collectionAmount <= 0) return;
-
-            var accountsReceivableName = salesTransaction.Customer.Name + " Accounts Receivable";
-            var date = UtilityMethods.GetCurrentDate().Date;
-            var transaction = new LedgerTransaction();
-
-            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, date, salesTransaction.SalesTransactionID, "Sales Transaction Receipt")) return;
-            context.SaveChanges();
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, paymentMode, "Debit", collectionAmount);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, accountsReceivableName, "Credit", collectionAmount);
-            context.SaveChanges();
         }
 
         private void ResetTransaction()

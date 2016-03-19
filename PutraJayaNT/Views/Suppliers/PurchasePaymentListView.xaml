@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="PutraJayaNT.Views.Suppliers.PurchasePaymentListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.125*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.125*" />
+        </Grid.RowDefinitions>
+        <Border BorderBrush="Blue" BorderThickness="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Paid:" />
+                <CheckBox Grid.Column="1" HorizontalAlignment="Left" IsChecked="{Binding IsPaidChecked}" Margin="10, 5, 10, 0"/>
+                <TextBlock Grid.Column="2" Text="Due From:" />
+                <DatePicker Grid.Column="3" SelectedDateFormat="Long" SelectedDate="{Binding DueFrom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Column="4" Text="Due To:" />
+                <DatePicker Grid.Column="5" SelectedDateFormat="Long" SelectedDate="{Binding DueTo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Column="6" Text="Supplier:" />
+                <ComboBox Grid.Column="7" ItemsSource="{Binding Suppliers}" DisplayMemberPath="Name"
+                          SelectedItem="{Binding SelectedSupplier, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Column="8" Content="Display" Margin="10, 15, 10, 15" Command="{Binding DisplayCommand}"/>
+            </Grid>
+        </Border>
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayedPurchaseTransactions}" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding PurchaseID}" />
+                <DataGridTextColumn Header="DO ID" Width="1*" Binding="{Binding DOID}" />
+                <DataGridTextColumn Header="Supplier" Width="1*" Binding="{Binding Supplier.Name}" />
+                <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Total, StringFormat=N2}" />
+                <DataGridTextColumn Header="Paid" Width="1*" Binding="{Binding Paid, StringFormat=N2}" />
+                <DataGridTextColumn Header="Remaining" Width="1*" Binding="{Binding Remaining, StringFormat=N2}" />
+                <DataGridTextColumn Header="Date" Width="1*" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Due Date" Width="1*" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.2*" />
+                <ColumnDefinition Width="0.2*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1" Text="Total:" />
+            <TextBox Grid.Column="2" Foreground="Red" Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" />
+        </Grid>
+    </Grid>
+</UserControl>

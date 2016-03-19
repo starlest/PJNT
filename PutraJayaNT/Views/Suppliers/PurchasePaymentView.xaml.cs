@@ -1,14 +1,13 @@
 ﻿using PutraJayaNT.ViewModels.Suppliers;
-using System.Windows.Controls;
 
 namespace PutraJayaNT.Views.Suppliers
 {
     /// <summary>
     /// Interaction logic for PaymentView.xaml
     /// </summary>
-    public partial class PaymentView : UserControl
+    public partial class PurchasePaymentView
     {
-        public PaymentView()
+        public PurchasePaymentView()
         {
             InitializeComponent();
             var vm = new PurchasePaymentVM();

@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.Utilities.ModelHelpers
 {
+    using System.Data.Entity;
     using System.Linq;
     using System.Transactions;
     using System.Windows;
@@ -80,6 +81,19 @@
                 salesTransactionFromDatabase.User = context.Users.Single(e => e.Username.Equals(user.Username));
 
                 context.SaveChanges();
+                ts.Complete();
+            }
+        }
+
+        public static void Collect(SalesTransaction salesTransaction, decimal creditsUsed, decimal collectionAmount, string paymentMode)
+        {
+            using (var ts = new TransactionScope())
+            {
+                var context = new ERPContext();
+                context.Entry(salesTransaction).State = EntityState.Modified;
+                salesTransaction.Paid += collectionAmount + creditsUsed;
+                salesTransaction.Customer.SalesReturnCredits -= creditsUsed;
+                SaveCollectionLedgerTransactionInDatabase(context, salesTransaction, collectionAmount, paymentMode);
                 ts.Complete();
             }
         }
@@ -349,6 +363,23 @@
             }
 
             return costOfGoodsSoldAmount;
+        }
+        #endregion
+
+        #region Collection Helper Methods
+        private static void SaveCollectionLedgerTransactionInDatabase(ERPContext context, SalesTransaction salesTransaction, decimal collectionAmount, string paymentMode)
+        {
+            if (collectionAmount <= 0) return;
+
+            var accountsReceivableName = salesTransaction.Customer.Name + " Accounts Receivable";
+            var date = UtilityMethods.GetCurrentDate().Date;
+            var transaction = new LedgerTransaction();
+
+            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, date, salesTransaction.SalesTransactionID, "Sales Transaction Receipt")) return;
+            context.SaveChanges();
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, paymentMode, "Debit", collectionAmount);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, accountsReceivableName, "Credit", collectionAmount);
+            context.SaveChanges();
         }
         #endregion
     }

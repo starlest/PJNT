@@ -1,105 +1,103 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Windows;
-using System.Windows.Input;
-using System.Linq;
-using System;
-using System.Transactions;
-using PutraJayaNT.Models.Purchase;
-
-namespace PutraJayaNT.ViewModels.Suppliers
+﻿namespace PutraJayaNT.ViewModels.Suppliers
 {
+    using MVVMFramework;
+    using Models;
+    using Models.Accounting;
+    using Utilities;
+    using System.Collections.ObjectModel;
+    using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
+    using System.Windows;
+    using System.Windows.Input;
+    using System.Linq;
+    using System;
+    using System.Transactions;
+    using Models.Purchase;
     using Utilities.ModelHelpers;
 
-    class PurchasePaymentVM : ViewModelBase
+    internal class PurchasePaymentVM : ViewModelBase
     {
-        ObservableCollection<Supplier> _suppliers;
-        ObservableCollection<PurchaseTransaction> _supplierUnpaidPurchases;
-        ObservableCollection<PurchaseTransactionLineVM> _selectedPurchaseLines;
-        ObservableCollection<string> _paymentModes;
+        #region Purchase Transaction Backing Fields
+        private decimal _purchaseTransactionGrossTotal;
+        private decimal _purchaseTransactionDiscount;
+        private decimal _purchaseTransactionTax;
+        private decimal _purchaseTransactionTotal;
+        #endregion
 
-        decimal _purchaseReturnCredits;
-        decimal _useCredits;
-        DateTime _date;
+        #region Backing Fields
+        private decimal _purchaseReturnCredits;
 
-        decimal? _total;
-        decimal _grossRemaining;
-        decimal? _remaining;
-        decimal? _pay;
+        private decimal _remaining;
+        private decimal _useCredits;
+        private decimal _pay;
 
-        Supplier _selectedSupplier;
-        PurchaseTransaction _selectedPurchase;
-        string _selectedPaymentMode;
+        private Supplier _selectedSupplier;
+        private PurchaseTransaction _selectedPurchaseTransaction;
+        private string _selectedPaymentMode;
 
-        ICommand _confirmPaymentCommand;
+        private ICommand _confirmPaymentCommand;
+
+        private bool _isPaymentButtonPressed;
+        #endregion
 
         public PurchasePaymentVM()
         {
-            _suppliers = new ObservableCollection<Supplier>();
-            _supplierUnpaidPurchases = new ObservableCollection<PurchaseTransaction>();
-            _selectedPurchaseLines = new ObservableCollection<PurchaseTransactionLineVM>();
-            _paymentModes = new ObservableCollection<string>();
-            _paymentModes.Add("Cash");
-            using (var context = new ERPContext())
-            {
-                var bankAccounts = context.Ledger_Accounts
-                    .Where(e => e.Name.Contains("Bank") && !e.Name.Contains("Expense"));
-                foreach (var bank in bankAccounts)
-                    _paymentModes.Add(bank.Name);
-            }
+            Suppliers = new ObservableCollection<Supplier>();
+            PaymentModes = new ObservableCollection<string>();
+            SupplierUnpaidPurchases = new ObservableCollection<PurchaseTransaction>();
+            SelectedPurchaseLines = new ObservableCollection<PurchaseTransactionLineVM>();
 
-            _date = UtilityMethods.GetCurrentDate().Date;
-            RefreshSuppliers();
+            UpdateSuppliers();
+            UpdatePaymentMethods();
         }
 
-        public ObservableCollection<Supplier> Suppliers
+        public bool IsPaymentButtonPressed
         {
-            get
-            {
-                RefreshSuppliers();
-                return _suppliers;
-            }
+            get { return _isPaymentButtonPressed; }
+            set { SetProperty(ref _isPaymentButtonPressed, value, () => IsPaymentButtonPressed); }
         }
 
-        public ObservableCollection<PurchaseTransaction> SupplierUnpaidPurchases
+        #region Collections
+        public ObservableCollection<Supplier> Suppliers { get; }
+
+        public ObservableCollection<PurchaseTransaction> SupplierUnpaidPurchases { get; }
+
+        public ObservableCollection<PurchaseTransactionLineVM> SelectedPurchaseLines { get; }
+
+        public ObservableCollection<string> PaymentModes { get; }
+        #endregion
+
+        #region Purchase Transaction Properties
+        public decimal PurchaseTransactionGrossTotal
         {
-            get { return _supplierUnpaidPurchases; }
+            get { return _purchaseTransactionGrossTotal; }
+            set { SetProperty(ref _purchaseTransactionGrossTotal, value, () => PurchaseTransactionGrossTotal); }
         }
 
-        public ObservableCollection<PurchaseTransactionLineVM> SelectedPurchaseLines
+        public decimal PurchaseTransactionDiscount
         {
-            get { return _selectedPurchaseLines; }
+            get { return _purchaseTransactionDiscount; }
+            set { SetProperty(ref _purchaseTransactionDiscount, value, () => PurchaseTransactionDiscount); }
         }
 
-        public ObservableCollection<string> PaymentModes
+        public decimal PurchaseTransactionTax
         {
-            get { return _paymentModes; }
+            get { return _purchaseTransactionTax; }
+            set { SetProperty(ref _purchaseTransactionTax, value, () => PurchaseTransactionTax); }
         }
 
-        public DateTime Date
+        public decimal PurchaseTransactionTotal
         {
-            get { return _date; }
-            set { SetProperty(ref _date, value, "Date"); }
+            get { return _purchaseTransactionTotal; }
+            set { SetProperty(ref _purchaseTransactionTotal, value, () => PurchaseTransactionTotal); }
         }
+        #endregion
 
+        #region Properties
         public decimal PurchaseReturnCredits
         {
             get { return _purchaseReturnCredits; }
-            set { SetProperty(ref _purchaseReturnCredits, value, "PurchaseReturnCredits"); }
-        }
-
-        public decimal? Total
-        {
-            get { return _total; }
-            set
-            {
-                SetProperty(ref _total, value, "Total");
-            }
+            set { SetProperty(ref _purchaseReturnCredits, value, () => PurchaseReturnCredits); }
         }
 
         public decimal UseCredits
@@ -112,34 +110,27 @@ namespace PutraJayaNT.ViewModels.Suppliers
                     MessageBox.Show("There is not enough credits.", "Insufficient Credits", MessageBoxButton.OK);
                     return;
                 }
-
-                SetProperty(ref _useCredits, value, "UseCredits");
-
-                Remaining = _grossRemaining - _useCredits;
+                SetProperty(ref _useCredits, value, () => UseCredits);
             }
         }
 
-        public decimal? Remaining
+        public decimal Remaining
         {
             get { return _remaining; }
-            set
-            {
-                SetProperty(ref _remaining, value, "Remaining");
-            }
+            set { SetProperty(ref _remaining, value, () => Remaining); }
         }
 
-        public decimal? Pay
+        public decimal Pay
         {
             get { return _pay; }
             set
             {
-                if (value <= 0 || value > _remaining)
+                if (_selectedPurchaseTransaction != null && (value <= 0 || value > _remaining))
                 {
-                    MessageBox.Show("Please input the correct amount", "Wrong Value", MessageBoxButton.OK);
+                    MessageBox.Show($"Please input a valid amount. {0} - {_remaining}", "Invalid Value", MessageBoxButton.OK);
                     return;
                 }
-
-                SetProperty(ref _pay, value, "Pay");
+                SetProperty(ref _pay, value, () => Pay);
             }
         }
 
@@ -148,66 +139,34 @@ namespace PutraJayaNT.ViewModels.Suppliers
             get { return _selectedSupplier; }
             set
             {
-                _selectedPurchaseLines.Clear();
-
-                if (value == null)
-                {
-                    SelectedPurchase = null;
-                    PurchaseReturnCredits = 0;
-                }
-
-                else
-                {
-                    _supplierUnpaidPurchases.Clear();
-                    RefreshSuppliers();
-
-                    using (var context = new ERPContext())
-                    {
-                        var unpaidPurchases = context.PurchaseTransactions
-                            .Where(e => e.Supplier.ID == value.ID && e.Paid < e.Total)
-                            .Include("Supplier").Include("PurchaseTransactionLines.Item");
-
-                        foreach (var purchase in unpaidPurchases)
-                            _supplierUnpaidPurchases.Add(purchase);
-                    }
-
-                    PurchaseReturnCredits = value.PurchaseReturnCredits;
-                }
-
-                SetProperty(ref _selectedSupplier, value, "SelectedSupplier");
+                SelectedPurchaseLines.Clear();
+                SetProperty(ref _selectedSupplier, value, () => SelectedSupplier);
+                if (_selectedSupplier == null) return;
+                UpdateSuppliers();
+                UpdateSupplierUnpaidPurchases();
+                PurchaseReturnCredits = value.PurchaseReturnCredits;
             }
         }
 
-        public PurchaseTransaction SelectedPurchase
+        public PurchaseTransaction SelectedPurchaseTransaction
         {
-            get { return _selectedPurchase; }
+            get { return _selectedPurchaseTransaction; }
             set
             {
-                if (value == null) _selectedPurchaseLines.Clear();
-
+                if (value == null)
+                    SelectedPurchaseLines.Clear();
                 else
-                {
-                    _selectedPurchaseLines.Clear();
-                    foreach (var line in value.PurchaseTransactionLines)
-                    {
-                        var lineVM = new PurchaseTransactionLineVM { Model = line };
-                        _selectedPurchaseLines.Add(lineVM);
-                    }
-
-                    Total = value.Total;
-                    Remaining = value.Total - value.Paid;
-                    _grossRemaining = (decimal) _remaining;
-                }
-
-                SetProperty(ref _selectedPurchase, value, "SelectedPurchase");
+                    AssignSelectedPurchaseTransactionPropertiesToUI(value);
+                SetProperty(ref _selectedPurchaseTransaction, value, () => SelectedPurchaseTransaction);
             }
         }
 
         public string SelectedPaymentMode
         {
             get { return _selectedPaymentMode; }
-            set { SetProperty(ref _selectedPaymentMode, value, "SelectedPaymentMode"); }
+            set { SetProperty(ref _selectedPaymentMode, value, () =>SelectedPaymentMode); }
         }
+        #endregion
 
         public ICommand ConfirmPaymentCommand
         {
@@ -215,70 +174,116 @@ namespace PutraJayaNT.ViewModels.Suppliers
             {
                 return _confirmPaymentCommand ?? (_confirmPaymentCommand = new RelayCommand(() =>
                 {
-                    if (_pay == null)
-                    {
-                        MessageBox.Show("Please enter payment amount", "Empty Field", MessageBoxButton.OK);
-                        return;
-                    }
-
-                    if (_selectedPaymentMode == null)
-                    {
-                        MessageBox.Show("Please select a payment mode.", "No Selection", MessageBoxButton.OK);
-                        return;
-                    }
-
-                    if (MessageBox.Show("Confirm Payment?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    {
-                        using (var ts = new TransactionScope())
-                        {
-                            var context = new ERPContext();
-
-                            _selectedPurchase.Paid += (decimal) _pay + _useCredits;
-                            _selectedPurchase.Supplier = context.Suppliers.Where(e => e.ID.Equals(_selectedPurchase.Supplier.ID)).FirstOrDefault();
-
-                            _selectedPurchase.Supplier.PurchaseReturnCredits -= _useCredits;
-
-
-                            context.PurchaseTransactions.Attach(_selectedPurchase);
-                            ((IObjectContextAdapter)context)
-                            .ObjectContext.ObjectStateManager.ChangeObjectState(_selectedPurchase, EntityState.Modified);
-
-                            var accountsPayableName = _selectedSupplier.Name + " Accounts Payable";
-                            var transaction = new LedgerTransaction();
-
-                            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, _date, _selectedPurchase.PurchaseID.ToString(), "Purchase Payment")) return;
-                            context.SaveChanges();
-
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, accountsPayableName, "Debit", (decimal) _pay);
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, _selectedPaymentMode, "Credit", (decimal) _pay);
-                            context.SaveChanges();
-
-                            ts.Complete();
-                        }
-
-                        Total = null;
-                        Pay = null;
-                        SelectedSupplier = null;
-                        SelectedPaymentMode = null;
-                        SelectedPurchase = null;
-                        UseCredits = 0;
-                        Remaining = null;
-                        _supplierUnpaidPurchases.Clear();
-                    }
+                    if (!IsPaymentModeSelected() || !IsPaymentConfirmationYes()) return;
+                    PurchaseTransactionHelper.MakePayment(_selectedPurchaseTransaction, _pay, _useCredits, _selectedPaymentMode);
+                    ResetTransaction();
+                    TriggerPaymentButtonStyle();
+                    MessageBox.Show("Payment successfully made!", "Success", MessageBoxButton.OK);
 
                 }));
             }
         }
 
-        public void RefreshSuppliers()
+        #region Helper Methods
+        public void UpdateSuppliers()
         {
-            _suppliers.Clear();
+            var oldSelectedSupplier = _selectedSupplier;
+
+            Suppliers.Clear();
             using (var context = new ERPContext())
             {
                 var suppliers = context.Suppliers.Where(e => !e.Name.Equals("-"));
                 foreach (var supplier in suppliers)
-                    _suppliers.Add(supplier);
+                    Suppliers.Add(supplier);
+            }
+
+            UpdateSelectedSupplier(oldSelectedSupplier);
+        }
+
+        private void UpdateSelectedSupplier(Supplier oldSelectedSupplier)
+        {
+            if (oldSelectedSupplier == null) return;
+            _selectedSupplier = Suppliers.Single(supplier => supplier.ID.Equals(oldSelectedSupplier.ID));
+        }
+
+        private void UpdatePaymentMethods()
+        {
+            PaymentModes.Add("Cash");
+            using (var context = new ERPContext())
+            {
+                var bankAccounts = context.Ledger_Accounts
+                    .Where(account => account.Name.Contains("Bank") && !account.Name.Contains("Expense"));
+                foreach (var bank in bankAccounts)
+                    PaymentModes.Add(bank.Name);
             }
         }
+
+        private void UpdateSupplierUnpaidPurchases()
+        {
+            SupplierUnpaidPurchases.Clear();
+            using (var context = new ERPContext())
+            {
+                var unpaidPurchases = context.PurchaseTransactions
+                    .Where(e => e.Supplier.ID == _selectedSupplier.ID && e.Paid < e.Total)
+                    .Include("Supplier").Include("PurchaseTransactionLines.Item");
+
+                foreach (var purchase in unpaidPurchases)
+                    SupplierUnpaidPurchases.Add(purchase);
+            }
+        }
+
+        private void AssignSelectedPurchaseTransactionPropertiesToUI(PurchaseTransaction purchaseTransaction)
+        {
+            SelectedPurchaseLines.Clear();
+            foreach (var lineVM in purchaseTransaction.PurchaseTransactionLines.Select(line => new PurchaseTransactionLineVM { Model = line }))
+                SelectedPurchaseLines.Add(lineVM);   
+            PurchaseTransactionGrossTotal = purchaseTransaction.GrossTotal;
+            PurchaseTransactionDiscount = purchaseTransaction.Discount;
+            PurchaseTransactionTax = purchaseTransaction.Tax;
+            PurchaseTransactionTotal = purchaseTransaction.Total;
+            Remaining = purchaseTransaction.Total - purchaseTransaction.Paid;
+        }
+
+        private bool IsPaymentModeSelected()
+        {
+            if (_selectedPaymentMode != null) return true;
+            MessageBox.Show("Please select a payment mode.", "Invalid Selection", MessageBoxButton.OK);
+            return false;
+        }
+
+        private static bool IsPaymentConfirmationYes()
+        {
+            return MessageBox.Show("Confirm Payment?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+        }
+
+        private void ResetTransaction()
+        {
+            SelectedSupplier = null;
+            PurchaseReturnCredits = 0;
+            
+            SelectedPaymentMode = null;
+            SelectedPurchaseTransaction = null;
+
+            PurchaseTransactionGrossTotal = 0;
+            PurchaseTransactionDiscount = 0;
+            PurchaseTransactionTax = 0;
+            PurchaseTransactionTotal = 0;
+
+            UseCredits = 0;
+            Remaining = 0;
+            Pay = 0;
+
+            UpdateSuppliers();
+            UpdatePaymentMethods();
+            SelectedPurchaseLines.Clear();
+            SupplierUnpaidPurchases.Clear();
+        }
+
+        private void TriggerPaymentButtonStyle()
+        {
+            IsPaymentButtonPressed = true;
+            IsPaymentButtonPressed = false;
+        }
+        #endregion
     }
 }

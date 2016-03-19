@@ -17,6 +17,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.125*" />
+            <RowDefinition Height="0.125*" />
             <RowDefinition Height="0.25*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
@@ -32,7 +33,22 @@
             <Button Content="(F5) New" Command="{Binding NewTransactionCommand}" />
             <Button Grid.Column="5" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding IsNotEditMode}" />
         </Grid>
-        <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="1">
+        <Border BorderBrush="Red" BorderThickness="2" Grid.Row="1" Margin="0, 0, 0, 10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Foreground="Blue" Text="ID:" />
+                <TextBox Name="TransactionIDTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding TransactionID, UpdateSourceTrigger=Explicit}" MaxLength="12" KeyDown="TextBox_KeyDown" />
+                <TextBlock Grid.Row="0"  Grid.Column="2" Foreground="Blue" Text="Description:" />
+                <TextBox  Grid.Row="0" Grid.Column="3" Text="{Binding TransactionDescription, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" IsEnabled="{Binding IsNotEditMode}" />
+            </Grid>
+        </Border>
+        <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -46,22 +62,18 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Foreground="Red" Text="ID:" />
-                <TextBox Name="TransactionIDTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding TransactionID, UpdateSourceTrigger=Explicit}" MaxLength="12" KeyDown="TextBox_KeyDown" />
-                <TextBlock Grid.Row="0" Grid.Column="2" Text="Warehouse:" />
-                <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Warehouses, Mode=OneWay}" DisplayMemberPath="Name"
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Warehouse:" />
+                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Warehouses, Mode=OneWay}" DisplayMemberPath="Name"
                           SelectedItem="{Binding NewEntryWarehouse}" IsEnabled="{Binding IsNotEditMode}"/>
-                <TextBlock Grid.Row="0" Grid.Column="4" Text="Product ID:" />
-                <ComboBox Grid.Row="0" Grid.Column="5" ItemsSource="{Binding Products, Mode=OneWay}" DisplayMemberPath="ID" 
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Product ID:" />
+                <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Products, Mode=OneWay}" DisplayMemberPath="ID" 
                           SelectedItem="{Binding NewEntryProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsNotEditMode}" />
-                <TextBlock Grid.Row="0" Grid.Column="6" Text="Product:" />
-                <ComboBox Grid.Row="0" Grid.Column="7" ItemsSource="{Binding Products, Mode=OneWay}" DisplayMemberPath="Name"
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="Product:" />
+                <ComboBox Grid.Row="0" Grid.Column="5" ItemsSource="{Binding Products, Mode=OneWay}" DisplayMemberPath="Name"
                           SelectedItem="{Binding NewEntryProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                           IsEnabled="{Binding IsNotEditMode}"/>
-                <Grid Grid.Row="0" Grid.Column="8" IsEnabled="{Binding IsNotEditMode}">
+                <Grid Grid.Row="0" Grid.Column="6" IsEnabled="{Binding IsNotEditMode}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
@@ -79,10 +91,10 @@
                     <TextBox Grid.Column="1" Text="{Binding NewEntryPieces}" />
                 </Grid>
                 <TextBlock Grid.Row="1" Grid.Column="2" Foreground="Red" Text="{Binding NewEntryRemainingStock}" />
-                <Button Grid.Row="1" Grid.Column="8" Margin="10" Content="Enter" Command="{Binding NewEntryCommand}" IsEnabled="{Binding IsNotEditMode}" />
+                <Button Grid.Row="1" Grid.Column="6" Margin="10" Content="Enter" Command="{Binding NewEntryCommand}" IsEnabled="{Binding IsNotEditMode}" />
             </Grid>
         </Border>
-        <DataGrid Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" Grid.Row="2" ItemsSource="{Binding Lines}" SelectedItem="{Binding SelectedLine}" 
+        <DataGrid Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" Grid.Row="3" ItemsSource="{Binding Lines}" SelectedItem="{Binding SelectedLine}" 
                   IsEnabled="{Binding IsNotEditMode}" IsReadOnly="True" >
             <DataGrid.ContextMenu>
                 <ContextMenu>
