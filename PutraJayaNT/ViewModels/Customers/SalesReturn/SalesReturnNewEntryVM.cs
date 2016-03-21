@@ -3,7 +3,6 @@
     using System.Windows;
     using System.Windows.Input;
     using Models.Sales;
-    using Sales;
     using MVVMFramework;
     using System.Linq;
     using Utilities;
@@ -147,7 +146,7 @@
         {
             var salesReturnNewEntryQuantity = _salesReturnNewEntryUnits * _parentVM.SelectedSalesTransactionLine.Item.PiecesPerUnit + _salesReturnNewEntryPieces;
             salesReturnTransactionLine.Quantity += salesReturnNewEntryQuantity;
-            salesReturnTransactionLine.UpdateTotal();
+            salesReturnTransactionLine.Total += salesReturnNewEntryQuantity*_salesReturnNewEntryPrice;
             salesReturnTransactionLine.CostOfGoodsSold = SalesReturnTransactionLineHelper.GetSalesReturnTransactionLineCOGS(salesReturnTransactionLine.Model);
             _parentVM.SalesReturnTransactionNetTotal += salesReturnNewEntryQuantity * salesReturnTransactionLine.Model.SalesPrice;
         }
@@ -163,13 +162,15 @@
                 SalesPrice = _parentVM.SelectedSalesTransactionLine.SalesPrice / _parentVM.SelectedSalesTransactionLine.Item.PiecesPerUnit,
                 Discount = _parentVM.SelectedSalesTransactionLine.Discount / _parentVM.SelectedSalesTransactionLine.Item.PiecesPerUnit,
                 ReturnPrice = _salesReturnNewEntryPrice / _parentVM.SelectedSalesTransactionLine.Item.PiecesPerUnit,
-                Quantity = salesReturnNewEntryQuantity
+                Quantity = salesReturnNewEntryQuantity,
+                Total = salesReturnNewEntryQuantity * _salesReturnNewEntryPrice / _parentVM.SelectedSalesTransactionLine.Item.PiecesPerUnit
             };
             return new SalesReturnTransactionLineVM { Model = salesReturnTransactionLine };
         }
 
         private void ResetEntryFields()
         {
+            _parentVM.SelectedSalesTransactionLine = null;
             SalesReturnNewEntryProduct = null;
             SalesReturnNewEntryUnits = 0;
             SalesReturnNewEntryPieces = 0;

@@ -7,8 +7,6 @@ namespace PutraJayaNT.Models.Purchase
 {
     public class PurchaseReturnTransactionLine : ObservableObject
     {
-        int _quantity;
-
         [Key]
         [Column("PurchaseReturnTransactionID", Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -43,11 +41,7 @@ namespace PutraJayaNT.Models.Purchase
         public decimal ReturnPrice { get; set; }
 
         [Required]
-        public int Quantity
-        {
-            get { return _quantity; }
-            set { SetProperty(ref _quantity, value, "Quantity"); }
-        }
+        public int Quantity { get; set; }
 
         [Required]
         public decimal Total { get; set; }

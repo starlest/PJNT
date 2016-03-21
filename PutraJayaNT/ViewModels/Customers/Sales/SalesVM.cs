@@ -289,7 +289,7 @@
                         SaveEditedTransaction();
                     else
                         SaveNewTransaction();
-                    MessageBox.Show("Successfully saved transaction.", "Success", MessageBoxButton.OK);
+                    if (SalesTransactionHelper.IsLastSaveSuccessful) MessageBox.Show("Successfully saved transaction.", "Success", MessageBoxButton.OK);
                     Model = GetSalesTransactionFromDatabase(_transactionID);
                     SetEditMode();
                 }));

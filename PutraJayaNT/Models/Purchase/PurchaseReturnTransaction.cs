@@ -7,6 +7,11 @@ namespace PutraJayaNT.Models.Purchase
 {
     public class PurchaseReturnTransaction
     {
+        public PurchaseReturnTransaction()
+        {
+            PurchaseReturnTransactionLines = new List<PurchaseReturnTransactionLine>();
+        }
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 0), StringLength(128)]
         public string PurchaseReturnTransactionID { get; set; }
 
@@ -20,6 +25,6 @@ namespace PutraJayaNT.Models.Purchase
 
         public virtual User User { get; set; }
 
-        public virtual List<PurchaseReturnTransactionLine> TransactionLines { get; set; }
+        public virtual List<PurchaseReturnTransactionLine> PurchaseReturnTransactionLines { get; set; }
     }
 }

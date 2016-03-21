@@ -11,8 +11,12 @@
 
     public static class SalesTransactionHelper
     {
+        public static bool IsLastSaveSuccessful;
+
         public static void AddTransactionToDatabase(SalesTransaction salesTransaction)
         {
+            IsLastSaveSuccessful = false;
+
             using (var context = new ERPContext())
             {
                 foreach (var line in salesTransaction.SalesTransactionLines.ToList())
@@ -25,10 +29,14 @@
                 context.SalesTransactions.Add(salesTransaction);
                 context.SaveChanges();
             }
+
+            IsLastSaveSuccessful = true;
         }
 
         public static void EditNotIssuedInvoiceTransaction(SalesTransaction editedSalesTransaction)
         {
+            IsLastSaveSuccessful = false;
+
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext();
@@ -42,10 +50,13 @@
                 ts.Complete();
             }
 
+            IsLastSaveSuccessful = true;
         }
 
         public static void EditIssuedInvoiceTransaction(SalesTransaction editedSalesTransaction)
         {
+            IsLastSaveSuccessful = false;
+
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext();
@@ -61,10 +72,14 @@
                 context.SaveChanges();
                 ts.Complete();
             }
+
+            IsLastSaveSuccessful = true;
         }
 
         public static void IssueSalesTransactionInvoice(SalesTransaction salesTransaction)
         {
+            IsLastSaveSuccessful = true;
+
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext();
@@ -83,6 +98,8 @@
                 context.SaveChanges();
                 ts.Complete();
             }
+
+            IsLastSaveSuccessful = false;
         }
 
         public static void Collect(SalesTransaction salesTransaction, decimal creditsUsed, decimal collectionAmount, string paymentMode)

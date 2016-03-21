@@ -6,14 +6,14 @@ using System.Windows.Input;
 namespace PutraJayaNT.Views.Suppliers
 {
     /// <summary>
-    /// Interaction logic for PurchaseTransactionView.xaml
+    /// Interaction logic for PurchaseView.xaml
     /// </summary>
-    public partial class PurchaseTransactionView
+    public partial class PurchaseView
     {
-        public PurchaseTransactionView()
+        public PurchaseView()
         {
             InitializeComponent();
-            var vm = new PurchaseTransactionVM();
+            var vm = new PurchaseVM();
             DataContext = vm;
         }
 

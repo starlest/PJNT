@@ -51,7 +51,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="4" Text="Payment Mode:" />
                 <ComboBox Grid.Row="0" Grid.Column="5" ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding SelectedPaymentMode, UpdateSourceTrigger=PropertyChanged}" TabIndex="2" />
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Credits: " />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PurchaseReturnCredits, Mode=OneWay}" IsReadOnly="True" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PurchaseReturnCredits, Mode=OneWay, StringFormat=N2}" IsReadOnly="True" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding SelectedPurchaseLines}" VerticalAlignment="Stretch" CanUserAddRows="False" 

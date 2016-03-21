@@ -3,6 +3,7 @@
     using System;
     using System.Collections.ObjectModel;
     using System.Data;
+    using System.Diagnostics;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
@@ -28,9 +29,12 @@
         private SalesTransactionLineVM _selectedSalesTransactionLine;
         private CustomerVM _selectedSalesTransactionCustomer;
 
+        private SalesReturnTransactionLineVM _selectedLine;
+
         private ICommand _newCommand;
         private ICommand _printCommand;
         private ICommand _saveCommand;
+        private ICommand _deleteLineCommand;
         #endregion
 
         public SalesReturnVM()
@@ -104,12 +108,8 @@
             get { return _selectedSalesTransactionID; }
             set
             {
-                if (value == null)
-                {
-                    SetProperty(ref _selectedSalesTransactionID, null, () => SelectedSalesTransactionID);
-                    return;
-                }
-
+                SetProperty(ref _selectedSalesTransactionID, value, () => SelectedSalesTransactionID);
+                if (_selectedSalesTransactionID == null) return;
                 using (var context = new ERPContext())
                 {
                     var salesTransactionFromDatabase = context.SalesTransactions
@@ -120,7 +120,6 @@
                         .SingleOrDefault(transaction => transaction.SalesTransactionID.Equals(value) && transaction.InvoiceIssued != null);
 
                     if (!IsSalesTransactionInDatabase(salesTransactionFromDatabase)) return;
-                    SetProperty(ref _selectedSalesTransactionID, value, "SelectedSalesTransactionID");
                     SetNewTransactionMode(salesTransactionFromDatabase);
                 }
             }
@@ -129,7 +128,7 @@
         public CustomerVM SelectedSalesTransactionCustomer
         {
             get { return _selectedSalesTransactionCustomer; }
-            set { SetProperty(ref _selectedSalesTransactionCustomer, value, "SelectedSalesTransactionCustomer"); }
+            set { SetProperty(ref _selectedSalesTransactionCustomer, value, () => SelectedSalesTransactionCustomer); }
         }
 
         public SalesTransactionLineVM SelectedSalesTransactionLine
@@ -143,6 +142,12 @@
             }
         }
         #endregion
+
+        public SalesReturnTransactionLineVM SelectedLine
+        {
+            get { return _selectedLine; }
+            set { SetProperty(ref _selectedLine, value, () => SelectedLine); }
+        }
 
         #region Commands
         public ICommand NewCommand => _newCommand ?? (_newCommand = new RelayCommand(ResetTransaction));
@@ -158,18 +163,30 @@
                     SetNewSalesReturnTransactionID();   // To avoid simultaneous input into the same ID
                     SetSalesReturnTransactionModelPropertiesToVMProperties();
                     SalesReturnTransactionHelper.AddSalesReturnTransactionToDatabase(Model);
-                    MessageBox.Show("Successfully added transaction!", "Success", MessageBoxButton.OK);
+                    if (SalesReturnTransactionHelper.IsLastSaveSuccessful) MessageBox.Show("Successfully added transaction!", "Success", MessageBoxButton.OK);
                     ResetTransaction();
                 }));
             }
         }
 
-        private void SetSalesReturnTransactionModelPropertiesToVMProperties()
+        public ICommand DeleteLineCommand
         {
-            Model.Date = _salesReturnTransactionDate;
-            Model.NetTotal = _salesReturnTransactionNetTotal;
-            AddDisplayedSalesReturnTransactionLinesModelsIntoSalesReturnTransactionModel();
+            get
+            {
+                return _deleteLineCommand ?? (_deleteLineCommand = new RelayCommand(() =>
+                {
+                    if (_selectedLine != null &&
+                        MessageBox.Show("Confirm Deletion?", "Confirmation", MessageBoxButton.YesNo)
+                        == MessageBoxResult.No)
+                        return;
+                    DisplayedSalesReturnTransactionLines.Remove(_selectedLine);
+                    Debug.Assert(_selectedLine != null, "_selectedLine != null");
+                    _salesReturnTransactionNetTotal -= _selectedLine.Total;
+                    UpdateUINetTotal();
+                }));
+            }
         }
+
 
         public ICommand PrintCommand
         {
@@ -240,7 +257,6 @@
             var newEntryID = "MR" + (long)((year - 2000) * 100 + month) * 1000000;
 
             string lastEntryID = null;
-
             using (var context = new ERPContext())
             {
                 var latestSalesReturnTransaction = context.SalesReturnTransactions.Where(
@@ -265,6 +281,13 @@
             NewEntryVM.SalesReturnNewEntryPrice = 0;
         }
 
+        private void SetSalesReturnTransactionModelPropertiesToVMProperties()
+        {
+            Model.Date = _salesReturnTransactionDate;
+            Model.NetTotal = _salesReturnTransactionNetTotal;
+            AddDisplayedSalesReturnTransactionLinesModelsIntoSalesReturnTransactionModel();
+        }
+
         private void AddDisplayedSalesReturnTransactionLinesModelsIntoSalesReturnTransactionModel()
         {
             foreach (var salesReturnTransactionLine in DisplayedSalesReturnTransactionLines)
@@ -279,8 +302,11 @@
             Model = new SalesReturnTransaction();
             NotEditing = true;
 
-            SelectedSalesTransactionID = null;
+            SetNewSalesReturnTransactionID();
             SalesReturnTransactionDate = UtilityMethods.GetCurrentDate().Date;
+            SalesReturnTransactionNetTotal = 0;
+
+            SelectedSalesTransactionID = null;
             SelectedSalesTransactionCustomer = null;
             SelectedSalesTransactionLine = null;
 
@@ -288,13 +314,11 @@
             NewEntryVM.SalesReturnNewEntryUnits = 0;
             NewEntryVM.SalesReturnNewEntryPieces = 0;
             NewEntryVM.SalesReturnNewEntryPrice = 0;
-
-            SalesReturnTransactionNetTotal = 0;
-            SetNewSalesReturnTransactionID();
         }
 
         private void UpdateUINetTotal()
         {
+
             OnPropertyChanged("SalesReturnTransactionNetTotal");
         }
         #endregion

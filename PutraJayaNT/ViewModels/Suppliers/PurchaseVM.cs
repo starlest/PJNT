@@ -15,7 +15,7 @@
     using System.Collections.Generic;
     using Utilities.ModelHelpers;
 
-    class PurchaseTransactionVM : ViewModelBase<PurchaseTransaction>
+    class PurchaseVM : ViewModelBase<PurchaseTransaction>
     {
         readonly ObservableCollection<PurchaseTransactionLineVM> _lines;
         readonly ObservableCollection<Supplier> _suppliers;
@@ -66,7 +66,7 @@
         ICommand _editLineCancelCommand;
         ICommand _deleteLineCommand;
 
-        public PurchaseTransactionVM()
+        public PurchaseVM()
         {
             Model = new PurchaseTransaction();
             _lines = new ObservableCollection<PurchaseTransactionLineVM>();

@@ -42,11 +42,7 @@
             }
         }
 
-        public string PurchaseTransactionID
-        {
-            get { return Model.PurchaseTransaction.PurchaseID; }
-        }
-
+        public string PurchaseTransactionID => Model.PurchaseTransaction.PurchaseID;
 
         public int Quantity
         {
@@ -166,6 +162,17 @@
                 var itemStock = context.Stocks.FirstOrDefault(stock => stock.ItemID.Equals(Model.Item.ItemID) && stock.WarehouseID.Equals(Model.Warehouse.ID));
                 return itemStock?.Pieces ?? 0;
             }
+        }
+       
+        public decimal GetNetDiscount()
+        {
+            var lineDiscount = Model.Discount / Model.Item.PiecesPerUnit;
+            var lineSalesPrice = Model.PurchasePrice / Model.Item.PiecesPerUnit;
+            if (lineSalesPrice - lineDiscount == 0) return 0;
+            var fractionOfTransaction = Model.Quantity * (lineSalesPrice - lineDiscount) / Model.PurchaseTransaction.GrossTotal;
+            var fractionOfTransactionDiscount = fractionOfTransaction * Model.PurchaseTransaction.Discount / Model.Quantity;
+            var discount = (lineDiscount + fractionOfTransactionDiscount) * Model.Item.PiecesPerUnit;
+            return discount;
         }
 
         public PurchaseTransactionLineVM Clone()

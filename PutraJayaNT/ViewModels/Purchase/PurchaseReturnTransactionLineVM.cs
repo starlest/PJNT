@@ -1,11 +1,21 @@
-﻿namespace PutraJayaNT.ViewModels.Sales
+﻿namespace PutraJayaNT.ViewModels.Purchase
 {
-    using MVVMFramework;
     using Models.Inventory;
-    using Models.Sales;
+    using Models.Purchase;
+    using MVVMFramework;
 
-    public class SalesReturnTransactionLineVM : ViewModelBase<SalesReturnTransactionLine>
+    internal class PurchaseReturnTransactionLineVM : ViewModelBase<PurchaseReturnTransactionLine>
     {
+        public PurchaseReturnTransaction PurchaseReturnTransaction
+        {
+            get { return Model.PurchaseReturnTransaction; }
+            set
+            {
+                Model.PurchaseReturnTransaction = value;
+                OnPropertyChanged("PurchaseReturnTransaction");
+            }
+        }
+
         public Item Item
         {
             get { return Model.Item; }
@@ -26,17 +36,15 @@
             }
         }
 
-        public virtual SalesReturnTransaction SalesReturnTransaction
+        public Warehouse ReturnWarehouse
         {
-            get { return Model.SalesReturnTransaction; }
+            get { return Model.ReturnWarehouse; }
             set
             {
-                Model.SalesReturnTransaction = value;
-                OnPropertyChanged("SalesReturnTransaction");
+                Model.ReturnWarehouse = value;
+                OnPropertyChanged("ReturnWarehouse");
             }
         }
-
-        public string Unit => Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit;
 
         public int Quantity
         {
@@ -45,41 +53,47 @@
             {
                 Model.Quantity = value;
                 OnPropertyChanged("Quantity");
-                OnPropertyChanged("Units");
                 OnPropertyChanged("Pieces");
+                OnPropertyChanged("Units");
             }
         }
 
-        public int Pieces => Model.Quantity%Model.Item.PiecesPerUnit;
+        public int Pieces => Model.Quantity % Model.Item.PiecesPerUnit;
 
-        public int Units => Model.Quantity/Model.Item.PiecesPerUnit;
+        public int Units => Model.Quantity / Model.Item.PiecesPerUnit;
 
-        public decimal SalesPrice
+        public decimal PurchasePrice
         {
-            get { return Model.SalesPrice * Item.PiecesPerUnit; }
+            get
+            {
+                return Model.PurchasePrice * Model.Item.PiecesPerUnit;
+            }
             set
             {
-                Model.SalesPrice = value / Item.PiecesPerUnit;
-                OnPropertyChanged("SalesPrice");
+                Model.PurchasePrice = value / Model.Item.PiecesPerUnit;
+                OnPropertyChanged("PurchasePrice");
             }
         }
 
         public decimal ReturnPrice
         {
-            get { return Model.ReturnPrice * Item.PiecesPerUnit; }
+            get
+            {
+                return Model.ReturnPrice * Model.Item.PiecesPerUnit;
+            }
             set
             {
-                Model.ReturnPrice = value / Item.PiecesPerUnit;
+                Model.ReturnPrice = value / Model.Item.PiecesPerUnit;
                 OnPropertyChanged("ReturnPrice");
             }
         }
 
         public decimal Discount
         {
-            get { return Model.Discount * Item.PiecesPerUnit; }
+            get { return Model.Discount * Model.Item.PiecesPerUnit; }
             set
             {
-                Model.Discount = value / Item.PiecesPerUnit;
+                Model.Discount = value / Model.Item.PiecesPerUnit;
                 OnPropertyChanged("Discount");
             }
         }
@@ -94,19 +108,10 @@
             }
         }
 
-        public decimal CostOfGoodsSold
-        {
-            get { return Model.CostOfGoodsSold; }
-            set
-            {
-                Model.CostOfGoodsSold = value;
-                OnPropertyChanged("CostOfGoodsSold");
-            }
-        }
-
         public void UpdateTotal()
         {
             OnPropertyChanged("Total");
         }
     }
 }
+

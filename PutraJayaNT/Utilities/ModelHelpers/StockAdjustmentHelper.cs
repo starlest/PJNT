@@ -10,7 +10,7 @@
     using Models.StockCorrection;
     using System.Linq;
 
-    public class StockAdjustmentHelper
+    public static class StockAdjustmentHelper
     {
         public static void AddStockAdjustmentTransactionToDatabase(StockAdjustmentTransaction stockAdjustmentTransaction)
         {

@@ -7,7 +7,7 @@
     using PutraJayaNT.Models.Accounting;
     using PutraJayaNT.Models.Sales;
     using PutraJayaNT.Utilities;
-    using PutraJayaNT.ViewModels.Customers;
+    using PutraJayaNT.Utilities.ModelHelpers;
 
     [TestClass]
     public class SalesCollectTests
@@ -26,7 +26,7 @@
             var remainingAmount = testSalesTransaction.NetTotal - testSalesTransaction.Paid;
             const string paymentMode = "Cash";
 
-            SalesCollectVM.Collect(testSalesTransaction, 0, remainingAmount, paymentMode);
+            SalesTransactionHelper.Collect(testSalesTransaction, 0, remainingAmount, paymentMode);
             var result1 = IsSalesTransactionInDatabaseFullyPaid(testSalesTransaction) &&
                           IsSalesReceiptLedgerTransactionRecordedInDatabase(testSalesTransaction);
             Assert.AreEqual(result1, true);

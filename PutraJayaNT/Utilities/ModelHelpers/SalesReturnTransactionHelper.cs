@@ -10,8 +10,12 @@
 
     public static class SalesReturnTransactionHelper
     {
+        public static bool IsLastSaveSuccessful;
+
         public static void AddSalesReturnTransactionToDatabase(SalesReturnTransaction salesReturnTransaction)
         {
+            IsLastSaveSuccessful = false;
+
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext();
@@ -33,6 +37,8 @@
                 AddSalesReturnTransactionLedgerTransactionsToDatabaseContext(context, salesReturnTransaction);
                 ts.Complete();
             }
+
+            IsLastSaveSuccessful = true;
         }
 
         #region Add Helper Methods
@@ -83,10 +89,9 @@
 
         private static void InceaseSalesReturnTransactionLineItemStockInDatabaseContext(ERPContext context, SalesReturnTransactionLine salesReturnTransactionLine)
         {
-            var stock = context.Stocks
-                .FirstOrDefault(e => e.Item.ItemID.Equals(salesReturnTransactionLine.Item.ItemID) && e.Warehouse.ID.Equals(salesReturnTransactionLine.Warehouse.ID));
-
-            if (stock != null) stock.Pieces += salesReturnTransactionLine.Quantity;
+            var stockFromDatabase = context.Stocks
+                .SingleOrDefault(stock => stock.Item.ItemID.Equals(salesReturnTransactionLine.Item.ItemID) && stock.Warehouse.ID.Equals(salesReturnTransactionLine.Warehouse.ID));
+            if (stockFromDatabase != null) stockFromDatabase.Pieces += salesReturnTransactionLine.Quantity;
             else
             {
                 var s = new Stock

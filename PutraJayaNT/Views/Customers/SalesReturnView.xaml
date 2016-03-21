@@ -100,7 +100,13 @@
                 <Button Grid.Column="8" Content="Add" Command="{Binding SalesReturnNewEntryAddCommand}" Margin="10, 15, 10, 10" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="4" ItemsSource="{Binding DisplayedSalesReturnTransactionLines}" IsEnabled="{Binding NotEditing}" IsReadOnly="True">
+        <DataGrid Grid.Row="4" ItemsSource="{Binding DisplayedSalesReturnTransactionLines}" SelectedItem="{Binding SelectedLine}"
+                  IsEnabled="{Binding NotEditing}" IsReadOnly="True">
+            <DataGrid.ContextMenu>
+                <ContextMenu >
+                    <MenuItem Header="Delete" HorizontalAlignment="Left" Command="{Binding DeleteLineCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Warehouse" Width="1*" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding Item.ItemID}" />
@@ -109,7 +115,6 @@
                 <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Sales Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
-                <DataGridTextColumn Header="COGS" Width="1*" Binding="{Binding CostOfGoodsSold, StringFormat=N2}" />
                 <DataGridTextColumn Header="Discount" Width="1*" Binding="{Binding Discount, StringFormat=N2}" />
                 <DataGridTextColumn Header="Return Price" Width="1*" Binding="{Binding ReturnPrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Total, StringFormat=N2}" />

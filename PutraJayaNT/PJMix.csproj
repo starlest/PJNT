@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\PurchaseReturnTransactionHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\PurchaseTransactionHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesmanHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionHelper.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesEditVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnNewEntryVM.cs" />
     <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
@@ -297,11 +299,11 @@
     <Compile Include="ViewModels\Salesman\SalesmanVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchasePaymentListVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchasePaymentVM.cs" />
-    <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionLineVM.cs" />
-    <Compile Include="ViewModels\Suppliers\PurchaseReturnTransactionVM.cs" />
-    <Compile Include="ViewModels\Suppliers\PurchaseTransactionLineVM.cs" />
-    <Compile Include="ViewModels\Suppliers\PurchaseTransactionVM.cs" />
-    <Compile Include="ViewModels\Suppliers\SupplierVM.cs" />
+    <Compile Include="ViewModels\Purchase\PurchaseReturnTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnVM.cs" />
+    <Compile Include="ViewModels\Purchase\PurchaseTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchaseVM.cs" />
+    <Compile Include="ViewModels\SupplierVM.cs" />
     <Compile Include="ViewModels\Test\TestVM.cs" />
     <Compile Include="ViewModels\VerificationVM.cs" />
     <Compile Include="ViewModels\Item\WarehouseVM.cs" />
@@ -419,8 +421,8 @@
     <Compile Include="Views\Suppliers\PurchaseReturnView.xaml.cs">
       <DependentUpon>PurchaseReturnView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Suppliers\PurchaseTransactionView.xaml.cs">
-      <DependentUpon>PurchaseTransactionView.xaml</DependentUpon>
+    <Compile Include="Views\Suppliers\PurchaseView.xaml.cs">
+      <DependentUpon>PurchaseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Test\TestView.xaml.cs">
       <DependentUpon>TestView.xaml</DependentUpon>
@@ -654,7 +656,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Suppliers\PurchaseTransactionView.xaml">
+    <Page Include="Views\Suppliers\PurchaseView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
