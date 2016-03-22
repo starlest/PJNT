@@ -1,13 +1,13 @@
-﻿namespace PutraJayaNT.ViewModels.Suppliers
+﻿namespace PutraJayaNT.ViewModels.Purchase
 {
     using System.Linq;
-    using MVVMFramework;
+    using System.Windows;
     using Models.Inventory;
     using Models.Purchase;
-    using System.Windows;
+    using MVVMFramework;
     using Utilities;
 
-    class PurchaseTransactionLineVM : ViewModelBase<PurchaseTransactionLine>
+    public class PurchaseTransactionLineVM : ViewModelBase<PurchaseTransactionLine>
     {
         int _pieces;
         int _units;

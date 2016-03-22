@@ -257,7 +257,7 @@
             _customers.Add(new CustomerVM {  Model = new Customer { ID = -1, Name = "All" } });
             using (var context = new ERPContext())
             {
-                var customers = context.Customers.Include("Group").ToList();
+                var customers = context.Customers.Include("Group").OrderBy(customer => customer.Name).ToList();
 
                 foreach (var customer in customers)
                     _customers.Add(new CustomerVM { Model = customer });

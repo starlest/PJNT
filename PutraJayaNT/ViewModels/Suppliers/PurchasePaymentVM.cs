@@ -14,6 +14,7 @@
     using System.Transactions;
     using Models.Purchase;
     using Utilities.ModelHelpers;
+    using ViewModels.Purchase;
 
     internal class PurchasePaymentVM : ViewModelBase
     {

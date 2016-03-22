@@ -123,6 +123,8 @@
     <Compile Include="ViewModels\Customers\Sales\SalesEditVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnNewEntryVM.cs" />
+    <Compile Include="ViewModels\Suppliers\Purchase\PurchaseEditVM.cs" />
+    <Compile Include="ViewModels\Suppliers\Purchase\PurchaseNewEntryVM.cs" />
     <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
@@ -240,6 +242,9 @@
     <Compile Include="Views\Master\Customers\MasterCustomersEditView.xaml.cs">
       <DependentUpon>MasterCustomersEditView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Suppliers\Purchase\PurchaseEditView.xaml.cs">
+      <DependentUpon>PurchaseEditView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\VerificationWindow.xaml.cs">
       <DependentUpon>VerificationWindow.xaml</DependentUpon>
     </Compile>
@@ -302,7 +307,7 @@
     <Compile Include="ViewModels\Purchase\PurchaseReturnTransactionLineVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnVM.cs" />
     <Compile Include="ViewModels\Purchase\PurchaseTransactionLineVM.cs" />
-    <Compile Include="ViewModels\Suppliers\PurchaseVM.cs" />
+    <Compile Include="ViewModels\Suppliers\Purchase\PurchaseVM.cs" />
     <Compile Include="ViewModels\SupplierVM.cs" />
     <Compile Include="ViewModels\Test\TestVM.cs" />
     <Compile Include="ViewModels\VerificationVM.cs" />
@@ -421,7 +426,7 @@
     <Compile Include="Views\Suppliers\PurchaseReturnView.xaml.cs">
       <DependentUpon>PurchaseReturnView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Suppliers\PurchaseView.xaml.cs">
+    <Compile Include="Views\Suppliers\Purchase\PurchaseView.xaml.cs">
       <DependentUpon>PurchaseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Test\TestView.xaml.cs">
@@ -499,6 +504,10 @@
     <Page Include="Views\Master\Customers\MasterCustomersEditView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Suppliers\Purchase\PurchaseEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\VerificationWindow.xaml">
       <SubType>Designer</SubType>
@@ -656,7 +665,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Suppliers\PurchaseView.xaml">
+    <Page Include="Views\Suppliers\Purchase\PurchaseView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

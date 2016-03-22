@@ -97,7 +97,7 @@
             {
                 return _editConfirmCommand ?? (_editConfirmCommand = new RelayCommand(() =>
                 {
-                    if (!IsEditedQuantityValid()) return;
+                    if (!IsEditedQuantityValid() || !ArePriceAndDiscountFieldsValid()) return;
 
                     var isLineCombinable = false;
 
@@ -169,6 +169,15 @@
                 $"{_selectedLine.Item.Name} has only {availableQuantity / _selectedLine.Item.PiecesPerUnit + _selectedLine.Units} units, " +
                 $"{availableQuantity % _selectedLine.Item.PiecesPerUnit + _selectedLine.Pieces} pieces available.",
                 "Insufficient Stock", MessageBoxButton.OK);
+            return false;
+        }
+
+        private bool ArePriceAndDiscountFieldsValid()
+        {
+            if (_editLineSalesPrice >= 0 && _editLineDiscount >= 0 &&
+                _editLineDiscount <= _editLineSalesPrice)
+                return true;
+            MessageBox.Show("Please check that the price and discount fields are valid.", "Invalid Field(s)", MessageBoxButton.OK);
             return false;
         }
 

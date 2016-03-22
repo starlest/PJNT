@@ -7,8 +7,8 @@
     using Item;
     using Models.Purchase;
     using MVVMFramework;
-    using Purchase;
     using Utilities;
+    using ViewModels.Purchase;
 
     internal class PurchaseReturnNewEntryVM : ViewModelBase
     {

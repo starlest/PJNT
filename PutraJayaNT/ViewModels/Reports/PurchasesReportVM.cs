@@ -11,6 +11,7 @@
     using Utilities;
     using Inventory;
     using Item;
+    using Purchase;
     using Suppliers;
 
     class PurchasesReportVM : ViewModelBase

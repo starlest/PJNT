@@ -10,7 +10,6 @@
     using Models.Inventory;
     using Utilities.ModelHelpers;
     using ViewModels.Suppliers;
-    using ViewModels.Inventory;
 
     public class MasterInventoryNewEntryVM : ViewModelBase
     {
@@ -96,7 +95,7 @@
             {
                 return _newEntryCommand ?? (_newEntryCommand = new RelayCommand(() =>
                 {
-                    if (!AreAllEntryFieldsFilled()) return;
+                    if (!AreAllEntryFieldsFilled() || !AreAllEntryFieldsValid()) return;
                     if (MessageBox.Show("Confirm adding this product?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
                     var newEntryItem = MakeNewEntryItem();
                     InventoryHelper.AddItemToDatabase(newEntryItem);
@@ -132,13 +131,21 @@
 
         private bool AreAllEntryFieldsFilled()
         {
-            if (_newEntryID != null || _newEntryName != null ||
-                _newEntryCategory != null || _newEntrySupplier != null ||
-                _newEntrySalesPrice == null || _newEntryPurchasePrice != null ||
-                _newEntryPiecesPerUnit <= 0 || _newEntryUnitName != null)
+            if (_newEntryID != null && _newEntryName != null &&
+                _newEntryCategory != null && _newEntrySupplier != null &&
+                _newEntrySalesPrice != null && _newEntryPurchasePrice != null && 
+                _newEntryUnitName != null)
                 return true;
 
             MessageBox.Show("Please enter all fields", "Missing Fields", MessageBoxButton.OK);
+            return false;
+        }
+
+        private bool AreAllEntryFieldsValid()
+        {
+            if (_newEntrySalesPrice >= 0 && _newEntryPurchasePrice >= 0 && _newEntryPiecesPerUnit > 0)
+                return true;
+            MessageBox.Show("Please check that all fields are valid.", "Invalid Field(s)", MessageBoxButton.OK);
             return false;
         }
 

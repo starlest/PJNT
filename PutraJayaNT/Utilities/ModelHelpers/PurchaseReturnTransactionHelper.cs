@@ -53,8 +53,10 @@
 
             var purchaseLineNetTotal = purchaseTransactionLine.PurchasePrice - purchaseTransactionLine.Discount;
             if (purchaseLineNetTotal == 0) return 0;
-            var fractionOfTransactionDiscount = purchaseReturnTransactionLine.Quantity * purchaseLineNetTotal / purchaseTransactionLine.PurchaseTransaction.GrossTotal * purchaseTransactionLine.PurchaseTransaction.Discount;
-            var fractionOfTransactionTax = purchaseReturnTransactionLine.Quantity * purchaseLineNetTotal / purchaseTransactionLine.PurchaseTransaction.GrossTotal * purchaseTransactionLine.PurchaseTransaction.Tax;
+            var fractionOfTransactionDiscount = purchaseReturnTransactionLine.Quantity * purchaseLineNetTotal / 
+                purchaseTransactionLine.PurchaseTransaction.GrossTotal * purchaseTransactionLine.PurchaseTransaction.Discount;
+            var fractionOfTransactionTax = purchaseReturnTransactionLine.Quantity * purchaseLineNetTotal / 
+                purchaseTransactionLine.PurchaseTransaction.GrossTotal * purchaseTransactionLine.PurchaseTransaction.Tax;
             return purchaseReturnTransactionLine.Quantity * purchaseLineNetTotal - fractionOfTransactionDiscount + fractionOfTransactionTax;
         }
 

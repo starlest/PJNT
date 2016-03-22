@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Inventory;
     using Item;
     using Models.Inventory;
     using Models.Sales;
@@ -194,7 +193,7 @@
             {
                 return _confirmNewEntryCommand ?? (_confirmNewEntryCommand = new RelayCommand(() =>
                 {
-                    if (!AreAllFieldsFilled() || !IsNewEntryQuantityValid()) return;
+                    if (!AreAllFieldsFilled() || !IsNewEntryQuantityValid() || !ArePriceAndDiscountFieldsValid()) return;
                     AddNewEntryToTransaction();
                     SubmitNewEntry();
                     ResetEntryFields();
@@ -308,6 +307,14 @@
                 $"{_newEntryProduct.Name} has only {availableQuantity / _newEntryProduct.PiecesPerUnit} units, " +
                 $"{availableQuantity % _newEntryProduct.PiecesPerUnit} pieces left.",
                 "Insufficient Stock", MessageBoxButton.OK);
+            return false;
+        }
+
+        private bool ArePriceAndDiscountFieldsValid()
+        {
+            if (_newEntryPrice >= 0 && _newEntryDiscount >= 0 && _newEntryDiscount <= _newEntryPrice)
+                return true;
+            MessageBox.Show("Please check that the price and discount fields are valid.", "Invalid Field(s)", MessageBoxButton.OK);
             return false;
         }
 
