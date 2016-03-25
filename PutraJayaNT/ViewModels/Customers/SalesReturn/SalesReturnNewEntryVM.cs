@@ -73,7 +73,7 @@
 
         private bool IsReturnNewEntryPriceValid()
         {
-            var maximumReturnPrice = _parentVM.SelectedSalesTransactionLine.SalesPrice - _parentVM.SelectedSalesTransactionLine.GetNetDiscount();
+            var maximumReturnPrice = _parentVM.SelectedSalesTransactionLine.GetNetLinePrice();
             if (_salesReturnNewEntryPrice >= 0 && _salesReturnNewEntryPrice <= maximumReturnPrice) return true;
             MessageBox.Show($"The valid return price is 0 - {maximumReturnPrice}", "Invalid Command", MessageBoxButton.OK);
             return false;

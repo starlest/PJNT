@@ -26,8 +26,12 @@ namespace PutraJayaNT.Models.Inventory
         public decimal SalesPrice { get; set; }
 
         public string UnitName { get; set; }
+        
+        public string SecondaryUnitName { get; set; }
 
         public int PiecesPerUnit { get; set; }
+
+        public int PiecesPerSecondaryUnit{ get; set; }
 
         public decimal SalesExpense { get; set; }
 

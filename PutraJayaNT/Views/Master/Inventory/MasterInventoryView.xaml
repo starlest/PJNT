@@ -22,6 +22,7 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
@@ -50,8 +51,12 @@
                 <TextBox Grid.Row="2"  Grid.Column="1" Text="{Binding NewEntryUnitName, Mode=TwoWay}" />
                 <TextBlock Grid.Row="2" Grid.Column="2" Foreground="Blue" Text="Pieces/Unit:" />
                 <TextBox Grid.Row="2"  Grid.Column="3" Text="{Binding NewEntryPiecesPerUnit, Mode=TwoWay}" />
-                <Button Content="Add" Grid.Row="1" Grid.Column="6" Command="{Binding NewEntryCommand}" />
-                <Button Content="Cancel" Grid.Row="2" Grid.Column="6" Command="{Binding CancelEntryCommand}" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Foreground="Blue" Text="SUnit Name:" />
+                <TextBox Grid.Row="3"  Grid.Column="1" Text="{Binding NewEntrySecondaryUnitName, Mode=TwoWay}" />
+                <TextBlock Grid.Row="3" Grid.Column="2" Foreground="Blue" Text="Pieces/SUnit:" />
+                <TextBox Grid.Row="3"  Grid.Column="3" Text="{Binding NewEntryPiecesPerSecondaryUnit, Mode=TwoWay}" />
+                <Button Content="Add" Grid.Row="2" Grid.Column="6" Command="{Binding NewEntryCommand}" />
+                <Button Content="Cancel" Grid.Row="3" Grid.Column="6" Command="{Binding CancelEntryCommand}" />
             </Grid>
         </Border>
         <Grid Grid.Row="1">
@@ -92,6 +97,8 @@
                 <DataGridTextColumn Header="Category" Width="1*" Binding="{Binding Category.Name}" />
                 <DataGridTextColumn Header="Unit Name" Width="1*" Binding="{Binding UnitName}" />
                 <DataGridTextColumn Header="Pieces/Unit" Width="1*" Binding="{Binding PiecesPerUnit}" />
+                <DataGridTextColumn Header="SUnit Name" Width="1*" Binding="{Binding SecondaryUnitName}" />
+                <DataGridTextColumn Header="Pieces/SUnit" Width="1*" Binding="{Binding PiecesPerSecondaryUnit}" />
                 <DataGridTextColumn Header="Purchase Price" Width="1*" Binding="{Binding PurchasePrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Sales Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Expense" Width="1*" Binding="{Binding SalesExpense, StringFormat=N2}" />

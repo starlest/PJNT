@@ -1,27 +1,22 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace PutraJayaNT
 {
+    using System.Windows.Controls.Primitives;
+
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         private void ComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             var MyComboBox = sender as ComboBox;
-
-            if (MyComboBox != null && MyComboBox.Text.Length > 0)
-            {
-                if (e.Key == Key.Enter)
-                {
-                    BindingExpression binding = MyComboBox.GetBindingExpression(ComboBox.SelectedItemProperty);
-                    if (binding != null) binding.UpdateSource();
-                }
-            }
+            if (MyComboBox == null || MyComboBox.Text.Length <= 0) return;
+            if (e.Key != Key.Enter) return;
+            var binding = MyComboBox.GetBindingExpression(Selector.SelectedItemProperty);
+            binding?.UpdateSource();
         }
     }
 }

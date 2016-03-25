@@ -20,7 +20,6 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -28,13 +27,16 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="4" Text="Putra Jaya" FontSize="40" HorizontalAlignment="Center"  VerticalAlignment="Center" Foreground="Blue" FontWeight="Bold"/>
-        <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Username: " />
-        <TextBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
+        <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="4" Text="Putra Jaya" FontSize="40" HorizontalAlignment="Center"  VerticalAlignment="Center" Foreground="Blue" FontWeight="Bold"/>
+        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Username: " />
+        <TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" 
                  Text="{Binding Username, Mode=TwoWay}" Margin="10" />
-        <TextBlock Grid.Row="4"  Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Password: " />
-        <PasswordBox Grid.Row="4" Grid.Column="2" x:Name ="passwordBox" w:PasswordHelper.Attach="True" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="30"
+        <TextBlock Grid.Row="3"  Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" Text="Password: " />
+        <PasswordBox Grid.Row="3" Grid.Column="2" x:Name ="passwordBox" w:PasswordHelper.Attach="True" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="30"
                      Margin="10, 0, 10, 0" w:PasswordHelper.Password="{Binding Password, Mode=TwoWay}" />
+        <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="Red" FontSize="28" Text="Server: " />
+        <ComboBox Grid.Row="4" Grid.Column="2" Height="30" Margin="10" Background="White" ItemsSource="{Binding Servers}" 
+                  SelectedItem="{Binding SelectedServer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEditable="False" />
         <Button Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Content="Login" Command="{Binding LoginCommand}" Margin="80, 0, 80, 0"/>
     </Grid>
 </mui:ModernWindow>

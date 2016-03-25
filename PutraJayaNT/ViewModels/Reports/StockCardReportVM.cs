@@ -8,7 +8,6 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Inventory;
     using Item;
     using Models.Inventory;
 
@@ -516,6 +515,7 @@
             var balance = _beginningBalance;
             var totalIn = 0;
             var totalOut = 0;
+            DisplayedLines.Clear();
             foreach (var l in sortedlines)
             {
                 balance += l.Amount;

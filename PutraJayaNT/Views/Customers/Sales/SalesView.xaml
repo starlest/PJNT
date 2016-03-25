@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:utilities="clr-namespace:PutraJayaNT.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
     <UserControl.Resources>
@@ -112,31 +113,35 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" FontSize="18"  Text="Warehouse:" />
                     <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Warehouses, Mode=OneWay}" DisplayMemberPath="Name" 
-                              SelectedItem="{Binding NewEntryWarehouse}" />
+                              SelectedItem="{Binding NewEntryWarehouse}" PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
                     <TextBlock Grid.Row="0" Grid.Column="2" Text="ID:" />
                     <ComboBox Name="NewItemIDComboBox" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding WarehouseProducts, Mode=OneWay}" DisplayMemberPath="ID" 
-                              SelectedItem="{Binding NewEntryProduct}"/>
+                              SelectedItem="{Binding NewEntryProduct}" PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
                     <TextBlock Grid.Row="0" Grid.Column="4" Text="Product:" />
-                    <Grid Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="2">
+                    <Grid Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="0.25*" />
-                            <ColumnDefinition Width="0.25*" />
+                            <ColumnDefinition Width="0.5*" />
+                            <ColumnDefinition Width="0.5*" />
+                            <ColumnDefinition Width="0.5*" />
                         </Grid.ColumnDefinitions>
-                        <ComboBox ItemsSource="{Binding WarehouseProducts, Mode=OneWay}" DisplayMemberPath="Name" SelectedItem="{Binding NewEntryProduct}" />
-                        <TextBox Grid.Column="1" Margin="10, 10, 0, 0" Text="{Binding NewEntryUnitName}" IsReadOnly="True" IsTabStop="False" />
-                        <TextBox Grid.Column="2" Margin="10, 10, 0, 0" Text="{Binding NewEntryPiecesPerUnit}" IsReadOnly="True" IsTabStop="False" />
+                        <ComboBox ItemsSource="{Binding WarehouseProducts, Mode=OneWay}" DisplayMemberPath="Name" SelectedItem="{Binding NewEntryProduct}" 
+                                  PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
+                        <TextBox Grid.Column="1" Margin="10, 5, 0, 0" Text="{Binding NewEntryUnit}" IsReadOnly="True" IsTabStop="False" />
+                        <TextBox Grid.Column="2" Margin="10, 5, 0, 0" Text="{Binding NewEntrySecondaryUnits}" IsReadOnly="True" IsTabStop="False" />
+                        <TextBlock Grid.Column="3" Margin="10, 10, 0, 10" HorizontalAlignment="Left" Foreground="Red" Text="{Binding RemainingStock}"  />
                     </Grid>
-                    <TextBlock Grid.Row="1" Grid.Column="0" FontSize="16" Text="Units/Pieces:" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Quantity:" />
                     <Grid Grid.Row="1" Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding NewEntryUnits}" />
-                        <TextBox Grid.Column="1" Text="{Binding NewEntryPieces}" />
-                        <TextBlock Grid.Column="2" Foreground="Red" Text="{Binding RemainingStock}"  />
+                        <TextBox Text="{Binding NewEntryUnits}" utilities:FocusAdvancement.AdvancesByEnterKey="True" />
+                        <TextBox Grid.Column="1" Text="{Binding NewEntrySecondaryUnits}" IsEnabled="{Binding IsSecondaryUnitUsed}"
+                                 utilities:FocusAdvancement.AdvancesByEnterKey="True" />
+                        <TextBox Grid.Column="2" Text="{Binding NewEntryPieces}" utilities:FocusAdvancement.AdvancesByEnterKey="True" />
                     </Grid>
                     <TextBlock Grid.Row="1" Grid.Column="2" Text="Price:" />
                     <Grid Grid.Row="1" Grid.Column="3">
@@ -145,8 +150,9 @@
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <ComboBox ItemsSource="{Binding NewEntryAlternativeSalesPrices, Mode=OneWay}" DisplayMemberPath="Name"
-                                  SelectedItem="{Binding NewEntrySelectedAlternativeSalesPrice}" />
-                        <TextBox Grid.Column="1" Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
+                                  SelectedItem="{Binding NewEntrySelectedAlternativeSalesPrice}" PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
+                        <TextBox Grid.Column="1" Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" 
+                                 utilities:FocusAdvancement.AdvancesByEnterKey="True" />
                     </Grid>
                     <TextBlock Grid.Row="1" Grid.Column="4" Text="Discount:" />
                     <Grid Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2">
@@ -158,13 +164,15 @@
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <TextBox Name="DiscountPercentTextBox" Text="{Binding NewEntryDiscountPercent, UpdateSourceTrigger=Explicit}" 
-                                 KeyDown="DiscountPercentTextBox_KeyDown"/>
+                                 KeyDown="DiscountPercentTextBox_KeyDown" utilities:FocusAdvancement.AdvancesByEnterKey="True" />
                         <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="%" />
-                        <TextBox Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding NewEntryDiscount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
+                        <TextBox Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding NewEntryDiscount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" 
+                                 utilities:FocusAdvancement.AdvancesByEnterKey="True" />
                     </Grid>
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Salesman:" />
                     <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Salesmans}" DisplayMemberPath="Name"
-                              SelectedItem="{Binding NewEntrySalesman, UpdateSourceTrigger=PropertyChanged}" />
+                              SelectedItem="{Binding NewEntrySalesman, UpdateSourceTrigger=PropertyChanged}"
+                              PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
                     <Button Grid.Row="1" Grid.Column="7" Margin="10" Content="Enter" Command="{Binding ConfirmNewEntryCommand}" />
                     <Button Grid.Row="2" Grid.Column="7" Margin="10" Content="Cancel" Command="{Binding CancelNewEntryCommand}" IsTabStop="False" />
                 </Grid>
@@ -182,7 +190,9 @@
                     <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding Item.ItemID}" />
                     <DataGridTextColumn Header="Name" Width="2*" Binding="{Binding Item.Name}" />
                     <DataGridTextColumn Header="Unit" Width="0.8*" Binding="{Binding Unit}" />
+                    <DataGridTextColumn Header="SUnit" Width="0.8*" Binding="{Binding SecondaryUnit}" />
                     <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                    <DataGridTextColumn Header="SUnits" Width="1*" Binding="{Binding SecondaryUnits}" />
                     <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
                     <DataGridTextColumn Header="Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
                     <DataGridTextColumn Header="Discount" Width="1*" Binding="{Binding Discount, StringFormat=N2}" />
@@ -192,6 +202,7 @@
             </DataGrid>
             <Grid Grid.Row="5"  IsEnabled="{Binding IsSaveAllowed}">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
@@ -229,8 +240,13 @@
                 </Grid>
                 <TextBlock Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="2" Text="Sales Expense:" />
                 <TextBox Grid.Row="2" Grid.Column="8" Text="{Binding TransactionSalesExpense, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
-                <TextBlock Grid.Row="3" Grid.Column="7" Text="Net Total: " />
-                <TextBox Grid.Row="3" Grid.Column="8" Foreground="Red" FontWeight="Black" Text="{Binding TransactionNetTotal, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
+                <CheckBox Grid.Row="3" Grid.Column="7" HorizontalAlignment="Center" Margin="10, 5, 10, 0" 
+                          IsChecked="{Binding IsTransactionTaxCheckBoxSelected}" />
+                <TextBlock Grid.Row="3" Grid.Column="7" Text="Tax: " />
+                <TextBox Grid.Row="3" Grid.Column="8" Text="{Binding TransactionTax, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"
+                     IsEnabled="False" />
+                <TextBlock Grid.Row="4" Grid.Column="7" Foreground="Red" Text="Net Total: " />
+                <TextBox Grid.Row="4" Grid.Column="8" Foreground="Red" Text="{Binding TransactionNetTotal, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
             </Grid>
         </Grid>
     </Grid>

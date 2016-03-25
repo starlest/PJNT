@@ -26,6 +26,7 @@
         private DateTime _transactionDueDate;
         private decimal? _transactionDiscountPercent;
         private decimal _transactionDiscount;
+        private bool _isTransactionTaxCheckBoxSelected;
         private decimal _transactionTax;
         private decimal _transactionGrossTotal;
         private decimal _transactionNetTotal;
@@ -198,6 +199,7 @@
                     _transactionGrossTotal += line.Total;
                 }
                 OnPropertyChanged("TransactionNetTotal");
+                CalculateTransactionTax();
                 return _transactionGrossTotal;
             }
         }
@@ -231,7 +233,18 @@
                     return;
                 }
                 SetProperty(ref _transactionDiscount, value, () => TransactionDiscount);
+                CalculateTransactionTax();
                 OnPropertyChanged("TransactionNetTotal");
+            }
+        }
+
+        public bool IsTransactionTaxCheckBoxSelected
+        {
+            get { return _isTransactionTaxCheckBoxSelected; }
+            set
+            {
+                SetProperty(ref _isTransactionTaxCheckBoxSelected, value, () => IsTransactionTaxCheckBoxSelected);
+                CalculateTransactionTax();
             }
         }
 
@@ -350,9 +363,11 @@
 
         private void SetEditMode(PurchaseTransaction transaction)
         {
-            IsTransactionNotPaid = transaction.Paid == 0; 
             Model = transaction;
             TransactionDOID = transaction.DOID;
+
+            IsTransactionNotPaid = transaction.Paid == 0;
+            IsTransactionTaxCheckBoxSelected = Model.Tax > 0;
 
             UpdateSuppliers();
             _transactionSupplier = Suppliers.Single(supplier => supplier.ID.Equals(transaction.Supplier.ID));
@@ -403,6 +418,7 @@
 
             IsTransactionNotPaid = true;
             NotEditMode = true;
+            IsTransactionTaxCheckBoxSelected = false;
 
             Model = new PurchaseTransaction();
             TransactionSupplier = null;
@@ -422,6 +438,13 @@
             OnPropertyChanged("TransactionNetTotal");
 
             SetTransactionID();
+        }
+
+        private void CalculateTransactionTax()
+        {
+            if (_isTransactionTaxCheckBoxSelected)
+                TransactionTax = (_transactionGrossTotal - _transactionDiscount) * 0.1m; // auto recalculates transaction net total
+            else TransactionTax = 0; 
         }
 
         private static bool IsSaveConfirmationYes()

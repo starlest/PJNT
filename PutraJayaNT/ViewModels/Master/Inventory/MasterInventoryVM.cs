@@ -9,7 +9,6 @@
     using System.Windows;
     using System.Windows.Input;
     using Item;
-    using ViewModels.Inventory;
     using ViewModels.Suppliers;
     using Views.Master.Inventory;
 
@@ -238,7 +237,7 @@
             using (var context = new ERPContext())
             {
                 var suppliersFromDatabase =
-                    context.Suppliers.Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name);
+                    context.Suppliers.Where(supplier => !supplier.Name.Equals("-") && supplier.Active).OrderBy(supplier => supplier.Name);
                 foreach (var supplier in suppliersFromDatabase)
                     Suppliers.Add(new SupplierVM {Model = supplier});
             }

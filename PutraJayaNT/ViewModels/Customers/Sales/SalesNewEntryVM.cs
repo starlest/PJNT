@@ -24,9 +24,11 @@
         private decimal _newEntryPrice;
         private decimal? _newEntryDiscountPercent;
         private decimal _newEntryDiscount;
-        private string _newEntryUnitName;
-        private int? _newEntryPiecesPerUnit;
+        private string _newEntryUnit;
+        private string _newEntrySecondaryUnit;
+        private bool _isSecondaryUnitUsed;
         private int? _newEntryUnits;
+        private int? _newEntrySecondaryUnits;
         private int? _newEntryPieces;
         private Salesman _newEntrySalesman;
         private bool _newEntrySubmitted;
@@ -47,7 +49,7 @@
             UpdateWarehouses();
             UpdateSalesmans();
 
-            _remainingStock = "0/0";
+            _remainingStock = "0/0/0";
         }
 
         #region Collections
@@ -143,22 +145,34 @@
             }
         }
 
-        public string NewEntryUnitName
+        public string NewEntryUnit
         {
-            get { return _newEntryUnitName; }
-            set { SetProperty(ref _newEntryUnitName, value, () => NewEntryUnitName); }
+            get { return _newEntryUnit; }
+            set { SetProperty(ref _newEntryUnit, value, () => NewEntryUnit); }
         }
 
-        public int? NewEntryPiecesPerUnit
+        public bool IsSecondaryUnitUsed
         {
-            get { return _newEntryPiecesPerUnit; }
-            set { SetProperty(ref _newEntryPiecesPerUnit, value, () => NewEntryPiecesPerUnit); }
+            get { return _isSecondaryUnitUsed; }
+            set { SetProperty(ref _isSecondaryUnitUsed, value, () => IsSecondaryUnitUsed); }
+        }
+
+        public string NewEntrySecondaryUnit
+        {
+            get { return _newEntrySecondaryUnit; }
+            set { SetProperty(ref _newEntrySecondaryUnit, value, () => NewEntrySecondaryUnit); }
         }
 
         public int? NewEntryUnits
         {
             get { return _newEntryUnits; }
             set { SetProperty(ref _newEntryUnits, value, () => NewEntryUnits); }
+        }
+
+        public int? NewEntrySecondaryUnits
+        {
+            get { return _newEntrySecondaryUnits; }
+            set { SetProperty(ref _newEntrySecondaryUnits, value, () => NewEntrySecondaryUnits); }
         }
 
         public int? NewEntryPieces
@@ -218,12 +232,24 @@
         private void SetNewEntryProductPropertiesToUI()
         {
             NewEntryPrice = _newEntryProduct.SalesPrice;
-            NewEntryUnitName = _newEntryProduct.UnitName;
-            NewEntryPiecesPerUnit = _newEntryProduct.PiecesPerUnit;
+            NewEntryUnit = _newEntryProduct.PiecesPerSecondaryUnit != 0 ? _newEntryProduct.UnitName + "/" + 
+                _newEntryProduct.PiecesPerUnit / _newEntryProduct.PiecesPerSecondaryUnit : 
+                _newEntryProduct.UnitName + "/" + _newEntryProduct.PiecesPerUnit;
+            NewEntrySecondaryUnit = _newEntryProduct.PiecesPerSecondaryUnit  != 0 ?_newEntryProduct.SecondaryUnitName + "/" + _newEntryProduct.PiecesPerSecondaryUnit : null;
             var remainingStock = _parentVM.GetAvailableQuantity(_newEntryProduct.Model, _newEntryWarehouse);
-            RemainingStock =
-                $"{remainingStock / _newEntryProduct.PiecesPerUnit}/{remainingStock % _newEntryProduct.PiecesPerUnit}";
-
+            if (_newEntryProduct.PiecesPerSecondaryUnit == 0)
+            {
+                RemainingStock =
+                    $"{remainingStock/_newEntryProduct.PiecesPerUnit}/0/{remainingStock%_newEntryProduct.PiecesPerUnit}";
+                IsSecondaryUnitUsed = false;
+            }
+            else
+            {
+                RemainingStock =
+                    $"{remainingStock/_newEntryProduct.PiecesPerUnit}/{remainingStock%_newEntryProduct.PiecesPerUnit/_newEntryProduct.PiecesPerSecondaryUnit}/" +
+                    $"{remainingStock%_newEntryProduct.PiecesPerUnit%_newEntryProduct.PiecesPerSecondaryUnit}";
+                IsSecondaryUnitUsed = true;
+            }
             UpdateNewEntryAlternativeSalesPrices();
         }
 
@@ -299,7 +325,8 @@
 
         private bool IsNewEntryQuantityValid()
         {
-            var newEntryQuantity = (_newEntryPieces ?? 0) + (_newEntryUnits * _newEntryProduct.PiecesPerUnit ?? 0);
+            var newEntryQuantity = (_newEntryPieces ?? 0) + (_newEntryUnits * _newEntryProduct.PiecesPerUnit ?? 0) + 
+                (_newEntrySecondaryUnits * _newEntryProduct.PiecesPerSecondaryUnit ?? 0);
             var availableQuantity = _parentVM.GetAvailableQuantity(_newEntryProduct.Model, _newEntryWarehouse);
 
             if (availableQuantity >= newEntryQuantity && newEntryQuantity > 0) return true;
@@ -320,7 +347,8 @@
 
         private void AddNewEntryToTransaction()
         {
-            var newEntryQuantity = (_newEntryPieces ?? 0) + (_newEntryUnits * _newEntryProduct.PiecesPerUnit ?? 0);
+            var newEntryQuantity = (_newEntryPieces ?? 0) + (_newEntryUnits * _newEntryProduct.PiecesPerUnit ?? 0) +
+                (_newEntrySecondaryUnits * _newEntryProduct.PiecesPerSecondaryUnit ?? 0);
             foreach (var line in _parentVM.DisplayedSalesTransactionLines)
             {
                 if (!line.Item.ItemID.Equals(_newEntryProduct.Model.ItemID) ||
@@ -339,7 +367,8 @@
 
         private SalesTransactionLineVM MakeNewEntryLineVM()
         {
-            var newEntryQuantity = (_newEntryPieces ?? 0) + (_newEntryUnits * _newEntryProduct.PiecesPerUnit ?? 0);
+            var newEntryQuantity = (_newEntryPieces ?? 0) + (_newEntryUnits * _newEntryProduct.PiecesPerUnit ?? 0) +
+                (_newEntrySecondaryUnits * _newEntryProduct.PiecesPerSecondaryUnit ?? 0);
             return new SalesTransactionLineVM
             {
                 Model = new SalesTransactionLine
@@ -364,14 +393,16 @@
 
         public void ResetEntryFields()
         {
-            NewEntryPiecesPerUnit = null;
+            IsSecondaryUnitUsed = false;
             NewEntryProduct = null;
             NewEntryPrice = 0;
             NewEntryDiscount = 0;
-            NewEntryUnitName = null;
-            NewEntryPieces = null;
+            NewEntryUnit = null;
+            NewEntrySecondaryUnit = null;
             NewEntryUnits = null;
-            RemainingStock = "0/0";
+            NewEntrySecondaryUnits = null;
+            NewEntryPieces = null;
+            RemainingStock = "0/0/0";
             NewEntrySalesman = null;
             NewEntrySelectedAlternativeSalesPrice = null;
             _parentVM.UpdateTransactionTotal();

@@ -30,6 +30,8 @@
         private string _transactionNotes;
         private decimal? _transactionDiscountPercent;
         private decimal _transactionDiscount;
+        private bool _isTransactionTaxCheckBoxSelected;
+        private decimal _transactionTax;
         private decimal _transactionSalesExpense;
         private decimal _transactionGrossTotal;
         private decimal _transactionNetTotal;
@@ -212,6 +214,31 @@
             }
         }
 
+        public bool IsTransactionTaxCheckBoxSelected
+        {
+            get { return _isTransactionTaxCheckBoxSelected; }
+            set
+            {
+                SetProperty(ref _isTransactionTaxCheckBoxSelected, value, () => IsTransactionTaxCheckBoxSelected);
+                CalculateTransactionTax();
+            }
+        }
+
+        public decimal TransactionTax
+        {
+            get { return _transactionTax; }
+            set
+            {
+                if (value < 0 || value > _transactionGrossTotal)
+                {
+                    MessageBox.Show($"Please enter a value from the range of 0 - {_transactionGrossTotal}.", "Invalid Range", MessageBoxButton.OK);
+                    return;
+                }
+                SetProperty(ref _transactionTax, value, () => TransactionTax);
+                OnPropertyChanged("TransactionNetTotal");
+            }
+        }
+
         public decimal TransactionSalesExpense
         {
             get { return _transactionSalesExpense; }
@@ -245,7 +272,7 @@
         {
             get
             {
-                _transactionNetTotal = Math.Round(_transactionGrossTotal + _transactionSalesExpense - _transactionDiscount, 2);
+                _transactionNetTotal = Math.Round(_transactionGrossTotal + _transactionSalesExpense - _transactionDiscount + _transactionTax, 2);
                 return _transactionNetTotal;
             }
         }
@@ -427,10 +454,13 @@
                     if (MessageBox.Show("Please save any changes before proceeding. \n \n Confirm issuing invoice?", "Confirmation", MessageBoxButton.YesNo) ==
                         MessageBoxResult.No) return;
 
+                    SaveEditedTransaction();
                     SalesTransactionHelper.IssueSalesTransactionInvoice(Model);
                     Model.InvoiceIssued = UtilityMethods.GetCurrentDate().Date;
                     InvoiceNotIssued = false;
                     MessageBox.Show("Invoice has been successfully issued.", "Success", MessageBoxButton.OK);
+                    Model = GetSalesTransactionFromDatabase(_transactionID);
+                    SetEditMode();
                 }));
             }
         }
@@ -503,6 +533,8 @@
             TransactionNotes = null;
             TransactionDiscount = 0;
             TransactionSalesExpense = 0;
+            TransactionTax = 0;
+            IsTransactionTaxCheckBoxSelected = false;
             TransactionCustomer = null;
             TransactionCustomerCity = null;
             TransactionDate = UtilityMethods.GetCurrentDate().Date;
@@ -529,9 +561,19 @@
             OnPropertyChanged("TransactionGrossTotal");
             TransactionSalesExpense = Model.SalesExpense;
             TransactionDiscount = Model.Discount;
+            IsTransactionTaxCheckBoxSelected = Model.Tax > 0;
+            TransactionTax = Model.Tax;
+            OnPropertyChanged("TransactionNetTotal");
 
             NewEntryVM.ResetEntryFields();
             NewEntryVM.NewEntryWarehouse = null;
+        }
+
+        private void CalculateTransactionTax()
+        {
+            if (_isTransactionTaxCheckBoxSelected)
+                TransactionTax = (_transactionGrossTotal - _transactionDiscount) * 0.1m; // auto recalculates transaction net total
+            else TransactionTax = 0;
         }
 
         private static int GetStock(Item item, Warehouse warehouse)
@@ -698,6 +740,7 @@
             Model.Customer = _transactionCustomer.Model;
             Model.Notes = _transactionNotes;
             Model.Discount = _transactionDiscount;
+            Model.Tax = _transactionTax;
             Model.SalesExpense = _transactionSalesExpense;
             Model.GrossTotal = _transactionGrossTotal;
             Model.NetTotal = _transactionNetTotal;

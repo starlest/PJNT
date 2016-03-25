@@ -10,43 +10,37 @@
     using System.Data.Entity;
     using System.Linq;
     using System.Windows;
+    using System.Windows.Input;
     using Models.Customer;
     using Customer;
     using Sales;
 
-    class SalesReportVM : ViewModelBase
+    internal class SalesReportVM : ViewModelBase
     {
-        ObservableCollection<Category> _categories;
-        ObservableCollection<Item> _categoryItems;
-        ObservableCollection<CustomerVM> _customers;
-        ObservableCollection<SalesTransactionLineVM> _detailedDisplayLines;
-        ObservableCollection<SalesTransactionLineVM> _globalDisplayLines;
+        private string _selectedMode;
+        private Visibility _detailedVisibility;
+        private Visibility _globalVisibility;
 
-        ObservableCollection<string> _modes;
-        string _selectedMode;
-        Visibility _detailedVisibility;
-        Visibility _globalVisibility;
+        private DateTime _fromDate;
+        private DateTime _toDate;
+        private decimal _total;
+        private string _quantitySold;
 
-        DateTime _fromDate;
-        DateTime _toDate;
-        decimal _total;
-        string _quantitySold;
+        private Category _selectedCategory;
+        private Item _selectedItem;
+        private CustomerVM _selectedCustomer;
 
-        Category _selectedCategory;
-        Item _selectedItem;
-        CustomerVM _selectedCustomer;
+        private ICommand _displayCommand;
 
         public SalesReportVM()
         {
-            _categories = new ObservableCollection<Category>();
-            _categoryItems = new ObservableCollection<Item>();
-            _customers = new ObservableCollection<CustomerVM>();
-            _detailedDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
-            _globalDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
+            Categories = new ObservableCollection<Category>();
+            CategoryItems = new ObservableCollection<Item>();
+            Customers = new ObservableCollection<CustomerVM>();
+            DetailedDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
+            GlobalDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
 
-            _modes = new ObservableCollection<string>();
-            _modes.Add("Global");
-            _modes.Add("Detailed");
+            Modes = new ObservableCollection<string> {"Global", "Detailed"};
             SelectedMode = Modes.First();
 
             _fromDate = UtilityMethods.GetCurrentDate().Date.AddDays(-UtilityMethods.GetCurrentDate().Day + 1);
@@ -55,56 +49,36 @@
             UpdateCategories();
             RefreshCustomers();
 
-            SelectedCategory = _categories.FirstOrDefault();
-            SelectedItem = _categoryItems.FirstOrDefault();
-            SelectedCustomer = _customers.FirstOrDefault();
+            SelectedCategory = Categories.FirstOrDefault();
+            SelectedItem = CategoryItems.FirstOrDefault();
+            SelectedCustomer = Customers.FirstOrDefault();
         }
 
         #region Collection
-        public ObservableCollection<Category> Categories
-        {
-            get
-            {
-                return _categories;
-            }
-        }
+        public ObservableCollection<Category> Categories { get; }
 
-        public ObservableCollection<Item> CategoryItems
-        {
-            get { return _categoryItems; }
-        }
+        public ObservableCollection<Item> CategoryItems { get; }
 
-        public ObservableCollection<CustomerVM> Customers
-        {
-            get { return _customers; }
-        }
+        public ObservableCollection<CustomerVM> Customers { get; }
 
-        public ObservableCollection<SalesTransactionLineVM> DetailedDisplayLines
-        {
-            get { return _detailedDisplayLines; }
-        }
+        public ObservableCollection<SalesTransactionLineVM> DetailedDisplayLines { get; }
 
-        public ObservableCollection<SalesTransactionLineVM> GlobalDisplayLines
-        {
-            get { return _globalDisplayLines; }
-        }
+        public ObservableCollection<SalesTransactionLineVM> GlobalDisplayLines { get; }
 
-        public ObservableCollection<string> Modes
-        {
-            get { return _modes; }
-        }
+        public ObservableCollection<string> Modes { get; }
         #endregion
 
+        #region Properties
         public Visibility DetailedVisibility
         {
             get { return _detailedVisibility; }
-            set { SetProperty(ref _detailedVisibility, value, "DetailedVisibility"); }
+            set { SetProperty(ref _detailedVisibility, value, () => DetailedVisibility); }
         }
 
         public Visibility GlobalVisibility
         {
             get { return _globalVisibility; }
-            set { SetProperty(ref _globalVisibility, value, "GlobalVisibility"); }
+            set { SetProperty(ref _globalVisibility, value, () => GlobalVisibility); }
         }
 
         public DateTime FromDate
@@ -117,9 +91,7 @@
                     MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
                     return;
                 }
-
-                SetProperty(ref _fromDate, value, "FromDate");
-                RefreshDisplayLines();
+                SetProperty(ref _fromDate, value, () => FromDate);
             }
         }
 
@@ -133,9 +105,7 @@
                     MessageBox.Show("Please select a valid date range.", "Invalid Date Range", MessageBoxButton.OK);
                     return;
                 }
-
-                SetProperty(ref _toDate, value, "ToDate");
-                RefreshDisplayLines();
+                SetProperty(ref _toDate, value, () => ToDate);
             }
         }
 
@@ -144,11 +114,8 @@
             get { return _selectedCategory; }
             set
             {
-                _detailedDisplayLines.Clear();
-                SetProperty(ref _selectedCategory, value, "SelectedCategory");
-
+                SetProperty(ref _selectedCategory, value, () => SelectedCategory);
                 if (_selectedCategory == null) return;
-                _selectedItem = null;
                 UpdateCategoryItems();
             }
         }
@@ -156,22 +123,13 @@
         public Item SelectedItem
         {
             get { return _selectedItem; }
-            set { SetProperty(ref _selectedItem, value, "SelectedItem"); }
+            set { SetProperty(ref _selectedItem, value, () => SelectedItem); }
         }
 
         public CustomerVM SelectedCustomer
         {
             get { return _selectedCustomer; }
-            set
-            {
-                if (_selectedItem == null || _selectedCategory == null)
-                {
-                    MessageBox.Show("Please select an Item first.", "Invalid Action", MessageBoxButton.OK);
-                    return;
-                }
-                SetProperty(ref _selectedCustomer, value, "SelectedCustomer");
-                RefreshDisplayLines();
-            }
+            set { SetProperty(ref _selectedCustomer, value, () => SelectedCustomer); }
         }
 
         public string SelectedMode
@@ -179,61 +137,74 @@
             get { return _selectedMode; }
             set
             {
-                SetProperty(ref _selectedMode, value, "SelectedMode");
-
-                RefreshDisplayLines();
-
-                if (_selectedMode == "Global")
-                {
-                    GlobalVisibility = Visibility.Visible;
-                    DetailedVisibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    GlobalVisibility = Visibility.Collapsed;
-                    DetailedVisibility = Visibility.Visible;
-                }
+                SetProperty(ref _selectedMode, value, () => SelectedMode);
+                SetDisplayMode();
+                
             }
         }
 
         public decimal Total
         {
             get { return _total; }
-            set { SetProperty(ref _total, value, "Total"); }
+            set { SetProperty(ref _total, value, () => Total); }
         }
 
         public string QuantitySold
         {
             get { return _quantitySold; }
-            set { SetProperty(ref _quantitySold, value, "QuantitySold"); }
+            set { SetProperty(ref _quantitySold, value, () => QuantitySold); }
+        }
+        #endregion
+
+        public ICommand DisplayCommand
+        {
+            get
+            {
+                return _displayCommand ?? (_displayCommand = new RelayCommand(() =>
+                {
+                    if (_selectedItem != null && _selectedCustomer!= null) RefreshDisplayLines();
+                    UpdateCategories();
+                    RefreshCustomers();
+                }));
+            }
         }
 
         #region Helper Methods
         private void UpdateCategories()
         {
-            _categories.Clear();
+            var oldSelectedCategory = _selectedCategory;
 
+            Categories.Clear();
             using (var context = new ERPContext())
             {
-                _categories.Add(new Category { ID = -1, Name = "All" });
-                var categories = context.ItemCategories;
+                Categories.Add(new Category { ID = -1, Name = "All" });
+                var categories = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categories)
-                    _categories.Add(category);
+                    Categories.Add(category);
             }
+
+            UpdateSelectedCategory(oldSelectedCategory);
+        }
+
+        private void UpdateSelectedCategory(Category oldSelectedCategory)
+        {
+            if (oldSelectedCategory == null) return;
+            SelectedCategory = Categories.SingleOrDefault(category => category.ID.Equals(oldSelectedCategory.ID));
         }
 
         private void UpdateCategoryItems()
         {
-            _categoryItems.Clear();
-            _categoryItems.Add(new Item { ItemID = "-1", Name = "All" });
+            var oldSelectedItem = _selectedItem;
 
+            CategoryItems.Clear();
+            CategoryItems.Add(new Item { ItemID = "-1", Name = "All" });
             if (_selectedCategory.Name == "All")
             {
                 using (var context = new ERPContext())
                 {
-                    var items = context.Inventory.ToList();
+                    var items = context.Inventory.OrderBy(item => item.Name);
                     foreach (var item in items)
-                        _categoryItems.Add(item);
+                        CategoryItems.Add(item);
                 }
             }
 
@@ -243,38 +214,51 @@
                 {
                     var items = context.Inventory
                         .Where(e => e.Category.Name == _selectedCategory.Name)
-                        .ToList();
+                        .OrderBy(item => item.Name);
                     foreach (var item in items)
-                        _categoryItems.Add(item);
+                        CategoryItems.Add(item);
                 }
             }
+
+            UpdateSelectedItem(oldSelectedItem);
+        }
+
+        private void UpdateSelectedItem(Item oldSelectedItem)
+        {
+            if (oldSelectedItem == null) return;
+            SelectedItem = CategoryItems.SingleOrDefault(item => item.ItemID.Equals(oldSelectedItem.ItemID));
         }
 
         private void RefreshCustomers()
         {
-            _customers.Clear();
+            var oldSelectedCustomer = _selectedCustomer;
 
-            _customers.Add(new CustomerVM {  Model = new Customer { ID = -1, Name = "All" } });
+            Customers.Clear();
+            Customers.Add(new CustomerVM {  Model = new Customer { ID = -1, Name = "All" } });
             using (var context = new ERPContext())
             {
-                var customers = context.Customers.Include("Group").OrderBy(customer => customer.Name).ToList();
-
+                var customers = context.Customers.Include("Group").OrderBy(customer => customer.Name);
                 foreach (var customer in customers)
-                    _customers.Add(new CustomerVM { Model = customer });
+                    Customers.Add(new CustomerVM { Model = customer });
             }
+
+            UpdateSelectedCustomer(oldSelectedCustomer);
+        }
+
+        private void UpdateSelectedCustomer(CustomerVM oldSelectedCustomer)
+        {
+            if (oldSelectedCustomer == null) return;
+            SelectedCustomer = Customers.SingleOrDefault(customer => customer.ID.Equals(oldSelectedCustomer.ID));
         }
 
         private void RefreshDisplayLines()
         {
-            _detailedDisplayLines.Clear();
-            _globalDisplayLines.Clear();
-
+            DetailedDisplayLines.Clear();
+            GlobalDisplayLines.Clear();
             if (_selectedItem == null) return;
-
-            var transactionLines = new List<SalesTransactionLine>();
-
             using (var context = new ERPContext())
             {
+                List<SalesTransactionLine> transactionLines;
                 if (_selectedCategory.Name == "All" && _selectedItem.Name == "All")
                 {
                     transactionLines = context.SalesTransactionLines
@@ -329,30 +313,19 @@
                 }
 
 
-                foreach (var line in transactionLines)
+                foreach (var line in transactionLines.Where(line => _selectedCustomer.ID == -1 || _selectedCustomer.ID == line.SalesTransaction.Customer.ID))
                 {
-                    if (_selectedCustomer.ID == -1 || _selectedCustomer.ID == line.SalesTransaction.Customer.ID)
+                    DetailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
+                    //if (_selectedMode != "Global") continue;
+                    var contains = false;
+                    foreach (var l in GlobalDisplayLines.Where(l => l.Item.ItemID.Equals(line.ItemID)))
                     {
-                        _detailedDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-
-                        if (_selectedMode == "Global")
-                        {
-                            var contains = false;
-                            foreach (var l in _globalDisplayLines)
-                            {
-                                if (l.Item.ItemID == line.ItemID)
-                                {
-                                    l.Quantity += line.Quantity;
-                                    contains = true;
-                                    break;
-                                }
-                            }
-
-                            if (!contains) _globalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
-                        }
+                        l.Quantity += line.Quantity;
+                        contains = true;
+                        break;
                     }
+                    if (!contains) GlobalDisplayLines.Add(new SalesTransactionLineVM { Model = line });
                 }
-
                 RefreshTotal();
             }
         }
@@ -361,18 +334,31 @@
         {
             _total = 0;
             var quantitySold = 0;
-            foreach (var line in _detailedDisplayLines)
+            foreach (var line in DetailedDisplayLines)
             {
                 quantitySold += line.Quantity;
                 _total += line.NetTotal;
             }
 
             if (_selectedItem.Name != "All")
-                QuantitySold = (quantitySold / _selectedItem.PiecesPerUnit) + "/" + (quantitySold % _selectedItem.PiecesPerUnit);
-
+                QuantitySold = quantitySold / _selectedItem.PiecesPerUnit + "/" + quantitySold % _selectedItem.PiecesPerUnit;
             else
                 QuantitySold = "";
             OnPropertyChanged("Total");
+        }
+
+        private void SetDisplayMode()
+        {
+            if (_selectedMode.Equals("Global"))
+            {
+                GlobalVisibility = Visibility.Visible;
+                DetailedVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                GlobalVisibility = Visibility.Collapsed;
+                DetailedVisibility = Visibility.Visible;
+            }
         }
         #endregion
     }

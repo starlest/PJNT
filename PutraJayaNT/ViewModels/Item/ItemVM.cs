@@ -71,6 +71,17 @@
             }
         }
 
+
+        public string SecondaryUnitName
+        {
+            get { return Model.SecondaryUnitName; }
+            set
+            {
+                Model.SecondaryUnitName = value;
+                OnPropertyChanged("SecondaryUnitName");
+            }
+        }
+
         public int PiecesPerUnit
         {
             get
@@ -81,6 +92,16 @@
             {
                 Model.PiecesPerUnit = value;
                 OnPropertyChanged("PiecesPerUnit");
+            }
+        }
+
+        public int PiecesPerSecondaryUnit
+        {
+            get { return Model.PiecesPerSecondaryUnit; }
+            set
+            {
+                Model.PiecesPerSecondaryUnit = value;
+                OnPropertyChanged("PiecesPerSecondaryUnit");
             }
         }
 
@@ -125,6 +146,8 @@
             OnPropertyChanged("SalesPrice");
             OnPropertyChanged("UnitName");
             OnPropertyChanged("PiecesPerUnit");
+            OnPropertyChanged("SecondaryUnitName");
+            OnPropertyChanged("PiecesPerSecondaryUnit");
             OnPropertyChanged("Unit");
             OnPropertyChanged("SalesExpense");
             OnPropertyChanged("Active");

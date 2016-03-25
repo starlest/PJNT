@@ -50,7 +50,7 @@
                 SetProperty(ref _newEntryItem, value, () => NewEntryItem);
                 if (_newEntryItem == null) return;
                 NewEntryUnitName = _newEntryItem.UnitName;
-                NewEntryPrice = _newEntryItem.PurchasePrice * _newEntryItem.PiecesPerUnit;
+                NewEntryPrice = _newEntryItem.PurchasePrice;
                 NewEntryPiecesPerUnit = _newEntryItem.PiecesPerUnit;
             }
         }

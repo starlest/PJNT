@@ -1,6 +1,7 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using MVVMFramework;
 using PutraJayaNT.Utilities;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -13,17 +14,32 @@ namespace PutraJayaNT.ViewModels
         private string _password;
 
         private ICommand _loginCommand;
+        private string _selectedServer;
+
+        public LoginVM()
+        {
+            Servers = new ObservableCollection<string> { "Mix", "Nestle" };
+            SelectedServer = Servers.First();
+        }
 
         public string Username
         {
             get { return _userName; }
-            set { SetProperty(ref _userName, value, "Username"); }
+            set { SetProperty(ref _userName, value, () => Username); }
         }
 
         public string Password
         {
             get { return _password; }
             set { SetProperty(ref _password, value, "Password"); }
+        }
+        
+        public ObservableCollection<string> Servers { get; }
+
+        public string SelectedServer
+        {
+            get { return _selectedServer; }
+            set { SetProperty(ref _selectedServer, value, () => SelectedServer); }
         }
 
         public ICommand LoginCommand
@@ -49,9 +65,10 @@ namespace PutraJayaNT.ViewModels
                         }
 
                         // Login Successful
+                        Application.Current.Resources.Add("SelectedServer", _selectedServer);
                         Application.Current.Resources.Add("CurrentUser", user);
                         var windows = Application.Current.Windows;
-                        foreach (ModernWindow window in windows.Cast<ModernWindow>().Where(window => window.Title == "Login"))
+                        foreach (var window in windows.Cast<ModernWindow>().Where(window => window.Title == "Login"))
                         {
                             window.Close();
                             return;

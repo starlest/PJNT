@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:utilities="clr-namespace:PutraJayaNT.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
     <UserControl.Resources>
@@ -92,10 +93,10 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" FontSize="18" Text="Warehouse:" />
                 <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Warehouses, Mode=OneWay}" DisplayMemberPath="Name" 
-                          SelectedItem="{Binding NewEntryWarehouse}" />
+                          SelectedItem="{Binding NewEntryWarehouse}" PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
                 <TextBlock Grid.Row="0" Grid.Column="2" Text="ID:" />
                 <ComboBox Name="NewItemIDComboBox" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding SupplierItems, Mode=OneWay}" DisplayMemberPath="ID" 
-                          SelectedItem="{Binding NewEntryItem}" />
+                          SelectedItem="{Binding NewEntryItem}" PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
                 <TextBlock Grid.Row="0" Grid.Column="4" Text="Product:" />
                 <Grid Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="2">
                     <Grid.ColumnDefinitions>
@@ -103,7 +104,8 @@
                         <ColumnDefinition Width="0.25*" />
                         <ColumnDefinition Width="0.25*" />
                     </Grid.ColumnDefinitions>
-                    <ComboBox ItemsSource="{Binding SupplierItems, Mode=OneWay}" DisplayMemberPath="Name" SelectedItem="{Binding NewEntryItem}" />
+                    <ComboBox ItemsSource="{Binding SupplierItems, Mode=OneWay}" DisplayMemberPath="Name" SelectedItem="{Binding NewEntryItem}" 
+                              PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
                     <TextBox Grid.Column="1" Text="{Binding NewEntryUnitName}" IsReadOnly="True" IsTabStop="False" />
                     <TextBox Grid.Column="2" Text="{Binding NewEntryPiecesPerUnit}" IsReadOnly="True" IsTabStop="False" />
                 </Grid>
@@ -113,11 +115,12 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <TextBox VerticalAlignment="Center" Text="{Binding NewEntryUnits}" />
-                    <TextBox Grid.Column="1" Text="{Binding NewEntryPieces}" />
+                    <TextBox VerticalAlignment="Center" Text="{Binding NewEntryUnits}" utilities:FocusAdvancement.AdvancesByEnterKey="True" />
+                    <TextBox Grid.Column="1" Text="{Binding NewEntryPieces}" utilities:FocusAdvancement.AdvancesByEnterKey="True" />
                 </Grid>
                 <TextBlock Grid.Row="1" Grid.Column="2" Text="Price:" />
-                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
+                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" 
+                         utilities:FocusAdvancement.AdvancesByEnterKey="True" />
                 <TextBlock Grid.Row="1" Grid.Column="4" Text="Discount:" />
                 <Grid Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2">
                     <Grid.ColumnDefinitions>
@@ -126,9 +129,11 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <TextBox Name="DiscountPercentTextBox" Text="{Binding NewEntryDiscountPercent, UpdateSourceTrigger=Explicit}" KeyDown="DiscountPercentTextBox_KeyDown"/>
+                    <TextBox Name="DiscountPercentTextBox" Text="{Binding NewEntryDiscountPercent, UpdateSourceTrigger=Explicit}" 
+                             utilities:FocusAdvancement.AdvancesByEnterKey="True" KeyDown="DiscountPercentTextBox_KeyDown"/>
                     <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="%" />
-                    <TextBox Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding NewEntryDiscount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
+                    <TextBox Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding NewEntryDiscount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"
+                             utilities:FocusAdvancement.AdvancesByEnterKey="True" />
                 </Grid>
                 <Button Grid.Row="1" Grid.Column="7" Margin="10" Content="Enter" Command="{Binding NewEntryCommand}" />
             </Grid>
@@ -172,7 +177,7 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" HorizontalAlignment="Left" Text="Note:" Margin="10,9,0,12" />
-            <TextBox Grid.Row="0" Grid.ColumnSpan="4" Grid.RowSpan="4" VerticalContentAlignment="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" 
+            <TextBox Grid.Row="0" Grid.ColumnSpan="4" Grid.Column="0" Grid.RowSpan="4" VerticalContentAlignment="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" 
                      Text="{Binding TransactionNote, Mode=TwoWay}" TextWrapping="Wrap" MaxLength="500" IsEnabled="{Binding IsTransactionNotPaid}" Margin="64,12,70,42"/>
             <TextBlock Grid.Row="0" Grid.Column="7" Text="Gross Total: " />
             <TextBox Grid.Row="0" Grid.Column="8" Text="{Binding TransactionGrossTotal, Mode=OneWay, StringFormat=N2}" IsEnabled="False" />
@@ -190,9 +195,11 @@
                 <TextBox Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding TransactionDiscount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" 
                          IsEnabled="{Binding IsTransactionNotPaid}" />
             </Grid>
+            <CheckBox Grid.Row="2" Grid.Column="7" HorizontalAlignment="Center" Margin="10, 5, 10, 0" IsChecked="{Binding IsTransactionTaxCheckBoxSelected}"
+                      IsEnabled="{Binding IsTransactionNotPaid}"/>
             <TextBlock Grid.Row="2" Grid.Column="7" Text="Tax: " />
             <TextBox Grid.Row="2" Grid.Column="8" Text="{Binding TransactionTax, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"
-                     IsEnabled="{Binding IsTransactionNotPaid}" />
+                     IsEnabled="False" />
             <TextBlock Grid.Row="3" Grid.Column="7" Text="Net Total: " />
             <TextBox Grid.Row="3" Grid.Column="8" Foreground="Red" Text="{Binding TransactionNetTotal, Mode=OneWay, StringFormat=N2}" 
                      IsReadOnly="True" />

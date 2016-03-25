@@ -18,10 +18,10 @@
     {
         private readonly string _connectionString;
         private readonly User _user;
+        private readonly string _selectedServerName;
 
         public MainWindow()
         {
-            AppearanceManager.Current.AccentColor = Colors.Blue;
             ModernUIHelper.TrySetPerMonitorDpiAware();
             InitializeComponent();
             IsEnabled = false;
@@ -33,10 +33,11 @@
 
             else
             {
+                _selectedServerName = Application.Current.FindResource("SelectedServer") as string;
                 IsEnabled = true;
-
                 _connectionString =
                     ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString.Substring(7).Split(';')[0];
+                SetColorTheme();
 
                 if (_user.Username.Equals("edwin92"))
                 {
@@ -63,6 +64,14 @@
 
                 RunUpdateTitleLoop();
             }
+        }
+
+        private void SetColorTheme()
+        {
+            if (_selectedServerName.Equals("Mix"))
+                AppearanceManager.Current.AccentColor = Colors.Blue;
+            else
+                AppearanceManager.Current.AccentColor = Colors.Yellow;
         }
 
         private void RunUpdateTitleLoop()
@@ -94,7 +103,7 @@
 
         private void SetTitle()
         {
-            Title = "Putra Jaya - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
+            Title = _selectedServerName + " - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
         }
     }
 }

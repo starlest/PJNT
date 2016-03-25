@@ -47,7 +47,9 @@
             toItem.SalesPrice = fromItem.SalesPrice;
             toItem.SalesExpense = fromItem.SalesExpense;
             toItem.UnitName = fromItem.UnitName;
+            toItem.SecondaryUnitName = fromItem.SecondaryUnitName;
             toItem.PiecesPerUnit = fromItem.PiecesPerUnit;
+            toItem.PiecesPerSecondaryUnit = fromItem.PiecesPerSecondaryUnit;
         }
 
         #region Add Item Helper Methods

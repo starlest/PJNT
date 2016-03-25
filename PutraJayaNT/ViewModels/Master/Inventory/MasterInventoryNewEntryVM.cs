@@ -22,8 +22,10 @@
         private SupplierVM _newEntrySupplier;
         private int _newEntryPiecesPerUnit;
         private string _newEntryUnitName;
-        private decimal? _newEntryPurchasePrice;
-        private decimal? _newEntrySalesPrice;
+        private string _newEntrySecondaryUnitName;
+        private int _newEntryPiecesPerSecondaryUnit;
+        private decimal _newEntryPurchasePrice;
+        private decimal _newEntrySalesPrice;
         private ICommand _newEntryCommand;
         private ICommand _cancelEntryCommand;
         #endregion
@@ -63,25 +65,37 @@
             set { SetProperty(ref _newEntrySupplier, value, "NewEntrySupplier"); }
         }
 
-        public int NewEntryPiecesPerUnit
-        {
-            get { return _newEntryPiecesPerUnit; }
-            set { SetProperty(ref _newEntryPiecesPerUnit, value, "NewEntryPiecesPerUnit"); }
-        }
-
         public string NewEntryUnitName
         {
             get { return _newEntryUnitName; }
             set { SetProperty(ref _newEntryUnitName, value, "NewEntryUnitName"); }
         }
 
-        public decimal? NewEntrySalesPrice
+        public string NewEntrySecondaryUnitName
+        {
+            get { return _newEntrySecondaryUnitName; }
+            set { SetProperty(ref _newEntrySecondaryUnitName, value, () => NewEntrySecondaryUnitName); }
+        }
+
+        public int NewEntryPiecesPerUnit
+        {
+            get { return _newEntryPiecesPerUnit; }
+            set { SetProperty(ref _newEntryPiecesPerUnit, value, () => NewEntryPiecesPerUnit); }
+        }
+
+        public int NewEntryPiecesPerSecondaryUnit
+        {
+            get { return _newEntryPiecesPerSecondaryUnit; }
+            set { SetProperty(ref _newEntryPiecesPerSecondaryUnit, value, () => NewEntryPiecesPerSecondaryUnit); }
+        }
+
+        public decimal NewEntrySalesPrice
         {
             get { return _newEntrySalesPrice; }
             set { SetProperty(ref _newEntrySalesPrice, value, "NewEntrySalesPrice"); }
         }
 
-        public decimal? NewEntryPurchasePrice
+        public decimal NewEntryPurchasePrice
         {
             get { return _newEntryPurchasePrice; }
             set { SetProperty(ref _newEntryPurchasePrice, value, "NewEntryPurchasePrice"); }
@@ -95,7 +109,7 @@
             {
                 return _newEntryCommand ?? (_newEntryCommand = new RelayCommand(() =>
                 {
-                    if (!AreAllEntryFieldsFilled() || !AreAllEntryFieldsValid()) return;
+                    if (!AreAllEntryFieldsFilled() || !AreAllPriceEntryFieldsValid() || !AreAllQuantityFieldsValid()) return;
                     if (MessageBox.Show("Confirm adding this product?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
                     var newEntryItem = MakeNewEntryItem();
                     InventoryHelper.AddItemToDatabase(newEntryItem);
@@ -112,17 +126,17 @@
         #region Helper Methods
         private Item MakeNewEntryItem()
         {
-            Debug.Assert(_newEntryPurchasePrice != null, "_newEntryPurchasePrice != null");
-            Debug.Assert(_newEntrySalesPrice != null, "_newEntrySalesPrice != null");
             var newEntryItem = new Item
             {
                 ItemID = _newEntryID,
                 Name = _newEntryName,
                 Category = _newEntryCategory.Model,
                 UnitName = _newEntryUnitName,
+                SecondaryUnitName = _newEntrySecondaryUnitName,
                 PiecesPerUnit = _newEntryPiecesPerUnit,
-                PurchasePrice = (decimal) _newEntryPurchasePrice/_newEntryPiecesPerUnit,
-                SalesPrice = (decimal) _newEntrySalesPrice/_newEntryPiecesPerUnit,
+                PiecesPerSecondaryUnit =  _newEntryPiecesPerSecondaryUnit,
+                PurchasePrice = _newEntryPurchasePrice/_newEntryPiecesPerUnit,
+                SalesPrice = _newEntrySalesPrice/_newEntryPiecesPerUnit,
                 Suppliers = new ObservableCollection<Supplier>()
             };
             newEntryItem.Suppliers.Add(_newEntrySupplier.Model);
@@ -132,8 +146,7 @@
         private bool AreAllEntryFieldsFilled()
         {
             if (_newEntryID != null && _newEntryName != null &&
-                _newEntryCategory != null && _newEntrySupplier != null &&
-                _newEntrySalesPrice != null && _newEntryPurchasePrice != null && 
+                _newEntryCategory != null && _newEntrySupplier != null && 
                 _newEntryUnitName != null)
                 return true;
 
@@ -141,11 +154,20 @@
             return false;
         }
 
-        private bool AreAllEntryFieldsValid()
+        private bool AreAllPriceEntryFieldsValid()
         {
-            if (_newEntrySalesPrice >= 0 && _newEntryPurchasePrice >= 0 && _newEntryPiecesPerUnit > 0)
+            if (_newEntrySalesPrice >= 0 && _newEntryPurchasePrice >= 0)
                 return true;
-            MessageBox.Show("Please check that all fields are valid.", "Invalid Field(s)", MessageBoxButton.OK);
+            MessageBox.Show("Please check that all price fields are valid.", "Invalid Field(s)", MessageBoxButton.OK);
+            return false;
+        }
+
+        private bool AreAllQuantityFieldsValid()
+        {
+            if (_newEntryPiecesPerUnit > 0 && _newEntryPiecesPerSecondaryUnit >= 0 && _newEntryPiecesPerUnit >= _newEntryPiecesPerSecondaryUnit
+                && _newEntryPiecesPerUnit % _newEntryPiecesPerSecondaryUnit == 0)
+                return true;
+            MessageBox.Show("Please check that all quantity fields are valid.", "Invalid Field(s)", MessageBoxButton.OK);
             return false;
         }
 
@@ -157,8 +179,8 @@
             NewEntrySupplier = null;
             NewEntryPiecesPerUnit = 1;
             NewEntryUnitName = null;
-            NewEntrySalesPrice = null;
-            NewEntryPurchasePrice = null;
+            NewEntrySalesPrice = 0;
+            NewEntryPurchasePrice = 0;
             _parentVM.UpdateSuppliers();
             _parentVM.UpdateCategories();
         }

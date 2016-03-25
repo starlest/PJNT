@@ -29,25 +29,27 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="0.4*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="From:" />
                 <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                             SelectedDateFormat="Long" />
-                <TextBlock Grid.Row="0" Grid.Column="3" Text="To:" />
-                <DatePicker Grid.Row="0" Grid.Column="4" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="To:" />
+                <DatePicker Grid.Row="0" Grid.Column="3" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             SelectedDateFormat="Long" />
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Category:" />
-                <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Categories}" DisplayMemberPath="Name"
-                          SelectedItem="{Binding SelectedCategory, UpdateSourceTrigger=Explicit}" />
-                <TextBlock Grid.Row="1" Grid.Column="3" Text="Product:" />
-                <ComboBox Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" ItemsSource="{Binding CategoryItems}" DisplayMemberPath="Name" 
-                          SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=Explicit}" />
+                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Categories}" DisplayMemberPath="Name"
+                          SelectedItem="{Binding SelectedCategory, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="Product:" />
+                <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding CategoryItems}" DisplayMemberPath="Name" 
+                          SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="1" Grid.Column="4" Text="Customer:" />
+                <ComboBox Grid.Row="1" Grid.Column="5" ItemsSource="{Binding Customers}" DisplayMemberPath="Name"  
+                          SelectedItem="{Binding SelectedCustomer, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Grid.Row="2" Grid.Column="0" Foreground="Red" Text="Mode:" />
-                <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Modes}" 
+                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Modes}" 
                           SelectedItem="{Binding SelectedMode, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Grid.Row="2" Grid.Column="3" Text="Customer:" />
-                <ComboBox Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" ItemsSource="{Binding Customers}" DisplayMemberPath="Name"  
-                          SelectedItem="{Binding SelectedCustomer, UpdateSourceTrigger=Explicit}" />
+                <Button Grid.Row="2" Grid.Column="2" Margin="10" Content="Display" Command="{Binding DisplayCommand}" />
             </Grid>
         </Border>
         <Grid Grid.Row="1" Visibility="{Binding DetailedVisibility}">

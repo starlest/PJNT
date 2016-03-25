@@ -8,10 +8,10 @@
 
     public class PurchaseEditVM : ViewModelBase
     {
-        private PurchaseTransactionLineVM _editingLine;
+        private readonly PurchaseTransactionLineVM _editingLine;
 
-        decimal _editLinePurchasePrice;
-        decimal _editLineDiscount;
+        private decimal _editLinePurchasePrice;
+        private decimal _editLineDiscount;
         ICommand _editLineConfirmCommand;
 
         public PurchaseEditVM(PurchaseTransactionLineVM editingLine)

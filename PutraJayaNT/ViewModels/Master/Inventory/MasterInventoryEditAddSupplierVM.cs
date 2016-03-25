@@ -48,7 +48,7 @@
             using (var context = new ERPContext())
             {
                 var allSuppliersFromDatabase = context.Suppliers.Where(
-                    supplier => !supplier.Name.Equals("-"))
+                    supplier => !supplier.Name.Equals("-") && supplier.Active)
                     .OrderBy(supplier => supplier.Name)
                     .ToList();
                 foreach (var supplier in from supplier in allSuppliersFromDatabase

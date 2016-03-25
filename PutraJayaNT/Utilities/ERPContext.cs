@@ -11,6 +11,7 @@ namespace PutraJayaNT.Utilities
     using Models.StockCorrection;
     using Models.Salesman;
     using System.Data.Entity.ModelConfiguration.Conventions;
+
     public partial class ERPContext : DbContext
     {
         public ERPContext()

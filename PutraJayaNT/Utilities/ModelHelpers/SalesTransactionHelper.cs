@@ -111,6 +111,7 @@
                 salesTransaction.Paid += collectionAmount + creditsUsed;
                 salesTransaction.Customer.SalesReturnCredits -= creditsUsed;
                 SaveCollectionLedgerTransactionInDatabase(context, salesTransaction, collectionAmount, paymentMode);
+                context.SaveChanges();
                 ts.Complete();
             }
         }
@@ -149,6 +150,7 @@
             salesTransactionFromDatabaseContext.Customer = editedSalesTransaction.Customer;
             salesTransactionFromDatabaseContext.Notes = editedSalesTransaction.Notes;
             salesTransactionFromDatabaseContext.Discount = editedSalesTransaction.Discount;
+            salesTransactionFromDatabaseContext.Tax = editedSalesTransaction.Tax;
             salesTransactionFromDatabaseContext.SalesExpense = editedSalesTransaction.SalesExpense;
             salesTransactionFromDatabaseContext.GrossTotal = editedSalesTransaction.GrossTotal;
             salesTransactionFromDatabaseContext.NetTotal = editedSalesTransaction.NetTotal;
@@ -253,6 +255,7 @@
             salesTransactionFromDatabaseContext.Notes = editedSalesTransaction.Notes;
             salesTransactionFromDatabaseContext.GrossTotal = editedSalesTransaction.GrossTotal;
             salesTransactionFromDatabaseContext.Discount = editedSalesTransaction.Discount;
+            salesTransactionFromDatabaseContext.Tax = editedSalesTransaction.Tax;
             salesTransactionFromDatabaseContext.SalesExpense = editedSalesTransaction.SalesExpense;
             salesTransactionFromDatabaseContext.NetTotal = editedSalesTransaction.NetTotal;
         }

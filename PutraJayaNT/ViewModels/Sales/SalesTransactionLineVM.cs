@@ -63,9 +63,13 @@
 
         public string Unit => Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit;
 
-        public int Pieces => Model.Quantity % Model.Item.PiecesPerUnit;
+        public string SecondaryUnit => Model.Item.PiecesPerSecondaryUnit == 0 ? null : Model.Item.SecondaryUnitName + "/" + Model.Item.PiecesPerSecondaryUnit;
 
         public int Units => Model.Quantity / Model.Item.PiecesPerUnit;
+
+        public int? SecondaryUnits => Model.Item.PiecesPerSecondaryUnit == 0 ? (int?) null : Model.Quantity % Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
+
+        public int Pieces => Model.Quantity % Model.Item.PiecesPerUnit;
 
         public decimal SalesPrice
         {
@@ -99,9 +103,7 @@
             }
         }
 
-        public decimal NetDiscount => GetNetDiscount();
-
-        public decimal NetTotal => (SalesPrice - NetDiscount) / Item.PiecesPerUnit * Quantity;
+        public decimal NetTotal => GetNetLinePrice() / Model.Item.PiecesPerUnit * Model.Quantity;
 
         public override bool Equals(object obj)
         {
@@ -130,15 +132,16 @@
             return new SalesTransactionLineVM { Model = cloneLine };
         }
 
-        public decimal GetNetDiscount()
+        public decimal GetNetLinePrice()
         {
-            var lineDiscount = Model.Discount / Model.Item.PiecesPerUnit;
-            var lineSalesPrice = Model.SalesPrice / Model.Item.PiecesPerUnit;
+            var lineDiscount = Model.Discount;
+            var lineSalesPrice = Model.SalesPrice;
             if (lineSalesPrice - lineDiscount == 0) return 0;
             var fractionOfTransaction = Model.Quantity * (lineSalesPrice - lineDiscount) / Model.SalesTransaction.GrossTotal;
             var fractionOfTransactionDiscount = fractionOfTransaction * Model.SalesTransaction.Discount / Model.Quantity;
-            var discount = (lineDiscount + fractionOfTransactionDiscount) * Model.Item.PiecesPerUnit;
-            return discount;
+            var fractionOfTransactionTax = fractionOfTransaction * Model.SalesTransaction.Tax / Model.Quantity;
+            var netLinePrice = lineSalesPrice - lineDiscount - fractionOfTransactionDiscount + fractionOfTransactionTax;
+            return netLinePrice * Model.Item.PiecesPerUnit;
         }
 
         public void UpdateTotal()

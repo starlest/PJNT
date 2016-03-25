@@ -101,10 +101,13 @@
 
                     var isLineCombinable = false;
 
+                    var salesTransactionLinesList = _parentVM.DisplayedSalesTransactionLines.ToList();
+                    var editingLineIndex = salesTransactionLinesList.IndexOf(_selectedLine);
                     // Run a check to see if this line can be combined with another line of the same in transaction
-                    foreach (var line in _parentVM.DisplayedSalesTransactionLines.ToList())
+                    foreach (var line in salesTransactionLinesList)
                     {
                         if (!CompareLineToEditProperties(line.Model)) continue;
+                        if (editingLineIndex == salesTransactionLinesList.IndexOf(line)) continue;
                         line.Quantity += _selectedLine.Quantity;
                         _parentVM.DisplayedSalesTransactionLines.Remove(_selectedLine);
                         isLineCombinable = true;

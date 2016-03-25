@@ -107,6 +107,19 @@
     <Compile Include="Migrations\201603170858231_Update8.Designer.cs">
       <DependentUpon>201603170858231_Update8.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201603230430162_AddTaxToSalesTransaction.cs" />
+    <Compile Include="Migrations\201603230430162_AddTaxToSalesTransaction.Designer.cs">
+      <DependentUpon>201603230430162_AddTaxToSalesTransaction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603250309060_Update9.cs" />
+    <Compile Include="Migrations\201603250309060_Update9.Designer.cs">
+      <DependentUpon>201603250309060_Update9.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603250314107_Update10.cs" />
+    <Compile Include="Migrations\201603250314107_Update10.Designer.cs">
+      <DependentUpon>201603250314107_Update10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\FocusAdvancement.cs" />
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\PurchaseReturnTransactionHelper.cs" />
@@ -711,6 +724,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603170858231_Update8.resx">
       <DependentUpon>201603170858231_Update8.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603230430162_AddTaxToSalesTransaction.resx">
+      <DependentUpon>201603230430162_AddTaxToSalesTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603250309060_Update9.resx">
+      <DependentUpon>201603250309060_Update9.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603250314107_Update10.resx">
+      <DependentUpon>201603250314107_Update10.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

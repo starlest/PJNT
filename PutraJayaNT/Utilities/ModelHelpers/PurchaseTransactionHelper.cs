@@ -211,6 +211,7 @@
             transactionFromDatabase.DueDate = editedPurchaseTransaction.DueDate;
             transactionFromDatabase.DOID = editedPurchaseTransaction.DOID;
             transactionFromDatabase.Note = editedPurchaseTransaction.Note;
+            transactionFromDatabase.Tax = editedPurchaseTransaction.Tax;
             transactionFromDatabase.GrossTotal = editedPurchaseTransaction.GrossTotal;
             transactionFromDatabase.Discount = editedPurchaseTransaction.Discount;
             transactionFromDatabase.Total = editedPurchaseTransaction.Total;

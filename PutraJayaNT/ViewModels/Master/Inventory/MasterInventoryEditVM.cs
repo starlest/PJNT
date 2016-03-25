@@ -9,7 +9,6 @@
     using Models.Inventory;
     using Utilities;
     using Customer;
-    using ViewModels.Inventory;
     using Item;
     using Utilities.ModelHelpers;
     using ViewModels.Suppliers;
@@ -27,7 +26,9 @@
         private SupplierVM _editSelectedSupplier;
         AlternativeSalesPriceVM _editSelectedAlternativeSalesPrice;
         private string _editUnitName;
+        private string _editSecondaryUnitName;
         private int _editPiecesPerUnit;
+        private int _editPiecesPerSecondaryUnit;
 
         private ICommand _editAddAlternativeSalesPriceCommand;
         private ICommand _editDeleteAlternativeSalesPriceCommand;
@@ -111,6 +112,18 @@
             set { SetProperty(ref _editPiecesPerUnit, value, () => EditPiecesPerUnit); }
         }
 
+        public string EditSecondaryUnitName
+        {
+            get { return _editSecondaryUnitName; }
+            set { SetProperty(ref _editSecondaryUnitName, value, () => EditSecondaryUnitName); }
+        }
+
+        public int EditPiecesPerSecondaryUnit
+        {
+            get { return _editPiecesPerSecondaryUnit; }
+            set { SetProperty(ref _editPiecesPerSecondaryUnit, value, () => _editPiecesPerSecondaryUnit); }
+        }
+
         public SupplierVM EditSelectedSupplier
         {
             get { return _editSelectedSupplier; }
@@ -182,6 +195,8 @@
                 SalesPrice = _editSalesPrice/_editPiecesPerUnit,
                 SalesExpense = _editSalesExpense/_editPiecesPerUnit,
                 UnitName = _editUnitName,
+                SecondaryUnitName = _editSecondaryUnitName,
+                PiecesPerSecondaryUnit = _editPiecesPerSecondaryUnit,
                 Suppliers = new ObservableCollection<Supplier>(),
                 AlternativeSalesPrices = new ObservableCollection<AlternativeSalesPrice>()
             };
@@ -203,7 +218,9 @@
             EditSalesPrice = EditingItem.SalesPrice;
             EditPurchasePrice = EditingItem.PurchasePrice;
             EditUnitName = EditingItem.UnitName;
+            EditSecondaryUnitName = EditingItem.SecondaryUnitName;
             EditPiecesPerUnit = EditingItem.PiecesPerUnit;
+            EditPiecesPerSecondaryUnit = EditingItem.PiecesPerSecondaryUnit;
             EditSalesExpense = EditingItem.SalesExpense;
             UpdateEditAlternativeSalesPrices();
             UpdateEditSuppliers();
