@@ -76,7 +76,7 @@
 
         private decimal GetSelectedDateSalesTransactionPaidAmount(SalesTransactionVM salesTransaction)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var receipts = context.Ledger_Transaction_Lines
                     .Where(line => line.LedgerTransaction.Description.Equals("Sales Transaction Receipt") && 

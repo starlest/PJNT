@@ -72,7 +72,7 @@
             get { return _salesReturnTransactionID; }
             set
             {
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var salesReturnTransactionFromDatabase =  context.SalesReturnTransactions
                         .Include("SalesReturnTransactionLines")
@@ -110,7 +110,7 @@
             {
                 SetProperty(ref _selectedSalesTransactionID, value, () => SelectedSalesTransactionID);
                 if (_selectedSalesTransactionID == null) return;
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var salesTransactionFromDatabase = context.SalesTransactions
                         .Include("Customer")
@@ -257,7 +257,7 @@
             var newEntryID = "MR" + (long)((year - 2000) * 100 + month) * 1000000;
 
             string lastEntryID = null;
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var latestSalesReturnTransaction = context.SalesReturnTransactions.Where(
                     transaction => string.Compare(transaction.SalesReturnTransactionID, newEntryID, StringComparison.Ordinal) >= 0)
@@ -326,7 +326,7 @@
         #region Print Helper Methods
         private void SetupAndPrint()
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var salesReturnTransaction = context.SalesReturnTransactions
                     .Include("SalesReturnTransactionLines")

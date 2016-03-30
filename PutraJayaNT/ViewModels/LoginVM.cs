@@ -8,6 +8,8 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels
 {
+    using System.Configuration;
+
     internal class LoginVM : ViewModelBase
     {
         private string _userName;
@@ -39,7 +41,12 @@ namespace PutraJayaNT.ViewModels
         public string SelectedServer
         {
             get { return _selectedServer; }
-            set { SetProperty(ref _selectedServer, value, () => SelectedServer); }
+            set
+            {
+                SetProperty(ref _selectedServer, value, () => SelectedServer);
+                Application.Current.Resources.Remove("SelectedServer");
+                Application.Current.Resources.Add("SelectedServer", _selectedServer);
+            }
         }
 
         public ICommand LoginCommand
@@ -54,7 +61,7 @@ namespace PutraJayaNT.ViewModels
                         return;
                     }
 
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var user = context.Users.FirstOrDefault(e => e.Username.Equals(_userName) && e.Password.Equals(_password));
 
@@ -65,7 +72,6 @@ namespace PutraJayaNT.ViewModels
                         }
 
                         // Login Successful
-                        Application.Current.Resources.Add("SelectedServer", _selectedServer);
                         Application.Current.Resources.Add("CurrentUser", user);
                         var windows = Application.Current.Windows;
                         foreach (var window in windows.Cast<ModernWindow>().Where(window => window.Title == "Login"))

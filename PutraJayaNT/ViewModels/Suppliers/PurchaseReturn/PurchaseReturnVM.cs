@@ -76,7 +76,7 @@
             get { return _purchaseReturnTransactionID; }
             set
             {
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var purchaseReturnTransactionFromDatabase = context.PurchaseReturnTransactions
                         .Include("PurchaseReturnTransactionLines")
@@ -114,7 +114,7 @@
                 SetProperty(ref _selectedPurchaseTransactionID, value, "SelectedPurchaseTransactionID");
                 if (_selectedPurchaseTransactionID == null) return;
 
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var purchaseTransactionFromDatabase = context.PurchaseTransactions
                         .Include("Supplier")
@@ -190,7 +190,7 @@
         public void UpdateWarehouses()
         {
             Warehouses.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var warehouses = context.Warehouses.OrderBy(warehouse => warehouse.Name);
                 foreach (var warehouse in warehouses)
@@ -206,7 +206,7 @@
             var newEntryID = "PR" + (long)((year - 2000) * 100 + month) * 1000000;
 
             string lastEntryID = null;
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var latestPurchaseReturnTransaction = context.PurchaseReturnTransactions.Where(
                     transaction => string.Compare(transaction.PurchaseReturnTransactionID, newEntryID, StringComparison.Ordinal) >= 0)

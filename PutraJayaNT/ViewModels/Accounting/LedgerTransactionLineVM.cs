@@ -64,7 +64,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _opposingLines.Clear();
 
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var lines = context.Ledger_Transaction_Lines
                         .Include("LedgerTransaction")

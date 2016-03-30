@@ -10,7 +10,7 @@
         public static void AddItemToDatabase(Item item)
         {
             var success = true;
-            var context = new ERPContext();
+            var context = new ERPContext(UtilityMethods.GetDBName());
             try
             {
                 AddItemToDatabaseContext(context, item);
@@ -33,7 +33,7 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
                 SaveItemEditsToDatabaseContext(context, editingItem, editedItem);
                 ts.Complete();
             }

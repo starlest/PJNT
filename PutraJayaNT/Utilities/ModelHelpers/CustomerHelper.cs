@@ -10,7 +10,7 @@ namespace PutraJayaNT.Utilities.ModelHelpers
     {
         public static void AddCustomerAlongWithItsLedgerToDatabase(Customer customer)
         {
-            var context = new ERPContext();
+            var context = new ERPContext(UtilityMethods.GetDBName());
             var success = true;
             try
             {
@@ -35,7 +35,7 @@ namespace PutraJayaNT.Utilities.ModelHelpers
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
                 if (!IsCustomerNameChanged(editingCustomer, editedCustomer))
                     ChangeCustomerLedgerAccountNameInDatabaseContext(context, editingCustomer, editedCustomer);
                 SaveCustomerEditsToDatabaseContext(context, editingCustomer, editedCustomer);

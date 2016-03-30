@@ -62,10 +62,11 @@ namespace PutraJayaNT.ViewModels.Master
 
                 if (value == "All")
                 {
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var accounts = context.Ledger_Accounts
                             .Include("LedgerGeneral")
+                            .Where(e => !e.Name.Equals("- Accounts Payable"))
                             .OrderBy(e => e.Class)
                             .ThenBy(e => e.Notes)
                             .ThenBy(e => e.Name);
@@ -78,15 +79,14 @@ namespace PutraJayaNT.ViewModels.Master
                 else
                 {
                     _displayAccounts.Clear();
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var accounts = context.Ledger_Accounts
-                            .Where(e => e.Class == value)
+                            .Where(e => e.Class == value && !e.Name.Equals("- Accounts Payable"))
                             .Include("LedgerGeneral")
                             .OrderBy(e => e.Class)
                             .ThenBy(e => e.Notes)
                             .ThenBy(e => e.Name);
-
                         foreach (var account in accounts)
                             _displayAccounts.Add(new LedgerAccountVM { Model = account });
                     }
@@ -113,9 +113,9 @@ namespace PutraJayaNT.ViewModels.Master
             {
                 return _newEntryCommand ?? (_newEntryCommand = new RelayCommand(() =>
                 {
-                    if (MessageBox.Show("Confirmation adding this account?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+                    if (MessageBox.Show("Confirm adding this account?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
 
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         CreateNewAccount(context);
                         context.SaveChanges();

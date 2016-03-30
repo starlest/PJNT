@@ -96,7 +96,7 @@
         private void UpdateNewEntryGroups()
         {
             NewEntryGroups.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var groupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
                 foreach (var group in groupsReturnedFromDatabase)

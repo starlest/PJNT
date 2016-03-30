@@ -105,7 +105,7 @@
                 NewEntryVM.NewEntryWarehouse = null;
 
                 // Search the database for the transaction
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var purchaseTransactionFromDatabase = context.PurchaseTransactions
                         .Include("Supplier")
@@ -329,7 +329,7 @@
         private void UpdateSuppliers()
         {
             Suppliers.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var suppliersFromDatabase = context.Suppliers.Where(
                     supplier => !supplier.Name.Equals("-") && supplier.Active)
@@ -342,7 +342,7 @@
         private void UpdateSupplierItems()
         {
             SupplierItems.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var items = context.Inventory.Include("Suppliers").Where(item => item.Active).OrderBy(item => item.Name).ToList();
                 foreach (var item in items.Where(item => item.Active && item.Suppliers.Contains(_transactionSupplier.Model)))
@@ -353,7 +353,7 @@
         private void UpdateWarehouses()
         {
             Warehouses.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var warehouses = context.Warehouses.OrderBy(warehouse => warehouse.Name);
                 foreach (var warehouse in warehouses)
@@ -393,7 +393,7 @@
             _transactionID = "P" + (long)((year - 2000) * 100 + month) * 1000000;
 
             string lastEntryID = null;
-            using(var context = new ERPContext())
+            using(var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var lastPurchaseTransaction =
                     context.PurchaseTransactions.Where(

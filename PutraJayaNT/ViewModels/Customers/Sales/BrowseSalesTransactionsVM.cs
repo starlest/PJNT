@@ -90,7 +90,7 @@
         {
             _total = 0;
             SalesTransactions.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var salesTransactions = context.SalesTransactions
                     .Include("User")

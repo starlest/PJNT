@@ -2,10 +2,12 @@ using PutraJayaNT.Models.Customer;
 
 namespace PutraJayaNT.Utilities
 {
+    using System.Configuration;
     using Models;
     using Models.Accounting;
     using Models.Inventory;
     using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
     using Models.Sales;
     using Models.Purchase;
     using Models.StockCorrection;
@@ -14,11 +16,19 @@ namespace PutraJayaNT.Utilities
 
     public partial class ERPContext : DbContext
     {
-        public ERPContext()
-            : base("name=ERPContext")
+        public ERPContext(string dbName)
+            : base(GetConnectionString(dbName))
         {
             //Database.SetInitializer<ERPContext>(new MigrateDatabaseToLatestVersion<ERPContext, Migrations.Configuration>());
             //Database.SetInitializer<ERPContext>(new DropCreateDatabaseAlways<ERPContext>());
+        }
+
+        public static string GetConnectionString(string dbName)
+        {
+            // Server=localhost;Database={0};Uid=username;Pwd=password
+            var connString =
+                ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString;
+            return string.Format(connString, dbName);
         }
 
         public virtual DbSet<Stock> Stocks { get; set; }
@@ -63,6 +73,14 @@ namespace PutraJayaNT.Utilities
         {
             modelBuilder.Conventions.Remove<DecimalPropertyConvention>();
             modelBuilder.Conventions.Add(new DecimalPropertyConvention(50, 30));
+        }
+    }
+
+    public class MigrationsContextFactory : IDbContextFactory<ERPContext>
+    {
+        public ERPContext Create()
+        {
+            return new ERPContext("putrajayant");
         }
     }
 }

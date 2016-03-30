@@ -10,19 +10,19 @@
     {
         public static IEnumerable<Warehouse> GetAll()
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 return context.Warehouses.OrderBy(warehouse => warehouse.Name).ToList();
         }
 
         public static IEnumerable<Warehouse> Get(Func<Warehouse, bool> condition)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 return context.Warehouses.Where(condition).OrderBy(warehouse => warehouse.Name).ToList();
         }
 
         public static Warehouse FirstOrDefault(Func<Warehouse, bool> condition)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 return context.Warehouses.Where(condition).OrderBy(warehouse => warehouse.Name).FirstOrDefault();
         }
 

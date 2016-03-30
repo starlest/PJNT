@@ -471,7 +471,7 @@
         {
             Customers.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customers = context.Customers
                     .Where(customer => customer.Active)
@@ -495,7 +495,7 @@
             _transactionID = leadingIDString + endingIDString;
 
             string lastTransactionID = null;
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var IDs = from SalesTransaction in context.SalesTransactions
                           where SalesTransaction.SalesTransactionID.Substring(0, 6).Equals(leadingIDString)
@@ -579,7 +579,7 @@
         private static int GetStock(Item item, Warehouse warehouse)
         {
             int s;
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var stock = context
                     .Stocks
@@ -617,7 +617,7 @@
         #region Transacton Helper Methods
         private static SalesTransaction GetSalesTransactionFromDatabase(string salesTransactionID)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 return context.SalesTransactions
                     .Include("Customer")
@@ -633,7 +633,7 @@
 
         private static bool DoesCustomerHasMaximumNumberOfInvoices(CustomerVM customer)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customerTransactions =
                     context.SalesTransactions.Where(e => e.Customer.ID.Equals(customer.ID) && e.Paid < e.NetTotal);
@@ -646,7 +646,7 @@
 
         private static bool DoesCustomerHasOverduedInvoices(CustomerVM customer)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customerTransactions =
                     context.SalesTransactions.Where(e => e.Customer.ID.Equals(customer.ID) && e.Paid < e.NetTotal);
@@ -665,7 +665,7 @@
 
         private void DeleteInvoice()
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var transaction = context.SalesTransactions
                 .Include("SalesTransactionLines")

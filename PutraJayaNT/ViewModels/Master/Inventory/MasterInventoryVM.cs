@@ -184,7 +184,7 @@
             CategoriesWithAll.Clear(); 
             CategoriesWithAll.Add(new CategoryVM { Model = new Category { Name = "All" } });
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name).ToList();
                 foreach (
@@ -212,7 +212,7 @@
 
             Items.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var itemsFromDatabase =
                     context.Inventory.Include("Suppliers").Include("AlternativeSalesPrices").Include("Category").OrderBy(item => item.Name);
@@ -234,7 +234,7 @@
             var oldSelectedSupplier = _selectedSupplier;
 
             Suppliers.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var suppliersFromDatabase =
                     context.Suppliers.Where(supplier => !supplier.Name.Equals("-") && supplier.Active).OrderBy(supplier => supplier.Name);
@@ -290,7 +290,7 @@
 
         public static void DeactivateItemInDatabase(Item item)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 context.Entry(item).State = EntityState.Modified;
                 item.Active = false;
@@ -300,7 +300,7 @@
 
         public static void ActivateItemInDatabase(Item item)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 context.Entry(item).State = EntityState.Modified;
                 item.Active = true;

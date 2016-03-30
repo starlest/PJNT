@@ -243,7 +243,7 @@
         private void UpdateListedProducts()
         {
             ListedProducts.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var stocksFromDatabase = context.Stocks.Where(
                     stock => stock.WarehouseID.Equals(_transactionFromWarehouse.ID))
@@ -260,7 +260,7 @@
         {
             Warehouses.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var warehouses = context.Warehouses.ToList();
                 foreach (var warehouse in warehouses)
@@ -270,7 +270,7 @@
 
         private static bool CheckIDExists(string id)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var transaction = context.StockMovementTransactions.SingleOrDefault(e => e.StockMovementTransactionID.Equals(id));
                 return transaction != null;
@@ -284,7 +284,7 @@
             _transactionID = "MS" + (long)((year - 2000) * 100 + month) * 1000000;
 
             string lastTransactionID = null;
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var IDs = from StockMovementTransaction in context.StockMovementTransactions
                           where string.Compare(StockMovementTransaction.StockMovementTransactionID, _transactionID, StringComparison.Ordinal) >= 0
@@ -330,7 +330,7 @@
             IsNotEditMode = false;
             ResetEntryFields();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var stockMovementTransactionFromDatabase = context.StockMovementTransactions
                     .Include("StockMovementTransactionLines")
@@ -352,7 +352,7 @@
 
         private int GetRemainingStock(Item item, Warehouse warehouse)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var stock = context.Stocks.SingleOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID));
                 var availableQuantity = stock?.Pieces ?? 0;
@@ -363,7 +363,7 @@
 
         private static int GetRemainingStockInDatabase(Item item, Warehouse warehouse)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var stock = context.Stocks.SingleOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID));
                 return stock?.Pieces ?? 0;

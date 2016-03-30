@@ -154,7 +154,7 @@
 
             CustomerGroups.Clear();
             CustomerGroups.Add(new CustomerGroupVM { Model = new CustomerGroup { ID = -1, Name = "All" }});
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var groupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
                 foreach (var group in groupsReturnedFromDatabase)
@@ -175,7 +175,7 @@
 
             Customers.Clear();
             Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customersReturnedFromDatabase = _selectedCustomerGroup.Name.Equals("All") ? 
                     context.Customers.Include("Group").OrderBy(customer => customer.Name) : 
@@ -199,7 +199,7 @@
         {
             var oldSelectedCity = _selectedCity;
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customersReturnedFromDatabase = context.Customers.Include("Group").OrderBy(customer => customer.Name);
                 foreach (
@@ -229,7 +229,7 @@
         {
             DisplayedCustomers.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customersReturnedFromDatabase = LoadCustomersFromDatabaseContextAccordingToSelections(context);
                 foreach (
@@ -242,7 +242,7 @@
 
         public static void DeactivateCustomerInDatabase(Customer customer)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 context.Entry(customer).State = EntityState.Modified;
                 customer.Active = false;
@@ -252,7 +252,7 @@
 
         public static void ActivateCustomerInDatabase(Customer customer)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 context.Entry(customer).State = EntityState.Modified;
                 customer.Active = true;

@@ -71,7 +71,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             Lines.Clear();
             SetBeginningBalance();
             _endingBalance = _beginningBalance;
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var lines = context.Ledger_Transaction_Lines
                     .Include("LedgerAccount")
@@ -110,7 +110,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         private void SetBeginningBalance()
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var balances = context.Ledger_Account_Balances
                     .Include("LedgerAccount")

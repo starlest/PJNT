@@ -230,7 +230,7 @@
         private void UpdateCustomerGroups()
         {
             CustomerGroups.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customerGroupsFromDatabase = context.CustomerGroups;
                 foreach (var group in customerGroupsFromDatabase)
@@ -241,7 +241,7 @@
         private void UpdateCategories()
         {
             Categories.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categoriesFromDatabase)
@@ -259,7 +259,7 @@
         private void UpdateEditAlternativeSalesPrices()
         {
             EditAlternativeSalesPrices.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var editItemAlternativeSalesPrices = context.AlternativeSalesPrices
                     .Where(altSalesPrice => altSalesPrice.ItemID.Equals(EditingItem.ID));

@@ -103,7 +103,7 @@
             var oldSelectedSalesman = _selectedSalesman;
 
             Salesmans.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var salesmansFromDatabase =
                     context.Salesmans.Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name);
@@ -124,7 +124,7 @@
         {
             DisplayedSalesCommissions.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var categories = context.ItemCategories.OrderBy(category => category.Name);
 

@@ -258,10 +258,9 @@
             var oldSelectedWarehouse = _newEntryWarehouse;
 
             Warehouses.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
-                var warehouses = context.Warehouses.ToList();
-
+                var warehouses = context.Warehouses.OrderBy(warehouse => warehouse.Name);
                 foreach (var warehouse in warehouses)
                     Warehouses.Add(warehouse);
             }
@@ -279,7 +278,7 @@
         {
             WarehouseProducts.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var stocks = context.Stocks
                     .Include("Item")
@@ -296,7 +295,7 @@
         private void UpdateSalesmans()
         {
             Salesmans.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var salesmans = context.Salesmans.OrderBy(salesman => salesman.Name);
                 foreach (var salesman in salesmans.Where(salesman => !salesman.Name.Equals(" ")))
@@ -307,7 +306,7 @@
         private void UpdateNewEntryAlternativeSalesPrices()
         {
             NewEntryAlternativeSalesPrices.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var alternativeSalesPrices = context.AlternativeSalesPrices.Where(e => e.ItemID.Equals(_newEntryProduct.ID)).OrderBy(price => price.Name);
                 foreach (var alt in alternativeSalesPrices)

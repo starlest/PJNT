@@ -17,7 +17,7 @@
         {
             IsLastSaveSuccessful = false;
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 foreach (var line in salesTransaction.SalesTransactionLines.ToList())
                 {
@@ -39,7 +39,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
 
                 var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context,
                     editedSalesTransaction);
@@ -59,7 +59,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
 
                 var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context, editedSalesTransaction);
 
@@ -82,7 +82,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
 
                 var salesTransactionFromDatabase = context.SalesTransactions.Include("Customer").Single(
                     transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
@@ -106,7 +106,7 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
                 context.Entry(salesTransaction).State = EntityState.Modified;
                 salesTransaction.Paid += collectionAmount + creditsUsed;
                 salesTransaction.Customer.SalesReturnCredits -= creditsUsed;
@@ -328,7 +328,7 @@
         {
             var costOfGoodsSoldAmount = 0m;
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 foreach (var line in salesTransaction.SalesTransactionLines.ToList())
                 {

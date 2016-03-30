@@ -10,19 +10,19 @@
     {
         public static IEnumerable<Supplier> GetAll()
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 return context.Suppliers.Include("Items").Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name).ToList();
         }
 
         public static IEnumerable<Supplier> Get(Func<Supplier, bool> condition)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 return context.Suppliers.Include("Items").Where(condition).Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name).ToList();
         }
 
         public static Supplier FirstOrDefault(Func<Supplier, bool> condition)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 return context.Suppliers.Include("Items").Where(condition).FirstOrDefault();
         }
 

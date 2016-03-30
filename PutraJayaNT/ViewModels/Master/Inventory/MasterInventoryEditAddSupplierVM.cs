@@ -45,7 +45,7 @@
         private void LoadSuppliersAvailableForAddition()
         {
             SuppliersAvailableForAddition.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var allSuppliersFromDatabase = context.Suppliers.Where(
                     supplier => !supplier.Name.Equals("-") && supplier.Active)

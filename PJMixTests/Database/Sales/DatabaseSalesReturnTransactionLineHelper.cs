@@ -10,7 +10,7 @@
     {
         public static IEnumerable<SalesReturnTransactionLine> Get(Func<SalesReturnTransactionLine, bool> condition)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 return context.SalesReturnTransactionLines
                     .Include("Item")
                     .Include("Warehouse")

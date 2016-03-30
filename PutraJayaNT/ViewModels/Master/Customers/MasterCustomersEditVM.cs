@@ -127,7 +127,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         private void UpdateEditGroups()
         {
             EditGroups.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customerGroupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
                 foreach (var customerGroup in customerGroupsReturnedFromDatabase)

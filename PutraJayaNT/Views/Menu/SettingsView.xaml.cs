@@ -20,9 +20,9 @@ namespace PutraJayaNT.Views.Menu
 
         private void Export()
         {
-            string constring = ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString;
+            var constring = ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString;
 
-            using (var conn = new MySqlConnection(constring))
+            using (var conn = new MySqlConnection(string.Format(constring, UtilityMethods.GetDBName())))
             {
                 using (var cmd = new MySqlCommand())
                 {
@@ -101,7 +101,7 @@ namespace PutraJayaNT.Views.Menu
 
             if (!UtilityMethods.GetVerification()) return;
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var currentDate = context.Dates.FirstOrDefault(x => x.Name.Equals("Current"));
                 if (currentDate != null) currentDate.DateTime = currentDate.DateTime.AddDays(-1);
@@ -114,14 +114,12 @@ namespace PutraJayaNT.Views.Menu
             if (MessageBox.Show(
                 $"The date now is: {UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy")} \n Confirm increasing day?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var currentDate = context.Dates.FirstOrDefault(x => x.Name.Equals("Current"));
                 if (currentDate != null)
                 {
                     currentDate.DateTime = currentDate.DateTime.AddDays(1);
-                    var newDate = new Date { DateTime = currentDate.DateTime, Name = "Current2" };
-                    context.Dates.Add(newDate);
                 }
                 context.SaveChanges();
             }

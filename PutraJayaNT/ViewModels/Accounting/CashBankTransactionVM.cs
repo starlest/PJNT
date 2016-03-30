@@ -227,7 +227,7 @@ namespace PutraJayaNT.ViewModels.Accounting
                     {
                         using (TransactionScope ts = new TransactionScope(TransactionScopeOption.Required))
                         {
-                            var context1 = new ERPContext();
+                            var context1 = new ERPContext(UtilityMethods.GetDBName());
 
                             var transaction = new LedgerTransaction();
 
@@ -265,7 +265,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             _accounts.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var accounts = context.Ledger_Accounts
                     .Where(e => !e.Name.Equals("Cost of Goods Sold") && !e.Name.Equals("- Accounts Payable")
@@ -296,7 +296,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             _banks.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var banks = context.Ledger_Accounts
                     .Where(e => e.Name.Contains("Bank") && !e.Name.Contains("Expense") || e.Name.Equals("Cash"))
@@ -314,7 +314,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             _displayLines.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var transactionLines = context.Ledger_Transaction_Lines
                     .Include("LedgerAccount")
@@ -347,7 +347,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 foreach (LedgerTransactionLineVM line in e.OldItems)
                 {
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var firstLine = context.Ledger_Transaction_Lines
                             .Include("LedgerAccount")

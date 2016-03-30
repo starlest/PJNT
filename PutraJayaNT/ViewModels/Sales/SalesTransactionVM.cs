@@ -65,7 +65,7 @@
 
         private void UpdateCollectionSalesmans()
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var collectionSalesmansFromDatabase = context.Salesmans.OrderBy(salesman => salesman.Name);
                 foreach (var salesman in collectionSalesmansFromDatabase)
@@ -75,7 +75,7 @@
 
         private void SaveCollectionSalesmanToTransactionInDatabase()
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var transactionFromDatabase = context.SalesTransactions.Single(transaction => transaction.SalesTransactionID.Equals(Model.SalesTransactionID));
                 context.Salesmans.Attach(CollectionSalesman);

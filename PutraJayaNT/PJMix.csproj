@@ -91,34 +91,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603170835495_Update5.cs" />
-    <Compile Include="Migrations\201603170835495_Update5.Designer.cs">
-      <DependentUpon>201603170835495_Update5.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603170839212_Update6.cs" />
-    <Compile Include="Migrations\201603170839212_Update6.Designer.cs">
-      <DependentUpon>201603170839212_Update6.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603170850413_Update7.cs" />
-    <Compile Include="Migrations\201603170850413_Update7.Designer.cs">
-      <DependentUpon>201603170850413_Update7.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603170858231_Update8.cs" />
-    <Compile Include="Migrations\201603170858231_Update8.Designer.cs">
-      <DependentUpon>201603170858231_Update8.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603230430162_AddTaxToSalesTransaction.cs" />
-    <Compile Include="Migrations\201603230430162_AddTaxToSalesTransaction.Designer.cs">
-      <DependentUpon>201603230430162_AddTaxToSalesTransaction.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603250309060_Update9.cs" />
-    <Compile Include="Migrations\201603250309060_Update9.Designer.cs">
-      <DependentUpon>201603250309060_Update9.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603250314107_Update10.cs" />
-    <Compile Include="Migrations\201603250314107_Update10.Designer.cs">
-      <DependentUpon>201603250314107_Update10.cs</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\FocusAdvancement.cs" />
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
@@ -140,22 +112,6 @@
     <Compile Include="ViewModels\Suppliers\Purchase\PurchaseNewEntryVM.cs" />
     <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603041709518_Update1.cs" />
-    <Compile Include="Migrations\201603041709518_Update1.Designer.cs">
-      <DependentUpon>201603041709518_Update1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603070403129_Update2.cs" />
-    <Compile Include="Migrations\201603070403129_Update2.Designer.cs">
-      <DependentUpon>201603070403129_Update2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603070927590_Update3.cs" />
-    <Compile Include="Migrations\201603070927590_Update3.Designer.cs">
-      <DependentUpon>201603070927590_Update3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603080402369_Update4.cs" />
-    <Compile Include="Migrations\201603080402369_Update4.Designer.cs">
-      <DependentUpon>201603080402369_Update4.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Date.cs" />
     <Compile Include="Models\Inventory\StockBalance.cs" />
@@ -701,39 +657,6 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603041709518_Update1.resx">
-      <DependentUpon>201603041709518_Update1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603070403129_Update2.resx">
-      <DependentUpon>201603070403129_Update2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603070927590_Update3.resx">
-      <DependentUpon>201603070927590_Update3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603080402369_Update4.resx">
-      <DependentUpon>201603080402369_Update4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603170835495_Update5.resx">
-      <DependentUpon>201603170835495_Update5.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603170839212_Update6.resx">
-      <DependentUpon>201603170839212_Update6.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603170850413_Update7.resx">
-      <DependentUpon>201603170850413_Update7.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603170858231_Update8.resx">
-      <DependentUpon>201603170858231_Update8.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603230430162_AddTaxToSalesTransaction.resx">
-      <DependentUpon>201603230430162_AddTaxToSalesTransaction.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603250309060_Update9.resx">
-      <DependentUpon>201603250309060_Update9.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603250314107_Update10.resx">
-      <DependentUpon>201603250314107_Update10.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

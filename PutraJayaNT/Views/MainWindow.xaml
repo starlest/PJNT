@@ -51,8 +51,7 @@
                 <mui:Link DisplayName="Inventory" Source="/Views/Reports/InventoryReportView.xaml" />
                 <mui:Link DisplayName="Stock Card" Source="/Views/Reports/StockCardReportView.xaml" />
                 <mui:Link DisplayName="Overall Sales" Source="/Views/Reports/OverallSalesReportView.xaml" />
-                <mui:Link DisplayName="Sales" Source="/Views/Reports/SalesReportView.xaml" />
-                <mui:Link DisplayName="Sales Returns" Source="/Views/Reports/SalesReturnsReportView.xaml" />
+                <mui:Link DisplayName="Sales" Source="/Views/Reports/SalesReportView.xaml" />    
                 <mui:Link DisplayName="Purchases" Source="/Views/Reports/PurchasesReportView.xaml" />
                 <mui:Link DisplayName="Commissions" Source="/Views/Reports/CommissionsReportView.xaml" />
             </mui:LinkGroup.Links>

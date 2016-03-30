@@ -17,7 +17,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
                 AttachPurchaseReturnTransactionPropertiesToDatabaseContext(context, ref purchaseReturnTransaction);
                 purchaseReturnTransaction.PurchaseTransaction.Supplier.PurchaseReturnCredits +=
                     purchaseReturnTransaction.NetTotal;
@@ -30,9 +30,9 @@
                     if (!IsThereEnoughLineItemStockInDatabaseContext(context, purchaseReturnTransactionLine)) return;
                     purchaseReturnTransactionLine.PurchaseReturnTransaction = purchaseReturnTransaction;
                     AddPurchaseReturnTransactionLineToDatabaseContext(context, purchaseReturnTransactionLine);
-                    IncreasePurchaseReturnTransactionLineItemSoldOrReturnedInDatabaseContext(context, purchaseReturnTransactionLine);
                     DecreasePurchaseReturnTransactionLineItemStockInDatabaseContext(context, purchaseReturnTransactionLine);
                     totalCOGS += CalculateLineCOGSFromDatabaseContext(context, purchaseReturnTransactionLine);
+                    IncreasePurchaseReturnTransactionLineItemSoldOrReturnedInDatabaseContext(context, purchaseReturnTransactionLine);
                     context.SaveChanges();
                 }
 

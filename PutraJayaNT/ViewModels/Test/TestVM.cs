@@ -28,12 +28,23 @@
             {
                 return _checkSalesTransactionsCommand ?? (_checkSalesTransactionsCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var transactions = context.SalesTransactions
                         .Include("SalesTransactionLines")
                         .ToList();
 
+                        foreach (var t in transactions)
+                        {
+                            var lines =
+                                context.SalesTransactionLines.Where(
+                                    line => line.SalesTransaction.SalesTransactionID.Equals(t.SalesTransactionID));
+
+                            if (lines.Count() != t.SalesTransactionLines.Count)
+                            {
+                                MessageBox.Show(t.SalesTransactionID);
+                            }
+                        }
                         foreach (var transaction in transactions)
                         {
                             decimal grossAmount = 0M;
@@ -86,7 +97,7 @@
             {
                 return _checkPurchaseTransactionsCommand ?? (_checkPurchaseTransactionsCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var transactions = context.PurchaseTransactions
                         .Include("PurchaseTransactionLines")
@@ -146,7 +157,7 @@
                 {
                     using (var ts = new TransactionScope())
                     {
-                        var context = new ERPContext();
+                        var context = new ERPContext(UtilityMethods.GetDBName());
 
                         var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance2 +
                         context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit - 
@@ -181,14 +192,14 @@
                                 {
                                     LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Debit", calculatedCOGS - actualCOGS);
                                     LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Credit", calculatedCOGS - actualCOGS);
-                                    MessageBox.Show(string.Format("Increased inventory by {0}", calculatedCOGS - actualCOGS), "Fixed", MessageBoxButton.OK);
+                                    MessageBox.Show($"Increased inventory by {calculatedCOGS - actualCOGS}", "Fixed", MessageBoxButton.OK);
                                 }
 
                                 else
                                 {
                                     LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Debit", actualCOGS - calculatedCOGS);
                                     LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Credit", actualCOGS - calculatedCOGS);
-                                    MessageBox.Show(string.Format("Decreased inventory by {0}", actualCOGS - calculatedCOGS), "Fixed", MessageBoxButton.OK);
+                                    MessageBox.Show($"Decreased inventory by {actualCOGS - calculatedCOGS}", "Fixed", MessageBoxButton.OK);
                                 }
 
                                 context.SaveChanges();
@@ -209,7 +220,7 @@
             {
                 return _checkStockCommand ?? (_checkStockCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var items = context.Inventory.ToList();
                         var warehouses = context.Warehouses.ToList();
@@ -247,7 +258,7 @@
             {
                 return _checkSoldOrReturnedCommand ?? (_checkSoldOrReturnedCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         
                         var items = context.Inventory.ToList();
@@ -260,7 +271,7 @@
                                 soldOrReturned += line.SoldOrReturned;
                             }
 
-                            var salesLines = context.SalesTransactionLines.Where(e => e.SalesTransaction.InvoiceIssued != null && e.ItemID.Equals(item.ItemID)).ToList();
+                            var salesLines = context.SalesTransactionLines.Where(e => e.ItemID.Equals(item.ItemID) && e.SalesTransaction.InvoiceIssued != null).ToList();
                             var salesReturnLines = context.SalesReturnTransactionLines.Where(e => e.ItemID.Equals(item.ItemID)).ToList();
                             var purchaseReturnLines = context.PurchaseReturnTransactionLines.Where(e => e.ItemID.Equals(item.ItemID)).ToList();
                             var adjustmentLines = context.StockAdjustmentTransactionLines.Where(e => e.StockAdjustmentTransactionID.Substring(0, 2).Equals("SA") && e.ItemID.Equals(item.ItemID) && e.Quantity < 0).ToList();
@@ -288,7 +299,8 @@
 
                             if (soldOrReturned != soldOrReturnedQuantity)
                             {
-                                MessageBox.Show(string.Format("{0} \n Actual: {1} \n Calculated: {2}", item.ItemID, soldOrReturned, soldOrReturnedQuantity), "Error", MessageBoxButton.OK);
+                                MessageBox.Show(
+                                    $"{item.ItemID} \n Actual: {soldOrReturned} \n Calculated: {soldOrReturnedQuantity}", "Error", MessageBoxButton.OK);
                             }
                         }
 
@@ -304,7 +316,7 @@
             {
                 return _checkLedgerTransactionsCommand ?? (_checkLedgerTransactionsCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var transactions = context.Ledger_Transactions
                         .Include("LedgerTransactionLines")
@@ -435,7 +447,7 @@
             {
                 return _checkLedgerGeneralCommand ?? (_checkLedgerGeneralCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var accounts = context.Ledger_Accounts
                         .Include("LedgerTransactionLines")
@@ -504,7 +516,7 @@
             {
                 return _checkPastCommand ?? (_checkPastCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext())
+                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
                         var transactions = context.SalesTransactions.Where(e => e.InvoiceIssued == null && e.Paid > 0).ToList();
 
@@ -524,7 +536,7 @@
         private int GetPeriodBeginningBalance(Item item, Warehouse warehouse, int year, int month)
         {
             var beginningBalance = 0;
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == year).FirstOrDefault();
 
@@ -584,7 +596,7 @@
             var monthDate = fromDate.AddDays(-fromDate.Date.Day + 1);
             var balance = GetPeriodBeginningBalance(item, warehouse, fromDate.Year, fromDate.Month);
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var purchaseLines = context.PurchaseTransactionLines
                     .Include("PurchaseTransaction")

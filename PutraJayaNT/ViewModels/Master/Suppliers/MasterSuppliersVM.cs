@@ -154,7 +154,7 @@
             Suppliers.Clear();
             var allSupplier = new Supplier { ID = -1, Name = "All" };
             Suppliers.Add(new SupplierVM { Model = allSupplier });
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var suppliersFromDatabase = context.Suppliers.Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name);
                 foreach (var supplier in suppliersFromDatabase)
@@ -177,7 +177,7 @@
             Categories.Clear();
             var allCategory = new Category { ID = -1, Name = "All" };
             Categories.Add(new CategoryVM { Model = allCategory });
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categoriesFromDatabase)
@@ -200,7 +200,7 @@
             CategoryItems.Clear();
             var allCategoryItem = new Item {ItemID = "-1", Name = "All"};
             CategoryItems.Add(new ItemVM {Model = allCategoryItem});
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var categoryItemsFromDatabase = _selectedCategory.Name.Equals("All")
                     ? context.Inventory.Include("Suppliers").OrderBy(item => item.Name)
@@ -250,7 +250,7 @@
         {
             var suppliersFromDatabase = new List<Supplier>();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 if (_selectedCategoryItem.Name.Equals("All") && _selectedCategory.Name.Equals("All"))
                     suppliersFromDatabase = context.Suppliers.Include("Items").Where(supplier => !supplier.Name.Equals("-")).ToList();
@@ -297,7 +297,7 @@
 
         public static void DeactivateSupplierInDatabase(Supplier supplier)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 context.Entry(supplier).State = EntityState.Modified;
                 supplier.Active = false;
@@ -307,7 +307,7 @@
 
         public static void ActivateSupplierInDatabase(Supplier supplier)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 context.Entry(supplier).State = EntityState.Modified;
                 supplier.Active = true;

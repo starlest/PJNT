@@ -1,7 +1,6 @@
 ﻿namespace PutraJayaNT.ViewModels.Master.Inventory
 {
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.Windows;
     using System.Windows.Input;
     using Item;
@@ -164,9 +163,13 @@
 
         private bool AreAllQuantityFieldsValid()
         {
-            if (_newEntryPiecesPerUnit > 0 && _newEntryPiecesPerSecondaryUnit >= 0 && _newEntryPiecesPerUnit >= _newEntryPiecesPerSecondaryUnit
-                && _newEntryPiecesPerUnit % _newEntryPiecesPerSecondaryUnit == 0)
-                return true;
+            if (_newEntryPiecesPerUnit > 0 && _newEntryPiecesPerSecondaryUnit >= 0 &&
+                _newEntryPiecesPerUnit >= _newEntryPiecesPerSecondaryUnit)
+            {
+                if (_newEntryPiecesPerSecondaryUnit > 0 && _newEntryPiecesPerUnit%_newEntryPiecesPerSecondaryUnit == 0)
+                    return true;
+                return _newEntryPiecesPerSecondaryUnit == 0;
+            }
             MessageBox.Show("Please check that all quantity fields are valid.", "Invalid Field(s)", MessageBoxButton.OK);
             return false;
         }
@@ -177,8 +180,10 @@
             NewEntryName = null;
             NewEntryCategory = null;
             NewEntrySupplier = null;
+            NewEntryPiecesPerSecondaryUnit = 0;
             NewEntryPiecesPerUnit = 1;
             NewEntryUnitName = null;
+            NewEntrySecondaryUnitName = null;
             NewEntrySalesPrice = 0;
             NewEntryPurchasePrice = 0;
             _parentVM.UpdateSuppliers();

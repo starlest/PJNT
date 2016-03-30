@@ -97,7 +97,7 @@
 
         private int GetAvailableReturnQuantity()
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var availableReturnQuantity = _parentVM.SelectedSalesTransactionLine.Quantity;
 

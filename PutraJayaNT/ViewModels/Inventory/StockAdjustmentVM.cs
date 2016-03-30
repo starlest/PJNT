@@ -206,7 +206,7 @@
         private void UpdateWarehouses()
         {
             Warehouses.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var warehouses = context.Warehouses.OrderBy(warehouse => warehouse.Name);
                 foreach (var warehouse in warehouses)
@@ -217,7 +217,7 @@
         private void UpdateProducts()
         {
             Products.Clear();
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var items = context.Inventory.OrderBy(item => item.Name);
                 foreach (var item in items)
@@ -227,7 +227,7 @@
 
         private static bool CheckIDExists(string id)
         {
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var transaction = context.StockAdjustmentTransactions.SingleOrDefault(e => e.StockAdjustmentTransactionID.Equals(id));
                 return transaction != null;
@@ -240,7 +240,7 @@
             ResetEntryFields();
             Lines.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 TransactionDescription =
                     context.StockAdjustmentTransactions.Single(
@@ -265,7 +265,7 @@
             _transactionID = "SA" + (long)((year - 2000) * 100 + month) * 1000000;
 
             string lastTransactionID = null;
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var IDs = from StockAdjustmentTransaction in context.StockAdjustmentTransactions
                     where string.Compare(StockAdjustmentTransaction.StockAdjustmentTransactionID, _transactionID, StringComparison.Ordinal) >= 0 && StockAdjustmentTransaction.StockAdjustmentTransactionID.Substring(0, 2).Equals("SA")

@@ -187,7 +187,7 @@
             var allWarehouse = new Warehouse { ID = -1, Name = "All" };
             Warehouses.Add(new WarehouseVM { Model = allWarehouse });
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var warehousesFromDatabase = context.Warehouses.OrderBy(warehouse => warehouse.Name);
                 foreach (var warehouse in warehousesFromDatabase)
@@ -211,7 +211,7 @@
             var allCategory = new Category {ID = -1, Name = "All"};
             Categories.Add(new CategoryVM { Model = allCategory });
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categoriesFromDatabase)
@@ -234,7 +234,7 @@
             Suppliers.Clear();
             Suppliers.Add(new SupplierVM { Model = new Supplier { ID = -1, Name = "All" } });
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var suppliersFromDatabase = context.Suppliers.Where(supplier => !supplier.Name.Equals("-")).OrderBy(supplier => supplier.Name);
                 foreach (
@@ -260,7 +260,7 @@
 
             var searchCondition = _selectedCategory != null ? GetSearchConditionAccordingToSelectedCategory() : GetSearchConditionAccordingToSelectedSupplier();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var itemsFromDatabase = context.Inventory.Include("Category").Include("Suppliers").Where(searchCondition).OrderBy(item => item.Name);
                 foreach (var item in itemsFromDatabase)
@@ -286,7 +286,7 @@
         {
             DisplayedLines.Clear();
 
-            using (var context = new ERPContext())
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 if (_selectedWarehouse.Name.Equals("All") && _selectedItem.Name.Equals("All"))
                     DisplayAllItems(context);

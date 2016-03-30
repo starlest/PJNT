@@ -19,7 +19,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
 
                 foreach (var line in purchaseTransaction.PurchaseTransactionLines)
                 {
@@ -43,7 +43,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
                 RecordEditedPurchaseTransactionLedgerTransactionsInDatabaseContext(context, editedPurchaseTransaction);
                 SetPurchaseTransactionInDatabaseContextToEditedPurchaseTransactionProperties(context, editedPurchaseTransaction);
                 ts.Complete();
@@ -57,7 +57,7 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext();
+                var context = new ERPContext(UtilityMethods.GetDBName());
 
                 context.Entry(purchaseTransaction).State = EntityState.Modified;
                 purchaseTransaction.Paid += paymentAmount + useCreditsAmount;

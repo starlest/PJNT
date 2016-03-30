@@ -7,7 +7,7 @@
     {
         public static void AddSalesmanToDatabase(Salesman salesman)
         {
-            var context = new ERPContext();
+            var context = new ERPContext(UtilityMethods.GetDBName());
             var success = true;
             try
             {

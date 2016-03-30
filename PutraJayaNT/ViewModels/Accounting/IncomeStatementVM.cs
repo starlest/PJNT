@@ -56,7 +56,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _revenues = 0;
 
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var revenues = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Sales Revenue"))
@@ -77,7 +77,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _salesReturnsAndAllowances = 0;
 
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var salesReturnsAndAllowancesAccount = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Sales Returns and Allowances"))
@@ -98,7 +98,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _costOfGoodsSold = 0;
 
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var cogsAccount = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Cost of Goods Sold"))
@@ -128,7 +128,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _operatingExpenses = 0;
 
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var operatingExpenseAccounts = context.Ledger_Accounts
                         .Where(e => e.Notes.Contains("Operating Expense"))

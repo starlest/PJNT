@@ -70,7 +70,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     _cashAndCashEquivalents = 0;
 
@@ -92,7 +92,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     _inventory = 0;
 
@@ -113,7 +113,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     _accountsReceivable = 0;
 
@@ -155,7 +155,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     _capital = 0;
 
@@ -176,7 +176,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     _retainedEarnings = 0;
 
@@ -215,7 +215,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     _accountsPayable = 0;
 
@@ -237,7 +237,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext())
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     _totalCurrentLiabilities = _accountsPayable;
 
