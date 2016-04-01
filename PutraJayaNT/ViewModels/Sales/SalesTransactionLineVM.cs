@@ -58,18 +58,24 @@
                 OnPropertyChanged("Quantity");
                 OnPropertyChanged("Pieces");
                 OnPropertyChanged("Units");
+                OnPropertyChanged("SecondaryUnits");
             }
         }
 
-        public string Unit => Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit;
+        public string Unit => Model.Item.PiecesPerSecondaryUnit == 0 ? 
+            Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit :
+            Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
 
-        public string SecondaryUnit => Model.Item.PiecesPerSecondaryUnit == 0 ? null : Model.Item.SecondaryUnitName + "/" + Model.Item.PiecesPerSecondaryUnit;
+        public string SecondaryUnit => Model.Item.PiecesPerSecondaryUnit == 0 ? null : 
+            Model.Item.SecondaryUnitName + "/" + Model.Item.PiecesPerSecondaryUnit;
 
         public int Units => Model.Quantity / Model.Item.PiecesPerUnit;
 
-        public int? SecondaryUnits => Model.Item.PiecesPerSecondaryUnit == 0 ? (int?) null : Model.Quantity % Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
+        public int? SecondaryUnits => Model.Item.PiecesPerSecondaryUnit == 0 ? (int?) null : 
+            Model.Quantity % Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
 
-        public int Pieces => Model.Quantity % Model.Item.PiecesPerUnit;
+        public int Pieces => Model.Item.PiecesPerSecondaryUnit == 0 ? Model.Quantity % Item.PiecesPerUnit :
+            Model.Quantity % Model.Item.PiecesPerUnit % Model.Item.PiecesPerSecondaryUnit;
 
         public decimal SalesPrice
         {

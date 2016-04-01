@@ -316,7 +316,7 @@
 
         private bool AreAllFieldsFilled()
         {
-            if (_newEntryProduct != null && (_newEntryUnits != null || _newEntryPieces != null)
+            if (_newEntryProduct != null && (_newEntryUnits != null || _newEntrySecondaryUnits != null || _newEntryPieces != null)
                 && _newEntrySalesman != null) return true;
             MessageBox.Show("Please enter all fields", "Missing Fields", MessageBoxButton.OK);
             return false;

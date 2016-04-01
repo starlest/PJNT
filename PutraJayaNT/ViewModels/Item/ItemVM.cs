@@ -71,7 +71,6 @@
             }
         }
 
-
         public string SecondaryUnitName
         {
             get { return Model.SecondaryUnitName; }
@@ -105,7 +104,12 @@
             }
         }
 
-        public string Unit => Model.UnitName + "/" + Model.PiecesPerUnit;
+        public string Unit => Model.PiecesPerSecondaryUnit == 0 ?
+            Model.UnitName + "/" + Model.PiecesPerUnit :
+            Model.UnitName + "/" + Model.PiecesPerUnit / Model.PiecesPerSecondaryUnit;
+
+        public string SecondaryUnit => Model.PiecesPerSecondaryUnit == 0 ? null :
+            Model.SecondaryUnitName + "/" + Model.PiecesPerSecondaryUnit;
 
         public decimal SalesExpense
         {

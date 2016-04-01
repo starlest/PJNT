@@ -1,7 +1,6 @@
 ﻿namespace PutraJayaNT.ViewModels.Purchase
 {
     using System.Linq;
-    using System.Windows;
     using Models.Inventory;
     using Models.Purchase;
     using MVVMFramework;
@@ -9,9 +8,6 @@
 
     public class PurchaseTransactionLineVM : ViewModelBase<PurchaseTransactionLine>
     {
-        int _pieces;
-        int _units;
-
         public Item Item
         {
             get { return Model.Item; }
@@ -50,60 +46,27 @@
             set
             {
                 Model.Quantity = value;
-                Total = value * Model.PurchasePrice;
-                OnPropertyChanged("Units");
+                UpdateTotal();
+                OnPropertyChanged("Quantity");
                 OnPropertyChanged("Pieces");
+                OnPropertyChanged("Units");
+                OnPropertyChanged("SecondaryUnits");
             }
         }
 
-        public string Unit
-        {
-            get { return Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit; }
-        }
+        public string Unit => Model.Item.PiecesPerSecondaryUnit == 0 ? Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit :
+            Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
 
-        public int Units
-        {
-            get
-            {
-                _units = Model.Quantity / Model.Item.PiecesPerUnit;
-                return _units;
-            }
-            set
-            {
-                if (value < 0)
-                {
-                    MessageBox.Show("Please enter a valid value", "Invalid Quantity", MessageBoxButton.OK);
-                    return;
-                }
+        public string SecondaryUnit => Model.Item.PiecesPerSecondaryUnit == 0 ? null : 
+            Model.Item.SecondaryUnitName + "/" + Model.Item.PiecesPerSecondaryUnit;
 
-                SetProperty(ref _units, value, "Units");
+        public int Units => Model.Quantity / Model.Item.PiecesPerUnit;
 
-                Model.Quantity = _pieces + (_units * Model.Item.PiecesPerUnit);
-                Total = Model.Quantity * Model.PurchasePrice;
-            }
-        }
+        public int? SecondaryUnits => Model.Item.PiecesPerSecondaryUnit == 0 ? (int?)null : 
+            Model.Quantity % Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
 
-        public int Pieces
-        {
-            get
-            {
-                _pieces = Model.Quantity % Model.Item.PiecesPerUnit;
-                return _pieces;
-            }
-            set
-            {
-                if (value >= Model.Item.PiecesPerUnit || value < 0)
-                {
-                    MessageBox.Show(string.Format("Please enter a value between {0} - {1}", 0, Model.Item.PiecesPerUnit - 1), "Invalid Quantity", MessageBoxButton.OK);
-                    return;
-                }
-
-                SetProperty(ref _pieces, value, "Pieces");
-
-                Model.Quantity = _pieces + (_units * Model.Item.PiecesPerUnit);
-                Total = Model.Quantity * Model.PurchasePrice;
-            }
-        }
+        public int Pieces => Model.Item.PiecesPerSecondaryUnit == 0 ? Model.Quantity % Item.PiecesPerUnit :
+            Model.Quantity % Model.Item.PiecesPerUnit % Model.Item.PiecesPerSecondaryUnit;
 
         public decimal Discount
         {
@@ -127,10 +90,7 @@
             }
         }
 
-        public decimal PurchasePricePerUnit
-        {
-            get { return Model.PurchasePrice * Model.Item.PiecesPerUnit; }
-        }
+        public decimal PurchasePricePerUnit => Model.PurchasePrice * Model.Item.PiecesPerUnit;
 
         public decimal Total
         {
@@ -188,6 +148,11 @@
             };
 
             return new PurchaseTransactionLineVM { Model = newLine };
+        }
+
+        public void UpdateTotal()
+        {
+            Total = (Model.PurchasePrice - Model.Discount) * Model.Quantity;
         }
     }
 }

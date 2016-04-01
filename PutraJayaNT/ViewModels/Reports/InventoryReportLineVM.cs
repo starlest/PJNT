@@ -25,7 +25,11 @@
 
         public decimal PurchasePrice => _item.PurchasePrice * _item.PiecesPerUnit;
 
-        public string Unit => _item.UnitName + "/" + _item.PiecesPerUnit;
+        public string Unit => _item.PiecesPerSecondaryUnit == 0 ? _item.UnitName + "/" + _item.PiecesPerUnit :
+            _item.UnitName + "/" + _item.PiecesPerUnit / _item.PiecesPerSecondaryUnit;
+
+        public string SecondaryUnit => _item.PiecesPerSecondaryUnit == 0 ? null :
+            _item.SecondaryUnitName + "/" + _item.PiecesPerSecondaryUnit;
 
         public int Quantity
         {
@@ -35,13 +39,18 @@
                 SetProperty(ref _quantity, value, "Quantity");
                 OnPropertyChanged("Units");
                 OnPropertyChanged("Pieces");
+                OnPropertyChanged("SecondaryUnits");
                 OnPropertyChanged("InventoryValue");
             }
         }
 
         public int Units => _quantity / _item.PiecesPerUnit;
 
-        public int Pieces => _quantity % _item.PiecesPerUnit;
+        public int? SecondaryUnits => _item.PiecesPerSecondaryUnit == 0 ? (int?)null :
+            _quantity % _item.PiecesPerUnit / _item.PiecesPerSecondaryUnit;
+
+        public int Pieces => _item.PiecesPerSecondaryUnit == 0 ? _quantity % Item.PiecesPerUnit : 
+            _quantity % _item.PiecesPerUnit % _item.PiecesPerSecondaryUnit;
 
         public decimal InventoryValue => _item.PurchasePrice * _quantity;
 

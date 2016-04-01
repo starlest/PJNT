@@ -20,7 +20,7 @@
 
         public static int GetRemainingStock(Item item, Warehouse warehouse)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(GetDBName()))
             {
                 var stock = context.Stocks.FirstOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID));
                 return stock?.Pieces ?? 0;
@@ -29,7 +29,7 @@
 
         public static DateTime GetCurrentDate()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(GetDBName()))
                 return context.Dates.First(e => e.Name.Equals("Current")).DateTime;          
         }
 

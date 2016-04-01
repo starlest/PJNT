@@ -56,7 +56,7 @@
         public int Balance
         {
             get { return _balance; }
-            set { SetProperty(ref _balance, value, "Balance"); }
+            set { SetProperty(ref _balance, value, () => Balance); }
         }
 
         public string StringBalance => _balance / Item.PiecesPerUnit + "/" + _balance % Item.PiecesPerUnit;

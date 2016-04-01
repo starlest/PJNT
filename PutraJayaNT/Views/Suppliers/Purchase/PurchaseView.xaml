@@ -98,25 +98,29 @@
                 <ComboBox Name="NewItemIDComboBox" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding SupplierItems, Mode=OneWay}" DisplayMemberPath="ID" 
                           SelectedItem="{Binding NewEntryItem}" PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
                 <TextBlock Grid.Row="0" Grid.Column="4" Text="Product:" />
-                <Grid Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="2">
+                <Grid Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="0.25*" />
-                        <ColumnDefinition Width="0.25*" />
+                        <ColumnDefinition Width="0.5*" />
+                        <ColumnDefinition Width="0.5*" />
+                        <ColumnDefinition Width="0.5*" />
                     </Grid.ColumnDefinitions>
                     <ComboBox ItemsSource="{Binding SupplierItems, Mode=OneWay}" DisplayMemberPath="Name" SelectedItem="{Binding NewEntryItem}" 
                               PreviewKeyDown="ComboBox_OnPreviewKeyDown" />
-                    <TextBox Grid.Column="1" Text="{Binding NewEntryUnitName}" IsReadOnly="True" IsTabStop="False" />
-                    <TextBox Grid.Column="2" Text="{Binding NewEntryPiecesPerUnit}" IsReadOnly="True" IsTabStop="False" />
+                    <TextBox Grid.Column="1" Margin="10, 5, 0, 0" Text="{Binding NewEntryUnit}" IsReadOnly="True" IsTabStop="False" />
+                    <TextBox Grid.Column="2" Margin="10, 5, 0, 0" Text="{Binding NewEntrySecondaryUnits}" IsReadOnly="True" IsTabStop="False" />
                 </Grid>
-                <TextBlock Grid.Row="1" Grid.Column="0" FontSize="17" Text="Units/Pieces:" />
+                <TextBlock Grid.Row="1" Grid.Column="0" FontSize="17" Text="Quantity:" />
                 <Grid Grid.Row="1" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <TextBox VerticalAlignment="Center" Text="{Binding NewEntryUnits}" utilities:FocusAdvancement.AdvancesByEnterKey="True" />
-                    <TextBox Grid.Column="1" Text="{Binding NewEntryPieces}" utilities:FocusAdvancement.AdvancesByEnterKey="True" />
+                    <TextBox Text="{Binding NewEntryUnits}" utilities:FocusAdvancement.AdvancesByEnterKey="True" />
+                    <TextBox Grid.Column="1" Text="{Binding NewEntrySecondaryUnits}" utilities:FocusAdvancement.AdvancesByEnterKey="True"
+                             IsEnabled="{Binding IsSecondaryUnitUsed}" />
+                    <TextBox Grid.Column="2" Text="{Binding NewEntryPieces}" utilities:FocusAdvancement.AdvancesByEnterKey="True" />
                 </Grid>
                 <TextBlock Grid.Row="1" Grid.Column="2" Text="Price:" />
                 <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding NewEntryPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" 
@@ -150,8 +154,10 @@
                 <DataGridTextColumn Header="Warehouse" Width="1*" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="2*" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Unit" Width="0.8*" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="SUnit" Width="0.8*" Binding="{Binding SecondaryUnit}" />
                 <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="SUnits" Width="1*" Binding="{Binding SecondaryUnits}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Price" Width="1*" Binding="{Binding PurchasePrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Discount" Width="1*" Binding="{Binding Discount, StringFormat=N2}" />

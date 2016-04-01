@@ -15,7 +15,7 @@
         #region Backing Fields
         private WarehouseVM _newEntryWarehouse;
         private ItemVM _newEntryItem;
-        private string _newEntryUnitName;
+        private string _newEntryUnit;
         private int? _newEntryUnits;
         private int? _newEntryPieces;
         private int? _newEntryPiecesPerUnit;
@@ -24,6 +24,9 @@
         private decimal _newEntryDiscount;
         private bool _newEntrySubmitted;
         private ICommand _newEntryCommand;
+        private bool _isSecondaryUnitUsed;
+        private string _newEntrySecondaryUnit;
+        private int? _newEntrySecondaryUnits;
         #endregion
 
         public PurchaseNewEntryVM(PurchaseVM parentVM)
@@ -49,22 +52,38 @@
             {
                 SetProperty(ref _newEntryItem, value, () => NewEntryItem);
                 if (_newEntryItem == null) return;
-                NewEntryUnitName = _newEntryItem.UnitName;
-                NewEntryPrice = _newEntryItem.PurchasePrice;
-                NewEntryPiecesPerUnit = _newEntryItem.PiecesPerUnit;
+                SetNewEntryProductProperties();
             }
         }
 
-        public string NewEntryUnitName
+        public string NewEntryUnit
         {
-            get { return _newEntryUnitName; }
-            set { SetProperty(ref _newEntryUnitName, value, () => NewEntryUnitName); }
+            get { return _newEntryUnit; }
+            set { SetProperty(ref _newEntryUnit, value, () => NewEntryUnit); }
+        }
+
+        public bool IsSecondaryUnitUsed
+        {
+            get { return _isSecondaryUnitUsed; }
+            set { SetProperty(ref _isSecondaryUnitUsed, value, () => IsSecondaryUnitUsed); }
+        }
+
+        public string NewEntrySecondaryUnit
+        {
+            get { return _newEntrySecondaryUnit; }
+            set { SetProperty(ref _newEntrySecondaryUnit, value, () => NewEntrySecondaryUnit); }
         }
 
         public int? NewEntryUnits
         {
             get { return _newEntryUnits; }
             set { SetProperty(ref _newEntryUnits, value, () => NewEntryUnits); }
+        }
+
+        public int? NewEntrySecondaryUnits
+        {
+            get { return _newEntrySecondaryUnits; }
+            set { SetProperty(ref _newEntrySecondaryUnits, value, () => NewEntrySecondaryUnits); }
         }
 
         public int? NewEntryPieces
@@ -140,9 +159,21 @@
         }
 
         #region Helper Methods
+        private void SetNewEntryProductProperties()
+        {
+            NewEntryUnit = _newEntryItem.PiecesPerSecondaryUnit != 0 ? _newEntryItem.UnitName + "/" +
+                _newEntryItem.PiecesPerUnit / _newEntryItem.PiecesPerSecondaryUnit :
+                _newEntryItem.UnitName + "/" + _newEntryItem.PiecesPerUnit;
+            NewEntrySecondaryUnit = _newEntryItem.PiecesPerSecondaryUnit != 0 ? _newEntryItem.SecondaryUnitName + "/" + _newEntryItem.PiecesPerSecondaryUnit : null;
+            NewEntryPrice = _newEntryItem.PurchasePrice;
+            NewEntryPiecesPerUnit = _newEntryItem.PiecesPerUnit;
+            IsSecondaryUnitUsed = _newEntryItem.PiecesPerSecondaryUnit != 0;
+        }
+
         private void AddNewEntryToTransaction()
         {
-            var newEntryQuantity = (_newEntryUnits ?? 0) * _newEntryItem.PiecesPerUnit + (_newEntryPieces ?? 0);
+            var newEntryQuantity = (_newEntryUnits ?? 0) * _newEntryItem.PiecesPerUnit + 
+                (_newEntrySecondaryUnits ?? 0) * _newEntryItem.PiecesPerSecondaryUnit + (_newEntryPieces ?? 0);
 
             foreach (var line in _parentVM.DisplayedLines)
             {
@@ -174,16 +205,20 @@
             NewEntryItem = null;
             NewEntryPieces = null;
             NewEntryUnits = null;
+            NewEntrySecondaryUnits = null;
             NewEntryPrice = 0;
             NewEntryDiscount = 0;
-            NewEntryUnitName = null;
+            NewEntryUnit = null;
+            NewEntrySecondaryUnit = null;
             NewEntryPiecesPerUnit = null;
+            IsSecondaryUnitUsed = false;
         }
 
         private bool AreAllEntryFieldsFilled()
         {
             if (_newEntryItem != null && _newEntryWarehouse != null &&
-                (_newEntryUnits != null || _newEntryPieces != null)) return true;
+                (_newEntryUnits != null || _newEntryPieces != null || _newEntrySecondaryUnits != null))
+                return true;
             MessageBox.Show("Please enter all the required fields", "Missing field(s)", MessageBoxButton.OK);
             return false;
         }

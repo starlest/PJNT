@@ -435,6 +435,7 @@
                     }
 
                     SalesTransactionPrintHelper.PrintSalesTransactionFromDatabaseInvoice(Model);
+                    Model.InvoicePrinted = true;
                 }));
             }
         }

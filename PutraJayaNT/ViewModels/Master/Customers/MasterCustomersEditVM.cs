@@ -158,7 +158,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
 
         private bool AreEditFieldsValid()
         {
-            return _editName != null && _editAddress != null && _editCity != null && _editAddress != null;
+            return _editName != null && _editAddress != null && _editCity != null;
         }
 
         private void UpdateEditingCustomerUIValues()
