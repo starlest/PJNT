@@ -4,7 +4,6 @@ using System.Windows;
 using System.Configuration;
 using PutraJayaNT.Utilities;
 using System.Linq;
-using PutraJayaNT.Models;
 
 namespace PutraJayaNT.Views.Menu
 {

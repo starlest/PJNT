@@ -139,7 +139,7 @@
             {
                 if (value != null && ((_editCustomer == null && !value.Name.Equals("Kontan")) || (_editCustomer != null && !value.ID.Equals(_editCustomer.ID))))
                 {
-                    if (DoesCustomerHasMaximumNumberOfInvoices(value) && DoesCustomerHasOverduedInvoices(value))
+                    if (DoesCustomerHasMaximumNumberOfInvoices(value) || DoesCustomerHasOverduedInvoices(value))
                     {
                         if (!UtilityMethods.GetVerification()) return;
                     }
@@ -487,8 +487,6 @@
 
         private void SetTransactionID()
         {
-            InvoiceNotIssued = true;
-
             var month = _transactionDate.Month;
             var year = _transactionDate.Year;
             var leadingIDString = "M" + (long)((year - 2000) * 100 + month) + "-";

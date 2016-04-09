@@ -203,6 +203,8 @@
                         fromDate);
                     balance += SumOfStockAdjustmentTransactionLinesValueFromBeginningPeriodToSelectedDate(context, warehouse.Model,
                         fromDate);
+                    balance += SumOfStockMovementTransactionLinesValueFromBeginningPeriodToSelectedDate(context, warehouse.Model,
+                        fromDate);
                 }
             }
 
@@ -264,6 +266,28 @@
                 && line.StockAdjustmentTransaction.Date < fromDate)
                 .ToList();
             return stockAdjustmentTransactionLinesFromDatabase.Sum(line => line.Quantity);
+        }
+
+        private int SumOfStockMovementTransactionLinesValueFromBeginningPeriodToSelectedDate(ERPContext context, Warehouse warehouse,
+            DateTime fromDate)
+        {
+            var beginningPeriodDate = fromDate.AddDays(-fromDate.Date.Day + 1);
+            var stockMovementFromTransactionLinesFromDatabase = context.StockMovementTransactionLines.Where(
+                line =>
+                    line.ItemID.Equals(_selectedProduct.ID) &&
+                    line.StockMovementTransaction.FromWarehouse.ID.Equals(warehouse.ID)
+                    && line.StockMovementTransaction.Date >= beginningPeriodDate
+                    && line.StockMovementTransaction.Date < fromDate)
+                .ToList();
+            var stockMovementToTransactionLinesFromDatabase = context.StockMovementTransactionLines.Where(
+                line =>
+                    line.ItemID.Equals(_selectedProduct.ID) &&
+                    line.StockMovementTransaction.ToWarehouse.ID.Equals(warehouse.ID)
+                    && line.StockMovementTransaction.Date >= beginningPeriodDate
+                    && line.StockMovementTransaction.Date < fromDate)
+                .ToList();
+            var quantity = stockMovementToTransactionLinesFromDatabase.Sum(line => line.Quantity);
+            return stockMovementFromTransactionLinesFromDatabase.Aggregate(quantity, (current, line) => current - line.Quantity);
         }
 
         private int GetPeriodBeginningBalance(int year, int month)

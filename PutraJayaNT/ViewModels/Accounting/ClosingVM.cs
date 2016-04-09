@@ -1,7 +1,6 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Models.Accounting;
 using PutraJayaNT.Utilities;
-using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Transactions;
@@ -10,30 +9,30 @@ namespace PutraJayaNT.ViewModels.Accounting
 {
     using Utilities.ModelHelpers;
 
-    class ClosingVM : ViewModelBase
+    internal class ClosingVM : ViewModelBase
     {
-        int _periodYear;
-        int _period;
+        private int _periodYear;
+        private int _period;
 
         public ClosingVM()
         {
             using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
-                _periodYear = context.Ledger_General.FirstOrDefault().PeriodYear;
-                _period = context.Ledger_General.FirstOrDefault().Period;
+                _periodYear = context.Ledger_General.First().PeriodYear;
+                _period = context.Ledger_General.First().Period;
             }
         }
 
         public int PeriodYear
         {
             get { return _periodYear; }
-            set { SetProperty(ref _periodYear, value, "PeriodYear"); }
+            set { SetProperty(ref _periodYear, value, () => PeriodYear); }
         }
 
         public int Period
         {
             get { return _period; }
-            set { SetProperty(ref _period, value, "Period"); }
+            set { SetProperty(ref _period, value, () => Period); }
         }
 
         public void Close(BackgroundWorker worker)
@@ -46,13 +45,6 @@ namespace PutraJayaNT.ViewModels.Accounting
                     .Include("LedgerGeneral")
                     .Include("LedgerAccountBalances")
                     .ToList();
-
-                var retainedEarnings = context.Ledger_Accounts
-                    .Include("LedgerGeneral")
-                    .Include("LedgerAccountBalances") 
-                    .Include("LedgerTransactionLines")               
-                    .Where(e => e.Name.Equals("Retained Earnings"))
-                    .FirstOrDefault();
 
                 var revenueAndExpenseAccounts = context.Ledger_Accounts
                     .Include("LedgerGeneral")
@@ -86,8 +78,6 @@ namespace PutraJayaNT.ViewModels.Accounting
                         account.LedgerGeneral.Period = 1;
                     }
 
-                    var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year)).FirstOrDefault();
-
                     // Close the balances
                     if (account.Class.Equals("Asset") || account.Class.Equals("Expense"))
                         CloseAssetOrExpenseAccount(account, context);                     
@@ -105,14 +95,13 @@ namespace PutraJayaNT.ViewModels.Accounting
             OnPropertyChanged("Period");
         }
 
-        private void CloseRevenueOrExpenseAccountToRetainedEarnings(LedgerAccount account, ERPContext context)
+        private static void CloseRevenueOrExpenseAccountToRetainedEarnings(LedgerAccount account, ERPContext context)
         {
             var retainedEarnings = context.Ledger_Accounts
                 .Include("LedgerGeneral")
                 .Include("LedgerAccountBalances")
                 .Include("LedgerTransactionLines")
-                .Where(e => e.Name.Equals("Retained Earnings"))
-                .FirstOrDefault();
+                .Single(e => e.Name.Equals("Retained Earnings"));
 
             if (account.Class.Equals("Expense"))
             {
@@ -143,8 +132,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         private void CloseAssetOrExpenseAccount(LedgerAccount account, ERPContext context)
         {
-            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year)).FirstOrDefault();
-
+            var periodYearBalances = account.LedgerAccountBalances.First(balance => balance.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year));
             switch (Period)
             {
                 case 1:
@@ -243,15 +231,13 @@ namespace PutraJayaNT.ViewModels.Accounting
                     account.LedgerGeneral.Debit = 0;
                     account.LedgerGeneral.Credit = 0;
                     break;
-                default:
-                    break;
             }
+            context.SaveChanges();
         }
 
         private void CloseLiabilityOrRevenueAccount(LedgerAccount account, ERPContext context)
         {
-            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year)).FirstOrDefault();
-
+            var periodYearBalances = account.LedgerAccountBalances.First(balance => balance.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year));
             switch (Period)
             {
                 case 1:
@@ -350,9 +336,8 @@ namespace PutraJayaNT.ViewModels.Accounting
                     account.LedgerGeneral.Debit = 0;
                     account.LedgerGeneral.Credit = 0;
                     break;
-                default:
-                    break;
             }
+            context.SaveChanges();
         }
     }
 }

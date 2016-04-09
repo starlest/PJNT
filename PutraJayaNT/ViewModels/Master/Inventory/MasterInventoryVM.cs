@@ -4,11 +4,11 @@
     using Models.Inventory;
     using Utilities;
     using System.Collections.ObjectModel;
-    using System.Data.Entity;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
     using Item;
+    using Utilities.ModelHelpers;
     using ViewModels.Suppliers;
     using Views.Master.Inventory;
 
@@ -136,8 +136,8 @@
                 return _activateItemCommand ?? (_activateItemCommand = new RelayCommand(() =>
                 {
                     if (!IsThereLineSelected() || !IsConfirmationYes()) return;
-                    if (_selectedLine.Active) DeactivateItemInDatabase(_selectedLine.Model);
-                    else ActivateItemInDatabase(_selectedLine.Model);
+                    if (_selectedLine.Active) InventoryHelper.DeactivateItemInDatabase(_selectedLine.Model);
+                    else InventoryHelper.ActivateItemInDatabase(_selectedLine.Model);
                     _selectedLine.Active = !IsActiveChecked;
                 }));
             }
@@ -149,7 +149,7 @@
             {
                 return _editItemCommand ?? (_editItemCommand = new RelayCommand(() =>
                 {
-                    if (!IsEditItemSelected()) return;
+                    if (!IsThereLineSelected()) return;
                     ShowEditWindow();
                     UpdateItems();
                 }));
@@ -167,13 +167,6 @@
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
             editWindow.ShowDialog();
-        }
-
-        private bool IsEditItemSelected()
-        {
-            if (_selectedLine != null) return true;
-            MessageBox.Show("Please select an item to edit.", "No Selection", MessageBoxButton.OK);
-            return false;
         }
 
         public void UpdateCategories()
@@ -286,26 +279,6 @@
                 if (_selectedItem.Active.Equals(_isActiveChecked)) DisplayedItems.Add(_selectedItem);
             }
             else if (_selectedSupplier != null) DisplaySupplierItems();
-        }
-
-        public static void DeactivateItemInDatabase(Item item)
-        {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
-            {
-                context.Entry(item).State = EntityState.Modified;
-                item.Active = false;
-                context.SaveChanges();
-            }
-        }
-
-        public static void ActivateItemInDatabase(Item item)
-        {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
-            {
-                context.Entry(item).State = EntityState.Modified;
-                item.Active = true;
-                context.SaveChanges();
-            }
         }
 
         private bool IsThereLineSelected()

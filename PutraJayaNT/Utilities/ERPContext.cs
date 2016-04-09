@@ -7,14 +7,13 @@ namespace PutraJayaNT.Utilities
     using Models.Accounting;
     using Models.Inventory;
     using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;
     using Models.Sales;
     using Models.Purchase;
     using Models.StockCorrection;
     using Models.Salesman;
     using System.Data.Entity.ModelConfiguration.Conventions;
 
-    public partial class ERPContext : DbContext
+    public class ERPContext : DbContext
     {
         public ERPContext(string dbName)
             : base(GetConnectionString(dbName))
@@ -73,14 +72,6 @@ namespace PutraJayaNT.Utilities
         {
             modelBuilder.Conventions.Remove<DecimalPropertyConvention>();
             modelBuilder.Conventions.Add(new DecimalPropertyConvention(50, 30));
-        }
-    }
-
-    public class MigrationsContextFactory : IDbContextFactory<ERPContext>
-    {
-        public ERPContext Create()
-        {
-            return new ERPContext("putrajayant");
         }
     }
 }

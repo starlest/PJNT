@@ -21,6 +21,8 @@ namespace PutraJayaNT.ViewModels.Accounting
         decimal _grossMargin;
         decimal _operatingExpenses;
         decimal _operatingIncome;
+        private decimal _netIncome;
+        private decimal _otherIncome;
 
         public IncomeStatementVM()
         {
@@ -68,6 +70,27 @@ namespace PutraJayaNT.ViewModels.Accounting
                 }
 
                 return _revenues;
+            }
+        }
+
+        public decimal OtherIncome
+        {
+            get
+            {
+                _otherIncome = 0;
+
+                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                {
+                    var otherIncome = context.Ledger_Accounts
+                        .Where(e => e.Name.Equals("Other Income"))
+                        .Include("LedgerGeneral")
+                        .Include("LedgerAccountBalances")
+                        .FirstOrDefault();
+
+                    _otherIncome += FindCurrentBalance(otherIncome);
+                }
+
+                return _otherIncome;
             }
         }
 
@@ -152,6 +175,15 @@ namespace PutraJayaNT.ViewModels.Accounting
             }
         }
 
+        public decimal NetIncome
+        {
+            get
+            {
+                _netIncome = _operatingIncome + _otherIncome;
+                return _netIncome;
+            }
+        }
+
         private void RefreshIncomeStatement()
         {
             OnPropertyChanged("ForTheDate");
@@ -161,6 +193,8 @@ namespace PutraJayaNT.ViewModels.Accounting
             OnPropertyChanged("GrossMargin");
             OnPropertyChanged("OperatingExpenses");
             OnPropertyChanged("OperatingIncome");
+            OnPropertyChanged("OtherIncome");
+            OnPropertyChanged("NetIncome");
         }
 
         private decimal FindCurrentBalance(LedgerAccount account)

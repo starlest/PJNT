@@ -1,6 +1,5 @@
 ﻿using MVVMFramework;
 using PutraJayaNT.Utilities;
-using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -122,8 +121,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 var accounts = context.Ledger_Accounts
                     .Where(e => !e.Name.Equals("- Accounts Payable"))
-                    .OrderBy(e => e.Class)
-                    .ThenBy(e => e.Name);
+                    .OrderBy(e => e.Name);
                 foreach (var account in accounts)
                     Accounts.Add(new LedgerAccountVM { Model = account });
             }
@@ -215,8 +213,6 @@ namespace PutraJayaNT.ViewModels.Accounting
                     break;
                 case 12:
                     _selectedBeginningBalance = periodYearBalances.Balance11;
-                    break;
-                default:
                     break;
             }
         }

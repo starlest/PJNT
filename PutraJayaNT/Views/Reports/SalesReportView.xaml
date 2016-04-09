@@ -61,6 +61,7 @@
                       IsReadOnly="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Date" Width="1*" Binding="{Binding SalesTransaction.Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                    <DataGridTextColumn Header="Issued Date" Width="1*" Binding="{Binding SalesTransaction.InvoiceIssued, StringFormat={}{0:dd/MM/yyyy}}" />
                     <DataGridTextColumn Header="Sales ID" Width="1*" Binding="{Binding SalesTransaction.SalesTransactionID}" />
                     <DataGridTextColumn Header="Customer" Width="1*" Binding="{Binding SalesTransaction.Customer.Name}" />
                     <DataGridTextColumn Header="Product ID" Width="1*" Binding="{Binding Item.ItemID}" />

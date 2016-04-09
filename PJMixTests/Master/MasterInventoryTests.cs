@@ -44,18 +44,18 @@
             Assert.AreEqual(result1, result2);
         }
 
-        [TestMethod]
-        public void TestActivateItem()
-        {
-            var testItem = DatabaseItemHelper.FirstOrDefault(item =>  item.ItemID.Equals("PLP001"));
-            MasterInventoryVM.DeactivateItemInDatabase(testItem);
-            testItem = DatabaseItemHelper.FirstOrDefault(item => item.ItemID.Equals("PLP001"));
-            Assert.AreEqual(testItem.Active, false);
+        //[TestMethod]
+        //public void TestActivateItem()
+        //{
+        //    var testItem = DatabaseItemHelper.FirstOrDefault(item =>  item.ItemID.Equals("PLP001"));
+        //    MasterInventoryVM.DeactivateItemInDatabase(testItem);
+        //    testItem = DatabaseItemHelper.FirstOrDefault(item => item.ItemID.Equals("PLP001"));
+        //    Assert.AreEqual(testItem.Active, false);
 
-            MasterInventoryVM.ActivateItemInDatabase(testItem);
-            testItem = DatabaseItemHelper.FirstOrDefault(item => item.ItemID.Equals("PLP001"));
-            Assert.AreEqual(testItem.Active, true);
-        }
+        //    MasterInventoryVM.ActivateItemInDatabase(testItem);
+        //    testItem = DatabaseItemHelper.FirstOrDefault(item => item.ItemID.Equals("PLP001"));
+        //    Assert.AreEqual(testItem.Active, true);
+        //}
 
         private static bool CompareItems(Item item1, Item item2)
         {

@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.Utilities.ModelHelpers
 {
+    using System.Data.Entity;
     using System.Linq;
     using System.Transactions;
     using System.Windows;
@@ -50,6 +51,26 @@
             toItem.SecondaryUnitName = fromItem.SecondaryUnitName;
             toItem.PiecesPerUnit = fromItem.PiecesPerUnit;
             toItem.PiecesPerSecondaryUnit = fromItem.PiecesPerSecondaryUnit;
+        }
+
+        public static void DeactivateItemInDatabase(Item item)
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                context.Entry(item).State = EntityState.Modified;
+                item.Active = false;
+                context.SaveChanges();
+            }
+        }
+
+        public static void ActivateItemInDatabase(Item item)
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                context.Entry(item).State = EntityState.Modified;
+                item.Active = true;
+                context.SaveChanges();
+            }
         }
 
         #region Add Item Helper Methods

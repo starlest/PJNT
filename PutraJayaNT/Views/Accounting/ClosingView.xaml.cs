@@ -3,16 +3,15 @@ using PutraJayaNT.ViewModels.Accounting;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace PutraJayaNT.Views.Accounting
 {
     /// <summary>
     /// Interaction logic for ClosingView.xaml
     /// </summary>
-    public partial class ClosingView : UserControl
+    public partial class ClosingView
     {
-        ClosingVM vm;
+        private readonly ClosingVM vm;
 
         public ClosingView()
         {
@@ -21,7 +20,7 @@ namespace PutraJayaNT.Views.Accounting
             DataContext = vm;
         }
 
-        bool isRunning = false;
+        private bool isRunning;
 
         private void OnClick(object sender, EventArgs e)
         {
@@ -31,28 +30,23 @@ namespace PutraJayaNT.Views.Accounting
                 return;
             }
 
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
+            var worker = new BackgroundWorker {WorkerReportsProgress = true};
             worker.DoWork += worker_DoWork;
             worker.ProgressChanged += worker_ProgressChanged;
 
-            if (!isRunning)
-            {
-                // Verification
-                if (!UtilityMethods.GetVerification()) return;
-
-                isRunning = true;
-                worker.RunWorkerAsync();
-            }
+            if (isRunning) return;
+            if (!UtilityMethods.GetVerification()) return;
+            isRunning = true;
+            worker.RunWorkerAsync();
         }
 
-        void worker_DoWork(object sender, DoWorkEventArgs e)
+        private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             vm.Close((BackgroundWorker)sender);
             isRunning = false;
         }
 
-        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbStatus.Value = e.ProgressPercentage;
         }
