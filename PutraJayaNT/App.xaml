@@ -43,6 +43,7 @@
                 <Setter Property="Height" Value="30" />
                 <Setter Property="Margin" Value="10, 5, 10, 0"/>
                 <Setter Property="IsEditable" Value="True" />
+                <Setter Property="MaxDropDownHeight" Value="300"/>
                 <EventSetter Event="PreviewKeyDown" Handler="ComboBox_KeyDown" />
             </Style>
             <Style TargetType="{x:Type ComboBoxItem}">

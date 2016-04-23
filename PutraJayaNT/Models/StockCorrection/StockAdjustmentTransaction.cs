@@ -7,6 +7,12 @@ namespace PutraJayaNT.Models.StockCorrection
 {
     public class StockAdjustmentTransaction
     {
+        public StockAdjustmentTransaction()
+        {
+            // ReSharper disable once VirtualMemberCallInContructor
+            AdjustStockTransactionLines = new ObservableCollection<StockAdjustmentTransactionLine>();
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string StockAdjustmentTransactionID { get; set; }

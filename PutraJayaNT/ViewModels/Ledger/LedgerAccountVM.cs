@@ -1,12 +1,13 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Accounting;
-using System.Collections.ObjectModel;
-
-namespace PutraJayaNT.ViewModels.Accounting
+﻿namespace PutraJayaNT.ViewModels.Ledger
 {
-    class LedgerAccountVM : ViewModelBase<LedgerAccount>
+    using System.Collections.ObjectModel;
+    using Models.Accounting;
+    using MVVMFramework;
+
+    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+    public class LedgerAccountVM : ViewModelBase<LedgerAccount>
     {
-        ObservableCollection<LedgerTransactionLineVM> _transactionLines;
+        readonly ObservableCollection<LedgerTransactionLineVM> _transactionLines;
 
         public LedgerAccountVM()
         {
@@ -78,13 +79,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         public override bool Equals(object obj)
         {
             var account = obj as LedgerAccountVM;
-            if (account == null) return false;
-            else return this.ID.Equals(account.ID);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
+            return account != null && ID.Equals(account.ID);
         }
     }
 }

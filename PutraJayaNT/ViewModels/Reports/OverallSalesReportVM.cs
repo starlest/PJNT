@@ -96,6 +96,7 @@
             {
                 return _displayCommand ?? (_displayCommand = new RelayCommand(() =>
                 {
+                    if (_selectedCustomer == null) return;
                     UpdateDisplayLines();
                     UpdateCustomers();
                 }));

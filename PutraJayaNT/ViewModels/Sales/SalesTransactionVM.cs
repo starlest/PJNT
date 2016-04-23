@@ -37,6 +37,8 @@
 
         public DateTime DueDate => Model.DueDate;
 
+        public string Note => Model.Notes;
+
         public DateTime? InvoiceIssued => Model.InvoiceIssued;
 
         public User User => Model.User;

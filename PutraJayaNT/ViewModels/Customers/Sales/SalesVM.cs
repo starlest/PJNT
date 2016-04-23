@@ -311,7 +311,7 @@
             {
                 return _saveTransactionCommand ?? (_saveTransactionCommand = new RelayCommand(() =>
                 {
-                    if (!IsConfirmationYes() || !IsTransactionCustomerSelected() || !AreThereEnoughStockForAllTransactionItems()) return;
+                    if (!IsConfirmationYes() || !IsTransactionCustomerSelected() || !AreThereEnoughStockForAllTransactionItems() || !_isSaveAllowed) return;
                     if (_editMode)
                         SaveEditedTransaction();
                     else
@@ -446,6 +446,8 @@
             {
                 return _issueInvoiceCommand ?? (_issueInvoiceCommand = new RelayCommand(() =>
                 {
+                    if (!_invoiceNotIssued) return;
+
                     if (_editMode == false)
                     {
                         MessageBox.Show("Please save the transaction first.", "Invalid Command", MessageBoxButton.OK);
@@ -489,7 +491,9 @@
         {
             var month = _transactionDate.Month;
             var year = _transactionDate.Year;
-            var leadingIDString = "M" + (long)((year - 2000) * 100 + month) + "-";
+            var selectedServer = Application.Current.FindResource("SelectedServer") as string;
+            var initialSelectedServer = selectedServer?.Substring(0, 1);
+            var leadingIDString = initialSelectedServer + (long)((year - 2000) * 100 + month) + "-";
             var endingIDString = 0.ToString().PadLeft(4, '0');
             _transactionID = leadingIDString + endingIDString;
 

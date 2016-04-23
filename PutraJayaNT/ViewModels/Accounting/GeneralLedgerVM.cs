@@ -1,14 +1,17 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Utilities;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
+﻿using System.Data.Entity;
 
 namespace PutraJayaNT.ViewModels.Accounting
 {
     using System.Windows.Input;
+    using Ledger;
+    using PutraJayaNT.Reports.Windows;
+    using System.Windows;
+    using MVVMFramework;
+    using Utilities;
+    using System.Collections.ObjectModel;
+    using System.Linq;
 
-    internal class GeneralLedgerVM : ViewModelBase
+    public class GeneralLedgerVM : ViewModelBase
     {
         #region Backing Fields
         private int _selectedMonth;
@@ -23,7 +26,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         private decimal _totalCredit;
 
         private ICommand _displayCommand;
-
+        private ICommand _printCommand;
         #endregion
 
         public GeneralLedgerVM()
@@ -34,7 +37,6 @@ namespace PutraJayaNT.ViewModels.Accounting
 
             _selectedMonth = UtilityMethods.GetCurrentDate().Month;              
             _selectedYear = UtilityMethods.GetCurrentDate().Year;
-
             UpdateAccounts();
         }
 
@@ -62,7 +64,16 @@ namespace PutraJayaNT.ViewModels.Accounting
         public LedgerAccountVM SelectedAccount
         {
             get { return _selectedAccount; }
-            set  { SetProperty(ref _selectedAccount, value, () => SelectedAccount); }
+            set
+            {
+                SetProperty(ref _selectedAccount, value, () => SelectedAccount);
+                UpdateSelectedClass();
+            }
+        }
+
+        private void UpdateSelectedClass()
+        {
+            SelectedClass = _selectedAccount?.Class;
         }
 
         public string SelectedClass
@@ -111,6 +122,18 @@ namespace PutraJayaNT.ViewModels.Accounting
             }
         }
 
+        public ICommand PrintCommand
+        {
+            get
+            {
+                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                {
+                    if (DisplayedTransactionLines.Count == 0) return;
+                    ShowPrintWindow();
+                }));
+            }
+        }
+
         #region Helper Methods
         public void UpdateAccounts()
         {
@@ -149,18 +172,18 @@ namespace PutraJayaNT.ViewModels.Accounting
                     .Include("LedgerAccount")
                     .OrderBy(e => e.LedgerTransaction.Date);
 
-                if (_selectedClass == "Asset" || _selectedClass == "Expense") _normalSeq = "Debit";
+                if (_selectedClass.Equals("Asset" ) || _selectedClass.Equals("Expense")) _normalSeq = "Debit";
                 else _normalSeq = "Credit";
 
                 foreach (var opposingLine in transactionLines.ToList().Select(
                     line => new LedgerTransactionLineVM { Model = line }).SelectMany(lineVM => lineVM.OpposingLines))
                 {
-                    opposingLine.Seq = opposingLine.Seq == "Debit" ? "Credit" : "Debit";
+                    opposingLine.Seq = opposingLine.Seq.Equals("Debit") ? "Credit" : "Debit";
 
-                    if (_normalSeq == opposingLine.Seq) balanceTracker += opposingLine.Amount;
+                    if (_normalSeq.Equals(opposingLine.Seq)) balanceTracker += opposingLine.Amount;
                     else balanceTracker -= opposingLine.Amount;
 
-                    if (opposingLine.Seq == "Debit") _totalDebit += opposingLine.Amount;
+                    if (opposingLine.Seq.Equals("Debit")) _totalDebit += opposingLine.Amount;
                     else _totalCredit += opposingLine.Amount;
 
                     opposingLine.Balance = balanceTracker;
@@ -231,6 +254,16 @@ namespace PutraJayaNT.ViewModels.Accounting
             TotalDebit = 0;
             TotalCredit = 0;
             DisplayedTransactionLines.Clear();
+        }
+
+        private void ShowPrintWindow()
+        {
+            var dailyCashFlowReportWindow = new GeneralLedgerReportWindow(this)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            dailyCashFlowReportWindow.Show();
         }
         #endregion
     }

@@ -12,7 +12,7 @@
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding  Key="F1"  Command="{Binding SaveTransactionCommand}"/>
+        <KeyBinding  Key="F1"  Command="{Binding SaveTransactionCommand}" />
         <KeyBinding  Key="F2"  Command="{Binding PrintDOCommand}"/>
         <KeyBinding  Key="F3"  Command="{Binding PrintInvoiceCommand}"/>
         <KeyBinding  Key="F4"  Command="{Binding IssueInvoiceCommand}"/>

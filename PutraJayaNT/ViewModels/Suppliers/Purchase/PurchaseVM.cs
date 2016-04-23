@@ -306,7 +306,7 @@
             {
                 return _saveTransactionCommand ?? (_saveTransactionCommand = new RelayCommand(() =>
                 {
-                    if (DisplayedLines.Count == 0 || !IsSaveConfirmationYes()) return;
+                    if (DisplayedLines.Count == 0 || !_isTransactionNotPaid || !IsSaveConfirmationYes()) return;
 
                     AssignVMPropertiesToModel();
 

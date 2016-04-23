@@ -81,7 +81,7 @@
         public CustomerVM SelectedCustomer
         {
             get { return _selectedCustomer; }
-            set { SetProperty(ref _selectedCustomer, value, "SelectedCustomer"); }
+            set { SetProperty(ref _selectedCustomer, value, () => SelectedCustomer); }
         }
 
         public string SelectedCity
@@ -172,9 +172,6 @@
         public void UpdateListedCustomers()
         {
             var oldSelectedCustomer = _selectedCustomer;
-
-            Customers.Clear();
-            Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
             using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customersReturnedFromDatabase = _selectedCustomerGroup.Name.Equals("All") ? 
@@ -182,7 +179,8 @@
                     context.Customers.Include("Group").Where(
                         customer => customer.Group.ID.Equals(_selectedCustomerGroup.ID))
                     .OrderBy(customer => customer.Name);
-
+                Customers.Clear();
+                Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
                 foreach (var customer in customersReturnedFromDatabase.OrderBy(customer => customer.Name))
                     Customers.Add(new CustomerVM {Model = customer});
             }
@@ -202,12 +200,14 @@
             using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
                 var customersReturnedFromDatabase = context.Customers.Include("Group").OrderBy(customer => customer.Name);
-                foreach (
-                    var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
+                foreach (var customer in customersReturnedFromDatabase)
+                {
+                    if (Cities.Contains(customer.City)) continue;
                     Cities.Add(customer.City);
+                }
+                ArrangeCitiesAlphabetically();
             }
 
-            ArrangeCitiesAlphabetically();
             UpdateSelectedCity(oldSelectedCity);
         }
 

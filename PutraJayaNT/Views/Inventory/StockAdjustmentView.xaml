@@ -40,16 +40,23 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1.5*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Foreground="Blue" Text="ID:" />
-                <TextBox Name="TransactionIDTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding TransactionID, UpdateSourceTrigger=Explicit}" MaxLength="12" KeyDown="TextBox_KeyDown" />
+                <TextBox Name="TransactionIDTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding TransactionID, UpdateSourceTrigger=Explicit}"
+                         MaxLength="12" KeyDown="TextBox_KeyDown" />
                 <TextBlock Grid.Row="0"  Grid.Column="2" Foreground="Blue" Text="Description:" />
-                <TextBox  Grid.Row="0" Grid.Column="3" Text="{Binding TransactionDescription, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" IsEnabled="{Binding IsNotEditMode}" />
+                <TextBox  Grid.Row="0" Grid.Column="3" Text="{Binding TransactionDescription, UpdateSourceTrigger=PropertyChanged}" 
+                          MaxLength="100" IsEnabled="{Binding IsNotEditMode}" />
+                <TextBlock Grid.Row="0" Grid.Column="5" Foreground="Blue" Text="Date:" />
+                <DatePicker Grid.Row="0" Grid.Column="6" SelectedDate="{Binding TransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedDateFormat="Long" IsEnabled="False" />
             </Grid>
         </Border>
         <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="2">
-            <Grid>
+            <Grid DataContext="{Binding NewEntryVM}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
@@ -94,8 +101,8 @@
                 <Button Grid.Row="1" Grid.Column="6" Margin="10" Content="Enter" Command="{Binding NewEntryCommand}" IsEnabled="{Binding IsNotEditMode}" />
             </Grid>
         </Border>
-        <DataGrid Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" Grid.Row="3" ItemsSource="{Binding Lines}" SelectedItem="{Binding SelectedLine}" 
-                  IsEnabled="{Binding IsNotEditMode}" IsReadOnly="True" >
+        <DataGrid Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" Grid.Row="3" ItemsSource="{Binding DisplayedLines}" 
+                  SelectedItem="{Binding SelectedLine}" IsEnabled="{Binding IsNotEditMode}" IsReadOnly="True" >
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Delete" Command="{Binding DeleteLineCommand}" />

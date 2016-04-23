@@ -12,11 +12,19 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="0.125*" />
             <RowDefinition Height="0.375*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="0.125*" />
         </Grid.RowDefinitions>
         <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.2*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Content="Print" Command="{Binding PrintCommand}" />
+        </Grid>
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
@@ -52,7 +60,7 @@
             <TextBox Grid.Row="2" Grid.Column="7" Foreground="Red" Text="{Binding SelectedEndingBalance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"
                          IsEnabled="False" />
         </Grid>
-        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" RowHeaderWidth="40" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedTransactionLines}"
+        <DataGrid Grid.Row="2" Grid.ColumnSpan="2" RowHeaderWidth="40" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedTransactionLines}"
                   CanUserSortColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Width="1*" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
@@ -64,7 +72,7 @@
                 <DataGridTextColumn Header="Balance" Width="1*" Binding="{Binding Balance, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />

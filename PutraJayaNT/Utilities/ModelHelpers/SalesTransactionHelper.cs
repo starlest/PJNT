@@ -40,13 +40,13 @@
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext(UtilityMethods.GetDBName());
-
                 var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context,
                     editedSalesTransaction);
                 AssignEditedPropertiesToSalesTransactionFromDatabaseContext(editedSalesTransaction, salesTransactionFromDatabaseContext);
                 AttachSalesTransactionPropertiesToDatabaseContext(context, salesTransactionFromDatabaseContext);
                 AssignEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(context, editedSalesTransaction,
                     salesTransactionFromDatabaseContext);
+                context.SaveChanges();
                 ts.Complete();
             }
 
@@ -90,7 +90,7 @@
                 salesTransactionFromDatabase.InvoiceIssued = UtilityMethods.GetCurrentDate().Date;
                 RecordSalesRevenueRecognitionLedgerTransactionInDatabaseContext(context, salesTransactionFromDatabase);
                 RecordCostOfGoodsSoldLedgerTransactionInDatabaseContext(context, salesTransactionFromDatabase);
-                IncreaseSoldOrReturnedOfSalesTransactionItemsInDatabaseContext(context, salesTransactionFromDatabase);
+                //IncreaseSoldOrReturnedOfSalesTransactionItemsInDatabaseContext(context, salesTransactionFromDatabase);
 
                 var user = Application.Current.FindResource("CurrentUser") as User;
                 salesTransactionFromDatabase.User = context.Users.Single(e => e.Username.Equals(user.Username));
@@ -262,45 +262,6 @@
         #endregion
 
         #region Issue Invoice Helper Methods
-        private static void IncreaseSoldOrReturnedOfSalesTransactionItemsInDatabaseContext(ERPContext context, SalesTransaction salesTransaction)
-        {
-            foreach (var line in salesTransaction.SalesTransactionLines.ToList())
-            {
-                var itemID = line.Item.ItemID;
-
-                var purchases = context.PurchaseTransactionLines
-                    .Include("PurchaseTransaction")
-                    .Where(purchaseTransaction => purchaseTransaction.ItemID == itemID && purchaseTransaction.SoldOrReturned < purchaseTransaction.Quantity)
-                    .OrderBy(purchaseTransactionLine => purchaseTransactionLine.PurchaseTransactionID)
-                    .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
-                    .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.PurchasePrice)
-                    .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Discount)
-                    .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.WarehouseID)
-                    .ToList();
-
-                var tracker = line.Quantity;
-
-                foreach (var purchase in purchases)
-                {
-                    var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
-
-                    if (tracker <= availableQuantity)
-                    {
-                        purchase.SoldOrReturned += tracker;
-                        break;
-                    }
-
-                    if (tracker > availableQuantity)
-                    {
-                        purchase.SoldOrReturned += availableQuantity;
-                        tracker -= availableQuantity;
-                    }
-                }
-            }
-
-            context.SaveChanges();
-        }
-
         private static void RecordSalesRevenueRecognitionLedgerTransactionInDatabaseContext(ERPContext context, SalesTransaction salesTransaction)
         {
             var salesRevenueRecognitionLedgerTransaction = new LedgerTransaction();
@@ -314,7 +275,7 @@
 
         private static void RecordCostOfGoodsSoldLedgerTransactionInDatabaseContext(ERPContext context, SalesTransaction salesTransaction)
         {
-            var costOfGoodsSoldAmount = CalculateCOGS(salesTransaction);
+            var costOfGoodsSoldAmount = CalculateCOGSAndIncreaseSoldOrReturned(context, salesTransaction);
 
             var costOfGoodsSoldLedgerTransaction = new LedgerTransaction();
             if (!LedgerTransactionHelper.AddTransactionToDatabase(context, costOfGoodsSoldLedgerTransaction, UtilityMethods.GetCurrentDate().Date, salesTransaction.SalesTransactionID, "Cost of Goods Sold")) return;
@@ -324,64 +285,63 @@
             context.SaveChanges();
         }
 
-        private static decimal CalculateCOGS(SalesTransaction salesTransaction)
+        private static decimal CalculateCOGSAndIncreaseSoldOrReturned(ERPContext context, SalesTransaction salesTransaction)
         {
             var costOfGoodsSoldAmount = 0m;
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            foreach (var line in salesTransaction.SalesTransactionLines.ToList())
             {
-                foreach (var line in salesTransaction.SalesTransactionLines.ToList())
+                var itemID = line.Item.ItemID;
+
+                var purchases = context.PurchaseTransactionLines
+                    .Include("PurchaseTransaction")
+                    .Where(purchaseTransactionLine => purchaseTransactionLine.ItemID.Equals(itemID) && purchaseTransactionLine.SoldOrReturned < purchaseTransactionLine.Quantity)
+                    .OrderBy(purchaseTransaction => purchaseTransaction.PurchaseTransactionID)
+                    .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
+                    .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.PurchasePrice)
+                    .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Discount)
+                    .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.WarehouseID)
+                    .ToList();
+
+                var tracker = line.Quantity;
+
+                foreach (var purchase in purchases)
                 {
-                    var itemID = line.Item.ItemID;
+                    var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
+                    var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
 
-                    var purchases = context.PurchaseTransactionLines
-                        .Include("PurchaseTransaction")
-                        .Where(purchaseTransactionLine => purchaseTransactionLine.ItemID.Equals(itemID) && purchaseTransactionLine.SoldOrReturned < purchaseTransactionLine.Quantity)
-                        .OrderBy(purchaseTransaction => purchaseTransaction.PurchaseTransactionID)
-                        .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
-                        .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.PurchasePrice)
-                        .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Discount)
-                        .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.WarehouseID)
-                        .ToList();
-
-                    var tracker = line.Quantity;
-
-                    foreach (var purchase in purchases)
+                    if (tracker <= availableQuantity)
                     {
-                        var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
-                        var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
+                        purchase.SoldOrReturned += tracker;
+                        if (purchaseLineNetTotal == 0) break;
+                        var fractionOfTransactionDiscount = tracker * purchaseLineNetTotal /
+                                                            purchase.PurchaseTransaction.GrossTotal *
+                                                            purchase.PurchaseTransaction.Discount;
+                        var fractionOfTransactionTax = tracker * purchaseLineNetTotal /
+                                                       purchase.PurchaseTransaction.GrossTotal *
+                                                       purchase.PurchaseTransaction.Tax;
+                        costOfGoodsSoldAmount += tracker * purchaseLineNetTotal - fractionOfTransactionDiscount +
+                                                 fractionOfTransactionTax;
+                        break;
+                    }
 
-                        if (tracker <= availableQuantity)
-                        {
-                            if (purchaseLineNetTotal == 0) break;
-                            var fractionOfTransactionDiscount = tracker*purchaseLineNetTotal/
-                                                                purchase.PurchaseTransaction.GrossTotal*
-                                                                purchase.PurchaseTransaction.Discount;
-                            var fractionOfTransactionTax = tracker*purchaseLineNetTotal/
-                                                           purchase.PurchaseTransaction.GrossTotal*
-                                                           purchase.PurchaseTransaction.Tax;
-                            costOfGoodsSoldAmount += tracker*purchaseLineNetTotal - fractionOfTransactionDiscount +
-                                                     fractionOfTransactionTax;
-                            break;
-                        }
-
-                        if (tracker > availableQuantity)
-                        {
-                            tracker -= availableQuantity;
-                            if (purchaseLineNetTotal == 0) continue;
-                            var fractionOfTransactionDiscount = availableQuantity*purchaseLineNetTotal/
-                                                                purchase.PurchaseTransaction.GrossTotal*
-                                                                purchase.PurchaseTransaction.Discount;
-                            var fractionOfTransactionTax = availableQuantity*purchaseLineNetTotal/
-                                                           purchase.PurchaseTransaction.GrossTotal*
-                                                           purchase.PurchaseTransaction.Tax;
-                            costOfGoodsSoldAmount += availableQuantity*purchaseLineNetTotal -
-                                                     fractionOfTransactionDiscount + fractionOfTransactionTax;
-                        }
+                    if (tracker > availableQuantity)
+                    {
+                        purchase.SoldOrReturned += availableQuantity;
+                        tracker -= availableQuantity;
+                        if (purchaseLineNetTotal == 0) continue;
+                        var fractionOfTransactionDiscount = availableQuantity * purchaseLineNetTotal /
+                                                            purchase.PurchaseTransaction.GrossTotal *
+                                                            purchase.PurchaseTransaction.Discount;
+                        var fractionOfTransactionTax = availableQuantity * purchaseLineNetTotal /
+                                                       purchase.PurchaseTransaction.GrossTotal *
+                                                       purchase.PurchaseTransaction.Tax;
+                        costOfGoodsSoldAmount += availableQuantity * purchaseLineNetTotal -
+                                                 fractionOfTransactionDiscount + fractionOfTransactionTax;
                     }
                 }
             }
-
+            context.SaveChanges();
             return costOfGoodsSoldAmount;
         }
         #endregion

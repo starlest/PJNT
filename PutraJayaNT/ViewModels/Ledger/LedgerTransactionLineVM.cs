@@ -1,15 +1,15 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace PutraJayaNT.ViewModels.Accounting
+﻿namespace PutraJayaNT.ViewModels.Ledger
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Models.Accounting;
+    using MVVMFramework;
+    using Utilities;
+
     public class LedgerTransactionLineVM : ViewModelBase<LedgerTransactionLine>
     {
-        List<LedgerTransactionLineVM> _opposingLines;
+        private readonly List<LedgerTransactionLineVM> _opposingLines;
 
         public LedgerTransactionLineVM()
         {
@@ -63,7 +63,6 @@ namespace PutraJayaNT.ViewModels.Accounting
             get
             {
                 _opposingLines.Clear();
-
                 using (var context = new ERPContext(UtilityMethods.GetDBName()))
                 {
                     var lines = context.Ledger_Transaction_Lines
@@ -72,7 +71,6 @@ namespace PutraJayaNT.ViewModels.Accounting
                         .Where(e => e.LedgerTransactionID == LedgerTransaction.ID && e.LedgerAccountID != LedgerAccount.ID);
                     foreach (var line in lines)
                         _opposingLines.Add(new LedgerTransactionLineVM { Model = line });
-                
                 }
 
                 return _opposingLines;

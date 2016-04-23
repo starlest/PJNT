@@ -1,5 +1,4 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
+﻿using Microsoft.Reporting.WinForms;
 using PutraJayaNT.ViewModels.Accounting;
 using System;
 using System.Data;
@@ -10,9 +9,9 @@ namespace PutraJayaNT.Reports.Windows
     /// <summary>
     /// Interaction logic for DailyCashFlowReportWindow.xaml
     /// </summary>
-    public partial class DailyCashFlowReportWindow : ModernWindow
+    public partial class DailyCashFlowReportWindow
     {
-        DailyCashFlowVM _vm;
+        private readonly DailyCashFlowVM _vm;
 
         public DailyCashFlowReportWindow(DailyCashFlowVM vm)
         {
@@ -34,15 +33,14 @@ namespace PutraJayaNT.Reports.Windows
             dt1.Columns.Add(new DataColumn("Debit", typeof(string)));
             dt1.Columns.Add(new DataColumn("Credit", typeof(string)));
 
-            var endingBalance = _vm.BeginningBalance;
-            foreach (var line in _vm.Lines)
+            foreach (var line in _vm.DisplayedLines)
             {
                 var dr1 = dt1.NewRow();
                 dr1["Account"] = line.LedgerAccount.Name;
                 dr1["Documentation"] = line.Documentation;
                 dr1["Description"] = line.Description;
-                dr1["Debit"] = line.Amount > 0 ? string.Format("{0:N2}", line.Amount) : "";
-                dr1["Credit"] = line.Amount < 0 ? string.Format("{0:N2}", -line.Amount) : "";
+                dr1["Debit"] = line.Amount > 0 ? $"{line.Amount:N2}" : "";
+                dr1["Credit"] = line.Amount < 0 ? $"{-line.Amount:N2}" : "";
                 dt1.Rows.Add(dr1);
             }
 
@@ -52,12 +50,12 @@ namespace PutraJayaNT.Reports.Windows
             dt2.Columns.Add(new DataColumn("EndingBalance", typeof(string)));
             var dr2 = dt2.NewRow();
             dr2["Date"] = _vm.Date.ToString("dd-MM-yyyy");
-            dr2["BeginningBalance"] = string.Format("{0:N2}",  _vm.BeginningBalance);
-            dr2["EndingBalance"] = string.Format("{0:N2}", _vm.EndingBalance);
+            dr2["BeginningBalance"] = $"{_vm.BeginningBalance:N2}";
+            dr2["EndingBalance"] = $"{_vm.EndingBalance:N2}";
             dt2.Rows.Add(dr2);
 
-            ReportDataSource reportDataSource1 = new ReportDataSource("DailyCashFlowReportLineDataset", dt1);
-            ReportDataSource reportDataSource2 = new ReportDataSource("DailyCashFlowReportDataset", dt2);
+            var reportDataSource1 = new ReportDataSource("DailyCashFlowReportLineDataset", dt1);
+            var reportDataSource2 = new ReportDataSource("DailyCashFlowReportDataset", dt2);
 
             reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\DailyCashFlowReport.rdlc"); // Path of the rdlc file
 

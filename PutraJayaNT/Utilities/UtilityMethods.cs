@@ -22,7 +22,7 @@
         {
             using (var context = new ERPContext(GetDBName()))
             {
-                var stock = context.Stocks.FirstOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID));
+                var stock = context.Stocks.SingleOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID));
                 return stock?.Pieces ?? 0;
             }
         }
@@ -42,11 +42,9 @@
         public static string GetDBName()
         {
            var selectedServerName = Application.Current.FindResource("SelectedServer") as string;
-
             if (selectedServerName != null && selectedServerName.Equals("Mix"))
                 return "putrajayant";
-            else
-                return "pjnestle";
+            return "pjnestle";
         }
     }
 }

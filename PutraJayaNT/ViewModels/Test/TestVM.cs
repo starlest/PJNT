@@ -21,6 +21,7 @@
         ICommand _checkLedgerTransactionsCommand;
         ICommand _checkLedgerGeneralCommand;
         ICommand _checkPastCommand;
+        private ICommand _testIssueCommand;
 
         public ICommand CheckSalesTransactionsCommand
         {
@@ -155,62 +156,67 @@
             {
                 return _checkInventoryCommand ?? (_checkInventoryCommand = new RelayCommand(() =>
                 {
-                    using (var ts = new TransactionScope())
-                    {
-                        var context = new ERPContext(UtilityMethods.GetDBName());
-
-                        var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance3 +
-                        context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit - 
-                        context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Credit; // changge beginningbalaance
-
-                        decimal calculatedCOGS = 0;
-
-                        var purchaseTransactionLines = context.PurchaseTransactionLines
-                        .Include("PurchaseTransaction")
-                        .Where(e => e.SoldOrReturned < e.Quantity).ToList();
-
-                        foreach (var purchase in purchaseTransactionLines)
-                        {
-                            var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
-                            var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
-                            if (purchaseLineNetTotal == 0) continue;
-                            var fractionOfTransactionDiscount = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                            var fractionOfTransactionTax = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
-                            calculatedCOGS += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
-                        }
-
-                        if (actualCOGS != calculatedCOGS)
-                        {
-                           if (MessageBox.Show(string.Format("Actual Inventory: {0} \n Calculated Inventory: {1} \n Difference: {2} \n Fix?", actualCOGS, calculatedCOGS, actualCOGS - calculatedCOGS), "Error", MessageBoxButton.YesNo) ==
-                                MessageBoxResult.Yes)
-                            {
-                                var newTransaction = new LedgerTransaction();
-                                LedgerTransactionHelper.AddTransactionToDatabase(context, newTransaction, UtilityMethods.GetCurrentDate().Date, "Inventory Adjustment", "Inventory Adjustment");
-                                context.SaveChanges();
-
-                                if (actualCOGS < calculatedCOGS)
-                                {
-                                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Debit", calculatedCOGS - actualCOGS);
-                                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Credit", calculatedCOGS - actualCOGS);
-                                    MessageBox.Show($"Increased inventory by {calculatedCOGS - actualCOGS}", "Fixed", MessageBoxButton.OK);
-                                }
-
-                                else
-                                {
-                                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Debit", actualCOGS - calculatedCOGS);
-                                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Credit", actualCOGS - calculatedCOGS);
-                                    MessageBox.Show($"Decreased inventory by {actualCOGS - calculatedCOGS}", "Fixed", MessageBoxButton.OK);
-                                }
-
-                                context.SaveChanges();
-                            }
-                        }
-
-                        ts.Complete();
-                    }
+                    CheckInventoryValue();
 
                     MessageBox.Show("Check done.", "Successful", MessageBoxButton.OK);
                 }));
+            }
+        }
+
+        private void CheckInventoryValue()
+        {
+            using (var ts = new TransactionScope())
+            {
+                var context = new ERPContext(UtilityMethods.GetDBName());
+
+                var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance3 +
+                context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit -
+                context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Credit; // changge beginningbalaance
+
+                decimal calculatedCOGS = 0;
+
+                var purchaseTransactionLines = context.PurchaseTransactionLines
+                .Include("PurchaseTransaction")
+                .Where(e => e.SoldOrReturned < e.Quantity).ToList();
+
+                foreach (var purchase in purchaseTransactionLines)
+                {
+                    var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
+                    var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
+                    if (purchaseLineNetTotal == 0) continue;
+                    var fractionOfTransactionDiscount = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                    var fractionOfTransactionTax = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                    calculatedCOGS += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
+                }
+
+                if (actualCOGS != calculatedCOGS)
+                {
+                    if (MessageBox.Show(string.Format("Actual Inventory: {0} \n Calculated Inventory: {1} \n Difference: {2} \n Fix?", actualCOGS, calculatedCOGS, actualCOGS - calculatedCOGS), "Error", MessageBoxButton.YesNo) ==
+                         MessageBoxResult.Yes)
+                    {
+                        var newTransaction = new LedgerTransaction();
+                        LedgerTransactionHelper.AddTransactionToDatabase(context, newTransaction, UtilityMethods.GetCurrentDate().Date, "Inventory Adjustment", "Inventory Adjustment");
+                        context.SaveChanges();
+
+                        if (actualCOGS < calculatedCOGS)
+                        {
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Debit", calculatedCOGS - actualCOGS);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Credit", calculatedCOGS - actualCOGS);
+                            MessageBox.Show($"Increased inventory by {calculatedCOGS - actualCOGS}", "Fixed", MessageBoxButton.OK);
+                        }
+
+                        else
+                        {
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Debit", actualCOGS - calculatedCOGS);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Credit", actualCOGS - calculatedCOGS);
+                            MessageBox.Show($"Decreased inventory by {actualCOGS - calculatedCOGS}", "Fixed", MessageBoxButton.OK);
+                        }
+
+                        context.SaveChanges();
+                    }
+                }
+
+                ts.Complete();
             }
         }
 
@@ -458,7 +464,7 @@
                         {
                             decimal totalDebit = 0;
                             decimal totalCredit = 0;
-                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 3))
+                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 4))
                             {
                                 count++;
                                 if (line.Amount < 0) MessageBox.Show(string.Format("Check {0} - {1}", line.LedgerTransactionID, line.Seq), "Error", MessageBoxButton.OK);
@@ -530,6 +536,62 @@
                         MessageBox.Show("Check done.", "Successful", MessageBoxButton.OK);
                     }
                 }));
+            }
+        }
+
+        public ICommand TestIssueCommand
+        {
+            get
+            {
+                return _testIssueCommand ?? (_testIssueCommand = new RelayCommand(() =>
+                {
+                    using (var context = new ERPContext("putrajayant"))
+                    {
+                        var unissuedInvoices =
+                            context.SalesTransactions.Where(transaction => transaction.InvoiceIssued == null).ToList();
+
+                        foreach (var invoice in unissuedInvoices)
+                        {
+                            SalesTransactionHelper.IssueSalesTransactionInvoice(invoice);
+                            if (!CheckInventoryValue2())
+                                MessageBox.Show(invoice.SalesTransactionID);
+                        }
+                    }
+                }));
+            }
+        }
+
+
+        private bool CheckInventoryValue2()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance3 +
+                context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit -
+                context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Credit; // changge beginningbalaance
+
+                decimal calculatedCOGS = 0;
+
+                var purchaseTransactionLines = context.PurchaseTransactionLines
+                .Include("PurchaseTransaction")
+                .Where(e => e.SoldOrReturned < e.Quantity).ToList();
+
+                foreach (var purchase in purchaseTransactionLines)
+                {
+                    var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
+                    var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
+                    if (purchaseLineNetTotal == 0) continue;
+                    var fractionOfTransactionDiscount = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
+                    var fractionOfTransactionTax = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
+                    calculatedCOGS += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
+                }
+
+                if (actualCOGS != calculatedCOGS)
+                {
+                    MessageBox.Show(string.Format("Actual {0}, calculated {1} difference {2}", actualCOGS, calculatedCOGS, actualCOGS - calculatedCOGS));
+                    return false;
+                }
+                return true;
             }
         }
 

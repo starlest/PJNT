@@ -8,8 +8,6 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels
 {
-    using System.Configuration;
-
     internal class LoginVM : ViewModelBase
     {
         private string _userName;
@@ -20,7 +18,7 @@ namespace PutraJayaNT.ViewModels
 
         public LoginVM()
         {
-            Servers = new ObservableCollection<string> { "Mix", "Nestle" };
+            Servers = new ObservableCollection<string> { "Nestle", " " };
             SelectedServer = Servers.First();
         }
 
@@ -43,6 +41,7 @@ namespace PutraJayaNT.ViewModels
             get { return _selectedServer; }
             set
             {
+                if (value.Equals(" ")) value = "Mix";
                 SetProperty(ref _selectedServer, value, () => SelectedServer);
                 Application.Current.Resources.Remove("SelectedServer");
                 Application.Current.Resources.Add("SelectedServer", _selectedServer);

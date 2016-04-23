@@ -1,13 +1,10 @@
 ﻿namespace PutraJayaNT.ViewModels.Customers
 {
     using System.Collections.ObjectModel;
-    using System.Data.Entity;
     using System.Linq;
-    using System.Transactions;
     using System.Windows;
     using System.Windows.Input;
     using MVVMFramework;
-    using Models.Accounting;
     using Models.Sales;
     using Utilities;
     using Customer;
@@ -104,19 +101,19 @@
         public decimal SalesTransactionGrossTotal
         {
             get { return _salesTransactionGrossTotal; }
-            set { SetProperty(ref _salesTransactionGrossTotal, value, "SalesTransactionGrossTotal"); }
+            set { SetProperty(ref _salesTransactionGrossTotal, value, () => SalesTransactionGrossTotal); }
         }
 
         public decimal SalesTransactionDiscount
         {
             get { return _salesTransactionDiscount; }
-            set { SetProperty(ref _salesTransactionDiscount, value, "SalesTransactionDiscount"); }
+            set { SetProperty(ref _salesTransactionDiscount, value, () => SalesTransactionDiscount); }
         }
 
         public decimal SalesTransactionSalesExpense
         {
             get { return _salesTransactionSalesExpense; }
-            set { SetProperty(ref _salesTransactionSalesExpense, value, "SalesTransactionSalesExpense"); }
+            set { SetProperty(ref _salesTransactionSalesExpense, value, () => SalesTransactionSalesExpense); }
         }
 
         public decimal SalesTransactionTotal
@@ -124,7 +121,7 @@
             get { return _salesTransactionTotal; }
             set
             {
-                SetProperty(ref _salesTransactionTotal, value, "SalesTransactionTotal");
+                SetProperty(ref _salesTransactionTotal, value, () => SalesTransactionTotal);
                 if (_salesTransactionTotal == 0) return;
                 Remaining = _salesTransactionTotal - _selectedSalesTransaction.Paid - _useCredits;
             }
@@ -138,16 +135,16 @@
             set
             {
                 if (!IsCreditsValueValid(value)) return;
-                SetProperty(ref _useCredits, value, "UseCredits");
+                SetProperty(ref _useCredits, value, () => UseCredits);
                 if (_useCredits <= 0) return;
-                Remaining = _salesTransactionTotal - _selectedSalesTransaction.Paid - _useCredits;
+                UpdateRemaining();
             }
         }
 
         public decimal Remaining
         {
             get { return _remaining; }
-            set {  SetProperty(ref _remaining, value, "Remaining");  }
+            set { SetProperty(ref _remaining, value, () => Remaining);  }
         }
 
         public decimal CollectionAmount
@@ -173,7 +170,7 @@
             {
                 return _confirmCollectionCommand ?? (_confirmCollectionCommand = new RelayCommand(() =>
                 {
-                    if (!IsPaymentModeSelected() || !IsCollectionConfirmationYes()) return;
+                    if (!IsThereAmountCollected() || !IsPaymentModeSelected() || !IsCollectionConfirmationYes()) return;
                     SalesTransactionHelper.Collect(_selectedSalesTransaction, _salesReturnCredits, _collectionAmount, _selectedPaymentMode);
                     MessageBox.Show("Succesfully collected!", "Success", MessageBoxButton.OK);
                     ResetTransaction();
@@ -264,6 +261,13 @@
                 SelectedSalesTransactionLines.Add(new SalesTransactionLineVM { Model = line });
         }
 
+        private bool IsThereAmountCollected()
+        {
+            if (_useCredits != 0 || _collectionAmount != 0) return true;
+            MessageBox.Show("Please input a collection amount.", "Invalid Command", MessageBoxButton.OK);
+            return false;
+        }
+
         private bool IsCreditsValueValid(decimal value)
         {
             if (value >= 0 && value <= _salesReturnCredits) return true;
@@ -305,6 +309,12 @@
             SelectedSalesTransactionLines.Clear();
             CustomerUnpaidSalesTransactions.Clear();
             IsCollectionSuccess = true;
+        }
+
+        private void UpdateRemaining()
+        {
+            CollectionAmount = 0;
+            Remaining = _salesTransactionTotal - _selectedSalesTransaction.Paid - _useCredits;
         }
         #endregion
     }

@@ -10,6 +10,8 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels.Master
 {
+    using Ledger;
+
     class MasterLedgerVM : ViewModelBase
     {
         ObservableCollection<LedgerAccountVM> _displayAccounts;

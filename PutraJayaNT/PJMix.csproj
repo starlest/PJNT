@@ -91,6 +91,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\DatasetObjects\GeneralLedgerReport.cs" />
+    <Compile Include="Reports\DatasetObjects\LedgerTransactionLine.cs" />
+    <Compile Include="Reports\Windows\GeneralLedgerReportWindow.xaml.cs">
+      <DependentUpon>GeneralLedgerReportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\FocusAdvancement.cs" />
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
@@ -104,9 +109,11 @@
     <Compile Include="Utilities\ModelHelpers\SupplierHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesTransactionHelper.cs" />
     <Compile Include="Utilities\PrintHelpers\SalesTransactionPrintHelper.cs" />
+    <Compile Include="ViewModels\Accounting\CashBankTransactionNewEntryVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesEditVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockAdjustmentNewEntryVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Suppliers\Purchase\PurchaseEditVM.cs" />
     <Compile Include="ViewModels\Suppliers\Purchase\PurchaseNewEntryVM.cs" />
@@ -223,7 +230,6 @@
     <Compile Include="ViewModels\Accounting\DailyCashFlowVM.cs" />
     <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
     <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
-    <Compile Include="ViewModels\Accounting\OperatingExpenseVM.cs" />
     <Compile Include="ViewModels\Item\CategoryVM.cs" />
     <Compile Include="ViewModels\Customer\CustomerGroupVM.cs" />
     <Compile Include="ViewModels\Item\AlternativeSalesPriceVM.cs" />
@@ -243,8 +249,8 @@
     <Compile Include="ViewModels\Inventory\StockMovementTransactionLineVM.cs" />
     <Compile Include="ViewModels\Inventory\StockMovementVM.cs" />
     <Compile Include="ViewModels\Item\ItemVM.cs" />
-    <Compile Include="ViewModels\Accounting\LedgerAccountVM.cs" />
-    <Compile Include="ViewModels\Accounting\LedgerTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Ledger\LedgerAccountVM.cs" />
+    <Compile Include="ViewModels\Ledger\LedgerTransactionLineVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\Master\Customers\MasterCustomersEditVM.cs" />
     <Compile Include="ViewModels\Master\Customers\MasterCustomersNewEntryVM.cs" />
@@ -295,9 +301,6 @@
     </Compile>
     <Compile Include="Views\Accounting\IncomeStatementView.xaml.cs">
       <DependentUpon>IncomeStatementView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Accounting\OperatingExpenseView.xaml.cs">
-      <DependentUpon>OperatingExpenseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounting\DailyCashFlowView.xaml.cs">
       <DependentUpon>DailyCashFlowView.xaml</DependentUpon>
@@ -405,6 +408,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Reports\Windows\GeneralLedgerReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -499,10 +506,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounting\IncomeStatementView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Accounting\OperatingExpenseView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -648,6 +651,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\PutraJayaNT.Reports.DatasetObjects.GeneralLedgerReport.datasource" />
+    <None Include="Properties\DataSources\PutraJayaNT.Reports.DatasetObjects.GeneralLedgerReport1.datasource" />
+    <None Include="Properties\DataSources\PutraJayaNT.Reports.DatasetObjects.LedgerTransactionLine.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -657,6 +663,9 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\RDLC\GeneralLedgerReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

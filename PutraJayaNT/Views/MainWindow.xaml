@@ -60,7 +60,6 @@
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="General Ledger" Source="/Views/Accounting/GeneralLedgerView.xaml" />
                 <mui:Link DisplayName="Cash/Bank Transaction" Source="/Views/Accounting/CashBankTransactionView.xaml" />
-                <mui:Link DisplayName="Operating Expense" Source="/Views/Accounting/OperatingExpenseView.xaml" />
                 <mui:Link DisplayName="Daily Cash Flow" Source="/Views/Accounting/DailyCashFlowView.xaml" />
                 <mui:Link DisplayName="Balance Sheet" Source="/Views/Accounting/BalanceSheetView.xaml" />
                 <mui:Link DisplayName="Income Statement" Source="/Views/Accounting/IncomeStatementView.xaml" />
