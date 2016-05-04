@@ -80,7 +80,7 @@
         #region Helper Methods
         private int GetBeginningBalance(ERPContext context, Warehouse warehouse, Item item)
         {
-            var periodYearBalances = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == _periodYear).FirstOrDefault();
+            var periodYearBalances = context.StockBalances.FirstOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == _periodYear);
 
             if (periodYearBalances == null) return 0;
 

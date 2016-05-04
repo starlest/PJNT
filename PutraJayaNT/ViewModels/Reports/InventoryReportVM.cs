@@ -8,7 +8,6 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Inventory;
     using Suppliers;
     using Utilities;
     using System;

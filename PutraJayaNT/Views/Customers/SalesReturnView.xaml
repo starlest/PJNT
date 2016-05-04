@@ -74,6 +74,7 @@
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
                 <DataGridTextColumn Header="Sales Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Discount" Width="1*" Binding="{Binding Discount, StringFormat=N2}" />
+                <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Total, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>
         <Border Grid.Row="3" BorderBrush="Blue" BorderThickness="2" IsEnabled="{Binding NotEditing}">

@@ -532,7 +532,6 @@
             DisplayedSalesTransactionLines.Clear();
             NewEntryVM.ResetEntryFields();
             NewEntryVM.NewEntryWarehouse = null;
-            SetTransactionID();
             TransactionNotes = null;
             TransactionDiscount = 0;
             TransactionSalesExpense = 0;
@@ -541,6 +540,7 @@
             TransactionCustomer = null;
             TransactionCustomerCity = null;
             TransactionDate = UtilityMethods.GetCurrentDate().Date;
+            SetTransactionID();
             UpdateCustomers();
         }
 

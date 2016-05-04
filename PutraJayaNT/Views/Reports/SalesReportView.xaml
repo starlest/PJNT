@@ -67,7 +67,9 @@
                     <DataGridTextColumn Header="Product ID" Width="1*" Binding="{Binding Item.ItemID}" />
                     <DataGridTextColumn Header="Product" Width="2*" Binding="{Binding Item.Name}" />
                     <DataGridTextColumn Header="Unit" Width="0.8*" Binding="{Binding Unit}" />
+                    <DataGridTextColumn Header="SUnit" Width="0.8*" Binding="{Binding SecondaryUnit}" />
                     <DataGridTextColumn Header="Units" Width="0.8*" Binding="{Binding Units}" />
+                    <DataGridTextColumn Header="SUnits" Width="0.8*" Binding="{Binding SecondaryUnits}" />
                     <DataGridTextColumn Header="Pieces" Width="0.8*" Binding="{Binding Pieces}" />
                     <DataGridTextColumn Header="Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
                     <DataGridTextColumn Header="Discount" Width="1*" Binding="{Binding NetDiscount, StringFormat=N2}" />
@@ -97,7 +99,9 @@
                 <DataGridTextColumn Header="Product ID" Width="1*" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Product" Width="2*" Binding="{Binding Item.Name}" />
                 <DataGridTextColumn Header="Unit" Width="0.8*" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="SUnit" Width="0.8*" Binding="{Binding SecondaryUnit}" />
                 <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="SUnits" Width="1*" Binding="{Binding SecondaryUnits}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
             </DataGrid.Columns>
         </DataGrid>

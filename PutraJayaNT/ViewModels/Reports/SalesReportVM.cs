@@ -54,7 +54,7 @@
             SelectedCustomer = Customers.FirstOrDefault();
         }
 
-        #region Collection
+        #region Collections
         public ObservableCollection<Category> Categories { get; }
 
         public ObservableCollection<Item> CategoryItems { get; }

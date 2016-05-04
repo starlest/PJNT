@@ -64,16 +64,16 @@
             <DatePicker Grid.Row="2" Grid.Column="1" SelectedDateFormat="Long" SelectedDate="{Binding CollectionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="2" Grid.Column="2" Foreground="Green" Content="Search" Margin="15, 10, 15, 10" Command="{Binding SearchCollectionDateSelectionCommand}"/>
         </Grid>
-        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSalesTransactions}">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSalesTransactions}" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Width="1*" IsReadOnly="True" Binding="{Binding SalesTransactionID}"/>
-                <DataGridTextColumn Header="Customer" Width="1*" IsReadOnly="True" Binding="{Binding Customer.Name}" />
-                <DataGridTextColumn Header="Date" Width="1*" IsReadOnly="True" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTextColumn Header="Due Date" Width="1*" IsReadOnly="True" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
-                <DataGridTextColumn Header="Total" Width="1*" IsReadOnly="True" Binding="{Binding Total, StringFormat=N2}" />
-                <DataGridTextColumn Header="Paid" Width="1*" IsReadOnly="True" Binding="{Binding Paid, StringFormat=N2}" />
-                <DataGridTextColumn Header="Remaining" Width="1*" IsReadOnly="True" Binding="{Binding Remaining, StringFormat=N2}" />
-                <DataGridTextColumn Header="Note" Width="1*" IsReadOnly="True" Binding="{Binding Note, StringFormat=N2}" />
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding SalesTransactionID}"/>
+                <DataGridTextColumn Header="Customer" Width="1*" Binding="{Binding Customer.Name}" />
+                <DataGridTextColumn Header="Date" Width="1*" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Due Date" Width="1*" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Total, StringFormat=N2}" />
+                <DataGridTextColumn Header="Paid" Width="1*" Binding="{Binding Paid, StringFormat=N2}" />
+                <DataGridTextColumn Header="Remaining" Width="1*" Binding="{Binding Remaining, StringFormat=N2}" />
+                <DataGridTextColumn Header="Note" Width="1*" Binding="{Binding Note, StringFormat=N2}" />
                 <DataGridTemplateColumn x:Name="collectorColumn" Header="Collector" Width="0.8*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

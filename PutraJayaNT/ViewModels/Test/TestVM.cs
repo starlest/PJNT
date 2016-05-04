@@ -163,59 +163,73 @@
             }
         }
 
-        private void CheckInventoryValue()
+        private static void CheckInventoryValue()
         {
             using (var ts = new TransactionScope())
             {
                 var context = new ERPContext(UtilityMethods.GetDBName());
 
-                var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance3 +
-                context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit -
-                context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Credit; // changge beginningbalaance
+                var actualCOGS =
+                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance4 +
+                    context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Debit -
+                    context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Credit;
+                // change beginningbalaance
 
                 decimal calculatedCOGS = 0;
 
                 var purchaseTransactionLines = context.PurchaseTransactionLines
-                .Include("PurchaseTransaction")
-                .Where(e => e.SoldOrReturned < e.Quantity).ToList();
+                    .Include("PurchaseTransaction")
+                    .Where(e => e.SoldOrReturned < e.Quantity).ToList();
 
                 foreach (var purchase in purchaseTransactionLines)
                 {
                     var availableQuantity = purchase.Quantity - purchase.SoldOrReturned;
                     var purchaseLineNetTotal = purchase.PurchasePrice - purchase.Discount;
                     if (purchaseLineNetTotal == 0) continue;
-                    var fractionOfTransactionDiscount = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Discount;
-                    var fractionOfTransactionTax = ((availableQuantity * purchaseLineNetTotal) / purchase.PurchaseTransaction.GrossTotal) * purchase.PurchaseTransaction.Tax;
-                    calculatedCOGS += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
+                    var fractionOfTransactionDiscount = availableQuantity*purchaseLineNetTotal/
+                                                        purchase.PurchaseTransaction.GrossTotal*
+                                                        purchase.PurchaseTransaction.Discount;
+                    var fractionOfTransactionTax = availableQuantity*purchaseLineNetTotal/
+                                                   purchase.PurchaseTransaction.GrossTotal*
+                                                   purchase.PurchaseTransaction.Tax;
+                    calculatedCOGS += availableQuantity*purchaseLineNetTotal - fractionOfTransactionDiscount +
+                                      fractionOfTransactionTax;
                 }
 
                 if (actualCOGS != calculatedCOGS)
                 {
-                    if (MessageBox.Show(string.Format("Actual Inventory: {0} \n Calculated Inventory: {1} \n Difference: {2} \n Fix?", actualCOGS, calculatedCOGS, actualCOGS - calculatedCOGS), "Error", MessageBoxButton.YesNo) ==
-                         MessageBoxResult.Yes)
+                    if (MessageBox.Show(
+                        $"Actual Inventory: {actualCOGS} \n Calculated Inventory: {calculatedCOGS} \n Difference: {actualCOGS - calculatedCOGS} \n Fix?",
+                        "Error", MessageBoxButton.YesNo) ==
+                        MessageBoxResult.Yes)
                     {
                         var newTransaction = new LedgerTransaction();
-                        LedgerTransactionHelper.AddTransactionToDatabase(context, newTransaction, UtilityMethods.GetCurrentDate().Date, "Inventory Adjustment", "Inventory Adjustment");
+                        LedgerTransactionHelper.AddTransactionToDatabase(context, newTransaction,
+                            UtilityMethods.GetCurrentDate().Date, "Inventory Adjustment", "Inventory Adjustment");
                         context.SaveChanges();
 
                         if (actualCOGS < calculatedCOGS)
                         {
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Debit", calculatedCOGS - actualCOGS);
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Credit", calculatedCOGS - actualCOGS);
-                            MessageBox.Show($"Increased inventory by {calculatedCOGS - actualCOGS}", "Fixed", MessageBoxButton.OK);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory",
+                                "Debit", calculatedCOGS - actualCOGS);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction,
+                                "Cost of Goods Sold", "Credit", calculatedCOGS - actualCOGS);
+                            MessageBox.Show($"Increased inventory by {calculatedCOGS - actualCOGS}", "Fixed",
+                                MessageBoxButton.OK);
                         }
 
                         else
                         {
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Cost of Goods Sold", "Debit", actualCOGS - calculatedCOGS);
-                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory", "Credit", actualCOGS - calculatedCOGS);
-                            MessageBox.Show($"Decreased inventory by {actualCOGS - calculatedCOGS}", "Fixed", MessageBoxButton.OK);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction,
+                                "Cost of Goods Sold", "Debit", actualCOGS - calculatedCOGS);
+                            LedgerTransactionHelper.AddTransactionLineToDatabase(context, newTransaction, "Inventory",
+                                "Credit", actualCOGS - calculatedCOGS);
+                            MessageBox.Show($"Decreased inventory by {actualCOGS - calculatedCOGS}", "Fixed",
+                                MessageBoxButton.OK);
                         }
-
                         context.SaveChanges();
                     }
                 }
-
                 ts.Complete();
             }
         }
@@ -561,8 +575,7 @@
             }
         }
 
-
-        private bool CheckInventoryValue2()
+        private static bool CheckInventoryValue2()
         {
             using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {

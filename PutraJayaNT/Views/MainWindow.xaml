@@ -46,6 +46,16 @@
                 <mui:Link DisplayName="Close Stock" Source="/Views/Inventory/CloseStockView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
+        <mui:LinkGroup DisplayName="Accounting">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="General Ledger" Source="/Views/Accounting/GeneralLedgerView.xaml" />
+                <mui:Link DisplayName="Cash/Bank Transaction" Source="/Views/Accounting/CashBankTransactionView.xaml" />
+                <mui:Link DisplayName="Daily Cash Flow" Source="/Views/Accounting/DailyCashFlowView.xaml" />
+                <mui:Link DisplayName="Balance Sheet" Source="/Views/Accounting/BalanceSheetView.xaml" />
+                <mui:Link DisplayName="Income Statement" Source="/Views/Accounting/IncomeStatementView.xaml" />
+                <mui:Link DisplayName="Close" Source="/Views/Accounting/ClosingView.xaml" />
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Reports">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Inventory" Source="/Views/Reports/InventoryReportView.xaml" />
@@ -56,14 +66,10 @@
                 <mui:Link DisplayName="Commissions" Source="/Views/Reports/CommissionsReportView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="Accounting">
+        <mui:LinkGroup DisplayName="Analysis">
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="General Ledger" Source="/Views/Accounting/GeneralLedgerView.xaml" />
-                <mui:Link DisplayName="Cash/Bank Transaction" Source="/Views/Accounting/CashBankTransactionView.xaml" />
-                <mui:Link DisplayName="Daily Cash Flow" Source="/Views/Accounting/DailyCashFlowView.xaml" />
-                <mui:Link DisplayName="Balance Sheet" Source="/Views/Accounting/BalanceSheetView.xaml" />
-                <mui:Link DisplayName="Income Statement" Source="/Views/Accounting/IncomeStatementView.xaml" />
-                <mui:Link DisplayName="Close" Source="/Views/Accounting/ClosingView.xaml" />
+                <mui:Link DisplayName="Sales Analysis (Monthly)" Source="/Views/Analysis/SalesAnalysisMonthlyView.xaml" />
+                <mui:Link DisplayName="Sales Forecast" Source="" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
     </mui:ModernWindow.MenuLinkGroups>

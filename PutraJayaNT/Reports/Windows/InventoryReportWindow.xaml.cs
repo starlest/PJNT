@@ -1,6 +1,5 @@
 ﻿namespace PutraJayaNT.Reports.Windows
 {
-    using System.Linq;
     using Microsoft.Reporting.WinForms;
     using ViewModels.Reports;
     using System;
@@ -70,7 +69,7 @@
 
         private void LoadInventoryReportlinesDataTableRows()
         {
-            foreach (var line in _vm.DisplayedLines.Where(line => line.Quantity > 0))
+            foreach (var line in _vm.DisplayedLines)
             {
                 var row = _inventoryReportLinesDataTable.NewRow();
                 row["ItemID"] = line.Item.ItemID;

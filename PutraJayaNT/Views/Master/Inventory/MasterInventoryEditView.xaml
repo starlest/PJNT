@@ -50,7 +50,7 @@
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EditPurchasePrice, Mode=TwoWay, StringFormat=N2}" />
         <TextBlock Grid.Row="2" Grid.Column="2" Text="Sales Price:" />
         <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding EditSalesPrice, Mode=TwoWay, StringFormat=N2}" />
-        <TextBlock Grid.Row="2" Grid.Column="4" Text="Alt. Sales Price:" />
+        <TextBlock Grid.Row="2" Grid.Column="4" FontSize="18" Text="Alt. Sales Price:" />
         <ComboBox Grid.Row="2" Grid.Column="5" ItemsSource="{Binding EditAlternativeSalesPrices}" DisplayMemberPath="Name"
                   SelectedItem="{Binding EditSelectedAlternativeSalesPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Button Grid.Row="2" Grid.Column="6" Content="Add" Foreground="Red" Margin="10, 40, 10, 40" 
