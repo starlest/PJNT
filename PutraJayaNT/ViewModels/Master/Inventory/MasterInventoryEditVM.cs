@@ -171,7 +171,7 @@
             {
                 return _editConfirmCommand ?? (_editConfirmCommand = new RelayCommand(() =>
                 {
-                    if (!IsEditConfirmationYes() && !AreEditFieldsValid()) return;
+                    if (!IsEditConfirmationYes() || !AreEditFieldsValid() || !IsItemNameInDatabaseAlready()) return;
                     var originalItem = EditingItem.Model;
                     var editedItemCopy = MakeEditedItem();
                     InventoryHelper.SaveItemEditsToDatabase(originalItem, editedItemCopy);
@@ -305,6 +305,17 @@
         private bool AreEditFieldsValid()
         {
             return _editID != null && _editName != null && _editUnitName != null;
+        }
+
+        private bool IsItemNameInDatabaseAlready()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                if (_editName.Equals(EditingItem.Name) ||
+                    context.Inventory.SingleOrDefault(item => item.Name.Equals(_editName)) == null) return true;
+                MessageBox.Show("Item name already exists!", "Invalid Name", MessageBoxButton.OK);
+                return false;
+            }
         }
 
         private void UpdateEditingItemUIValues()

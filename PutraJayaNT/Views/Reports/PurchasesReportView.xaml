@@ -29,20 +29,21 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="From:" />
                 <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                             SelectedDateFormat="Long" />
-                <TextBlock Grid.Row="0" Grid.Column="4" Text="To:" />
-                <DatePicker Grid.Row="0" Grid.Column="5" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="To:" />
+                <DatePicker Grid.Row="0" Grid.Column="3" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             SelectedDateFormat="Long" />
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Supplier:" />
-                <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"  ItemsSource="{Binding Suppliers}" DisplayMemberPath="Name"
-                          SelectedItem="{Binding SelectedSupplier, UpdateSourceTrigger=Explicit}" />
-                <TextBlock Grid.Row="1" Grid.Column="4" Text="Product:" />
-                <ComboBox Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" ItemsSource="{Binding SupplierItems}" DisplayMemberPath="Name" 
+                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Suppliers}" DisplayMemberPath="Name"
+                          SelectedItem="{Binding SelectedSupplier, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="Product:" />
+                <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding SupplierItems}" DisplayMemberPath="Name" 
                           SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Row="1" Grid.Column="4" Margin="20, 10, 20 ,10" Content="Display" Command="{Binding DisplayCommand}" />
+                <Button Grid.Row="1" Grid.Column="5" Margin="20, 10, 20 ,10" Content="Clear" Command="{Binding ClearCommand}" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayLines}" IsReadOnly="True">
@@ -64,11 +65,16 @@
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="0.2*" />
-                <ColumnDefinition Width="0.2*" />
+                <ColumnDefinition Width="0.3*" />
+                <ColumnDefinition Width="0.3*" />
+                <ColumnDefinition Width="0.3*" />
+                <ColumnDefinition Width="0.3*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1" Text="Total:" />
-            <TextBox Grid.Column="2" Foreground="Red" Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" 
+            <TextBlock Grid.Column="1" Text="Units:" />
+            <TextBox Grid.Column="2" Foreground="Red" Text="{Binding Units, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                     IsReadOnly="True"  />
+            <TextBlock Grid.Column="3" Text="Total:" />
+            <TextBox Grid.Column="4" Foreground="Red" Text="{Binding Total, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" 
                      IsReadOnly="True"  />
         </Grid>
     </Grid>

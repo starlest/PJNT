@@ -150,7 +150,7 @@
             get { return _allSelected; }
             set
             {
-                SetProperty(ref _allSelected, value, "AllSelected");
+                SetProperty(ref _allSelected, value, () => AllSelected);
                 ChangeAllSelections();
             }
         }

@@ -69,7 +69,7 @@
         <mui:LinkGroup DisplayName="Analysis">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Sales Analysis (Monthly)" Source="/Views/Analysis/SalesAnalysisMonthlyView.xaml" />
-                <mui:Link DisplayName="Sales Forecast" Source="" />
+                <mui:Link DisplayName="Sales Forecast (Monthly)" Source="/Views/Analysis/SalesForecastMonthlyView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
     </mui:ModernWindow.MenuLinkGroups>

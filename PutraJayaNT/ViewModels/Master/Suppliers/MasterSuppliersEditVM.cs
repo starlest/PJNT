@@ -7,6 +7,7 @@
     using Models;
     using Utilities;
     using Utilities.ModelHelpers;
+    using System.Linq;
 
     public class MasterSuppliersEditVM : ViewModelBase
     { 
@@ -49,7 +50,7 @@
             {
                 return _confirmEditCommand ?? (_confirmEditCommand = new RelayCommand(() =>
                 {
-                    if (!IsEditConfirmationYes() && !AreEditFieldsValid()) return;
+                    if (!IsEditConfirmationYes() || !AreEditFieldsValid() || !IsSupplierNameInDatabaseAlready()) return;
                     var editingSupplier = _editingSupplier.Model;
                     var editedSupplierCopy = MakeEditedSupplier();
                     SupplierHelper.SaveSupplierEditsToDatabase(editingSupplier, editedSupplierCopy);
@@ -86,6 +87,17 @@
         private bool AreEditFieldsValid()
         {
             return _editName != null && _editAddress != null;
+        }
+
+        private bool IsSupplierNameInDatabaseAlready()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                if (_editName.Equals(_editingSupplier.Name) ||
+                    context.Suppliers.SingleOrDefault(supplier => supplier.Name.Equals(_editName)) == null) return true;
+                MessageBox.Show("Supplier name already exists!", "Invalid Name", MessageBoxButton.OK);
+                return false;
+            }
         }
 
         private void UpdateEditingSupplierUIValues()

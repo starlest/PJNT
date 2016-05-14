@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="PutraJayaNT.Views.Analysis.SalesAnalysisMonthlyView"
+﻿<UserControl x:Class="PutraJayaNT.Views.Analysis.SalesForecastMonthlyView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -26,8 +26,6 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Year:" />
                 <ComboBox Grid.Column="1" ItemsSource="{Binding Years}" SelectedItem="{Binding SelectedYear, UpdateSourceTrigger=PropertyChanged}" />
@@ -37,143 +35,140 @@
                 <TextBlock Grid.Column="4" Text="Product:" />
                 <ComboBox Grid.Column="5" ItemsSource="{Binding ListedItems}" SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
                           DisplayMemberPath="Name" />
-                <TextBlock Grid.Column="6" Text="Customer:" />
-                <ComboBox Grid.Column="7" ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer, UpdateSourceTrigger=PropertyChanged}"
-                          DisplayMemberPath="Name" />
-                <Button Grid.Column="8" Content="Display" Margin="20" Command="{Binding DisplayCommand}" />
-                <Button Grid.Column="9" Content="Clear" Margin="20" Command="{Binding ClearCommand}" />
+                <Button Grid.Column="6" Content="Display" Margin="20" Command="{Binding DisplayCommand}" />
+                <Button Grid.Column="7" Content="Clear" Margin="20" Command="{Binding ClearCommand}" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedLines}" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Product" Width="2*" Binding="{Binding Item.Name}" />
                 <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding Item.Unit}" />
-                <DataGridTextColumn Header="Jan" Width="1*" Binding="{Binding Jan}">
+                <DataGridTextColumn Header="Jan" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Jan}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsJanSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsJanTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Feb" Width="1*" Binding="{Binding Feb}">
+                <DataGridTextColumn Header="Feb" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Feb}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsFebSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsFebTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Mar" Width="1*" Binding="{Binding Mar}">
+                <DataGridTextColumn Header="Mar" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Mar}" >
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsMarSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsMarTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Apr" Width="1*" Binding="{Binding Apr}">
+                <DataGridTextColumn Header="Apr" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Apr}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsAprSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsAprTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="May" Width="1*" Binding="{Binding May}">
+                <DataGridTextColumn Header="May" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding May}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsMaySalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsMayTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Jun" Width="1*" Binding="{Binding Jun}">
+                <DataGridTextColumn Header="Jun" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Jun}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsJunSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsJunTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Jul" Width="1*" Binding="{Binding Jul}">
+                <DataGridTextColumn Header="Jul" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Jul}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsJulSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsJulTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Aug" Width="1*" Binding="{Binding Aug}">
+                <DataGridTextColumn Header="Aug" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Aug}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsAugSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsAugTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Sep" Width="1*" Binding="{Binding Sep}">
+                <DataGridTextColumn Header="Sep" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Sep}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsSepSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsSepTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Oct" Width="1*" Binding="{Binding Oct}">
+                <DataGridTextColumn Header="Oct" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Oct}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsOctSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsOctTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Nov" Width="1*" Binding="{Binding Nov}">
+                <DataGridTextColumn Header="Nov" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Nov}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsNovSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsNovTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Dec" Width="1*" Binding="{Binding Dec}">
+                <DataGridTextColumn Header="Dec" Width="1*" Foreground="{Binding ForegroundColor}" Binding="{Binding Dec}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsDecSalesDown}" Value="True">
+                                <DataTrigger Binding="{Binding IsDecTargetNotMet}" Value="True">
                                     <Setter Property="Background" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>

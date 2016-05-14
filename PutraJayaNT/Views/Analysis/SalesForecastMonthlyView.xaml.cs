@@ -1,18 +1,17 @@
 ﻿namespace PutraJayaNT.Views.Analysis
 {
-    using System;
     using System.Windows.Controls;
     using ViewModels.Analysis;
 
     /// <summary>
-    /// Interaction logic for SalesAnalysisMonthlyView.xaml
+    /// Interaction logic for SalesForecastMonthlyView.xaml
     /// </summary>
-    public partial class SalesAnalysisMonthlyView
+    public partial class SalesForecastMonthlyView
     {
-        public SalesAnalysisMonthlyView()
+        public SalesForecastMonthlyView()
         {
             InitializeComponent();
-            var vm = new SalesAnalysisMonthlyVM();
+            var vm = new SalesForecastMonthlyVM();
             DataContext = vm;
         }
 

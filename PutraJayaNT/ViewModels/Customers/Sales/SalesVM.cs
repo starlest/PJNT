@@ -319,9 +319,34 @@
                     if (SalesTransactionHelper.IsLastSaveSuccessful) MessageBox.Show("Successfully saved transaction.", "Success", MessageBoxButton.OK);
                     Model = GetSalesTransactionFromDatabase(_transactionID);
                     SetEditMode();
+                    AddTelegramNotifications();
                 }));
             }
         }
+
+        private void AddTelegramNotifications()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                foreach (var line in DisplayedSalesTransactionLines)
+                {
+                    if (line.Warehouse.Name.Contains("Kanvas")) continue;
+                    var lineStock =
+                        context.Stocks
+                            .Include("Warehouse")
+                            .Include("Item")
+                            .SingleOrDefault(
+                                stock =>
+                                    stock.ItemID.Equals(line.Item.ItemID) && stock.WarehouseID.Equals(line.Warehouse.ID));
+                    var unitsLeft = lineStock?.Pieces / line.Item.PiecesPerUnit ?? 0;
+                    if (lineStock == null || lineStock.Pieces / lineStock.Item.PiecesPerUnit <= 20)
+                        TelegramBot.AddTelegramNotification(DateTime.Now,
+                            $"{line.Warehouse.Name} / {line.Item.Name} : {unitsLeft}");
+                }
+                context.SaveChanges();
+            }
+        }
+
         #endregion
 
         #region Other Commands

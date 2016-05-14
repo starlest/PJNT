@@ -100,7 +100,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             {
                 return _editConfirmCommand ?? (_editConfirmCommand = new RelayCommand(() =>
                 {
-                    if (!IsEditConfirmationYes() && !AreEditFieldsValid()) return;
+                    if (!IsEditConfirmationYes() || !AreEditFieldsValid() || !IsCustomerNameInDatabaseAlready()) return;
                     var editingCustomer = _editingCustomer.Model;
                     var editedCustomerCopy = MakeEditedCustomer();
                     CustomerHelper.SaveCustomerEditsToDatabase(editingCustomer, editedCustomerCopy);
@@ -167,6 +167,17 @@ namespace PutraJayaNT.ViewModels.Master.Customers
             var customerTo = _editingCustomer.Model;
             CustomerHelper.DeepCopyCustomerProperties(editedCustomer, ref customerTo);
             _editingCustomer.UpdatePropertiesToUI();
+        }
+
+        private bool IsCustomerNameInDatabaseAlready()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                if (_editName.Equals(_editingCustomer.Name) ||
+                    context.Customers.SingleOrDefault(customer => customer.Name.Equals(_editName)) == null) return true;
+                MessageBox.Show("Customer name already exists!", "Invalid Name", MessageBoxButton.OK);
+                return false;
+            }
         }
         #endregion
     }

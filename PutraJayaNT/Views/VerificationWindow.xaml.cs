@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.Views
 {
+    using System.Windows.Input;
     using ViewModels;
 
     /// <summary>
@@ -12,6 +13,7 @@
             InitializeComponent();
             var vm = new VerificationVM();
             DataContext = vm;
+            FocusManager.SetFocusedElement(this, UsernameBox);
         }
     }
 }

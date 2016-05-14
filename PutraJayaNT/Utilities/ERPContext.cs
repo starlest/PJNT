@@ -22,6 +22,13 @@ namespace PutraJayaNT.Utilities
             //Database.SetInitializer<ERPContext>(new DropCreateDatabaseAlways<ERPContext>());
         }
 
+        //public ERPContext()
+        //    : base("name=PJMIX")
+        //{
+        //    //Database.SetInitializer<ERPContext>(new MigrateDatabaseToLatestVersion<ERPContext, Migrations.Configuration>());
+        //    //Database.SetInitializer<ERPContext>(new DropCreateDatabaseAlways<ERPContext>());
+        //}
+
         public static string GetConnectionString(string dbName)
         {
             // Server=localhost;Database={0};Uid=username;Pwd=password
@@ -67,6 +74,8 @@ namespace PutraJayaNT.Utilities
         public virtual DbSet<LedgerAccountBalance> Ledger_Account_Balances { get; set; }
 
         public virtual DbSet<Date> Dates { get; set; }
+
+        public virtual DbSet<TelegramBotNotification> TelegramBotNotifications { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

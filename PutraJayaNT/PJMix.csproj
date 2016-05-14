@@ -61,11 +61,20 @@
       <HintPath>..\packages\MySqlBackup.NET.2.0.9.2\lib\net45\MySqlBackup.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
@@ -76,6 +85,10 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Telegram.Bot, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Telegram.Bot.9.0.0\lib\net45\Telegram.Bot.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -85,6 +98,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605130858455_Update1.cs" />
+    <Compile Include="Migrations\201605130858455_Update1.Designer.cs">
+      <DependentUpon>201605130858455_Update1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TelegramBotNotification.cs" />
     <Compile Include="Reports\DatasetObjects\GeneralLedgerReport.cs" />
     <Compile Include="Reports\DatasetObjects\LedgerTransactionLine.cs" />
     <Compile Include="Reports\Windows\GeneralLedgerReportWindow.xaml.cs">
@@ -103,9 +121,12 @@
     <Compile Include="Utilities\ModelHelpers\SupplierHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesTransactionHelper.cs" />
     <Compile Include="Utilities\PrintHelpers\SalesTransactionPrintHelper.cs" />
+    <Compile Include="Utilities\TelegramBot.cs" />
     <Compile Include="ViewModels\Accounting\CashBankTransactionNewEntryVM.cs" />
     <Compile Include="ViewModels\Analysis\SalesAnalysisMonthlyLineVM.cs" />
     <Compile Include="ViewModels\Analysis\SalesAnalysisMonthlyVM.cs" />
+    <Compile Include="ViewModels\Analysis\SalesForecastMonthlyLineVM.cs" />
+    <Compile Include="ViewModels\Analysis\SalesForecastMonthlyVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesEditVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
@@ -113,6 +134,9 @@
     <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Suppliers\Purchase\PurchaseEditVM.cs" />
     <Compile Include="ViewModels\Suppliers\Purchase\PurchaseNewEntryVM.cs" />
+    <Compile Include="Views\Analysis\SalesForecastMonthlyView.xaml.cs">
+      <DependentUpon>SalesForecastMonthlyView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Analysis\SalesAnalysisMonthlyView.xaml.cs">
       <DependentUpon>SalesAnalysisMonthlyView.xaml</DependentUpon>
     </Compile>
@@ -411,6 +435,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Analysis\SalesForecastMonthlyView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Analysis\SalesAnalysisMonthlyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -666,6 +694,9 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\201605130858455_Update1.resx">
+      <DependentUpon>201605130858455_Update1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\GeneralLedgerReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
