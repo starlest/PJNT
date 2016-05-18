@@ -4,12 +4,9 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Configuration;
-    using System.Globalization;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Threading;
-    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Media;
     using FirstFloor.ModernUI;
@@ -101,7 +98,7 @@
             worker.RunWorkerAsync();
         }
 
-        private bool _isSendingNotifications = false;
+        private bool _isSendingNotifications;
 
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -148,7 +145,7 @@
             foreach (var notification in unsentNotifications)
             {
                 var result = Bot.SendTextMessage(-104676249,
-                    $"{notification.When} - {notification.Message}");
+                    $"{notification.When} - {notification.Message}").Result;
             }
 
             using (var context = new ERPContext(UtilityMethods.GetDBName()))

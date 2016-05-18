@@ -478,7 +478,7 @@
                         {
                             decimal totalDebit = 0;
                             decimal totalCredit = 0;
-                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 4))
+                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 5))
                             {
                                 count++;
                                 if (line.Amount < 0) MessageBox.Show(string.Format("Check {0} - {1}", line.LedgerTransactionID, line.Seq), "Error", MessageBoxButton.OK);
