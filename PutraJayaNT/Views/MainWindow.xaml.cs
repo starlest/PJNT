@@ -14,6 +14,7 @@
     using Models;
     using Telegram.Bot;
     using Utilities;
+    using Utilities.ModelHelpers;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -67,6 +68,15 @@
                     };
                     MenuLinkGroups[1].Links.Add(link);
                 }
+
+                //using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                //{
+                //    var purchaseTransaction =
+                //        context.PurchaseTransactions.Single(
+                //            transaction => transaction.PurchaseID.Equals("P1605000025"));
+                //    PurchaseTransactionHelper.DeleteTransactionInDatabase(purchaseTransaction);
+                //    MessageBox.Show($"Delete {purchaseTransaction.PurchaseID}");
+                //}
                 RunUpdateTitleLoop();
             }
         }

@@ -52,6 +52,40 @@
             IsLastSaveSuccessful = true;
         }
 
+        public static void DeleteTransactionInDatabase(PurchaseTransaction purchaseTransaction)
+        {
+            IsLastSaveSuccessful = false;
+
+            using (var ts = new TransactionScope())
+            {
+                var context = new ERPContext(UtilityMethods.GetDBName());
+                var purchaseTransactionInDatabase =
+                    context.PurchaseTransactions
+                        .Include("Supplier")
+                        .Include("PurchaseTransactionLines.Item")
+                        .Include("PurchaseTransactionLines.Warehouse")
+                        .Include("PurchaseTransactionLines")
+                        .SingleOrDefault(
+                            transaction => transaction.PurchaseID.Equals(purchaseTransaction.PurchaseID));
+                if (purchaseTransactionInDatabase == null) return; // Purchase transaction could not be found
+
+                var lines = purchaseTransactionInDatabase.PurchaseTransactionLines.ToList();
+                foreach (var line in lines)
+                {
+                    if (!IsThereEnoughLineItemStockInDatabaseContext(context, line)) return;
+                    DecreasePurchaseTransactionLineItemStockInDatabaseContext(context, line);
+                    context.SaveChanges();
+                }
+
+                AddPurchaseTransactionDeletionLedgerTransactionToDatabaseContext(context, purchaseTransactionInDatabase);
+                context.PurchaseTransactions.Remove(purchaseTransactionInDatabase);
+                context.SaveChanges();
+                ts.Complete();
+            }
+
+            IsLastSaveSuccessful = true;
+        }
+
         public static void MakePayment(PurchaseTransaction purchaseTransaction, decimal paymentAmount,
             decimal useCreditsAmount, string paymentMode)
         {
@@ -233,6 +267,46 @@
                 context.SaveChanges();
             }
 
+            context.SaveChanges();
+        }
+        #endregion
+
+        #region Delete Transaction Helper Methods
+        private static bool IsThereEnoughLineItemStockInDatabaseContext(ERPContext context, PurchaseTransactionLine purchaseTransactionLine)
+        {
+            var stockFromDatabase = context.Stocks.SingleOrDefault(
+                stock => stock.Item.ItemID.Equals(purchaseTransactionLine.Item.ItemID) &&
+                stock.Warehouse.ID.Equals(purchaseTransactionLine.Warehouse.ID));
+            if (stockFromDatabase != null && stockFromDatabase.Pieces >= purchaseTransactionLine.Quantity)
+                return true;
+            var availableQuantity = stockFromDatabase?.Pieces ?? 0;
+            MessageBox.Show(
+                $"{purchaseTransactionLine.Item.Name} has only {availableQuantity / purchaseTransactionLine.Item.PiecesPerUnit} units {availableQuantity % purchaseTransactionLine.Item.PiecesPerUnit} pieces left.",
+                "Invalid Quantity", MessageBoxButton.OK);
+            return false;
+        }
+
+        private static void DecreasePurchaseTransactionLineItemStockInDatabaseContext(ERPContext context, PurchaseTransactionLine purchaseTransactionLine)
+        {
+            var stockFromDatabase = context.Stocks.Single(
+                stock => stock.Item.ItemID.Equals(purchaseTransactionLine.Item.ItemID) &&
+                stock.Warehouse.ID.Equals(purchaseTransactionLine.Warehouse.ID));
+            stockFromDatabase.Pieces -= purchaseTransactionLine.Quantity;
+            if (stockFromDatabase.Pieces == 0) context.Stocks.Remove(stockFromDatabase);
+        }
+
+        private static void AddPurchaseTransactionDeletionLedgerTransactionToDatabaseContext(ERPContext context, PurchaseTransaction purchaseTransaction)
+        {
+            var purchaseDeletionLedgerTransaction = new LedgerTransaction();
+            if (
+                !LedgerTransactionHelper.AddTransactionToDatabase(context, purchaseDeletionLedgerTransaction,
+                    UtilityMethods.GetCurrentDate(), purchaseTransaction.PurchaseID, "Purchase Transaction Deletion"))
+                return;
+            context.SaveChanges();
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseDeletionLedgerTransaction,
+                $"{purchaseTransaction.Supplier.Name} Accounts Payable", "Debit", purchaseTransaction.Total);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseDeletionLedgerTransaction, "Inventory",
+                "Credit", purchaseTransaction.Total);
             context.SaveChanges();
         }
         #endregion

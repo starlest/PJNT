@@ -6,6 +6,7 @@
     using System.Windows;
     using System.Windows.Input;
     using Item;
+    using Models;
     using Models.Purchase;
     using MVVMFramework;
     using Utilities;
@@ -17,6 +18,7 @@
     {
         private bool _notEditMode;
         private bool _isTransactionNotPaid;
+        private bool _isDeletionAllowed;
 
         #region Transaction backing fields
         private string _transactionID;
@@ -39,6 +41,7 @@
 
         private ICommand _saveTransactionCommand;
         private ICommand _newTransactionCommand;
+        private ICommand _deleteTransactionCommand;
 
         public PurchaseVM()
         {
@@ -61,6 +64,7 @@
 
             _notEditMode = true;
             _isTransactionNotPaid = true;
+            _isDeletionAllowed = false;
         }
 
         public PurchaseNewEntryVM NewEntryVM { get; }
@@ -75,6 +79,12 @@
         {
             get { return _notEditMode; }
             set { SetProperty(ref _notEditMode, value, () => NotEditMode); }
+        }
+
+        public bool IsDeletionAllowed
+        {
+            get { return _isDeletionAllowed; }
+            set { SetProperty(ref _isDeletionAllowed, value, () => IsDeletionAllowed); }
         }
 
         public PurchaseTransactionLineVM SelectedLine
@@ -322,6 +332,43 @@
             }
         }
 
+        public ICommand DeleteTransactionCommand
+        {
+            get
+            {
+                return _deleteTransactionCommand ?? (_deleteTransactionCommand = new RelayCommand(() =>
+                {
+                    if (!DoAllLinesHaveEnoughStock() || !IsAllLinesSoldOrReturnedZero() || IsTransactionPaid()) return;
+
+                    var _user = Application.Current.FindResource("CurrentUser") as User;
+                    if (_user != null && _user.CanDeleteInvoice && UtilityMethods.GetVerification())
+                    {
+                        PurchaseTransactionHelper.DeleteTransactionInDatabase(Model);
+                        if (PurchaseTransactionHelper.IsLastSaveSuccessful)
+                            MessageBox.Show("Purchase transaction successfully deleted!", "Success", MessageBoxButton.OK);
+                        else
+                            MessageBox.Show("Purchase transaction failed to be deleted!", "Failure", MessageBoxButton.OK);
+                        ResetTransaction();
+                    }
+
+                    else
+                        MessageBox.Show("You are not authorised to delete transactions!", "Invalid User", MessageBoxButton.OK);
+                }));
+            }
+        }
+
+        private bool IsTransactionPaid()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                var transactionInDatabase =
+                    context.PurchaseTransactions.Single(transaction => transaction.PurchaseID.Equals(Model.PurchaseID));
+                if (transactionInDatabase.Paid == 0) return false;
+                MessageBox.Show("The transaction had been paid!", "Failure", MessageBoxButton.OK);
+                return true;
+            }
+        }
+
         public ICommand NewTransactionCommand => _newTransactionCommand ?? (_newTransactionCommand = new RelayCommand(ResetTransaction));
         #endregion
 
@@ -368,6 +415,7 @@
 
             IsTransactionNotPaid = transaction.Paid == 0;
             IsTransactionTaxCheckBoxSelected = Model.Tax > 0;
+            IsDeletionAllowed = IsTransactionNotPaid && IsAllLinesSoldOrReturnedZeroWithoutWarning();
 
             UpdateSuppliers();
             _transactionSupplier = Suppliers.Single(supplier => supplier.ID.Equals(transaction.Supplier.ID));
@@ -418,6 +466,7 @@
 
             IsTransactionNotPaid = true;
             NotEditMode = true;
+            IsDeletionAllowed = false;
             IsTransactionTaxCheckBoxSelected = false;
 
             Model = new PurchaseTransaction();
@@ -492,6 +541,58 @@
         public void UpdateUIGrossTotal()
         {
             OnPropertyChanged("TransactionGrossTotal");
+        }
+        #endregion
+
+        #region Delete Transaction Helper Methods
+        private bool DoAllLinesHaveEnoughStock()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                if (DisplayedLines.Any(line => !IsThereEnoughLineItemStockInDatabaseContext(context, line.Model)))
+                    return false;
+            }
+            return true;
+        }
+
+        private static bool IsThereEnoughLineItemStockInDatabaseContext(ERPContext context, PurchaseTransactionLine purchaseTransactionLine)
+        {
+            var stockFromDatabase = context.Stocks.SingleOrDefault(
+                stock => stock.Item.ItemID.Equals(purchaseTransactionLine.Item.ItemID) &&
+                stock.Warehouse.ID.Equals(purchaseTransactionLine.Warehouse.ID));
+            if (stockFromDatabase != null && stockFromDatabase.Pieces >= purchaseTransactionLine.Quantity)
+                return true;
+            var availableQuantity = stockFromDatabase?.Pieces ?? 0;
+            MessageBox.Show(
+                $"{purchaseTransactionLine.Item.Name} has only {availableQuantity / purchaseTransactionLine.Item.PiecesPerUnit} units {availableQuantity % purchaseTransactionLine.Item.PiecesPerUnit} pieces left" +
+                $" at {purchaseTransactionLine.Warehouse.Name}.",
+                "Invalid Quantity", MessageBoxButton.OK);
+            return false;
+        }
+
+        private bool IsAllLinesSoldOrReturnedZero()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                var purchaseTransactionInDatabase =
+                    context.PurchaseTransactions.Include("PurchaseTransactionLines").Single(transaction => transaction.PurchaseID.Equals(Model.PurchaseID));
+                foreach (var line in purchaseTransactionInDatabase.PurchaseTransactionLines.Where(line => line.SoldOrReturned > 0))
+                {
+                    MessageBox.Show($"{line.Item.Name} has been sold or returned!", "Failure", MessageBoxButton.OK);
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        private bool IsAllLinesSoldOrReturnedZeroWithoutWarning()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            {
+                var purchaseTransactionInDatabase =
+                    context.PurchaseTransactions.Include("PurchaseTransactionLines").Single(transaction => transaction.PurchaseID.Equals(Model.PurchaseID));
+                return !purchaseTransactionInDatabase.PurchaseTransactionLines.Any(line => line.SoldOrReturned > 0);
+            }
         }
         #endregion
     }
