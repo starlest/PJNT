@@ -7,29 +7,30 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels
 {
-    class VerificationVM : ViewModelBase
+    internal class VerificationVM : ViewModelBase
     {
-        string _userName;
-        string _password;
-
-        ICommand _submitCommand;
+        private string _userName;
+        private string _password;
+        private ICommand _submitCommand;
 
         public VerificationVM()
         {
-            if (App.Current.TryFindResource("IsVerified") != null) App.Current.Resources.Remove("IsVerified");
+            if (Application.Current.TryFindResource("IsVerified") != null) Application.Current.Resources.Remove("IsVerified");
         }
 
         public string Username
         {
             get { return _userName; }
-            set { SetProperty(ref _userName, value, "Username"); }
+            set { SetProperty(ref _userName, value, () => Username); }
         }
 
         public string Password
         {
             get { return _password; }
-            set { SetProperty(ref _password, value, "Password"); }
+            set { SetProperty(ref _password, value, () => Password); }
         }
+
+        public bool CheckForMasterAdmin { get; set; }
 
         public ICommand SubmitCommand
         {
@@ -45,24 +46,29 @@ namespace PutraJayaNT.ViewModels
 
                     using (var context = new ERPContext(UtilityMethods.GetDBName()))
                     {
-                        var user = context.Users.Where(e => e.Username.Equals(_userName) && e.Password.Equals(_password) && e.IsAdmin.Equals(true)).FirstOrDefault();
+                        var userFromDatabase = context.Users.SingleOrDefault(user => user.Username.Equals(_userName) && user.Password.Equals(_password) && user.IsAdmin);
 
-                        if (user == null)
+                        if (userFromDatabase == null)
                         {
-                            MessageBox.Show("Wrong Username or Password", "Verification Failed", MessageBoxButton.OK);
+                            MessageBox.Show("Wrong Username or Password.", "Verification Failed", MessageBoxButton.OK);
+                            return;
+                        }
+
+                        if (CheckForMasterAdmin && !userFromDatabase.CanDeleteInvoice)
+                        {
+                            MessageBox.Show("You are not authorised to perform this operation!", "Invalid User",
+                                MessageBoxButton.OK);
                             return;
                         }
 
                         // Verification Successful
-                        App.Current.Resources.Add("IsVerified", true);
-                        var windows = App.Current.Windows;
+                        Application.Current.Resources.Add("IsVerified", true);
+                        var windows = Application.Current.Windows;
                         foreach (ModernWindow window in windows)
                         {
-                            if (window.Title == "Verification")
-                            {
-                                window.Close();
-                                return;
-                            }
+                            if (window.Title != "Verification") continue;
+                            window.Close();
+                            return;
                         }
                     }
                 }));

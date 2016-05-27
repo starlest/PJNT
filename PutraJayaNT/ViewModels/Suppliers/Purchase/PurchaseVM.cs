@@ -6,7 +6,6 @@
     using System.Windows;
     using System.Windows.Input;
     using Item;
-    using Models;
     using Models.Purchase;
     using MVVMFramework;
     using Utilities;
@@ -338,21 +337,14 @@
             {
                 return _deleteTransactionCommand ?? (_deleteTransactionCommand = new RelayCommand(() =>
                 {
-                    if (!DoAllLinesHaveEnoughStock() || !IsAllLinesSoldOrReturnedZero() || IsTransactionPaid()) return;
-
-                    var _user = Application.Current.FindResource("CurrentUser") as User;
-                    if (_user != null && _user.CanDeleteInvoice && UtilityMethods.GetVerification())
-                    {
-                        PurchaseTransactionHelper.DeleteTransactionInDatabase(Model);
-                        if (PurchaseTransactionHelper.IsLastSaveSuccessful)
-                            MessageBox.Show("Purchase transaction successfully deleted!", "Success", MessageBoxButton.OK);
-                        else
-                            MessageBox.Show("Purchase transaction failed to be deleted!", "Failure", MessageBoxButton.OK);
-                        ResetTransaction();
-                    }
-
+                    if (!DoAllLinesHaveEnoughStock() || !IsAllLinesSoldOrReturnedZero() || 
+                    IsTransactionPaid() || !UtilityMethods.GetMasterAdminVerification()) return;
+                    PurchaseTransactionHelper.DeleteTransactionInDatabase(Model);
+                    if (PurchaseTransactionHelper.IsLastSaveSuccessful)
+                        MessageBox.Show("Purchase transaction successfully deleted!", "Success", MessageBoxButton.OK);
                     else
-                        MessageBox.Show("You are not authorised to delete transactions!", "Invalid User", MessageBoxButton.OK);
+                        MessageBox.Show("Purchase transaction failed to be deleted!", "Failure", MessageBoxButton.OK);
+                    ResetTransaction();
                 }));
             }
         }

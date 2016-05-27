@@ -35,7 +35,7 @@ namespace PutraJayaNT.Views.Accounting
             worker.ProgressChanged += worker_ProgressChanged;
 
             if (isRunning) return;
-            if (!UtilityMethods.GetVerification()) return;
+            if (!UtilityMethods.GetMasterAdminVerification()) return;
             isRunning = true;
             worker.RunWorkerAsync();
         }

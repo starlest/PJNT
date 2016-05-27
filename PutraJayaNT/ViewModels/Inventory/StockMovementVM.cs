@@ -216,7 +216,10 @@
             {
                 return _saveTransactionCommand ?? (_saveTransactionCommand = new RelayCommand(() =>
                 {
-                    if (StockMovementTransactionLines.Count == 0 || !IsToWarehouseSelected() || !IsTransactionConfirmationYes() || !AreThereEnoughStock() || !UtilityMethods.GetVerification()) return;
+                    if (StockMovementTransactionLines.Count == 0 || !IsToWarehouseSelected()
+                        || !IsTransactionConfirmationYes() || !AreThereEnoughStock()
+                        || !UtilityMethods.GetVerification())
+                        return;
                     SetTransactionID();
                     AssignSelectedPropertiesToModel();
                     StockMovementTransactionHelper.AddStockMovementTransactionToDatabase(Model);

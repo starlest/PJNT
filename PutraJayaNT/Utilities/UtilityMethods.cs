@@ -11,7 +11,17 @@
         public static bool GetVerification()
         {
             Application.Current.MainWindow.IsEnabled = false;
-            var window = new VerificationWindow();
+            var window = new VerificationWindow(false);
+            window.ShowDialog();
+            Application.Current.MainWindow.IsEnabled = true;
+            var isVerified = Application.Current.TryFindResource("IsVerified");
+            return isVerified != null;
+        }
+
+        public static bool GetMasterAdminVerification()
+        {
+            Application.Current.MainWindow.IsEnabled = false;
+            var window = new VerificationWindow(true);
             window.ShowDialog();
             Application.Current.MainWindow.IsEnabled = true;
             var isVerified = Application.Current.TryFindResource("IsVerified");

@@ -98,7 +98,7 @@ namespace PutraJayaNT.Views.Menu
             if (MessageBox.Show(
                 $"The date now is: {UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy")} \n Confirm decreasing day?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
 
-            if (!UtilityMethods.GetVerification()) return;
+            if (!UtilityMethods.GetMasterAdminVerification()) return;
 
             using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {

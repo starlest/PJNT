@@ -69,15 +69,7 @@
                     MenuLinkGroups[1].Links.Add(link);
                 }
 
-                //using (var context = new ERPContext(UtilityMethods.GetDBName()))
-                //{
-                //    var purchaseTransaction =
-                //        context.PurchaseTransactions.Single(
-                //            transaction => transaction.PurchaseID.Equals("P1605000025"));
-                //    PurchaseTransactionHelper.DeleteTransactionInDatabase(purchaseTransaction);
-                //    MessageBox.Show($"Delete {purchaseTransaction.PurchaseID}");
-                //}
-                RunUpdateTitleLoop();
+                SetUpBackgroundWorker();
             }
         }
 
@@ -101,7 +93,7 @@
                 AppearanceManager.Current.AccentColor = Colors.Yellow;
         }
 
-        private void RunUpdateTitleLoop()
+        private void SetUpBackgroundWorker()
         {
             var worker = new BackgroundWorker();
             worker.DoWork += worker_DoWork;
@@ -114,25 +106,39 @@
         {
             while (true)
             {
-                Dispatcher.Invoke(() =>
-                {
-                    try
-                    {
-                        SetTitle();
-                        if (_isServer && !_isSendingNotifications)
-                        {
-                            _isSendingNotifications = true;
-                            SendNotifications();
-                            _isSendingNotifications = false;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        _isSendingNotifications = false;
-                    }
-                });
+                Dispatcher.Invoke(UpdateTitle);              
+                AttemptToSendNotifications();
                 Thread.Sleep(5000);
             }
+        }
+
+        private void UpdateTitle()
+        {
+            if (HasTitledChanged()) SetTitle();
+        }
+
+        private void AttemptToSendNotifications()
+        {
+            try
+            {
+                if (_isServer && !_isSendingNotifications)
+                {
+                    _isSendingNotifications = true;
+                    SendNotifications();
+                    _isSendingNotifications = false;
+                }
+            }
+            catch (Exception)
+            {
+                _isSendingNotifications = false;
+            }
+
+        }
+
+        private bool HasTitledChanged()
+        {
+            var newTitle = _selectedServerName + " - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
+            return !newTitle.Equals(Title);
         }
 
         private void SetTitle()

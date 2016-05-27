@@ -291,16 +291,10 @@
 
                     if (MessageBox.Show("Confirm deleting this transaction?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
 
-                    var _user = Application.Current.FindResource("CurrentUser") as User;
-                    if (_user != null && _user.CanDeleteInvoice && UtilityMethods.GetVerification())
-                    {
-                        DeleteInvoice();
-                        MessageBox.Show("Successfully deleted transaction!", "Success", MessageBoxButton.OK);
-                        ResetTransaction();
-                    }
-
-                    else
-                        MessageBox.Show("You are not authorised to delete transactions!", "Invalid User", MessageBoxButton.OK);
+                    if (!UtilityMethods.GetMasterAdminVerification()) return;
+                    DeleteInvoice();
+                    MessageBox.Show("Successfully deleted transaction!", "Success", MessageBoxButton.OK);
+                    ResetTransaction();
                 }));
             }
         }

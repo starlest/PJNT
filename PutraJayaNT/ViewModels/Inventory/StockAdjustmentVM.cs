@@ -101,7 +101,8 @@
             {
                 return _saveTransactionCommand ?? (_saveTransactionCommand = new RelayCommand(() =>
                 {
-                    if (DisplayedLines.Count == 0 || !IsDescriptionFilled() || !IsSavingConfirmationYes() || !UtilityMethods.GetVerification()) return;
+                    if (DisplayedLines.Count == 0 || !IsDescriptionFilled() 
+                    || !IsSavingConfirmationYes() || !UtilityMethods.GetMasterAdminVerification()) return;
                     AssignTransactionPropertiesToModel();
                     StockAdjustmentHelper.AddStockAdjustmentTransactionToDatabase(Model);
                     MessageBox.Show("Transaction sucessfully is saved.", "Success", MessageBoxButton.OK);

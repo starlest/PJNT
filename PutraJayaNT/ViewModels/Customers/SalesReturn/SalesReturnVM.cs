@@ -160,6 +160,7 @@
                 {
                     if (DisplayedSalesReturnTransactionLines.Count == 0 || MessageBox.Show("Confirm transaction?", "Confirmation", MessageBoxButton.YesNo) !=
                         MessageBoxResult.Yes) return;
+                    if (!UtilityMethods.GetMasterAdminVerification()) return;
                     SetNewSalesReturnTransactionID();   // To avoid simultaneous input into the same ID
                     SetSalesReturnTransactionModelPropertiesToVMProperties();
                     SalesReturnTransactionHelper.AddSalesReturnTransactionToDatabase(Model);
@@ -186,7 +187,6 @@
                 }));
             }
         }
-
 
         public ICommand PrintCommand
         {
@@ -217,6 +217,7 @@
             SalesReturnTransactionDate = Model.Date;
 
             _salesReturnTransactionNetTotal = 0;
+            DisplayedSalesTransactionLines.Clear();
             foreach (var line in Model.SalesReturnTransactionLines)
             {
                 DisplayedSalesReturnTransactionLines.Add(new SalesReturnTransactionLineVM {Model = line});

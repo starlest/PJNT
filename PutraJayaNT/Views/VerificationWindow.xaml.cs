@@ -8,10 +8,10 @@
     /// </summary>
     public partial class VerificationWindow
     {
-        public VerificationWindow()
+        public VerificationWindow(bool checkForMasterAdmin)
         {
             InitializeComponent();
-            var vm = new VerificationVM();
+            var vm = new VerificationVM {CheckForMasterAdmin = checkForMasterAdmin};
             DataContext = vm;
             FocusManager.SetFocusedElement(this, UsernameBox);
         }

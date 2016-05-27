@@ -27,7 +27,7 @@ namespace PutraJayaNT.Views.Inventory
             worker.DoWork += worker_DoWork;
             worker.ProgressChanged += worker_ProgressChanged;
 
-            if (_isRunning || !UtilityMethods.GetVerification()) return;
+            if (_isRunning || !UtilityMethods.GetMasterAdminVerification()) return;
             _isRunning = true;
             worker.RunWorkerAsync();
         }
