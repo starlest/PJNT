@@ -1,5 +1,4 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
+﻿using Microsoft.Reporting.WinForms;
 using System;
 using System.Data;
 using System.Windows;
@@ -12,7 +11,7 @@ namespace PutraJayaNT.Reports.Windows
     /// <summary>
     /// Interaction logic for SalesInvoiceWindow.xaml
     /// </summary>
-    public partial class SalesTransactionDOReportWindow : ModernWindow
+    public partial class SalesTransactionDOReportWindow
     {
         readonly SalesTransaction _salesTransaction;
         private DataTable dt1;
@@ -69,7 +68,7 @@ namespace PutraJayaNT.Reports.Windows
         private void LoadReportViewer1()
         {
             InitializeDataSources();
-            int count = 1;
+            var count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(2)).ToList())
             {
                 DataRow dr1 = dt1.NewRow();
@@ -100,8 +99,8 @@ namespace PutraJayaNT.Reports.Windows
 
             dt2.Rows.Add(dr2);
 
-            ReportDataSource reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
-            ReportDataSource reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
+            var reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
+            var reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
 
             reportViewer1.LocalReport.ReportPath = reportPath;
             reportViewer1.LocalReport.DataSources.Add(reportDataSource1);
@@ -115,10 +114,10 @@ namespace PutraJayaNT.Reports.Windows
         private void LoadReportViewer2()
         {
             InitializeDataSources();
-            int count = 1;
+            var count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(1)).ToList())
             {
-                DataRow dr1 = dt1.NewRow();
+                var dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;
                 dr1["ItemID"] = line.Item.ItemID;
                 dr1["ItemName"] = line.Item.Name;
@@ -128,7 +127,7 @@ namespace PutraJayaNT.Reports.Windows
                 dt1.Rows.Add(dr1);
             }
 
-            DataRow dr2 = dt2.NewRow();
+            var dr2 = dt2.NewRow();
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
@@ -146,8 +145,8 @@ namespace PutraJayaNT.Reports.Windows
 
             dt2.Rows.Add(dr2);
 
-            ReportDataSource reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
-            ReportDataSource reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
+            var reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
+            var reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
 
             reportViewer2.LocalReport.ReportPath = reportPath;
             reportViewer2.LocalReport.DataSources.Add(reportDataSource1);
@@ -161,10 +160,10 @@ namespace PutraJayaNT.Reports.Windows
         private void LoadReportViewer3()
         {
             InitializeDataSources();
-            int count = 1;
+            var count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(3)).ToList())
             {
-                DataRow dr1 = dt1.NewRow();
+                var dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;
                 dr1["ItemID"] = line.Item.ItemID;
                 dr1["ItemName"] = line.Item.Name;
@@ -174,7 +173,7 @@ namespace PutraJayaNT.Reports.Windows
                 dt1.Rows.Add(dr1);
             }
 
-            DataRow dr2 = dt2.NewRow();
+            var dr2 = dt2.NewRow();
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
@@ -192,8 +191,8 @@ namespace PutraJayaNT.Reports.Windows
 
             dt2.Rows.Add(dr2);
 
-            ReportDataSource reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
-            ReportDataSource reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
+            var reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
+            var reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
 
             reportViewer3.LocalReport.ReportPath = reportPath;
             reportViewer3.LocalReport.DataSources.Add(reportDataSource1);
@@ -238,8 +237,8 @@ namespace PutraJayaNT.Reports.Windows
 
             dt2.Rows.Add(dr2);
 
-            ReportDataSource reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
-            ReportDataSource reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
+            var reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
+            var reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
 
             reportViewer4.LocalReport.ReportPath = reportPath; // Path of the rdlc file
             reportViewer4.LocalReport.DataSources.Add(reportDataSource1);

@@ -24,10 +24,10 @@
         <WindowsFormsHost>
             <rv:ReportViewer x:Name="reportViewer1" RenderingComplete="reportViewer_RenderingComplete" />
         </WindowsFormsHost>
-        <WindowsFormsHost Grid.Column="1">
+        <WindowsFormsHost Grid.Row="0" Grid.Column="1">
             <rv:ReportViewer x:Name="reportViewer2" RenderingComplete="reportViewer_RenderingComplete" />
         </WindowsFormsHost>
-        <WindowsFormsHost Grid.Row="1">
+        <WindowsFormsHost Grid.Row="1" Grid.Column="0">
             <rv:ReportViewer x:Name="reportViewer3" RenderingComplete="reportViewer_RenderingComplete" />
         </WindowsFormsHost>
         <WindowsFormsHost Grid.Row="1" Grid.Column="1">

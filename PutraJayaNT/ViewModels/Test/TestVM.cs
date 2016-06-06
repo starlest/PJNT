@@ -170,7 +170,7 @@
                 var context = new ERPContext(UtilityMethods.GetDBName());
 
                 var actualCOGS =
-                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance4 +
+                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance5 +
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Debit -
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Credit;
                 // change beginningbalaance
@@ -246,21 +246,24 @@
                         var warehouses = context.Warehouses.ToList();
 
                         foreach (var item in items)
-                        { 
+                        {
                             foreach (var warehouse in warehouses)
                             {
                                 var stock = context.Stocks
-                                .Include("Item")
-                                .Include("Warehouse")
-                                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID))
-                                .FirstOrDefault();
+                                    .Include("Item")
+                                    .Include("Warehouse")
+                                    .FirstOrDefault(
+                                        e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID));
 
-                                var actualBalance = stock == null ? 0 : stock.Pieces;
-                                var calculatedBalance = GetBeginningBalance(item, warehouse, UtilityMethods.GetCurrentDate().Date);
+                                var actualBalance = stock?.Pieces ?? 0;
+                                var calculatedBalance = GetBeginningBalance(item, warehouse,
+                                    UtilityMethods.GetCurrentDate().Date);
                                 var difference = actualBalance - calculatedBalance;
                                 if (difference != 0)
                                 {
-                                    if (MessageBox.Show(string.Format("{0}-{1} {2} \n Actual: {3} \n Calculated: {4}", item.ItemID, warehouse.ID, item.Name, actualBalance, calculatedBalance), "Error", MessageBoxButton.YesNo)
+                                    if (MessageBox.Show(
+                                        $"{item.ItemID}-{warehouse.ID} {item.Name} \n Actual: {actualBalance} \n Calculated: {calculatedBalance}",
+                                        "Error", MessageBoxButton.YesNo)
                                         == MessageBoxResult.No) return;
                                 }
                             }
@@ -478,7 +481,7 @@
                         {
                             decimal totalDebit = 0;
                             decimal totalCredit = 0;
-                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 5))
+                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 6))
                             {
                                 count++;
                                 if (line.Amount < 0) MessageBox.Show(string.Format("Check {0} - {1}", line.LedgerTransactionID, line.Seq), "Error", MessageBoxButton.OK);

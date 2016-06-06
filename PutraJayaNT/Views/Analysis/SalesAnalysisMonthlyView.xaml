@@ -44,7 +44,7 @@
                 <Button Grid.Column="9" Content="Clear" Margin="20" Command="{Binding ClearCommand}" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedLines}" IsReadOnly="True">
+        <DataGrid Grid.Row="1" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding DisplayedLines}" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Product" Width="2*" Binding="{Binding Item.Name}" />
                 <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding Item.Unit}" />

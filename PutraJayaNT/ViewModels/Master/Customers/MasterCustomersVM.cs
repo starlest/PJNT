@@ -68,7 +68,7 @@
             get { return _selectedCustomerGroup; }
             set
             {
-                SetProperty(ref _selectedCustomerGroup, value, "SelectedCustomerGroup");
+                SetProperty(ref _selectedCustomerGroup, value, () => SelectedCustomerGroup);
 
                 if (_selectedCustomerGroup == null) return;
 
@@ -89,7 +89,7 @@
             get { return _selectedCity; }
             set
             {
-                SetProperty(ref _selectedCity, value, "SelectedCity");
+                SetProperty(ref _selectedCity, value, () => SelectedCity);
 
                 if (_selectedCity == null) return;
 
@@ -102,7 +102,7 @@
         public CustomerVM SelectedLine
         {
             get { return _selectedLine; }
-            set { SetProperty(ref _selectedLine, value, "SelectedLine"); }
+            set { SetProperty(ref _selectedLine, value, () => SelectedLine); }
         }
         #endregion
 
@@ -171,6 +171,8 @@
 
         public void UpdateListedCustomers()
         {
+            if (_selectedCity != null) return;
+
             var oldSelectedCustomer = _selectedCustomer;
             using (var context = new ERPContext(UtilityMethods.GetDBName()))
             {
