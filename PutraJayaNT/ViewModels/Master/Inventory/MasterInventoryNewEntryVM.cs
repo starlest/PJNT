@@ -4,9 +4,9 @@
     using System.Windows;
     using System.Windows.Input;
     using Item;
-    using MVVMFramework;
     using Models;
     using Models.Inventory;
+    using MVVMFramework;
     using Utilities.ModelHelpers;
     using ViewModels.Suppliers;
 
@@ -15,6 +15,7 @@
         private readonly MasterInventoryVM _parentVM;
 
         #region Backing Fields
+
         private string _newEntryID;
         private string _newEntryName;
         private CategoryVM _newEntryCategory;
@@ -27,6 +28,7 @@
         private decimal _newEntrySalesPrice;
         private ICommand _newEntryCommand;
         private ICommand _cancelEntryCommand;
+
         #endregion
 
         public MasterInventoryNewEntryVM(MasterInventoryVM parentVM)
@@ -37,9 +39,10 @@
 
         public ObservableCollection<CategoryVM> Categories => _parentVM.Categories;
 
-        public ObservableCollection<SupplierVM> Suppliers => _parentVM.Suppliers; 
+        public ObservableCollection<SupplierVM> Suppliers => _parentVM.Suppliers;
 
         #region Properties
+
         public string NewEntryID
         {
             get { return _newEntryID; }
@@ -99,17 +102,21 @@
             get { return _newEntryPurchasePrice; }
             set { SetProperty(ref _newEntryPurchasePrice, value, "NewEntryPurchasePrice"); }
         }
+
         #endregion
 
         #region Commands
+
         public ICommand NewEntryCommand
         {
             get
             {
                 return _newEntryCommand ?? (_newEntryCommand = new RelayCommand(() =>
                 {
-                    if (!AreAllEntryFieldsFilled() || !AreAllPriceEntryFieldsValid() || !AreAllQuantityFieldsValid()) return;
-                    if (MessageBox.Show("Confirm adding this product?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+                    if (!AreAllEntryFieldsFilled() || !AreAllPriceEntryFieldsValid() || !AreAllQuantityFieldsValid())
+                        return;
+                    if (MessageBox.Show("Confirm adding this product?", "Confirmation", MessageBoxButton.YesNo) ==
+                        MessageBoxResult.No) return;
                     var newEntryItem = MakeNewEntryItem();
                     InventoryHelper.AddItemToDatabase(newEntryItem);
                     ResetEntryFields();
@@ -119,10 +126,13 @@
             }
         }
 
-        public ICommand CancelEntryCommand => _cancelEntryCommand ?? (_cancelEntryCommand = new RelayCommand(ResetEntryFields));
+        public ICommand CancelEntryCommand
+            => _cancelEntryCommand ?? (_cancelEntryCommand = new RelayCommand(ResetEntryFields));
+
         #endregion
 
         #region Helper Methods
+
         private Item MakeNewEntryItem()
         {
             var newEntryItem = new Item
@@ -133,7 +143,7 @@
                 UnitName = _newEntryUnitName,
                 SecondaryUnitName = _newEntrySecondaryUnitName,
                 PiecesPerUnit = _newEntryPiecesPerUnit,
-                PiecesPerSecondaryUnit =  _newEntryPiecesPerSecondaryUnit,
+                PiecesPerSecondaryUnit = _newEntryPiecesPerSecondaryUnit,
                 PurchasePrice = _newEntryPurchasePrice/_newEntryPiecesPerUnit,
                 SalesPrice = _newEntrySalesPrice/_newEntryPiecesPerUnit,
                 Suppliers = new ObservableCollection<Supplier>()
@@ -145,8 +155,11 @@
         private bool AreAllEntryFieldsFilled()
         {
             if (_newEntryID != null && _newEntryName != null &&
-                _newEntryCategory != null && _newEntrySupplier != null && 
-                _newEntryUnitName != null)
+                _newEntryCategory != null && _newEntrySupplier != null &&
+                _newEntryUnitName != null && (
+                    (_newEntryPiecesPerSecondaryUnit > 0 && _newEntrySecondaryUnitName != null)
+                    || (_newEntryPiecesPerSecondaryUnit == 0)
+                    ))
                 return true;
 
             MessageBox.Show("Please enter all fields", "Missing Fields", MessageBoxButton.OK);
@@ -164,13 +177,15 @@
         private bool AreAllQuantityFieldsValid()
         {
             if (_newEntryPiecesPerUnit > 0 && _newEntryPiecesPerSecondaryUnit >= 0 &&
-                _newEntryPiecesPerUnit >= _newEntryPiecesPerSecondaryUnit)
+                _newEntryPiecesPerUnit > _newEntryPiecesPerSecondaryUnit)
             {
-                if (_newEntryPiecesPerSecondaryUnit > 0 && _newEntryPiecesPerUnit%_newEntryPiecesPerSecondaryUnit == 0)
+                if ((_newEntryPiecesPerSecondaryUnit > 0 && _newEntryPiecesPerUnit%_newEntryPiecesPerSecondaryUnit == 0) ||
+                    _newEntryPiecesPerSecondaryUnit == 0)
                     return true;
-                return _newEntryPiecesPerSecondaryUnit == 0;
             }
-            MessageBox.Show("Please check that all quantity fields are valid.", "Invalid Field(s)", MessageBoxButton.OK);
+            MessageBox.Show("Please check that all quantity fields are valid. \n" +
+                            "Pieces/Unit must be greater than Pieces/SecondaryUnit \n" +
+                            "and the former must be divisible by the latter.", "Invalid Field(s)", MessageBoxButton.OK);
             return false;
         }
 
@@ -189,6 +204,7 @@
             _parentVM.UpdateSuppliers();
             _parentVM.UpdateCategories();
         }
+
         #endregion
     }
 }

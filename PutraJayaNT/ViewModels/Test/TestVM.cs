@@ -170,7 +170,7 @@
                 var context = new ERPContext(UtilityMethods.GetDBName());
 
                 var actualCOGS =
-                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance5 +
+                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance6 +
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Debit -
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Credit;
                 // change beginningbalaance
@@ -481,7 +481,7 @@
                         {
                             decimal totalDebit = 0;
                             decimal totalCredit = 0;
-                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 6))
+                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 7))
                             {
                                 count++;
                                 if (line.Amount < 0) MessageBox.Show(string.Format("Check {0} - {1}", line.LedgerTransactionID, line.Seq), "Error", MessageBoxButton.OK);

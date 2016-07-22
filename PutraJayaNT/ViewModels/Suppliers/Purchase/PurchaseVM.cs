@@ -21,6 +21,7 @@
 
         #region Transaction backing fields
         private string _transactionID;
+        private DateTime _transactionInvoiceDate;
         private string _transactionDoid;
         private SupplierVM _transactionSupplier;
         private DateTime _transactionDate;
@@ -54,8 +55,10 @@
 
             UpdateSuppliers();
 
-            TransactionDate = UtilityMethods.GetCurrentDate().Date;
-            TransactionDueDate = UtilityMethods.GetCurrentDate().Date;
+            var currentDate = UtilityMethods.GetCurrentDate().Date;
+            TransactionDate = currentDate;
+            TransactionDueDate = currentDate;
+            TransactionInvoiceDate = currentDate;
 
             SetTransactionID();
             Model.DueDate = _transactionDueDate;
@@ -140,6 +143,15 @@
         {
             get { return _transactionDoid; }
             set { SetProperty(ref _transactionDoid, value, () => TransactionDOID); }
+        }
+
+        public DateTime TransactionInvoiceDate
+        {
+            get { return _transactionInvoiceDate; }
+            set
+            {
+                SetProperty(ref _transactionInvoiceDate, value, () => TransactionInvoiceDate);
+            }
         }
 
         public DateTime TransactionDate
@@ -467,8 +479,9 @@
             TransactionTax = 0;
             TransactionDiscount = 0;
             TransactionNote = null;
-            TransactionDate = UtilityMethods.GetCurrentDate().Date;
-            TransactionDueDate = UtilityMethods.GetCurrentDate().Date;
+            var currentDate = UtilityMethods.GetCurrentDate().Date;
+            TransactionDate = currentDate;
+            TransactionDueDate = currentDate;
 
             Warehouses.Clear();
             SupplierItems.Clear();

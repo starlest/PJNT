@@ -64,7 +64,7 @@ namespace PutraJayaNT.ViewModels
                         // Verification Successful
                         Application.Current.Resources.Add("IsVerified", true);
                         var windows = Application.Current.Windows;
-                        foreach (ModernWindow window in windows)
+                        foreach (Window window in windows)
                         {
                             if (window.Title != "Verification") continue;
                             window.Close();
