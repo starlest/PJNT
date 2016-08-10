@@ -10,7 +10,7 @@
     {
         public static IEnumerable<StockAdjustmentTransactionLine> Get(Func<StockAdjustmentTransactionLine, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.StockAdjustmentTransactionLines.Include("Item").Include("Warehouse").Include("StockAdjustmentTransaction").Include("StockAdjustmentTransaction.User").Where(condition).ToList();
         }
     }

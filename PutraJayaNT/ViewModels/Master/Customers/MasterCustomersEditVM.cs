@@ -2,6 +2,7 @@
 
 namespace PutraJayaNT.ViewModels.Master.Customers
 {
+    using System;
     using MVVMFramework;
     using System.Linq;
     using System.Windows;
@@ -26,6 +27,9 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         private int _editMaxInvoices;
         private CustomerGroupVM _editCustomerGroup;
         private ICommand _editConfirmCommand;
+
+
+        public Action CloseWindow { get; set; }
         #endregion
 
         public MasterCustomersEditVM(CustomerVM editingCustomer)
@@ -105,7 +109,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
                     var editedCustomerCopy = MakeEditedCustomer();
                     CustomerHelper.SaveCustomerEditsToDatabase(editingCustomer, editedCustomerCopy);
                     UpdateEditingCustomerUIValues();
-                    UtilityMethods.CloseForemostWindow();
+                    CloseWindow();
                 }));
             }
         }
@@ -127,7 +131,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         private void UpdateEditGroups()
         {
             EditGroups.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customerGroupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
                 foreach (var customerGroup in customerGroupsReturnedFromDatabase)
@@ -171,7 +175,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
 
         private bool IsCustomerNameInDatabaseAlready()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 if (_editName.Equals(_editingCustomer.Name) ||
                     context.Customers.SingleOrDefault(customer => customer.Name.Equals(_editName)) == null) return true;

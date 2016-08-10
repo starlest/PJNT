@@ -77,7 +77,7 @@
         private void UpdateSalesTransactions()
         {
             SalesTransactions.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 IEnumerable<SalesTransaction> salesTransactions;
 

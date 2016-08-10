@@ -29,7 +29,7 @@
 
         private static SalesTransaction GetSalesTransactionFromDatabase(SalesTransaction salesTransaction)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 return context.SalesTransactions
                     .Include("Customer")
@@ -46,7 +46,7 @@
         #region Print DO Local Report Helper Methods
         private static void SetSalesTransactionDOPrintedStatusToTrue(SalesTransaction salesTransaction)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var salesTransactionFromDatabase = context.SalesTransactions.Single(
                     transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
@@ -60,7 +60,7 @@
         private static IEnumerable<LocalReport> CreateSalesInvoiceDOLocalReports(SalesTransaction salesTransaction)
         {
             var reports = new List<LocalReport>();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var warehouses = context.Warehouses;
                 foreach (var warehouse in warehouses)
@@ -188,7 +188,7 @@
         #region Print Invoice Helper Methods
         private static void SetSalesTransactionInvoicePrintedStatusToTrue(SalesTransaction salesTransaction)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var salesTransactionFromDatabase = context.SalesTransactions.Single(
                     transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));

@@ -154,7 +154,7 @@
 
             CustomerGroups.Clear();
             CustomerGroups.Add(new CustomerGroupVM { Model = new CustomerGroup { ID = -1, Name = "All" }});
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var groupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
                 foreach (var group in groupsReturnedFromDatabase)
@@ -174,7 +174,7 @@
             if (_selectedCity != null) return;
 
             var oldSelectedCustomer = _selectedCustomer;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customersReturnedFromDatabase = _selectedCustomerGroup.Name.Equals("All") ? 
                     context.Customers.Include("Group").OrderBy(customer => customer.Name) : 
@@ -199,7 +199,7 @@
         {
             var oldSelectedCity = _selectedCity;
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customersReturnedFromDatabase = context.Customers.Include("Group").OrderBy(customer => customer.Name);
                 foreach (var customer in customersReturnedFromDatabase)
@@ -231,7 +231,7 @@
         {
             DisplayedCustomers.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customersReturnedFromDatabase = LoadCustomersFromDatabaseContextAccordingToSelections(context);
                 foreach (
@@ -244,7 +244,7 @@
 
         public static void DeactivateCustomerInDatabase(Customer customer)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 context.Entry(customer).State = EntityState.Modified;
                 customer.Active = false;
@@ -254,7 +254,7 @@
 
         public static void ActivateCustomerInDatabase(Customer customer)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 context.Entry(customer).State = EntityState.Modified;
                 customer.Active = true;

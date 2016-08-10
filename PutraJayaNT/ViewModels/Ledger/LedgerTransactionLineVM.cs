@@ -63,7 +63,7 @@
             get
             {
                 _opposingLines.Clear();
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     var lines = context.Ledger_Transaction_Lines
                         .Include("LedgerTransaction")

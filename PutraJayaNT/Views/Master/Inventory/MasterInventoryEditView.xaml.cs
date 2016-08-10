@@ -3,6 +3,8 @@ using PutraJayaNT.ViewModels.Master.Inventory;
 
 namespace PutraJayaNT.Views.Master.Inventory
 {
+    using System;
+
     /// <summary>
     /// Interaction logic for MasterInventoryEditView.xaml
     /// </summary>
@@ -12,6 +14,7 @@ namespace PutraJayaNT.Views.Master.Inventory
         {
             InitializeComponent();
             DataContext = vm;
+            vm.CloseWindow = Close;
         }
 
         private void Cancel_Button_Clicked(object sender, RoutedEventArgs e)

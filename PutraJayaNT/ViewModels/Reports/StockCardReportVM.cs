@@ -154,7 +154,7 @@
             var oldSelectedProduct = _selectedProduct;
 
             Products.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var productsFromDatabase = context.Inventory.OrderBy(item => item.Name);
                 foreach (var product in productsFromDatabase)
@@ -173,7 +173,7 @@
         private void UpdateWarehouses()
         {
             Warehouses.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var warehousesFromDatabase = context.Warehouses.OrderBy(warehouse => warehouse.Name);
                 foreach (var warehouse in warehousesFromDatabase)
@@ -191,7 +191,7 @@
         {
             var balance = GetPeriodBeginningBalance(fromDate.Year, fromDate.Month);
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
                 {
@@ -293,7 +293,7 @@
         private int GetPeriodBeginningBalance(int year, int month)
         {
             var beginningBalance = 0;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 foreach (var warehouse in Warehouses.Where(warehouse => warehouse.IsSelected))
                 {
@@ -344,7 +344,7 @@
         private void UpdateDisplayedLines()
         {
             DisplayedLines.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 LoadPeriodPurchaseTransactionLinesIntoDisplayedLines(context);
                 LoadPeriodPurchaseReturnTransactionLinesIntoDisplayedLines(context);

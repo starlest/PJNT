@@ -18,7 +18,7 @@
 
         public CloseStockVM()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 PeriodYears = new ObservableCollection<int> { DateTime.Now.Year - 1, DateTime.Now.Year };
                 var firstOrDefault = context.Ledger_General.FirstOrDefault();
@@ -52,7 +52,7 @@
 
         public void Close(BackgroundWorker worker)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var items = context.Inventory.ToList();
 

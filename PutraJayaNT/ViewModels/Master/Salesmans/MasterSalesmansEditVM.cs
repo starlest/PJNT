@@ -8,12 +8,14 @@ using PutraJayaNT.ViewModels.Salesman;
 
 namespace PutraJayaNT.ViewModels.Master.Salesmans
 {
+    using System;
     using System.Linq;
 
     public class MasterSalesmansEditVM : ViewModelBase
     {
         private decimal _editPercentage;
         private ICommand _confirmEditCommand;
+        public Action CloseWindow { get; set; }
 
         public MasterSalesmansEditVM(SalesCommissionVM editingSalescommission)
         {
@@ -42,7 +44,7 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
                     var editedSalesCommission = MakeEditedSalesCommission();
                     SaveSalesCommissionEditsToDatabase(editingSalesCommissionCopy, editedSalesCommission);
                     UpdateEditingSalesCommissionUIValues();
-                    UtilityMethods.CloseForemostWindow();
+                    CloseWindow();
                 }));
             }
         }
@@ -94,7 +96,7 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName());
+                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
                 SaveSalesCommissionEditsToDatabaseContext(context, editingSalesCommission, editedSalesCommission);
                 ts.Complete();
             }

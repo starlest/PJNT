@@ -140,7 +140,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             var oldSelectedAccount = _selectedAccount;
 
             Accounts.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var accounts = context.Ledger_Accounts
                     .Where(e => !e.Name.Equals("- Accounts Payable"))
@@ -161,7 +161,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         public void RefreshDisplayLines()
         {
             DisplayedTransactionLines.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 SetBeginningBalanceFromDatabaseContext(context);
                 var balanceTracker = _selectedBeginningBalance;

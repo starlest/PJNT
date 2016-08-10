@@ -70,7 +70,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     _cashAndCashEquivalents = 0;
 
@@ -92,7 +92,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     _inventory = 0;
 
@@ -113,7 +113,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     _accountsReceivable = 0;
 
@@ -155,7 +155,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     _capital = 0;
 
@@ -176,7 +176,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     _retainedEarnings = 0;
 
@@ -215,7 +215,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     _accountsPayable = 0;
 
@@ -237,7 +237,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             get
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     _totalCurrentLiabilities = _accountsPayable;
 

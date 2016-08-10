@@ -130,7 +130,7 @@
             SupplierItems.Clear();
 
             Suppliers.Add(new Supplier { ID = -1, Name = "All" });
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var suppliers = context.Suppliers.Where(e => !e.Name.Equals("-")).OrderBy(e => e.Name);
                 foreach (var supplier in suppliers)
@@ -141,7 +141,7 @@
         private void UpdateSupplierItems()
         {
             SupplierItems.Add(new ItemVM { Model = new Item { ItemID = "-1", Name = "All" } });
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var  items = context.Inventory.Include("Suppliers").OrderBy(e => e.Name).ToList();
 
@@ -168,7 +168,7 @@
 
             if (_selectedSupplier.Name.Equals("All") && _selectedItem.Name.Equals("All"))
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     var purchases = context.PurchaseTransactions
                         .Where(e => e.Date >= _fromDate && e.Date <= _toDate && !e.Supplier.Name.Equals("-"))
@@ -188,7 +188,7 @@
 
             else if (_selectedSupplier.Name.Equals("All") && !_selectedItem.Name.Equals("All"))
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     var purchases = context.PurchaseTransactions
                         .Where(e => e.Date >= _fromDate && e.Date <= _toDate && !e.Supplier.Name.Equals("-"))
@@ -211,7 +211,7 @@
 
             else if (!_selectedSupplier.Name.Equals("All") && _selectedItem.Name.Equals("All"))
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     var purchases = context.PurchaseTransactions
                         .Where(e => e.Supplier.ID == _selectedSupplier.ID && e.Date >= _fromDate && e.Date <= _toDate && !e.Supplier.Name.Equals("-"))
@@ -231,7 +231,7 @@
 
             else
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     var purchases = context.PurchaseTransactions
                         .Where(e => e.Supplier.ID == _selectedSupplier.ID && e.Date >= _fromDate && e.Date <= _toDate)

@@ -175,7 +175,7 @@
             var oldSelectedCategory = _selectedCategory;
 
             Categories.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 Categories.Add(new Category { ID = -1, Name = "All" });
                 var categories = context.ItemCategories.OrderBy(category => category.Name);
@@ -200,7 +200,7 @@
             CategoryItems.Add(new Item { ItemID = "-1", Name = "All" });
             if (_selectedCategory.Name == "All")
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     var items = context.Inventory.OrderBy(item => item.Name);
                     foreach (var item in items)
@@ -210,7 +210,7 @@
 
             else
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     var items = context.Inventory
                         .Where(e => e.Category.Name == _selectedCategory.Name)
@@ -235,7 +235,7 @@
 
             Customers.Clear();
             Customers.Add(new CustomerVM {  Model = new Customer { ID = -1, Name = "All" } });
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customers = context.Customers.Include("Group").OrderBy(customer => customer.Name);
                 foreach (var customer in customers)
@@ -256,7 +256,7 @@
             DetailedDisplayLines.Clear();
             GlobalDisplayLines.Clear();
             if (_selectedItem == null) return;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 List<SalesTransactionLine> transactionLines;
                 if (_selectedCategory.Name == "All" && _selectedItem.Name == "All")

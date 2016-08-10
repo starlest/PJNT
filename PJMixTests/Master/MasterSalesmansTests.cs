@@ -33,7 +33,7 @@ namespace PJMixTests.Master
 
         private static bool CheckIfSalesmanExistsInDatabase(Salesman salesman)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var salesmanReturnedFromDatabase = context.Salesmans.FirstOrDefault(e => e.Name.Equals(salesman.Name));
                 return salesmanReturnedFromDatabase != null;
@@ -42,7 +42,7 @@ namespace PJMixTests.Master
 
         private static void RemoveSalesmanFromDatabase(Salesman salesman)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var salesmanToBeRemoved = context.Salesmans.First(s => s.Name.Equals(salesman.Name));
                 context.Salesmans.Remove(salesmanToBeRemoved);

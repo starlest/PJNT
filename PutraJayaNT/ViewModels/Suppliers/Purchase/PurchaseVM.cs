@@ -117,7 +117,7 @@
                 NewEntryVM.NewEntryWarehouse = null;
 
                 // Search the database for the transaction
-                using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 {
                     var purchaseTransactionFromDatabase = context.PurchaseTransactions
                         .Include("Supplier")
@@ -363,7 +363,7 @@
 
         private bool IsTransactionPaid()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var transactionInDatabase =
                     context.PurchaseTransactions.Single(transaction => transaction.PurchaseID.Equals(Model.PurchaseID));
@@ -380,7 +380,7 @@
         private void UpdateSuppliers()
         {
             Suppliers.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var suppliersFromDatabase = context.Suppliers.Where(
                     supplier => !supplier.Name.Equals("-") && supplier.Active)
@@ -393,7 +393,7 @@
         private void UpdateSupplierItems()
         {
             SupplierItems.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var items = context.Inventory.Include("Suppliers").Where(item => item.Active).OrderBy(item => item.Name).ToList();
                 foreach (var item in items.Where(item => item.Active && item.Suppliers.Contains(_transactionSupplier.Model)))
@@ -404,7 +404,7 @@
         private void UpdateWarehouses()
         {
             Warehouses.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var warehouses = context.Warehouses.OrderBy(warehouse => warehouse.Name);
                 foreach (var warehouse in warehouses)
@@ -445,7 +445,7 @@
             _transactionID = "P" + (long)((year - 2000) * 100 + month) * 1000000;
 
             string lastEntryID = null;
-            using(var context = new ERPContext(UtilityMethods.GetDBName()))
+            using(var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var lastPurchaseTransaction =
                     context.PurchaseTransactions.Where(
@@ -552,7 +552,7 @@
         #region Delete Transaction Helper Methods
         private bool DoAllLinesHaveEnoughStock()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 if (DisplayedLines.Any(line => !IsThereEnoughLineItemStockInDatabaseContext(context, line.Model)))
                     return false;
@@ -577,7 +577,7 @@
 
         private bool IsAllLinesSoldOrReturnedZero()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var purchaseTransactionInDatabase =
                     context.PurchaseTransactions.Include("PurchaseTransactionLines").Single(transaction => transaction.PurchaseID.Equals(Model.PurchaseID));
@@ -592,7 +592,7 @@
 
         private bool IsAllLinesSoldOrReturnedZeroWithoutWarning()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var purchaseTransactionInDatabase =
                     context.PurchaseTransactions.Include("PurchaseTransactionLines").Single(transaction => transaction.PurchaseID.Equals(Model.PurchaseID));

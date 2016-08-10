@@ -4,12 +4,12 @@ using System.Windows;
 using System.Windows.Input;
 using MVVMFramework;
 using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Customers;
 using PutraJayaNT.ViewModels.Item;
 
 namespace PutraJayaNT.ViewModels.Master.Inventory
 {
+    using System;
+
     public class MasterInventoryEditAddAlternativeSalesPriceVM : ViewModelBase
     { 
         private string _editAddAlternativeSalesPriceName;
@@ -18,6 +18,7 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
 
         private readonly MasterInventoryEditVM _parentVM;
         readonly ObservableCollection<AlternativeSalesPriceVM> _editAlternativeSalesPrices;
+        public Action CloseWindow { get; set; }
 
         public MasterInventoryEditAddAlternativeSalesPriceVM(MasterInventoryEditVM parentVM)
         {
@@ -46,7 +47,7 @@ namespace PutraJayaNT.ViewModels.Master.Inventory
                     if (!AreAllFieldsFilled() || !IsAlternativeSalesPriceValid()) return;
                     var newAltSalesPrice = CreateNewAlternativeSalesPrice();
                     _editAlternativeSalesPrices.Add(new AlternativeSalesPriceVM { Model = newAltSalesPrice });
-                    UtilityMethods.CloseForemostWindow();
+                    CloseWindow();
                 }));
             }
         }

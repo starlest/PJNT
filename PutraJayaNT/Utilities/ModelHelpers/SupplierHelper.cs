@@ -12,7 +12,7 @@ namespace PutraJayaNT.Utilities.ModelHelpers
     {
         public static void AddSupplierAlongWithItsLedgerToDatabase(Supplier supplier)
         {
-            var context = new ERPContext(UtilityMethods.GetDBName());
+            var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
             var success = true;
             try
             {
@@ -37,7 +37,7 @@ namespace PutraJayaNT.Utilities.ModelHelpers
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName());
+                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
                 if (!IsSupplierNameChange(editingSupplier, editedSupplier))
                     ChangeSupplierLedgerAccountNameInDatabaseContext(context, editingSupplier, editedSupplier);
                 SaveSupplierEditsToDatabaseContext(context, editingSupplier, editedSupplier);

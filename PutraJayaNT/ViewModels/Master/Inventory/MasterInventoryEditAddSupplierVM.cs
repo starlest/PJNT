@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.ViewModels.Master.Inventory
 {
+    using System;
     using ViewModels.Suppliers;
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -12,6 +13,7 @@
         private readonly ObservableCollection<SupplierVM> _editSuppliers;
         private SupplierVM _selectedSupplierForAddition;
         private ICommand _editAddSupplierConfirmCommand;
+        public Action CloseWindow { get; set; }
 
         public MasterInventoryEditAddSupplierVM(ObservableCollection<SupplierVM> editSuppliers)
         {
@@ -36,7 +38,7 @@
                 return _editAddSupplierConfirmCommand ?? (_editAddSupplierConfirmCommand = new RelayCommand(() =>
                 {
                     _editSuppliers.Add(_selectedSupplierForAddition);
-                    UtilityMethods.CloseForemostWindow();
+                    CloseWindow();
                 }));
             }
         }
@@ -45,7 +47,7 @@
         private void LoadSuppliersAvailableForAddition()
         {
             SuppliersAvailableForAddition.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var allSuppliersFromDatabase = context.Suppliers.Where(
                     supplier => !supplier.Name.Equals("-") && supplier.Active)

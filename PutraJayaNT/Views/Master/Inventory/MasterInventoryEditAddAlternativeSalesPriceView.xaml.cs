@@ -11,6 +11,7 @@ namespace PutraJayaNT.Views.Master.Inventory
         {
             InitializeComponent();
             DataContext = vm;
+            vm.CloseWindow = Close;
         }
 
         private void Cancel_Button_Clicked(object sender, System.Windows.RoutedEventArgs e)

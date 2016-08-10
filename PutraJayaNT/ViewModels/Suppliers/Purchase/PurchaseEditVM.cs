@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.ViewModels.Suppliers.Purchase
 {
+    using System;
     using System.Windows;
     using System.Windows.Input;
     using MVVMFramework;
@@ -13,6 +14,7 @@
         private decimal _editLinePurchasePrice;
         private decimal _editLineDiscount;
         ICommand _editLineConfirmCommand;
+        public Action CloseWindow { get; set; }
 
         public PurchaseEditVM(PurchaseTransactionLineVM editingLine)
         {
@@ -40,7 +42,7 @@
                 {
                     if (!AreFieldsValid()) return;
                     SetEditingLinePropertiesToEditProperties();
-                    UtilityMethods.CloseForemostWindow();
+                    CloseWindow();
                 }));
             }
         }

@@ -10,7 +10,7 @@
     {
         public static bool AddTransactionToDatabase(ERPContext context, LedgerTransaction transaction, DateTime date, string documentation, string description)
         {
-            using (var c = new ERPContext(UtilityMethods.GetDBName()))
+            using (var c = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var period = c.Ledger_General.First().Period;
                 if (period != date.Month)

@@ -127,7 +127,7 @@
                 Model = new Salesman { ID = -1, Name = "All" }
             });
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var salesmen = context.Salesmans.ToList().OrderBy(e => e.Name);
 
@@ -139,7 +139,7 @@
         private void UpdateLines()
         {
             _lines.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var categories = context.ItemCategories.OrderBy(e => e.Name).ToList();
                 _total = 0;
@@ -257,7 +257,7 @@
         {
             decimal netTotal = 0;
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var transaction = context.SalesTransactionLines
                     .Include("SalesTransaction")

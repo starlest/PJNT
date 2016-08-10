@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Configuration;
     using System.Linq;
     using System.Net;
     using System.Threading;
@@ -14,7 +13,6 @@
     using Models;
     using Telegram.Bot;
     using Utilities;
-    using Utilities.ModelHelpers;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -33,16 +31,15 @@
             IsEnabled = false;
             var window = new LoginWindow();
             window.ShowDialog();
-            _user = Application.Current.TryFindResource("CurrentUser") as User;
+            _user = Application.Current.TryFindResource(Constants.CURRENTUSER) as User;
 
             if (_user == null) Application.Current.Shutdown();
 
             else
             {
-                _selectedServerName = Application.Current.FindResource("SelectedServer") as string;
+                _selectedServerName = Application.Current.FindResource(Constants.SELECTEDSERVER) as string;
                 IsEnabled = true;
-                _connectionString =
-                    ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString.Substring(7).Split(';')[0];
+                _connectionString = UtilityMethods.GetIpAddress();
                 CheckIfIsServer();
                 SetColorTheme();
 
@@ -73,6 +70,7 @@
             }
         }
 
+        #region Helper Methods
         private void CheckIfIsServer()
         {
             var hostName = Dns.GetHostName(); // Retrive the Name of HOST
@@ -108,6 +106,7 @@
             {
                 Dispatcher.Invoke(UpdateTitle);              
                 AttemptToSendNotifications();
+                CleanNotifications();
                 Thread.Sleep(5000);
             }
         }
@@ -121,12 +120,10 @@
         {
             try
             {
-                if (_isServer && !_isSendingNotifications)
-                {
-                    _isSendingNotifications = true;
-                    SendNotifications();
-                    _isSendingNotifications = false;
-                }
+                if (!_isServer || _isSendingNotifications) return;
+                _isSendingNotifications = true;
+                SendNotifications();
+                _isSendingNotifications = false;
             }
             catch (Exception)
             {
@@ -150,28 +147,33 @@
         {
             var Bot = new Api("229513906:AAH5-4dU6h_BnI20CpY_X0XAm4xB9xrnvdw");
 
-            List<TelegramBotNotification> unsentNotifications;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
-                unsentNotifications =
+                var unsentNotifications =
                     context.TelegramBotNotifications.Where(notification => !notification.Sent).ToList();
                 if (unsentNotifications.Count == 0) return;
-            }
 
-            foreach (var notification in unsentNotifications)
-            {
-                var result = Bot.SendTextMessage(-104676249,
-                    $"{notification.When} - {notification.Message}").Result;
-            }
-
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
-            {
-                unsentNotifications =
-                    context.TelegramBotNotifications.Where(notification => !notification.Sent).ToList();
                 foreach (var notification in unsentNotifications)
+                {
+                    var result = Bot.SendTextMessage(-104676249,
+                        $"{notification.When} - {notification.Message}").Result;
                     notification.Sent = true;
+                    context.SaveChanges();
+                }
+            }
+        }
+
+
+        private static void CleanNotifications()
+        {
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            {
+                var sentNotifications =
+                    context.TelegramBotNotifications.Where(notification => notification.Sent);
+                context.TelegramBotNotifications.RemoveRange(sentNotifications);
                 context.SaveChanges();
             }
         }
+        #endregion
     }
 }

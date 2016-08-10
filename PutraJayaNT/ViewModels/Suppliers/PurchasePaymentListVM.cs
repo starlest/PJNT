@@ -99,7 +99,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
             Suppliers.Clear();
             Suppliers.Add(new SupplierVM { Model = new Supplier { ID = -1, Name = "All" } });
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var suppliers = context.Suppliers.Where(e => !e.Name.Equals("-")).ToList();
                 foreach (var supplier in suppliers)
@@ -119,7 +119,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             DisplayedPurchaseTransactions.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 Func<PurchaseTransaction, bool> searchQuery;
 

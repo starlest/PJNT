@@ -92,7 +92,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 dr2["Warehouse"] = context.Warehouses.Where(e => e.ID.Equals(2)).FirstOrDefault().Name;
             }
@@ -138,7 +138,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 dr2["Warehouse"] = context.Warehouses.Where(e => e.ID.Equals(1)).FirstOrDefault().Name;
             }
@@ -184,7 +184,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 dr2["Warehouse"] = context.Warehouses.Where(e => e.ID.Equals(3)).FirstOrDefault().Name;
             }
@@ -230,7 +230,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 dr2["Warehouse"] = context.Warehouses.Where(e => e.ID.Equals(4)).FirstOrDefault().Name;
             }

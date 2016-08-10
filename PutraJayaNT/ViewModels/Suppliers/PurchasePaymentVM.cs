@@ -191,7 +191,7 @@
             var oldSelectedSupplier = _selectedSupplier;
 
             Suppliers.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var suppliers = context.Suppliers.Where(e => !e.Name.Equals("-"));
                 foreach (var supplier in suppliers)
@@ -210,7 +210,7 @@
         private void UpdatePaymentMethods()
         {
             PaymentModes.Add("Cash");
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var bankAccounts = context.Ledger_Accounts
                     .Where(account => account.Name.Contains("Bank") && !account.Name.Contains("Expense"));
@@ -222,7 +222,7 @@
         private void UpdateSupplierUnpaidPurchases()
         {
             SupplierUnpaidPurchases.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var unpaidPurchases = context.PurchaseTransactions
                     .Where(e => e.Supplier.ID == _selectedSupplier.ID && e.Paid < e.Total)

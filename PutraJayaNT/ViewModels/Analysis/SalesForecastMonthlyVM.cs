@@ -97,7 +97,7 @@
             Categories.Clear();
             var allCategory = new Category { ID = -1, Name = "All" };
             Categories.Add(new CategoryVM { Model = allCategory });
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categoriesFromDatabase)
@@ -108,7 +108,7 @@
         private void UpdateListedItems()
         {
             ListedItems.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 IEnumerable<Item> itemsFromDatabase;
 
@@ -145,7 +145,7 @@
         private void UpdateLines()
         {
             DisplayedLines.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 if (_selectedItem.Name.Equals("All"))
                     LoadAllItemsSalesForecast(context);

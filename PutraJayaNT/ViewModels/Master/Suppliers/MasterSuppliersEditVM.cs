@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.ViewModels.Master.Suppliers
 {
+    using System;
     using ViewModels.Suppliers;
     using System.Windows;
     using System.Windows.Input;
@@ -17,6 +18,7 @@
         private string _editName;
         private string _editAddress;
         private int _editGSTID;
+        public Action CloseWindow { get; set; }
 
         public MasterSuppliersEditVM(SupplierVM editingSupplier)
         {
@@ -55,7 +57,7 @@
                     var editedSupplierCopy = MakeEditedSupplier();
                     SupplierHelper.SaveSupplierEditsToDatabase(editingSupplier, editedSupplierCopy);
                     UpdateEditingSupplierUIValues();
-                    UtilityMethods.CloseForemostWindow();
+                    CloseWindow();
                 }));
             }
         }
@@ -91,7 +93,7 @@
 
         private bool IsSupplierNameInDatabaseAlready()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 if (_editName.Equals(_editingSupplier.Name) ||
                     context.Suppliers.SingleOrDefault(supplier => supplier.Name.Equals(_editName)) == null) return true;

@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.ViewModels.Master.Inventory
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
@@ -35,6 +36,8 @@
         private ICommand _editAddSupplierCommand;
         private ICommand _editDeleteSupplierCommand;
         private ICommand _editConfirmCommand;
+
+        public Action CloseWindow { get; set; }
         #endregion
 
         public MasterInventoryEditVM(ItemVM editingItem)
@@ -176,7 +179,7 @@
                     var editedItemCopy = MakeEditedItem();
                     InventoryHelper.SaveItemEditsToDatabase(originalItem, editedItemCopy);
                     UpdateEditingItemUIValues();
-                    UtilityMethods.CloseForemostWindow();
+                    CloseWindow();
                 }));
             }
         }
@@ -230,7 +233,7 @@
         private void UpdateCustomerGroups()
         {
             CustomerGroups.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customerGroupsFromDatabase = context.CustomerGroups;
                 foreach (var group in customerGroupsFromDatabase)
@@ -241,7 +244,7 @@
         private void UpdateCategories()
         {
             Categories.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categoriesFromDatabase)
@@ -259,7 +262,7 @@
         private void UpdateEditAlternativeSalesPrices()
         {
             EditAlternativeSalesPrices.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var editItemAlternativeSalesPrices = context.AlternativeSalesPrices
                     .Where(altSalesPrice => altSalesPrice.ItemID.Equals(EditingItem.ID));
@@ -309,7 +312,7 @@
 
         private bool IsItemNameInDatabaseAlready()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 if (_editName.Equals(EditingItem.Name) ||
                     context.Inventory.SingleOrDefault(item => item.Name.Equals(_editName)) == null) return true;

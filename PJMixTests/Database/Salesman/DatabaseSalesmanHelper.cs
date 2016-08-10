@@ -10,25 +10,25 @@
     {
         public static IEnumerable<Salesman> GetAll()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.Salesmans.Include("SalesCommissions").Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name).ToList();
         }
 
         public static IEnumerable<Salesman> GetAllIncludingEmptySalesman()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.Salesmans.Include("SalesCommissions").OrderBy(salesman => salesman.Name).ToList();
         }
 
         public static IEnumerable<Salesman> Get(Func<Salesman, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.Salesmans.Include("SalesCommissions").Where(condition).Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name).ToList();
         }
 
         public static Salesman FirstOrDefault(Func<Salesman, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.Salesmans.Include("SalesCommissions").Where(condition).FirstOrDefault();
         }
 

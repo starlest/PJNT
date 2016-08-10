@@ -108,6 +108,7 @@
     <Compile Include="Reports\Windows\GeneralLedgerReportWindow.xaml.cs">
       <DependentUpon>GeneralLedgerReportWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\Constants.cs" />
     <Compile Include="Utilities\FocusAdvancement.cs" />
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />

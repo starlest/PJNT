@@ -124,7 +124,7 @@
             Customers.Clear();
             Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customersFromDatabase = context.Customers.OrderBy(customer => customer.Name);
                 foreach (var customer in customersFromDatabase)
@@ -148,7 +148,7 @@
 
             var searchCondition = GetSearchConditionAccordingToSelectedCustomer();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var salesTransactionsFromDatabase = context.SalesTransactions
                     .Include("User")

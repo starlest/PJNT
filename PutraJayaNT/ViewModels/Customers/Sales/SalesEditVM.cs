@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.ViewModels.Customers.Sales
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
@@ -15,6 +16,7 @@
     {
         private readonly SalesVM _parentVM;
         private readonly SalesTransactionLineVM _selectedLine;
+        public Action CloseWindow { get; set; }
 
         #region Edit Line Backing Fields
         private AlternativeSalesPrice _selectedAlternativeSalesPrice;
@@ -117,7 +119,7 @@
                     if (!isLineCombinable) AssignEditPropertiesToSelectedLine();
 
                     _parentVM.UpdateTransactionTotal();
-                    UtilityMethods.CloseForemostWindow();
+                    CloseWindow();
                 }));
             }
         }
@@ -126,7 +128,7 @@
         private void UpdateSalesmans()
         {
             Salesmans.Clear();   
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var salesmansFromDatabase = context.Salesmans.Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name);
 
@@ -139,7 +141,7 @@
         {
             AlternativeSalesPrices.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var alternativeSalesPrices =
                     context.AlternativeSalesPrices.Where(

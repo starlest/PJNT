@@ -15,26 +15,16 @@ namespace PutraJayaNT.Utilities
 
     public class ERPContext : DbContext
     {
-        public ERPContext(string dbName)
-            : base(GetConnectionString(dbName))
+        public ERPContext(string dbName, string ipAddress)
+            : base(GetConnectionString(dbName, ipAddress))
         {
-            //Database.SetInitializer<ERPContext>(new MigrateDatabaseToLatestVersion<ERPContext, Migrations.Configuration>());
-            //Database.SetInitializer<ERPContext>(new DropCreateDatabaseAlways<ERPContext>());
         }
 
-        //public ERPContext()
-        //    : base("name=PJMIX")
-        //{
-        //    //Database.SetInitializer<ERPContext>(new MigrateDatabaseToLatestVersion<ERPContext, Migrations.Configuration>());
-        //    //Database.SetInitializer<ERPContext>(new DropCreateDatabaseAlways<ERPContext>());
-        //}
-
-        public static string GetConnectionString(string dbName)
+        public static string GetConnectionString(string dbName, string ipAddress)
         {
-            // Server=localhost;Database={0};Uid=username;Pwd=password
             var connString =
                 ConfigurationManager.ConnectionStrings["ERPContext"].ConnectionString;
-            return string.Format(connString, dbName);
+            return string.Format(connString, dbName, ipAddress);
         }
 
         public virtual DbSet<Stock> Stocks { get; set; }

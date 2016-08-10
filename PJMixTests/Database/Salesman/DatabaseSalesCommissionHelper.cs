@@ -10,19 +10,19 @@
     {
         //public static IEnumerable<Salesman> GetAll()
         //{
-        //    using (var context = new ERPContext(UtilityMethods.GetDBName()))
+        //    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
         //        return context.Salesmans.Include("SalesCommissions").OrderBy(salesman => salesman.Name).ToList();
         //}
 
         public static IEnumerable<SalesCommission> Get(Func<SalesCommission, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.SalesCommissions.Include("Salesman").Include("Category").Where(condition).OrderBy(salesCommision => salesCommision.Salesman.Name).ToList();
         }
 
         public static SalesCommission FirstOrDefault(Func<SalesCommission, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.SalesCommissions.Include("Salesman").Include("Category").Where(condition).FirstOrDefault();
         }
 

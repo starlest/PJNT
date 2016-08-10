@@ -15,6 +15,7 @@ namespace PutraJayaNT.Views.Master.Customers
             AppearanceManager.Current.AccentColor = Colors.Blue;
             InitializeComponent();
             DataContext = vm;
+            vm.CloseWindow = Close;
         }
 
         private void Cancel_Button_Clicked(object sender, RoutedEventArgs e)

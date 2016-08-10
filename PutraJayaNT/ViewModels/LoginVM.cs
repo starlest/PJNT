@@ -8,18 +8,21 @@ using System.Windows.Input;
 
 namespace PutraJayaNT.ViewModels
 {
+    using System;
+
     internal class LoginVM : ViewModelBase
     {
         private string _userName;
         private string _password;
-
-        private ICommand _loginCommand;
         private string _selectedServer;
+        private string _ipAddress = "192.168.1.113";
+        private ICommand _loginCommand;
 
         public LoginVM()
         {
-            Servers = new ObservableCollection<string> { "Nestle", " " };
+            Servers = new ObservableCollection<string> {Constants.NESTLE, " "};
             SelectedServer = Servers.First();
+            Application.Current.Resources.Add(Constants.IPADDRESS, _ipAddress);
         }
 
         public string Username
@@ -31,9 +34,9 @@ namespace PutraJayaNT.ViewModels
         public string Password
         {
             get { return _password; }
-            set { SetProperty(ref _password, value, "Password"); }
+            set { SetProperty(ref _password, value, () => Password); }
         }
-        
+
         public ObservableCollection<string> Servers { get; }
 
         public string SelectedServer
@@ -41,10 +44,21 @@ namespace PutraJayaNT.ViewModels
             get { return _selectedServer; }
             set
             {
-                if (value.Equals(" ")) value = "Mix";
+                if (value.Equals(" ")) value = Constants.MIX;
                 SetProperty(ref _selectedServer, value, () => SelectedServer);
-                Application.Current.Resources.Remove("SelectedServer");
-                Application.Current.Resources.Add("SelectedServer", _selectedServer);
+                Application.Current.Resources.Remove(Constants.SELECTEDSERVER);
+                Application.Current.Resources.Add(Constants.SELECTEDSERVER, _selectedServer);
+            }
+        }
+
+        public string IpAddress
+        {
+            get { return _ipAddress; }
+            set
+            {
+                SetProperty(ref _ipAddress, value, () => IpAddress);
+                Application.Current.Resources.Remove(Constants.IPADDRESS);
+                Application.Current.Resources.Add(Constants.IPADDRESS, _ipAddress);
             }
         }
 
@@ -60,9 +74,12 @@ namespace PutraJayaNT.ViewModels
                         return;
                     }
 
-                    using (var context = new ERPContext(UtilityMethods.GetDBName()))
+                    var context = new ERPContext(UtilityMethods.GetDBName(), _ipAddress);
+                    try
                     {
-                        var user = context.Users.FirstOrDefault(e => e.Username.Equals(_userName) && e.Password.Equals(_password));
+                        var user =
+                            context.Users.FirstOrDefault(
+                                e => e.Username.Equals(_userName) && e.Password.Equals(_password));
 
                         if (user == null)
                         {
@@ -78,6 +95,14 @@ namespace PutraJayaNT.ViewModels
                             window.Close();
                             return;
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show("Failed to connect to server.", "Connection Failure", MessageBoxButton.OK);
+                    }
+                    finally
+                    {
+                        context.Dispose();
                     }
                 }));
             }

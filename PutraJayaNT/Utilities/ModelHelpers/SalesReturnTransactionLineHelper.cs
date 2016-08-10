@@ -9,7 +9,7 @@
         {
             decimal amount = 0;
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var purchases = context.PurchaseTransactionLines
                     .Include("PurchaseTransaction")

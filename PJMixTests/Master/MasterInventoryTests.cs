@@ -123,7 +123,7 @@
 
         private static void RemoveItemFromDatabase(Item itemToBeRemoved)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 itemToBeRemoved = context.Inventory.First(item => item.ItemID.Equals(itemToBeRemoved.ItemID));
                 context.Inventory.Remove(itemToBeRemoved);

@@ -10,19 +10,19 @@
     {
         public static IEnumerable<Stock> GetAll()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.Stocks.Include("Item").Include("Warehouse").OrderBy(stock => stock.Item.Name).ThenBy(stock => stock.Warehouse.Name).ToList();
         }
 
         public static IEnumerable<Stock> Get(Func<Stock, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.Stocks.Include("Item").Include("Warehouse").Where(condition).OrderBy(stock => stock.Item.Name).ThenBy(stock => stock.Warehouse.Name).ToList();
         }
 
         public static Item FirstOrDefault(Func<Item, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.Inventory.Include("Category").Include("Suppliers").Include("AlternativeSalesPrices").Where(condition).FirstOrDefault();
         }
 

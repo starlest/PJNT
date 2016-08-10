@@ -16,7 +16,7 @@ namespace PutraJayaNT.ViewModels.Accounting
 
         public ClosingVM()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 _periodYear = context.Ledger_General.First().PeriodYear;
                 _period = context.Ledger_General.First().Period;
@@ -39,7 +39,7 @@ namespace PutraJayaNT.ViewModels.Accounting
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName());
+                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
 
                 var accounts = context.Ledger_Accounts
                     .Include("LedgerGeneral")

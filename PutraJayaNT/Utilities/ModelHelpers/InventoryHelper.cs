@@ -11,7 +11,7 @@
         public static void AddItemToDatabase(Item item)
         {
             var success = true;
-            var context = new ERPContext(UtilityMethods.GetDBName());
+            var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
             try
             {
                 AddItemToDatabaseContext(context, item);
@@ -34,7 +34,7 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName());
+                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
                 SaveItemEditsToDatabaseContext(context, editingItem, editedItem);
                 ts.Complete();
             }
@@ -55,7 +55,7 @@
 
         public static void DeactivateItemInDatabase(Item item)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 context.Entry(item).State = EntityState.Modified;
                 item.Active = false;
@@ -65,7 +65,7 @@
 
         public static void ActivateItemInDatabase(Item item)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 context.Entry(item).State = EntityState.Modified;
                 item.Active = true;

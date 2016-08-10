@@ -469,7 +469,7 @@
         {
             Customers.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customers = context.Customers
                     .Where(customer => customer.Active)
@@ -493,7 +493,7 @@
             _transactionID = leadingIDString + endingIDString;
 
             string lastTransactionID = null;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var IDs = from SalesTransaction in context.SalesTransactions
                           where SalesTransaction.SalesTransactionID.Substring(0, 6).Equals(leadingIDString)
@@ -577,7 +577,7 @@
         private static int GetStock(Item item, Warehouse warehouse)
         {
             int s;
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var stock = context
                     .Stocks
@@ -615,7 +615,7 @@
         #region Transacton Helper Methods
         private static SalesTransaction GetSalesTransactionFromDatabase(string salesTransactionID)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 return context.SalesTransactions
                     .Include("Customer")
@@ -631,7 +631,7 @@
 
         private static bool DoesCustomerHasMaximumNumberOfInvoices(CustomerVM customer)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customerTransactions =
                     context.SalesTransactions.Where(e => e.Customer.ID.Equals(customer.ID) && e.Paid < e.NetTotal);
@@ -644,7 +644,7 @@
 
         private static bool DoesCustomerHasOverduedInvoices(CustomerVM customer)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var customerTransactions =
                     context.SalesTransactions.Where(e => e.Customer.ID.Equals(customer.ID) && e.Paid < e.NetTotal);
@@ -663,7 +663,7 @@
 
         private void DeleteInvoice()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var transaction = context.SalesTransactions
                 .Include("SalesTransactionLines")
@@ -773,7 +773,7 @@
 
         private void AddTelegramNotifications()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 foreach (var line in DisplayedSalesTransactionLines)
                 {

@@ -10,13 +10,13 @@
     {
         public static IEnumerable<Category> GetAll()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.ItemCategories.OrderBy(category => category.Name).ToList();
         }
 
         public static Category FirstOrDefault(Func<Category, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
                 return context.ItemCategories.Where(condition).OrderBy(category => category.Name).FirstOrDefault();
         }
 

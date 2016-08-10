@@ -17,7 +17,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName());
+                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
                 AttachPurchaseReturnTransactionPropertiesToDatabaseContext(context, ref purchaseReturnTransaction);
                 purchaseReturnTransaction.PurchaseTransaction.Supplier.PurchaseReturnCredits +=
                     purchaseReturnTransaction.NetTotal;

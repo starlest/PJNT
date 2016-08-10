@@ -111,7 +111,7 @@
         public void UpdateWarehouses()
         {
             Warehouses.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var warehouses = context.Warehouses.OrderBy(warehouse => warehouse.Name);
                 foreach (var warehouse in warehouses)
@@ -122,7 +122,7 @@
         private void UpdateProducts()
         {
             Products.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName()))
+            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
             {
                 var items = context.Inventory.OrderBy(item => item.Name);
                 foreach (var item in items)
