@@ -69,7 +69,7 @@ namespace PJMixTests.Master
 
         private static bool CheckIfSupplierAndItsLedgerExistsInDatabase(Supplier supplier)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var supplierReturnedFromDatabase = context.Suppliers.FirstOrDefault(e => e.ID.Equals(supplier.ID));
                 if (supplierReturnedFromDatabase == null) return false;
@@ -99,7 +99,7 @@ namespace PJMixTests.Master
 
         private static void RemoveSupplierAndItsLedgerFromDatabase(Supplier supplier)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var supplierToBeRemoved = context.Suppliers.First(s => s.Name.Equals(supplier.Name));
                 context.Suppliers.Remove(supplierToBeRemoved);

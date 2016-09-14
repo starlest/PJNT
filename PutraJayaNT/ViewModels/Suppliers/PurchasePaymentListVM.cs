@@ -11,13 +11,13 @@ namespace PutraJayaNT.ViewModels.Suppliers
 {
     using System.Windows.Input;
 
-    class PurchasePaymentListVM : ViewModelBase
+    internal class PurchasePaymentListVM : ViewModelBase
     {
-        SupplierVM _selectedSupplier;
-        bool _isPaidChecked;
-        DateTime _dueFrom;
-        DateTime _dueTo;
-        decimal _total;
+        private SupplierVM _selectedSupplier;
+        private bool _isPaidChecked;
+        private DateTime _dueFrom;
+        private DateTime _dueTo;
+        private decimal _total;
         private ICommand _displayCommand;
 
         public PurchasePaymentListVM()
@@ -99,9 +99,9 @@ namespace PutraJayaNT.ViewModels.Suppliers
 
             Suppliers.Clear();
             Suppliers.Add(new SupplierVM { Model = new Supplier { ID = -1, Name = "All" } });
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
-                var suppliers = context.Suppliers.Where(e => !e.Name.Equals("-")).ToList();
+                var suppliers = context.Suppliers.Where(supplier => !supplier.Name.Equals("-") && supplier.Active).ToList();
                 foreach (var supplier in suppliers)
                     Suppliers.Add(new SupplierVM { Model = supplier });
             }
@@ -119,7 +119,7 @@ namespace PutraJayaNT.ViewModels.Suppliers
         {
             DisplayedPurchaseTransactions.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 Func<PurchaseTransaction, bool> searchQuery;
 

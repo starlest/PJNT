@@ -82,7 +82,7 @@
         public CategoryVM EditCategory
         {
             get { return _editCategory; }
-            set { SetProperty(ref _editCategory, value, "EditCategory"); }
+            set { SetProperty(ref _editCategory, value, () => EditCategory); }
         }
 
         public decimal EditSalesPrice
@@ -124,19 +124,19 @@
         public int EditPiecesPerSecondaryUnit
         {
             get { return _editPiecesPerSecondaryUnit; }
-            set { SetProperty(ref _editPiecesPerSecondaryUnit, value, () => _editPiecesPerSecondaryUnit); }
+            set { SetProperty(ref _editPiecesPerSecondaryUnit, value, () => EditPiecesPerSecondaryUnit); }
         }
 
         public SupplierVM EditSelectedSupplier
         {
             get { return _editSelectedSupplier; }
-            set { SetProperty(ref _editSelectedSupplier, value, "EditSelectedSupplier"); }
+            set { SetProperty(ref _editSelectedSupplier, value, () => EditSelectedSupplier); }
         }
 
         public AlternativeSalesPriceVM EditSelectedAlternativeSalesPrice
         {
             get { return _editSelectedAlternativeSalesPrice; }
-            set { SetProperty(ref _editSelectedAlternativeSalesPrice, value, "EditSelectedAlternativeSalesPrice"); }
+            set { SetProperty(ref _editSelectedAlternativeSalesPrice, value, () => EditSelectedAlternativeSalesPrice); }
         }
         #endregion
 
@@ -233,7 +233,7 @@
         private void UpdateCustomerGroups()
         {
             CustomerGroups.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customerGroupsFromDatabase = context.CustomerGroups;
                 foreach (var group in customerGroupsFromDatabase)
@@ -244,7 +244,7 @@
         private void UpdateCategories()
         {
             Categories.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categoriesFromDatabase)
@@ -262,7 +262,7 @@
         private void UpdateEditAlternativeSalesPrices()
         {
             EditAlternativeSalesPrices.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var editItemAlternativeSalesPrices = context.AlternativeSalesPrices
                     .Where(altSalesPrice => altSalesPrice.ItemID.Equals(EditingItem.ID));
@@ -312,7 +312,7 @@
 
         private bool IsItemNameInDatabaseAlready()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 if (_editName.Equals(EditingItem.Name) ||
                     context.Inventory.SingleOrDefault(item => item.Name.Equals(_editName)) == null) return true;

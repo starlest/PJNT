@@ -115,7 +115,7 @@
         #region Helper Methods
         private static bool CheckIDExists(string id)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var transaction = context.StockAdjustmentTransactions.SingleOrDefault(e => e.StockAdjustmentTransactionID.Equals(id));
                 return transaction != null;
@@ -127,7 +127,7 @@
             IsNotEditMode = false;
             NewEntryVM.ResetEntryFields();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var transactionFromDatabase = context.StockAdjustmentTransactions.Single(
                     transaction => transaction.StockAdjustmentTransactionID.Equals(_transactionID));
@@ -154,7 +154,7 @@
             _transactionID = "SA" + (long)((year - 2000) * 100 + month) * 1000000;
 
             string lastTransactionID = null;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var IDs = from StockAdjustmentTransaction in context.StockAdjustmentTransactions
                     where string.Compare(StockAdjustmentTransaction.StockAdjustmentTransactionID, _transactionID, StringComparison.Ordinal) >= 0 && StockAdjustmentTransaction.StockAdjustmentTransactionID.Substring(0, 2).Equals("SA")

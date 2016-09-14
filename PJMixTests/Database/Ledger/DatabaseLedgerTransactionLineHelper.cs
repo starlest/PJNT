@@ -10,19 +10,19 @@
     {
         public static IEnumerable<LedgerTransaction> GetAll()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.Ledger_Transactions.Include("LedgerAccount").Include("LedgerTransactionLines").ToList();
         }
 
         public static IEnumerable<LedgerTransactionLine> Get(Func<LedgerTransactionLine, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.Ledger_Transaction_Lines.Include("LedgerAccount").Include("LedgerTransaction").Where(condition).ToList();
         }
 
         public static LedgerTransactionLine FirstOrDefault(Func<LedgerTransactionLine, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.Ledger_Transaction_Lines.Include("LedgerAccount").Include("LedgerTransaction").Where(condition).FirstOrDefault();
         }
 

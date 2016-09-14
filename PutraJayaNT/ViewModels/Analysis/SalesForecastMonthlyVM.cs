@@ -9,6 +9,7 @@
     using Models.Inventory;
     using MVVMFramework;
     using Utilities;
+    using Utilities.Analysis;
 
     internal class SalesForecastMonthlyVM : ViewModelBase
     {
@@ -97,7 +98,7 @@
             Categories.Clear();
             var allCategory = new Category { ID = -1, Name = "All" };
             Categories.Add(new CategoryVM { Model = allCategory });
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categoriesFromDatabase)
@@ -108,7 +109,7 @@
         private void UpdateListedItems()
         {
             ListedItems.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 IEnumerable<Item> itemsFromDatabase;
 
@@ -145,7 +146,7 @@
         private void UpdateLines()
         {
             DisplayedLines.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 if (_selectedItem.Name.Equals("All"))
                     LoadAllItemsSalesForecast(context);
@@ -168,119 +169,81 @@
                 switch (i)
                 {
                     case 1:
-                        var janTotalSales = GetSalesForecastInMonth(context, item, 1);
+                        var janTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 1);
                         line.Jan = ConvertSalesQuantityToString(item, janTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 1) < janTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 1) < janTotalSales)
                             line.IsJanTargetNotMet = true;
                         break;
                     case 2:
-                        var febTotalSales = GetSalesForecastInMonth(context, item, 2);
+                        var febTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 2);
                         line.Feb = ConvertSalesQuantityToString(item, febTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 2) < febTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 2) < febTotalSales)
                             line.IsFebTargetNotMet = true;
                         break;
                     case 3:
-                        var marTotalSales = GetSalesForecastInMonth(context, item, 3);
+                        var marTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 3);
                         line.Mar = ConvertSalesQuantityToString(item, marTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 3) < marTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 3) < marTotalSales)
                             line.IsMarTargetNotMet = true;
                         break;
                     case 4:
-                        var aprTotalSales = GetSalesForecastInMonth(context, item, 4);
+                        var aprTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 4);
                         line.Apr = ConvertSalesQuantityToString(item, aprTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 4) < aprTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 4) < aprTotalSales)
                             line.IsAprTargetNotMet = true;
                         break;
                     case 5:
-                        var mayTotalSales = GetSalesForecastInMonth(context, item, 5);
+                        var mayTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 5);
                         line.May = ConvertSalesQuantityToString(item, mayTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 5) < mayTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 5) < mayTotalSales)
                             line.IsMayTargetNotMet = true;
                         break;
                     case 6:
-                        var junTotalSales = GetSalesForecastInMonth(context, item, 6);
+                        var junTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 6);
                         line.Jun = ConvertSalesQuantityToString(item, junTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 6) < junTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 6) < junTotalSales)
                             line.IsJunTargetNotMet = true;
                         break;
                     case 7:
-                        var julTotalSales = GetSalesForecastInMonth(context, item, 7);
+                        var julTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 7);
                         line.Jul = ConvertSalesQuantityToString(item, julTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 7) < julTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 7) < julTotalSales)
                             line.IsJulTargetNotMet = true;
                         break;
                     case 8:
-                        var augTotalSales = GetSalesForecastInMonth(context, item, 8);
+                        var augTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 8);
                         line.Aug = ConvertSalesQuantityToString(item, augTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 8) < augTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 8) < augTotalSales)
                             line.IsAugTargetNotMet = true;
                         break;
                     case 9:
-                        var sepTotalSales = GetSalesForecastInMonth(context, item, 9);
+                        var sepTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 9);
                         line.Sep = ConvertSalesQuantityToString(item, sepTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 9) < sepTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 9) < sepTotalSales)
                             line.IsSepTargetNotMet = true;
                         break;
                     case 10:
-                        var octTotalSales = GetSalesForecastInMonth(context, item, 10);
+                        var octTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 10);
                         line.Oct = ConvertSalesQuantityToString(item, octTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 10) < octTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 10) < octTotalSales)
                             line.IsOctTargetNotMet = true;
                         break;
                     case 11:
-                        var novTotalSales = GetSalesForecastInMonth(context, item, 11);
+                        var novTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 11);
                         line.Nov = ConvertSalesQuantityToString(item, novTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 11) < novTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 11) < novTotalSales)
                             line.IsNovTargetNotMet = true;
                         break;
                     default:
-                        var decTotalSales = GetSalesForecastInMonth(context, item, 12);
+                        var decTotalSales = SalesAnalysisHelper.GetSalesForecastInMonth(context, item, _selectedYear, 12);
                         line.Dec = ConvertSalesQuantityToString(item, decTotalSales);
-                        if (GetItemTotalSalesInMonth(context, item, _selectedYear, 12) < decTotalSales)
+                        if (SalesAnalysisHelper.GetItemTotalSalesInMonth(context, item, _selectedYear, 12) < decTotalSales)
                             line.IsDecTargetNotMet = true;
                         break;
                 }
             }
 
             DisplayedLines.Add(line);
-        }
-
-        private int GetSalesForecastInMonth(ERPContext context, ItemVM item, int month)
-        {
-            var year = _selectedYear;
-            if (month == 1) year--;
-            var previousMonthTotalSales = GetItemTotalSalesInMonth(context, item, year, month - 1);
-            if (month == 2) year--;
-            var secondPreviousMonthTotalSales = GetItemTotalSalesInMonth(context, item, year, month - 2);
-            if (month == 3) year--;
-            var thirdPreviousMonthTotalSales = GetItemTotalSalesInMonth(context, item, year, month - 3);
-
-            if (previousMonthTotalSales == 0) return 0;
-            if (secondPreviousMonthTotalSales == 0) return previousMonthTotalSales;
-            return thirdPreviousMonthTotalSales == 0
-                ? (previousMonthTotalSales + secondPreviousMonthTotalSales) /2
-                : (previousMonthTotalSales + secondPreviousMonthTotalSales + thirdPreviousMonthTotalSales)/3;
-        }
-
-        private static int GetItemTotalSalesInMonth(ERPContext context, ItemVM item, int year, int month)
-        {
-            var totalSalesQuantity = 0;
-
-            var monthSalesTransactionLines =
-                context.SalesTransactionLines.Where(
-                    line => line.SalesTransaction.Date.Year.Equals(year) && line.SalesTransaction.Date.Month.Equals(month) && line.ItemID.Equals(item.ID));
-
-            var monthSalesReturnTransactionLines =
-                context.SalesReturnTransactionLines.Where(
-                    line => line.SalesReturnTransaction.Date.Year.Equals(year) && line.SalesReturnTransaction.Date.Month.Equals(month) && line.ItemID.Equals(item.ID));
-
-            foreach (var line in monthSalesTransactionLines)
-                totalSalesQuantity += line.Quantity;
-
-            foreach (var line in monthSalesReturnTransactionLines)
-                totalSalesQuantity -= line.Quantity;
-
-            return totalSalesQuantity;
         }
 
         private static string ConvertSalesQuantityToString(ItemVM item, int quantity)

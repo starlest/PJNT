@@ -10,7 +10,7 @@
     {
         public static IEnumerable<PurchaseReturnTransactionLine> Get(Func<PurchaseReturnTransactionLine, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.PurchaseReturnTransactionLines.Include("Item").Include("Warehouse").Include("PurchaseReturnTransaction").Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier").Where(condition).ToList();
         }
     }

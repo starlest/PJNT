@@ -58,7 +58,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _revenues = 0;
 
-                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                using (var context = UtilityMethods.createContext())
                 {
                     var revenues = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Sales Revenue"))
@@ -79,7 +79,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _otherIncome = 0;
 
-                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                using (var context = UtilityMethods.createContext())
                 {
                     var otherIncome = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Other Income"))
@@ -100,7 +100,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _salesReturnsAndAllowances = 0;
 
-                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                using (var context = UtilityMethods.createContext())
                 {
                     var salesReturnsAndAllowancesAccount = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Sales Returns and Allowances"))
@@ -121,7 +121,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _costOfGoodsSold = 0;
 
-                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                using (var context = UtilityMethods.createContext())
                 {
                     var cogsAccount = context.Ledger_Accounts
                         .Where(e => e.Name.Equals("Cost of Goods Sold"))
@@ -151,7 +151,7 @@ namespace PutraJayaNT.ViewModels.Accounting
             {
                 _operatingExpenses = 0;
 
-                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                using (var context = UtilityMethods.createContext())
                 {
                     var operatingExpenseAccounts = context.Ledger_Accounts
                         .Where(e => e.Notes.Contains("Operating Expense"))

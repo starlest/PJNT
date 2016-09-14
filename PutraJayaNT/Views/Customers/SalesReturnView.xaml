@@ -1,9 +1,9 @@
 ﻿<UserControl x:Class="PutraJayaNT.Views.Customers.SalesReturnView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="768" d:DesignWidth="1024">
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
@@ -11,9 +11,9 @@
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding  Key="F1"  Command="{Binding SaveCommand}"/>
-        <KeyBinding  Key="F2"  Command="{Binding PrintCommand}"/>
-        <KeyBinding  Key="F5"  Command="{Binding NewCommand}"/>
+        <KeyBinding Key="F1" Command="{Binding SaveCommand}" />
+        <KeyBinding Key="F2" Command="{Binding PrintCommand}" />
+        <KeyBinding Key="F5" Command="{Binding NewCommand}" />
     </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -33,8 +33,9 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Button Content="(F5) New" Command="{Binding NewCommand}" />
-            <Button Grid.Column="3"  Content="(F2) Print" Command="{Binding PrintCommand}" />
-            <Button Grid.Column="4" Content="(F1) Save" Command="{Binding SaveCommand}" IsEnabled="{Binding NotEditing}" />
+            <Button Grid.Column="3" Content="(F2) Print" Command="{Binding PrintCommand}" />
+            <Button Grid.Column="4" Content="(F1) Save" Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding NotEditing}" />
         </Grid>
         <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid>
@@ -52,18 +53,26 @@
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Foreground="Blue" FontSize="16" Text="Sales Return ID:" />
-                <TextBox Name="SalesReturnIDTextBox" Grid.Column="1" Text="{Binding SalesReturnTransactionID, UpdateSourceTrigger=Explicit}" KeyDown="SalesReturnIDTextBox_KeyDown" />
+                <TextBox Name="SalesReturnIDTextBox" Grid.Column="1"
+                         Text="{Binding SalesReturnTransactionID, UpdateSourceTrigger=Explicit}"
+                         KeyDown="SalesReturnIDTextBox_KeyDown" />
                 <TextBlock Grid.Column="2" Foreground="Blue" Text="Sales ID:" />
-                <TextBox Name="SalesIDTextBox" Grid.Column="3" Text="{Binding SelectedSalesTransactionID, UpdateSourceTrigger=Explicit}" KeyDown="SalesIDTextBox_KeyDown" 
+                <TextBox Name="SalesIDTextBox" Grid.Column="3"
+                         Text="{Binding SelectedSalesTransactionID, UpdateSourceTrigger=Explicit}"
+                         KeyDown="SalesIDTextBox_KeyDown"
                          IsEnabled="{Binding NotEditing}" />
                 <TextBlock Grid.Column="4" Foreground="Blue" Text="Customer:" />
-                <TextBox Grid.Column="5" Text="{Binding Path=SelectedSalesTransactionCustomer.Name, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" />
+                <TextBox Grid.Column="5"
+                         Text="{Binding Path=SelectedSalesTransactionCustomer.Name, UpdateSourceTrigger=PropertyChanged}"
+                         IsEnabled="False" />
                 <TextBlock Grid.Column="6" Foreground="Blue" Text="Date:" />
-                <DatePicker Grid.Column="7" SelectedDateFormat="Long" SelectedDate="{Binding SalesReturnTransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                <DatePicker Grid.Column="7" SelectedDateFormat="Long"
+                            SelectedDate="{Binding SalesReturnTransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             IsEnabled="False" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSalesTransactionLines}" SelectedItem="{Binding SelectedSalesTransactionLine, UpdateSourceTrigger=PropertyChanged}" 
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedSalesTransactionLines}"
+                  SelectedItem="{Binding SelectedSalesTransactionLine, UpdateSourceTrigger=PropertyChanged}"
                   IsEnabled="{Binding NotEditing}" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Warehouse" Width="1*" Binding="{Binding Warehouse.Name}" />
@@ -98,13 +107,15 @@
                 <TextBox Grid.Column="5" Text="{Binding SalesReturnNewEntryPieces}" />
                 <TextBlock Grid.Column="6" Text="Return Price:" />
                 <TextBox Grid.Column="7" Text="{Binding SalesReturnNewEntryPrice, StringFormat=N2}" />
-                <Button Grid.Column="8" Content="Add" Command="{Binding SalesReturnNewEntryAddCommand}" Margin="10, 15, 10, 10" />
+                <Button Grid.Column="8" Content="Add" Command="{Binding SalesReturnNewEntryAddCommand}"
+                        Margin="10, 15, 10, 10" />
             </Grid>
         </Border>
-        <DataGrid Grid.Row="4" ItemsSource="{Binding DisplayedSalesReturnTransactionLines}" SelectedItem="{Binding SelectedLine}"
+        <DataGrid Grid.Row="4" ItemsSource="{Binding DisplayedSalesReturnTransactionLines}"
+                  SelectedItem="{Binding SelectedLine, UpdateSourceTrigger=PropertyChanged}"
                   IsEnabled="{Binding NotEditing}" IsReadOnly="True">
             <DataGrid.ContextMenu>
-                <ContextMenu >
+                <ContextMenu>
                     <MenuItem Header="Delete" HorizontalAlignment="Left" Command="{Binding DeleteLineCommand}" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
@@ -131,7 +142,9 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="4" Text="Net Total:" />
-            <TextBox Grid.Column="5" Foreground="Red" Text="{Binding SalesReturnTransactionNetTotal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" IsReadOnly="True" />
+            <TextBox Grid.Column="5" Foreground="Red"
+                     Text="{Binding SalesReturnTransactionNetTotal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"
+                     IsReadOnly="True" />
         </Grid>
     </Grid>
 </UserControl>

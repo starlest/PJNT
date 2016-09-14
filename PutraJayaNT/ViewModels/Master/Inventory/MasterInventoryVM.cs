@@ -177,7 +177,7 @@
             CategoriesWithAll.Clear(); 
             CategoriesWithAll.Add(new CategoryVM { Model = new Category { Name = "All" } });
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var categoriesFromDatabase = context.ItemCategories.OrderBy(category => category.Name).ToList();
                 foreach (
@@ -205,7 +205,7 @@
 
             Items.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var itemsFromDatabase =
                     context.Inventory.Include("Suppliers").Include("AlternativeSalesPrices").Include("Category").OrderBy(item => item.Name);
@@ -227,7 +227,7 @@
             var oldSelectedSupplier = _selectedSupplier;
 
             Suppliers.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var suppliersFromDatabase =
                     context.Suppliers.Where(supplier => !supplier.Name.Equals("-") && supplier.Active).OrderBy(supplier => supplier.Name);

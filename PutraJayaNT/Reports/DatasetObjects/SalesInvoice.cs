@@ -1,6 +1,6 @@
 ﻿namespace PutraJayaNT.Reports.DatasetObjects
 {
-    class SalesInvoice
+    internal class SalesInvoice
     {
         public string ID { get; set; }
 

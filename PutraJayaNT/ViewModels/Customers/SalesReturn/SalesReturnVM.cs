@@ -63,7 +63,7 @@
         public bool NotEditing
         {
             get { return _notEditing; }
-            set { SetProperty(ref _notEditing, value, "NotEditing"); }
+            set { SetProperty(ref _notEditing, value, () => NotEditing); }
         }
 
         #region Sales Return Transaction Properties
@@ -72,7 +72,7 @@
             get { return _salesReturnTransactionID; }
             set
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                using (var context = UtilityMethods.createContext())
                 {
                     var salesReturnTransactionFromDatabase =  context.SalesReturnTransactions
                         .Include("SalesReturnTransactionLines")
@@ -92,13 +92,13 @@
         public DateTime SalesReturnTransactionDate
         {
             get { return _salesReturnTransactionDate; }
-            set { SetProperty(ref _salesReturnTransactionDate, value, "SalesReturnTransactionDate"); }
+            set { SetProperty(ref _salesReturnTransactionDate, value, () => SalesReturnTransactionDate); }
         }
 
         public decimal SalesReturnTransactionNetTotal
         {
             get {  return _salesReturnTransactionNetTotal;  }
-            set { SetProperty(ref _salesReturnTransactionNetTotal, value, "SalesReturnTransactionNetTotal"); }
+            set { SetProperty(ref _salesReturnTransactionNetTotal, value, () => SalesReturnTransactionNetTotal); }
         }
         #endregion
 
@@ -110,7 +110,7 @@
             {
                 SetProperty(ref _selectedSalesTransactionID, value, () => SelectedSalesTransactionID);
                 if (_selectedSalesTransactionID == null) return;
-                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                using (var context = UtilityMethods.createContext())
                 {
                     var salesTransactionFromDatabase = context.SalesTransactions
                         .Include("Customer")
@@ -180,9 +180,9 @@
                         MessageBox.Show("Confirm Deletion?", "Confirmation", MessageBoxButton.YesNo)
                         == MessageBoxResult.No)
                         return;
-                    DisplayedSalesReturnTransactionLines.Remove(_selectedLine);
                     Debug.Assert(_selectedLine != null, "_selectedLine != null");
                     _salesReturnTransactionNetTotal -= _selectedLine.Total;
+                    DisplayedSalesReturnTransactionLines.Remove(_selectedLine);
                     UpdateUINetTotal();
                 }));
             }
@@ -255,22 +255,31 @@
         {
             var year = _salesReturnTransactionDate.Year;
             var month = _salesReturnTransactionDate.Month;
-            var newEntryID = "MR" + (long)((year - 2000) * 100 + month) * 1000000;
+            var selectedServer = Application.Current.FindResource(Constants.SELECTEDSERVER) as string;
+            var initialSelectedServer = selectedServer?.Substring(0, 1);
+            var leadingIDString = initialSelectedServer + "R" + (long)((year - 2000) * 100 + month) + "-";
+            var endingIDString = 0.ToString().PadLeft(4, '0');
+            _salesReturnTransactionID = leadingIDString + endingIDString;
 
-            string lastEntryID = null;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            string lastTransactionID = null;
+            using (var context = UtilityMethods.createContext())
             {
-                var latestSalesReturnTransaction = context.SalesReturnTransactions.Where(
-                    transaction => string.Compare(transaction.SalesReturnTransactionID, newEntryID, StringComparison.Ordinal) >= 0)
-                    .OrderByDescending(transaction => transaction.SalesReturnTransactionID)
-                    .FirstOrDefault();
-                if (latestSalesReturnTransaction != null) lastEntryID = latestSalesReturnTransaction.SalesReturnTransactionID;
+                var IDs = from SalesReturnTransaction in context.SalesReturnTransactions
+                          where SalesReturnTransaction.SalesReturnTransactionID.Substring(0, 7).Equals(leadingIDString)
+                          && string.Compare(SalesReturnTransaction.SalesReturnTransactionID, _salesReturnTransactionID, StringComparison.Ordinal) >= 0
+                          orderby SalesReturnTransaction.SalesReturnTransactionID descending
+                          select SalesReturnTransaction.SalesReturnTransactionID;
+                if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
-            if (lastEntryID != null) newEntryID = "MR" + (Convert.ToInt64(lastEntryID.Substring(2)) + 1);
+            if (lastTransactionID != null)
+            {
+                var newIDIndex = Convert.ToInt64(lastTransactionID.Substring(7, 4)) + 1;
+                endingIDString = newIDIndex.ToString().PadLeft(4, '0');
+                _salesReturnTransactionID = leadingIDString + endingIDString;
+            }
 
-            Model.SalesReturnTransactionID = newEntryID;
-            _salesReturnTransactionID = newEntryID;
+            Model.SalesReturnTransactionID = _salesReturnTransactionID;
             OnPropertyChanged("SalesReturnTransactionID");
         }
 
@@ -327,7 +336,7 @@
         #region Print Helper Methods
         private void SetupAndPrint()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var salesReturnTransaction = context.SalesReturnTransactions
                     .Include("SalesReturnTransactionLines")
@@ -370,10 +379,10 @@
                 row["LineNumber"] = count++;
                 row["ItemID"] = line.Item.ItemID;
                 row["ItemName"] = line.Item.Name;
-                row["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                row["Units"] = line.Quantity / line.Item.PiecesPerUnit;
-                row["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
-                row["ReturnPrice"] = line.ReturnPrice;
+                row["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
+                row["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
+                row["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
+                row["ReturnPrice"] = line.ReturnPrice * line.Item.PiecesPerUnit;
                 row["Total"] = line.Total;
                 salesReturnInvoiceRowsDataTable.Rows.Add(row);
             }
@@ -407,9 +416,9 @@
             salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("ItemID", typeof(string)));
             salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("ItemName", typeof(string)));
-            salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("Unit", typeof(string)));
-            salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("Units", typeof(int)));
-            salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("Pieces", typeof(int)));
+            salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("UnitName", typeof(string)));
+            salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("QuantityPerUnit", typeof(string)));
+            salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("Quantity", typeof(string)));
             salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("ReturnPrice", typeof(decimal)));
             salesReturnTransactionRowsDataTable.Columns.Add(new DataColumn("Total", typeof(decimal)));
             return salesReturnTransactionRowsDataTable;

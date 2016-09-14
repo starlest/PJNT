@@ -13,6 +13,7 @@
     using System.Windows.Input;
     using Models.Customer;
     using Customer;
+    using PutraJayaNT.Reports.Windows;
     using Sales;
 
     internal class SalesReportVM : ViewModelBase
@@ -31,6 +32,7 @@
         private CustomerVM _selectedCustomer;
 
         private ICommand _displayCommand;
+        private ICommand _printCommand;
 
         public SalesReportVM()
         {
@@ -156,6 +158,7 @@
         }
         #endregion
 
+        #region Commands
         public ICommand DisplayCommand
         {
             get
@@ -169,13 +172,26 @@
             }
         }
 
+        public ICommand PrintCommand
+        {
+            get
+            {
+                return _printCommand ?? (_printCommand = new RelayCommand(() =>
+                {
+                    if (GlobalDisplayLines.Count == 0 && DetailedDisplayLines.Count == 0) return;
+                    ShowPrintWindow();
+                }));
+            }
+        }
+        #endregion
+
         #region Helper Methods
         private void UpdateCategories()
         {
             var oldSelectedCategory = _selectedCategory;
 
             Categories.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 Categories.Add(new Category { ID = -1, Name = "All" });
                 var categories = context.ItemCategories.OrderBy(category => category.Name);
@@ -200,7 +216,7 @@
             CategoryItems.Add(new Item { ItemID = "-1", Name = "All" });
             if (_selectedCategory.Name == "All")
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                using (var context = UtilityMethods.createContext())
                 {
                     var items = context.Inventory.OrderBy(item => item.Name);
                     foreach (var item in items)
@@ -210,7 +226,7 @@
 
             else
             {
-                using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                using (var context = UtilityMethods.createContext())
                 {
                     var items = context.Inventory
                         .Where(e => e.Category.Name == _selectedCategory.Name)
@@ -235,7 +251,7 @@
 
             Customers.Clear();
             Customers.Add(new CustomerVM {  Model = new Customer { ID = -1, Name = "All" } });
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customers = context.Customers.Include("Group").OrderBy(customer => customer.Name);
                 foreach (var customer in customers)
@@ -256,7 +272,7 @@
             DetailedDisplayLines.Clear();
             GlobalDisplayLines.Clear();
             if (_selectedItem == null) return;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 List<SalesTransactionLine> transactionLines;
                 if (_selectedCategory.Name == "All" && _selectedItem.Name == "All")
@@ -317,7 +333,7 @@
                 {
                     var vm = new SalesTransactionLineVM {Model = line};
                     DetailedDisplayLines.Add(vm);
-                    //if (_selectedMode != "Global") continue;
+
                     var contains = false;
                     foreach (var l in GlobalDisplayLines.Where(l => l.Item.ItemID.Equals(line.ItemID)))
                     {
@@ -360,6 +376,16 @@
                 GlobalVisibility = Visibility.Collapsed;
                 DetailedVisibility = Visibility.Visible;
             }
+        }
+
+        private void ShowPrintWindow()
+        {
+            var overallSalesReportWindow = new GlobalSalesReportWindow(GlobalDisplayLines)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            overallSalesReportWindow.Show();
         }
         #endregion
     }

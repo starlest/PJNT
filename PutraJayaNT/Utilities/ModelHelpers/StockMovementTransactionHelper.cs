@@ -13,7 +13,7 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
 
                 var fromWarehouse = context.Warehouses.Single(warehouse => warehouse.ID.Equals(stockMovementTransaction.FromWarehouse.ID));
                 var toWarehouse = context.Warehouses.Single(warehouse => warehouse.ID.Equals(stockMovementTransaction.ToWarehouse.ID));

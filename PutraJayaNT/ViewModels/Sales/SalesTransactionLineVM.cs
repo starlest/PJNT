@@ -1,5 +1,6 @@
 ﻿namespace PutraJayaNT.ViewModels.Sales
 {
+    using System;
     using MVVMFramework;
     using Models.Inventory;
     using Models.Sales;
@@ -147,7 +148,7 @@
             var fractionOfTransactionDiscount = fractionOfTransaction * Model.SalesTransaction.Discount / Model.Quantity;
             var fractionOfTransactionTax = fractionOfTransaction * Model.SalesTransaction.Tax / Model.Quantity;
             var netLinePrice = lineSalesPrice - lineDiscount - fractionOfTransactionDiscount + fractionOfTransactionTax;
-            return netLinePrice * Model.Item.PiecesPerUnit;
+            return Math.Round(netLinePrice * Model.Item.PiecesPerUnit, 2);
         }
 
         public void UpdateTotal()

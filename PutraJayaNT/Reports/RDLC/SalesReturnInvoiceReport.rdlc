@@ -253,7 +253,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Satuan/Isi</Value>
+                              <Value>Satuan</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -287,7 +287,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Units</Value>
+                              <Value>Isi</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -321,7 +321,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Pieces</Value>
+                              <Value>Qty</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -487,14 +487,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Unit">
+                    <Textbox Name="UnitName">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Unit.Value</Value>
+                              <Value>=Fields!UnitName.Value</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                               </Style>
@@ -505,7 +505,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Unit</rd:DefaultName>
+                      <rd:DefaultName>UnitName</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -520,14 +520,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Units">
+                    <Textbox Name="QuantityPerUnit">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Units.Value</Value>
+                              <Value>=Fields!QuantityPerUnit.Value</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                               </Style>
@@ -538,7 +538,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Units</rd:DefaultName>
+                      <rd:DefaultName>QuantityPerUnit</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -553,14 +553,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Pieces1">
+                    <Textbox Name="Quantity">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Pieces.Value</Value>
+                              <Value>=Fields!Quantity.Value</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                               </Style>
@@ -571,7 +571,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Pieces1</rd:DefaultName>
+                      <rd:DefaultName>Quantity</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1496,6 +1496,14 @@
           <DataField>Pieces</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
+        <Field Name="Quantity">
+          <DataField>Quantity</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QuantityPerUnit">
+          <DataField>QuantityPerUnit</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="ReturnPrice">
           <DataField>ReturnPrice</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
@@ -1508,15 +1516,19 @@
           <DataField>Unit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="UnitName">
+          <DataField>UnitName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Units">
           <DataField>Units</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
-        <rd:DataSetName>PutraJayaNT.Reports</rd:DataSetName>
+        <rd:DataSetName>PutraJayaNT.Reports.DatasetObjects</rd:DataSetName>
         <rd:TableName>SalesReturnInvoiceLine</rd:TableName>
-        <rd:ObjectDataSourceType>PutraJayaNT.Reports.SalesReturnInvoiceLine, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:ObjectDataSourceType>PutraJayaNT.Reports.DatasetObjects.SalesReturnInvoiceLine, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>

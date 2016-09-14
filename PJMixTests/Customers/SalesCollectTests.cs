@@ -16,7 +16,7 @@
         public void TestCollect()
         {
             SalesTransaction testSalesTransaction;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 testSalesTransaction =
                     context.SalesTransactions.FirstOrDefault(
@@ -42,7 +42,7 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
 
                 salesTransaction =
                     context.SalesTransactions
@@ -72,7 +72,7 @@
 
         private static bool IsSalesTransactionInDatabaseFullyPaid(SalesTransaction salesTransaction)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var salesTransactionFromDatabase =
                     context.SalesTransactions.Single(
@@ -83,7 +83,7 @@
 
         private static bool IsSalesReceiptLedgerTransactionRecordedInDatabase(SalesTransaction salesTransaction)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var ledgerTransaction =
                     context.Ledger_Transactions.FirstOrDefault(

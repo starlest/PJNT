@@ -17,7 +17,7 @@
         public static async void testApi()
         {
             List<Stock> stockFromDatabase;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 stockFromDatabase = context.Stocks.OrderBy(stock => stock.Item.Name).Include("Item").Where(stock => stock.Pieces <= 20).ToList();
             }
@@ -70,7 +70,7 @@
         public static void AddTelegramNotification(DateTime when, string message)
         {
             var notification = new TelegramBotNotification {When = when, Message = message, Sent = false};
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 context.TelegramBotNotifications.Add(notification);
                 context.SaveChanges();

@@ -1,7 +1,6 @@
 ﻿namespace PutraJayaNT.Views
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
     using System.Net;
@@ -23,6 +22,7 @@
         private readonly User _user;
         private readonly string _selectedServerName;
         private bool _isServer;
+        private bool _isSendingNotifications;
 
         public MainWindow()
         {
@@ -98,8 +98,6 @@
             worker.RunWorkerAsync();
         }
 
-        private bool _isSendingNotifications;
-
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             while (true)
@@ -147,7 +145,7 @@
         {
             var Bot = new Api("229513906:AAH5-4dU6h_BnI20CpY_X0XAm4xB9xrnvdw");
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var unsentNotifications =
                     context.TelegramBotNotifications.Where(notification => !notification.Sent).ToList();
@@ -155,6 +153,7 @@
 
                 foreach (var notification in unsentNotifications)
                 {
+                    // ReSharper disable once UnusedVariable
                     var result = Bot.SendTextMessage(-104676249,
                         $"{notification.When} - {notification.Message}").Result;
                     notification.Sent = true;
@@ -163,10 +162,9 @@
             }
         }
 
-
         private static void CleanNotifications()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var sentNotifications =
                     context.TelegramBotNotifications.Where(notification => notification.Sent);

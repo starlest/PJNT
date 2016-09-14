@@ -105,7 +105,7 @@
         #region Helper Methods
         private void UpdateAccounts()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 Accounts.Clear();
                 var accounts = context.Ledger_Accounts
@@ -145,7 +145,7 @@
         {
             using (var ts = new TransactionScope(TransactionScopeOption.Required))
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
                 var transaction = new LedgerTransaction();
                 if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, _newEntryDate, _newEntryDescription, _newEntryDescription)) return;
                 context.SaveChanges();

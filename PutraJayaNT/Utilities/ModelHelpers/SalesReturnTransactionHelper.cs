@@ -18,10 +18,11 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
 
                 AttachSalesReturnTransactionPropertiesToDatabaseContext(context, ref salesReturnTransaction);
                 salesReturnTransaction.SalesTransaction.Customer.SalesReturnCredits += salesReturnTransaction.NetTotal;
+                context.SaveChanges();
 
                 var lines = salesReturnTransaction.SalesReturnTransactionLines.ToList();
                 salesReturnTransaction.SalesReturnTransactionLines.Clear();

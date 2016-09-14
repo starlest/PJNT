@@ -128,7 +128,7 @@
         private void UpdateSalesmans()
         {
             Salesmans.Clear();   
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var salesmansFromDatabase = context.Salesmans.Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name);
 
@@ -141,7 +141,7 @@
         {
             AlternativeSalesPrices.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var alternativeSalesPrices =
                     context.AlternativeSalesPrices.Where(

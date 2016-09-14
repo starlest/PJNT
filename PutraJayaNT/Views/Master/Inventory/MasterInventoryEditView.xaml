@@ -45,7 +45,7 @@
         <TextBlock Grid.Row="1" Grid.Column="4" Text="SUnit Name:" />
         <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding EditSecondaryUnitName, Mode=TwoWay}" />
         <TextBlock Grid.Row="1" Grid.Column="6" Text="Pieces/SUnit:" />
-        <TextBox Grid.Row="1" Grid.Column="7" Text="{Binding EditPiecesPerSecondaryUnit, Mode=TwoWay}" IsEnabled="False" />
+        <TextBox Grid.Row="1" Grid.Column="7" Text="{Binding EditPiecesPerSecondaryUnit, Mode=OneWay}" IsEnabled="False" />
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Purchase Price:" />
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EditPurchasePrice, Mode=TwoWay, StringFormat=N2}" />
         <TextBlock Grid.Row="2" Grid.Column="2" Text="Sales Price:" />

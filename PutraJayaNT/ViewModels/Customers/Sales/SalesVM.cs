@@ -25,6 +25,7 @@
         #region Transaction Backing Fields
         private string _transactionID;
         private DateTime _transactionDate;
+        private DateTime _transactionDueDate;
         private CustomerVM _transactionCustomer;
         private string _transactionCustomerCity;
         private string _transactionNotes;
@@ -66,7 +67,9 @@
             DisplayedSalesTransactionLines = new ObservableCollection<SalesTransactionLineVM>();
 
             Model = new SalesTransaction();
-            _transactionDate = UtilityMethods.GetCurrentDate().Date;
+            var currentDate = UtilityMethods.GetCurrentDate().Date;
+            _transactionDate = currentDate;
+            _transactionDueDate = currentDate;
             Model.Date = _transactionDate;
             Model.InvoiceIssued = null;
             SetTransactionID();
@@ -79,13 +82,13 @@
         public bool EditMode
         {
             get { return _editMode; }
-            set { SetProperty(ref _editMode, value, "EditMode"); }
+            set { SetProperty(ref _editMode, value, () => EditMode); }
         }
 
         public bool InvoiceNotIssued
         {
             get { return _invoiceNotIssued; }
-            set { SetProperty(ref _invoiceNotIssued, value, "InvoiceNotIssued"); }
+            set { SetProperty(ref _invoiceNotIssued, value, () => InvoiceNotIssued); }
         }
 
         public bool SalesNotReturned
@@ -148,6 +151,8 @@
                 SetProperty(ref _transactionCustomer, value, () => TransactionCustomer);
                 if (_transactionCustomer == null) return;
                 TransactionCustomerCity = _transactionCustomer.City;
+                if (!_editMode)
+                    TransactionDueDate = _transactionDate.AddDays(_transactionCustomer.CreditTerms);
             }
         }
 
@@ -163,6 +168,21 @@
                 }
 
                 SetProperty(ref _transactionDate, value, () => TransactionDate);
+            }
+        }
+
+        public DateTime TransactionDueDate
+        {
+            get { return _transactionDueDate; }
+            set
+            {
+                if (value < _transactionDate)
+                {
+                    MessageBox.Show("Cannot set a date before the transaction date.", "Invalid Date", MessageBoxButton.OK);
+                    return;
+                }
+
+                SetProperty(ref _transactionDueDate, value, () => TransactionDueDate);
             }
         }
 
@@ -469,7 +489,7 @@
         {
             Customers.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customers = context.Customers
                     .Where(customer => customer.Active)
@@ -486,14 +506,14 @@
         {
             var month = _transactionDate.Month;
             var year = _transactionDate.Year;
-            var selectedServer = Application.Current.FindResource("SelectedServer") as string;
+            var selectedServer = Application.Current.FindResource(Constants.SELECTEDSERVER) as string;
             var initialSelectedServer = selectedServer?.Substring(0, 1);
             var leadingIDString = initialSelectedServer + (long)((year - 2000) * 100 + month) + "-";
             var endingIDString = 0.ToString().PadLeft(4, '0');
             _transactionID = leadingIDString + endingIDString;
 
             string lastTransactionID = null;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var IDs = from SalesTransaction in context.SalesTransactions
                           where SalesTransaction.SalesTransactionID.Substring(0, 6).Equals(leadingIDString)
@@ -535,6 +555,7 @@
             TransactionCustomer = null;
             TransactionCustomerCity = null;
             TransactionDate = UtilityMethods.GetCurrentDate().Date;
+            TransactionDueDate = UtilityMethods.GetCurrentDate().Date;
             SetTransactionID();
             UpdateCustomers();
         }
@@ -549,6 +570,7 @@
             IsSaveAllowed = Model.Paid == 0 && Model.SalesReturnTransactions.Count == 0;
 
             TransactionDate = Model.Date;
+            TransactionDueDate = Model.DueDate;
             TransactionCustomer = new CustomerVM { Model = Model.Customer };
             TransactionNotes = Model.Notes;
 
@@ -577,7 +599,7 @@
         private static int GetStock(Item item, Warehouse warehouse)
         {
             int s;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var stock = context
                     .Stocks
@@ -615,7 +637,7 @@
         #region Transacton Helper Methods
         private static SalesTransaction GetSalesTransactionFromDatabase(string salesTransactionID)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 return context.SalesTransactions
                     .Include("Customer")
@@ -631,7 +653,7 @@
 
         private static bool DoesCustomerHasMaximumNumberOfInvoices(CustomerVM customer)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customerTransactions =
                     context.SalesTransactions.Where(e => e.Customer.ID.Equals(customer.ID) && e.Paid < e.NetTotal);
@@ -644,7 +666,7 @@
 
         private static bool DoesCustomerHasOverduedInvoices(CustomerVM customer)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customerTransactions =
                     context.SalesTransactions.Where(e => e.Customer.ID.Equals(customer.ID) && e.Paid < e.NetTotal);
@@ -663,7 +685,7 @@
 
         private void DeleteInvoice()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var transaction = context.SalesTransactions
                 .Include("SalesTransactionLines")
@@ -743,8 +765,8 @@
             Model.GrossTotal = _transactionGrossTotal;
             Model.NetTotal = _transactionNetTotal;
             Model.Date = _transactionDate;
-            Model.DueDate = _transactionDate.AddDays(_transactionCustomer.CreditTerms);
-            var user = Application.Current.FindResource("CurrentUser") as User;
+            Model.DueDate = _transactionDueDate;
+            var user = Application.Current.FindResource(Constants.CURRENTUSER) as User;
             Model.User = user;
 
             foreach (var line in Model.SalesTransactionLines.ToList())
@@ -773,7 +795,7 @@
 
         private void AddTelegramNotifications()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 foreach (var line in DisplayedSalesTransactionLines)
                 {

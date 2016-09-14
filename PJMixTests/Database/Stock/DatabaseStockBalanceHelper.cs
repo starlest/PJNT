@@ -9,7 +9,7 @@
     {
         public static StockBalance FirstOrDefault(Func<StockBalance, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.StockBalances.Where(condition).OrderBy(stock => stock.Item.Name).ThenBy(stock => stock.Warehouse.Name).FirstOrDefault();
         }
 

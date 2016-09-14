@@ -10,13 +10,13 @@
     {
         public static IEnumerable<CustomerGroup> GetAll()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.CustomerGroups.OrderBy(group => group.Name).ToList();
         }
 
         public static CustomerGroup Get(Func<CustomerGroup, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.CustomerGroups.Where(condition).FirstOrDefault();
         }
 

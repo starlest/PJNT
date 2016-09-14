@@ -100,7 +100,7 @@ namespace PutraJayaNT.Views.Menu
 
             if (!UtilityMethods.GetMasterAdminVerification()) return;
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var currentDate = context.Dates.FirstOrDefault(x => x.Name.Equals("Current"));
                 if (currentDate != null) currentDate.DateTime = currentDate.DateTime.AddDays(-1);
@@ -113,7 +113,7 @@ namespace PutraJayaNT.Views.Menu
             if (MessageBox.Show(
                 $"The date now is: {UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy")} \n Confirm increasing day?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var currentDate = context.Dates.FirstOrDefault(x => x.Name.Equals("Current"));
                 if (currentDate != null)

@@ -44,7 +44,7 @@ namespace PutraJayaNT.ViewModels
                         return;
                     }
 
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         var userFromDatabase = context.Users.SingleOrDefault(user => user.Username.Equals(_userName) && user.Password.Equals(_password) && user.IsAdmin);
 

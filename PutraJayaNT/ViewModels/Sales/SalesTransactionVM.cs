@@ -69,7 +69,7 @@
 
         private void UpdateCollectionSalesmans()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var collectionSalesmansFromDatabase = context.Salesmans.OrderBy(salesman => salesman.Name);
                 foreach (var salesman in collectionSalesmansFromDatabase)
@@ -79,7 +79,7 @@
 
         private void SaveCollectionSalesmanToTransactionInDatabase()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var transactionFromDatabase = context.SalesTransactions.Single(transaction => transaction.SalesTransactionID.Equals(Model.SalesTransactionID));
                 context.Salesmans.Attach(CollectionSalesman);

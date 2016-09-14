@@ -96,7 +96,7 @@ namespace PutraJayaNT.ViewModels.Master.Salesmans
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
                 SaveSalesCommissionEditsToDatabaseContext(context, editingSalesCommission, editedSalesCommission);
                 ts.Complete();
             }

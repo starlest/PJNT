@@ -72,7 +72,7 @@ namespace PJMixTests.Master
 
         private static Customer CreateTestCustomer()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 return new Customer
                 {
@@ -92,7 +92,7 @@ namespace PJMixTests.Master
 
         private static bool CheckIfCustomerAndItsLedgerExistsInDatabase(Customer customer)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customerReturnedFromDatabase = context.Customers.FirstOrDefault(e => e.ID.Equals(customer.ID));
                 if (customerReturnedFromDatabase == null) return false;
@@ -122,7 +122,7 @@ namespace PJMixTests.Master
 
         private static void RemoveCustomerAndItsLedgerFromDatabase(Customer customer)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customerToBeRemoved = context.Customers.First(c => c.Name.Equals(customer.Name));
                 context.Customers.Remove(customerToBeRemoved);

@@ -6,28 +6,28 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.51006cm</Width>
+              <Width>1.20284cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>6.04508cm</Width>
+              <Width>4.18743cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.98312cm</Width>
+              <Width>3.03957cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.26874cm</Width>
+              <Width>2.19278cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.27347cm</Width>
+              <Width>2.19278cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.27416cm</Width>
+              <Width>1.96694cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.37999cm</Width>
+              <Width>2.07277cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.2477cm</Width>
+              <Width>2.12723cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -109,7 +109,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Satuan/Isi</Value>
+                              <Value>Satuan</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -134,14 +134,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox30">
+                    <Textbox Name="Textbox7">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Units</Value>
+                              <Value>Isi</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -150,7 +150,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox30</rd:DefaultName>
+                      <rd:DefaultName>Textbox7</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -166,14 +166,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox24">
+                    <Textbox Name="Textbox5">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Pieces</Value>
+                              <Value>Qty</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -193,7 +193,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox24</rd:DefaultName>
+                      <rd:DefaultName>Textbox5</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -376,14 +376,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Unit">
+                    <Textbox Name="UnitName">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Unit.Value</Value>
+                              <Value>=Fields!UnitName.Value</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                               </Style>
@@ -394,7 +394,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Unit</rd:DefaultName>
+                      <rd:DefaultName>UnitName</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -409,14 +409,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Units">
+                    <Textbox Name="QuantityPerUnit">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Units.Value</Value>
+                              <Value>=Fields!QuantityPerUnit.Value</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                               </Style>
@@ -427,7 +427,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Units</rd:DefaultName>
+                      <rd:DefaultName>QuantityPerUnit</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -442,14 +442,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Pieces1">
+                    <Textbox Name="Quantity">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!Pieces.Value</Value>
+                              <Value>=Fields!Quantity.Value</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                               </Style>
@@ -460,7 +460,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Pieces1</rd:DefaultName>
+                      <rd:DefaultName>Quantity</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1027,7 +1027,7 @@
     <Height>2.45373in</Height>
     <Style />
   </Body>
-  <Width>8.00468in</Width>
+  <Width>8.13898in</Width>
   <Page>
     <PageHeader>
       <Height>2.84069cm</Height>
@@ -1484,61 +1484,15 @@
       </ConnectionProperties>
       <rd:DataSourceID>8510b55f-afae-4d3f-a0b4-ed5dea005dbc</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="PutraJayaNTReportsDatasetObjects">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>a3dea76c-1b45-4d61-9c5d-0bc9e334602e</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="SalesInvoiceLineDataSet">
-      <Query>
-        <DataSourceName>PutraJayaNTCrystal_Reports</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="Discount">
-          <DataField>Discount</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="InvoiceTotal">
-          <DataField>InvoiceTotal</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="ItemID">
-          <DataField>ItemID</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ItemName">
-          <DataField>ItemName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="LineNumber">
-          <DataField>LineNumber</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Pieces">
-          <DataField>Pieces</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="SalesPrice">
-          <DataField>SalesPrice</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="Total">
-          <DataField>Total</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="Unit">
-          <DataField>Unit</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Units">
-          <DataField>Units</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>PutraJayaNT.Reports</rd:DataSetName>
-        <rd:TableName>SalesInvoiceLine</rd:TableName>
-        <rd:ObjectDataSourceType>PutraJayaNT.Reports.SalesInvoiceLine, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
-      </rd:DataSetInfo>
-    </DataSet>
     <DataSet Name="SalesInvoiceDataSet">
       <Query>
         <DataSourceName>PutraJayaNTReports</DataSourceName>
@@ -1622,6 +1576,63 @@
         <rd:DataSetName>PutraJayaNT.Reports.DatasetObjects</rd:DataSetName>
         <rd:TableName>SalesInvoice</rd:TableName>
         <rd:ObjectDataSourceType>PutraJayaNT.Reports.DatasetObjects.SalesInvoice, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="SalesInvoiceLineDataSet">
+      <Query>
+        <DataSourceName>PutraJayaNTReportsDatasetObjects</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Discount">
+          <DataField>Discount</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ItemID">
+          <DataField>ItemID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ItemName">
+          <DataField>ItemName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LineNumber">
+          <DataField>LineNumber</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Pieces">
+          <DataField>Pieces</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Quantity">
+          <DataField>Quantity</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QuantityPerUnit">
+          <DataField>QuantityPerUnit</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SalesPrice">
+          <DataField>SalesPrice</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="UnitName">
+          <DataField>UnitName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Units">
+          <DataField>Units</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>PutraJayaNT.Reports.DatasetObjects</rd:DataSetName>
+        <rd:TableName>SalesInvoiceLine</rd:TableName>
+        <rd:ObjectDataSourceType>PutraJayaNT.Reports.DatasetObjects.SalesInvoiceLine, PutraJayaNT, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>

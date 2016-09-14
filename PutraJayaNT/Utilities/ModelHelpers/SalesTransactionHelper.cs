@@ -17,7 +17,7 @@
         {
             IsLastSaveSuccessful = false;
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 foreach (var line in salesTransaction.SalesTransactionLines.ToList())
                 {
@@ -39,7 +39,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
                 var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context,
                     editedSalesTransaction);
                 AssignEditedPropertiesToSalesTransactionFromDatabaseContext(editedSalesTransaction, salesTransactionFromDatabaseContext);
@@ -59,7 +59,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
 
                 var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context, editedSalesTransaction);
 
@@ -82,7 +82,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
 
                 var salesTransactionFromDatabase = context.SalesTransactions.Include("Customer").Single(
                     transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
@@ -106,7 +106,7 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
                 context.Entry(salesTransaction).State = EntityState.Modified;
                 salesTransaction.Paid += collectionAmount + creditsUsed;
                 salesTransaction.Customer.SalesReturnCredits -= creditsUsed;

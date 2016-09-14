@@ -8,7 +8,11 @@
 
         public string ItemName { get; set; }
 
-        public string Unit { get; set; }
+        public string UnitName { get; set; }
+
+        public string QuantityPerUnit { get; set; }
+
+        public string Quantity { get; set; }
 
         public int Units { get; set; }
 

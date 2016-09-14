@@ -105,9 +105,14 @@
     <Compile Include="Models\TelegramBotNotification.cs" />
     <Compile Include="Reports\DatasetObjects\GeneralLedgerReport.cs" />
     <Compile Include="Reports\DatasetObjects\LedgerTransactionLine.cs" />
+    <Compile Include="Reports\DatasetObjects\GlobalSalesTransactionLine.cs" />
     <Compile Include="Reports\Windows\GeneralLedgerReportWindow.xaml.cs">
       <DependentUpon>GeneralLedgerReportWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Windows\GlobalSalesReportWindow.xaml.cs">
+      <DependentUpon>GlobalSalesReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\Analysis\SalesAnalysisHelper.cs" />
     <Compile Include="Utilities\Constants.cs" />
     <Compile Include="Utilities\FocusAdvancement.cs" />
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
@@ -436,6 +441,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Reports\Windows\GlobalSalesReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Analysis\SalesForecastMonthlyView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -701,7 +710,13 @@
     <EmbeddedResource Include="Reports\RDLC\GeneralLedgerReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\DetailedSalesReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\GlobalSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\SalesTransactionsReport.rdlc">

@@ -70,7 +70,7 @@
             DisplayedLines.Clear();
             SetBeginningBalance();
             _endingBalance = _beginningBalance;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var lines = context.Ledger_Transaction_Lines
                     .Include("LedgerAccount")
@@ -108,7 +108,7 @@
 
         private void SetBeginningBalance()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var cashBalance = context.Ledger_Account_Balances
                     .Include("LedgerAccount")

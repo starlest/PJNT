@@ -131,7 +131,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
         private void UpdateEditGroups()
         {
             EditGroups.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customerGroupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
                 foreach (var customerGroup in customerGroupsReturnedFromDatabase)
@@ -175,7 +175,7 @@ namespace PutraJayaNT.ViewModels.Master.Customers
 
         private bool IsCustomerNameInDatabaseAlready()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 if (_editName.Equals(_editingCustomer.Name) ||
                     context.Customers.SingleOrDefault(customer => customer.Name.Equals(_editName)) == null) return true;

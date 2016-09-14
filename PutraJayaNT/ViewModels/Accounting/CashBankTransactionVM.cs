@@ -108,7 +108,7 @@
         {
             var oldSelectedBank = _selectedBank;
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 Banks.Clear();
                 var banks = context.Ledger_Accounts
@@ -131,7 +131,7 @@
         public void UpdateDisplayedLines()
         {
             DisplayLines.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var transactionLines = context.Ledger_Transaction_Lines
                     .Include("LedgerAccount")
@@ -191,7 +191,7 @@
 
         private static void RemoveLineFromDatabase(LedgerTransactionLine deletedLine)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var firstLine = context.Ledger_Transaction_Lines
                     .Include("LedgerAccount")

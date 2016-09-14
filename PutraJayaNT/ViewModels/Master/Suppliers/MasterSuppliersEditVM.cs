@@ -93,7 +93,7 @@
 
         private bool IsSupplierNameInDatabaseAlready()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 if (_editName.Equals(_editingSupplier.Name) ||
                     context.Suppliers.SingleOrDefault(supplier => supplier.Name.Equals(_editName)) == null) return true;

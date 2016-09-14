@@ -10,7 +10,7 @@
     {
         public static IEnumerable<SalesReturnTransaction> Get(Func<SalesReturnTransaction, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.SalesReturnTransactions
                     .Include("SalesTransaction")
                     .Include("SalesTransaction.Customer")
@@ -23,7 +23,7 @@
 
         public static SalesReturnTransaction FirstOrDefault(Func<SalesReturnTransaction, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.SalesReturnTransactions
                     .Include("SalesTransaction")
                     .Include("SalesTransaction.Customer")

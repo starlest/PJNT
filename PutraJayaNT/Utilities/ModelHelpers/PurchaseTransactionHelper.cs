@@ -19,7 +19,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
 
                 foreach (var line in purchaseTransaction.PurchaseTransactionLines)
                 {
@@ -43,7 +43,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
                 RecordEditedPurchaseTransactionLedgerTransactionsInDatabaseContext(context, editedPurchaseTransaction);
                 SetPurchaseTransactionInDatabaseContextToEditedPurchaseTransactionProperties(context, editedPurchaseTransaction);
                 ts.Complete();
@@ -58,7 +58,7 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
                 var purchaseTransactionInDatabase =
                     context.PurchaseTransactions
                         .Include("Supplier")
@@ -91,7 +91,7 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
 
                 context.Entry(purchaseTransaction).State = EntityState.Modified;
                 purchaseTransaction.Paid += paymentAmount + useCreditsAmount;

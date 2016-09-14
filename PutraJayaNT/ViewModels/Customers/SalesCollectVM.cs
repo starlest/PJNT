@@ -184,7 +184,7 @@
             var oldSelectedCustomer = _selectedCustomer;
 
             Customers.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customersFromDatabase = context.Customers.OrderBy(customer => customer.Name);
                 foreach (var customer in customersFromDatabase)
@@ -208,7 +208,7 @@
             PaymentModes.Clear();
             PaymentModes.Add("Cash");
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var banksFromDatabase =
                     context.Ledger_Accounts.Where(
@@ -239,7 +239,7 @@
         {
             CustomerUnpaidSalesTransactions.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var transactions = context.SalesTransactions
                     .Include("SalesTransactionLines")

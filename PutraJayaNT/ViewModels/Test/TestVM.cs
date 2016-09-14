@@ -29,7 +29,7 @@
             {
                 return _checkSalesTransactionsCommand ?? (_checkSalesTransactionsCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         var transactions = context.SalesTransactions
                         .Include("SalesTransactionLines")
@@ -98,7 +98,7 @@
             {
                 return _checkPurchaseTransactionsCommand ?? (_checkPurchaseTransactionsCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         var transactions = context.PurchaseTransactions
                         .Include("PurchaseTransactionLines")
@@ -167,10 +167,10 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
 
                 var actualCOGS =
-                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance7 +
+                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance8 +
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Debit -
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Credit;
                 // change beginningbalaance
@@ -240,7 +240,7 @@
             {
                 return _checkStockCommand ?? (_checkStockCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         var items = context.Inventory.ToList();
                         var warehouses = context.Warehouses.ToList();
@@ -281,7 +281,7 @@
             {
                 return _checkSoldOrReturnedCommand ?? (_checkSoldOrReturnedCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         
                         var items = context.Inventory.ToList();
@@ -339,7 +339,7 @@
             {
                 return _checkLedgerTransactionsCommand ?? (_checkLedgerTransactionsCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         var transactions = context.Ledger_Transactions
                         .Include("LedgerTransactionLines")
@@ -470,7 +470,7 @@
             {
                 return _checkLedgerGeneralCommand ?? (_checkLedgerGeneralCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         var accounts = context.Ledger_Accounts
                         .Include("LedgerTransactionLines")
@@ -539,7 +539,7 @@
             {
                 return _checkPastCommand ?? (_checkPastCommand = new RelayCommand(() =>
                 {
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         var transactions = context.SalesTransactions.Where(e => e.InvoiceIssued == null && e.Paid > 0).ToList();
 
@@ -580,7 +580,7 @@
 
         private static bool CheckInventoryValue2()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance3 +
                 context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit -
@@ -614,7 +614,7 @@
         private int GetPeriodBeginningBalance(Item item, Warehouse warehouse, int year, int month)
         {
             var beginningBalance = 0;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == year).FirstOrDefault();
 
@@ -674,7 +674,7 @@
             var monthDate = fromDate.AddDays(-fromDate.Date.Day + 1);
             var balance = GetPeriodBeginningBalance(item, warehouse, fromDate.Year, fromDate.Month);
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var purchaseLines = context.PurchaseTransactionLines
                     .Include("PurchaseTransaction")

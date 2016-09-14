@@ -6,6 +6,8 @@ using System.Windows;
 
 namespace PutraJayaNT.Reports.Windows
 {
+    using Utilities.ModelHelpers;
+
     /// <summary>
     /// Interaction logic for SalesInvoiceReportWindow.xaml
     /// </summary>
@@ -21,7 +23,6 @@ namespace PutraJayaNT.Reports.Windows
 
         private void reportViewer_RenderingComplete(object sender, RenderingCompleteEventArgs e)
         {
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -32,9 +33,9 @@ namespace PutraJayaNT.Reports.Windows
             dt1.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             dt1.Columns.Add(new DataColumn("ItemID", typeof(string)));
             dt1.Columns.Add(new DataColumn("ItemName", typeof(string)));
-            dt1.Columns.Add(new DataColumn("Unit", typeof(string)));
-            dt1.Columns.Add(new DataColumn("Units", typeof(int)));
-            dt1.Columns.Add(new DataColumn("Pieces", typeof(int)));
+            dt1.Columns.Add(new DataColumn("UnitName", typeof(string)));
+            dt1.Columns.Add(new DataColumn("QuantityPerUnit", typeof(string)));
+            dt1.Columns.Add(new DataColumn("Quantity", typeof(string)));
             dt1.Columns.Add(new DataColumn("SalesPrice", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Discount", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
@@ -46,11 +47,11 @@ namespace PutraJayaNT.Reports.Windows
                 dr["LineNumber"] = count++;
                 dr["ItemID"] = line.Item.ItemID;
                 dr["ItemName"] = line.Item.Name;
-                dr["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                dr["Units"] = line.Quantity / line.Item.PiecesPerUnit;
-                dr["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
-                dr["SalesPrice"] = line.SalesPrice * line.Item.PiecesPerUnit;
-                dr["Discount"] = line.Discount * line.Item.PiecesPerUnit;
+                dr["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
+                dr["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
+                dr["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
+                dr["SalesPrice"] = line.SalesPrice*line.Item.PiecesPerUnit;
+                dr["Discount"] = line.Discount*line.Item.PiecesPerUnit;
                 dr["Total"] = line.Total;
                 dt1.Rows.Add(dr);
             }
@@ -84,7 +85,8 @@ namespace PutraJayaNT.Reports.Windows
             ReportDataSource reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
             ReportDataSource reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
 
-            reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\SalesInvoiceReport.rdlc"); // Path of the rdlc file
+            reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory,
+                @"Reports\\RDLC\\SalesInvoiceReport.rdlc"); // Path of the rdlc file
 
             reportViewer.LocalReport.DataSources.Add(reportDataSource1);
             reportViewer.LocalReport.DataSources.Add(reportDataSource2);

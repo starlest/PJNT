@@ -10,19 +10,19 @@
     {
         public static IEnumerable<AlternativeSalesPrice> GetAll()
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.AlternativeSalesPrices.OrderBy(alternativeSalesPrice => alternativeSalesPrice.Name).ToList();
         }
 
         public static IEnumerable<AlternativeSalesPrice> Get(Func<AlternativeSalesPrice, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.AlternativeSalesPrices.Include("Item").Where(condition).OrderBy(alternativeSalesPrice => alternativeSalesPrice.Name).ToList();
         }
 
         public static AlternativeSalesPrice FirstOrDefault(Func<AlternativeSalesPrice, bool> condition)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
                 return context.AlternativeSalesPrices.Include("Item").Where(condition).OrderBy(alternativeSalesPrice => alternativeSalesPrice.Name).FirstOrDefault();
         }
     }

@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Windows;
     using Microsoft.Reporting.WinForms;
+    using ModelHelpers;
     using Models.Inventory;
     using Models.Sales;
 
@@ -29,7 +30,7 @@
 
         private static SalesTransaction GetSalesTransactionFromDatabase(SalesTransaction salesTransaction)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 return context.SalesTransactions
                     .Include("Customer")
@@ -46,7 +47,7 @@
         #region Print DO Local Report Helper Methods
         private static void SetSalesTransactionDOPrintedStatusToTrue(SalesTransaction salesTransaction)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var salesTransactionFromDatabase = context.SalesTransactions.Single(
                     transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
@@ -60,7 +61,7 @@
         private static IEnumerable<LocalReport> CreateSalesInvoiceDOLocalReports(SalesTransaction salesTransaction)
         {
             var reports = new List<LocalReport>();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var warehouses = context.Warehouses;
                 foreach (var warehouse in warehouses)
@@ -110,9 +111,9 @@
                 salesTransactionLinesDataTableRow["LineNumber"] = count++;
                 salesTransactionLinesDataTableRow["ItemID"] = line.Item.ItemID;
                 salesTransactionLinesDataTableRow["ItemName"] = line.Item.Name;
-                salesTransactionLinesDataTableRow["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                salesTransactionLinesDataTableRow["Units"] = line.Quantity / line.Item.PiecesPerUnit;
-                salesTransactionLinesDataTableRow["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
+                salesTransactionLinesDataTableRow["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
+                salesTransactionLinesDataTableRow["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
+                salesTransactionLinesDataTableRow["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
                 salesTransactionLinesDataTable.Rows.Add(salesTransactionLinesDataTableRow);
             }
         }
@@ -154,9 +155,9 @@
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("ItemID", typeof(string)));
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("ItemName", typeof(string)));
-            salesTransactionLinesDataTable.Columns.Add(new DataColumn("Unit", typeof(string)));
-            salesTransactionLinesDataTable.Columns.Add(new DataColumn("Units", typeof(int)));
-            salesTransactionLinesDataTable.Columns.Add(new DataColumn("Pieces", typeof(int)));
+            salesTransactionLinesDataTable.Columns.Add(new DataColumn("UnitName", typeof(string)));
+            salesTransactionLinesDataTable.Columns.Add(new DataColumn("QuantityPerUnit", typeof(string)));
+            salesTransactionLinesDataTable.Columns.Add(new DataColumn("Quantity", typeof(string)));
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("SalesPrice", typeof(decimal)));
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("Discount", typeof(decimal)));
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("Total", typeof(decimal)));
@@ -188,7 +189,7 @@
         #region Print Invoice Helper Methods
         private static void SetSalesTransactionInvoicePrintedStatusToTrue(SalesTransaction salesTransaction)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var salesTransactionFromDatabase = context.SalesTransactions.Single(
                     transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
@@ -247,9 +248,9 @@
             salesInvoiceLinesDataTable.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             salesInvoiceLinesDataTable.Columns.Add(new DataColumn("ItemID", typeof(string)));
             salesInvoiceLinesDataTable.Columns.Add(new DataColumn("ItemName", typeof(string)));
-            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Unit", typeof(string)));
-            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Units", typeof(int)));
-            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Pieces", typeof(int)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("UnitName", typeof(string)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("QuantityPerUnit", typeof(string)));
+            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Quantity", typeof(string)));
             salesInvoiceLinesDataTable.Columns.Add(new DataColumn("SalesPrice", typeof(decimal)));
             salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Discount", typeof(decimal)));
             salesInvoiceLinesDataTable.Columns.Add(new DataColumn("Total", typeof(decimal)));
@@ -279,9 +280,9 @@
                 row["LineNumber"] = count++;
                 row["ItemID"] = line.Item.ItemID;
                 row["ItemName"] = line.Item.Name;
-                row["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                row["Units"] = line.Quantity / line.Item.PiecesPerUnit;
-                row["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
+                row["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
+                row["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
+                row["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
                 row["SalesPrice"] = line.SalesPrice * line.Item.PiecesPerUnit;
                 row["Discount"] = line.Discount * line.Item.PiecesPerUnit;
                 row["Total"] = line.Total;

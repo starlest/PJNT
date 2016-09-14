@@ -1,24 +1,20 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Customers;
-using System;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Windows;
-using PutraJayaNT.ViewModels.Sales;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace PutraJayaNT.Reports.Windows
 {
+    using Microsoft.Reporting.WinForms;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Data;
+    using System.Windows;
+    using ViewModels.Sales;
+
     /// <summary>
     /// Interaction logic for OverallSalesReportWindow.xaml
     /// </summary>
-    public partial class OverallSalesReportWindow : ModernWindow
+    public partial class OverallSalesReportWindow
     {
-        ObservableCollection<ViewModels.Sales.SalesTransactionVM>  _salesTransactions;
+        private readonly ObservableCollection<SalesTransactionVM>  _salesTransactions;
 
-        public OverallSalesReportWindow(ObservableCollection<ViewModels.Sales.SalesTransactionVM> salesTransactions)
+        public OverallSalesReportWindow(ObservableCollection<SalesTransactionVM> salesTransactions)
         {
             InitializeComponent();
             _salesTransactions = salesTransactions;
@@ -31,7 +27,7 @@ namespace PutraJayaNT.Reports.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
 
             dt.Columns.Add(new DataColumn("Date", typeof(string)));
             dt.Columns.Add(new DataColumn("DueDate", typeof(string)));
@@ -42,17 +38,17 @@ namespace PutraJayaNT.Reports.Windows
 
             foreach (var t in _salesTransactions)
             {
-                DataRow dr = dt.NewRow();
+                var dr = dt.NewRow();
                 dr["Date"] = t.Date.ToShortDateString();
                 dr["DueDate"] = t.DueDate.ToShortDateString();
                 dr["ID"] = t.SalesTransactionID;
                 dr["Customer"] = t.Customer.Name;
-                dr["InvoiceNetTotal"] = t.Total;
-                dr["InvoiceRemaining"] = t.Total - t.Paid;
+                dr["InvoiceNetTotal"] = Math.Round(t.Total, 2);
+                dr["InvoiceRemaining"] = Math.Round(t.Total - t.Paid, 2);
                 dt.Rows.Add(dr);
             }
 
-            ReportDataSource reportDataSource = new ReportDataSource("InvoiceDataSet", dt);
+            var reportDataSource = new ReportDataSource("InvoiceDataSet", dt);
 
             reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\OverallSalesReport.rdlc"); // Path of the rdlc file
 

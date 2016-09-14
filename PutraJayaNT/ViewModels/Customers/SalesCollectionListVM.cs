@@ -238,7 +238,7 @@
             var oldSelectedCity = _selectedCity;
 
             Cities.Clear();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var customersReturnedFromDatabase = context.Customers.ToList();
                 foreach (var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
@@ -269,7 +269,7 @@
             var oldSelectedSalesman = _selectedSalesman;
             Salesmans.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var salesmansFromDatabase = context.Salesmans.Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name);
                 var allSalesman = new Salesman {ID = -1, Name = "All"};
@@ -292,7 +292,7 @@
             var oldSelectedCustomer = _selectedCustomer;
             Customers.Clear();
 
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var allCustomer = new Customer {ID = -1, Name = "All"};
                 Customers.Add(new CustomerVM {Model = allCustomer});
@@ -340,7 +340,7 @@
         {
             _total = 0;
             var searchCondition = GetCitySalesmanSelectionSearchCondition();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var salesTransactionsFromDatabase = 
                     context.SalesTransactions
@@ -428,7 +428,7 @@
         {
             _total = 0;
             var searchCondition = GetCustomerSelectionSearchCondition();
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var salesTransactionsFromDatabase =
                     context.SalesTransactions
@@ -437,7 +437,8 @@
                     .Where(searchCondition)
                     .OrderBy(salesTransaction => salesTransaction.DueDate)
                     .ThenBy(salesTransaction => salesTransaction.Date)
-                    .ThenBy(salesTransaction => salesTransaction.Customer.Name);
+                    .ThenBy(salesTransaction => salesTransaction.Customer.Name)
+                    .ToList();
 
                 DisplayedSalesTransactions.Clear();
                 foreach (
@@ -471,7 +472,7 @@
         private void UpdateDisplayedSalesTransactionsAccordingToCollectionDateSalesTransactions()
         {
             _total = 0;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var emptyCollectionSalesman = context.Salesmans.SingleOrDefault(e => e.Name.Equals(" "));
                 var ledgerTransactions = context.Ledger_Transactions
@@ -493,7 +494,7 @@
 
         private static SalesTransactionVM GetCorrespondingSalesTransactionVM(LedgerTransaction ledgerTransaction)
         {
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 var salesTransactionFromDatabase = context.SalesTransactions
                     .Include("CollectionSalesman")

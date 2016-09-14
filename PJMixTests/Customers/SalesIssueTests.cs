@@ -16,7 +16,7 @@
         [TestMethod]
         public void TestIssue()
         {
-            using (var context = new ERPContext("putrajayant"))
+            using (var context = UtilityMethods.createContext())
             {
                 var unissuedInvoices =
                     context.SalesTransactions.Where(transaction => transaction.InvoiceIssued == null).ToList();
@@ -34,7 +34,7 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress());
+                var context = UtilityMethods.createContext();
 
                 var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance3 +
                 context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit -

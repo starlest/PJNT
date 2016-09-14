@@ -8,6 +8,8 @@ using PutraJayaNT.Models.Sales;
 
 namespace PutraJayaNT.Reports.Windows
 {
+    using Utilities.ModelHelpers;
+
     /// <summary>
     /// Interaction logic for SalesInvoiceWindow.xaml
     /// </summary>
@@ -32,9 +34,9 @@ namespace PutraJayaNT.Reports.Windows
             dt1.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             dt1.Columns.Add(new DataColumn("ItemID", typeof(string)));
             dt1.Columns.Add(new DataColumn("ItemName", typeof(string)));
-            dt1.Columns.Add(new DataColumn("Unit", typeof(string)));
-            dt1.Columns.Add(new DataColumn("Units", typeof(int)));
-            dt1.Columns.Add(new DataColumn("Pieces", typeof(int)));
+            dt1.Columns.Add(new DataColumn("UnitName", typeof(string)));
+            dt1.Columns.Add(new DataColumn("QuantityPerUnit", typeof(string)));
+            dt1.Columns.Add(new DataColumn("Quantity", typeof(string)));
             dt1.Columns.Add(new DataColumn("SalesPrice", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Discount", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
@@ -71,17 +73,17 @@ namespace PutraJayaNT.Reports.Windows
             var count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(2)).ToList())
             {
-                DataRow dr1 = dt1.NewRow();
+                var dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;
                 dr1["ItemID"] = line.Item.ItemID;
                 dr1["ItemName"] = line.Item.Name;
-                dr1["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                dr1["Units"] = line.Quantity / line.Item.PiecesPerUnit;
-                dr1["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
+                dr1["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
+                dr1["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
+                dr1["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
                 dt1.Rows.Add(dr1);
             }
 
-            DataRow dr2 = dt2.NewRow();
+            var dr2 = dt2.NewRow();
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
@@ -92,7 +94,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 dr2["Warehouse"] = context.Warehouses.Where(e => e.ID.Equals(2)).FirstOrDefault().Name;
             }
@@ -121,9 +123,9 @@ namespace PutraJayaNT.Reports.Windows
                 dr1["LineNumber"] = count++;
                 dr1["ItemID"] = line.Item.ItemID;
                 dr1["ItemName"] = line.Item.Name;
-                dr1["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                dr1["Units"] = line.Quantity / line.Item.PiecesPerUnit;
-                dr1["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
+                dr1["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
+                dr1["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
+                dr1["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
                 dt1.Rows.Add(dr1);
             }
 
@@ -138,7 +140,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 dr2["Warehouse"] = context.Warehouses.Where(e => e.ID.Equals(1)).FirstOrDefault().Name;
             }
@@ -167,9 +169,9 @@ namespace PutraJayaNT.Reports.Windows
                 dr1["LineNumber"] = count++;
                 dr1["ItemID"] = line.Item.ItemID;
                 dr1["ItemName"] = line.Item.Name;
-                dr1["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                dr1["Units"] = line.Quantity / line.Item.PiecesPerUnit;
-                dr1["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
+                dr1["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
+                dr1["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
+                dr1["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
                 dt1.Rows.Add(dr1);
             }
 
@@ -184,7 +186,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 dr2["Warehouse"] = context.Warehouses.Where(e => e.ID.Equals(3)).FirstOrDefault().Name;
             }
@@ -206,20 +208,20 @@ namespace PutraJayaNT.Reports.Windows
         private void LoadReportViewer4()
         {
             InitializeDataSources();
-            int count = 1;
+            var count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(4)).ToList())
             {
-                DataRow dr1 = dt1.NewRow();
+                var dr1 = dt1.NewRow();
                 dr1["LineNumber"] = count++;
                 dr1["ItemID"] = line.Item.ItemID;
                 dr1["ItemName"] = line.Item.Name;
-                dr1["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                dr1["Units"] = line.Quantity / line.Item.PiecesPerUnit;
-                dr1["Pieces"] = line.Quantity % line.Item.PiecesPerUnit;
+                dr1["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
+                dr1["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
+                dr1["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
                 dt1.Rows.Add(dr1);
             }
 
-            DataRow dr2 = dt2.NewRow();
+            var dr2 = dt2.NewRow();
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
@@ -230,7 +232,7 @@ namespace PutraJayaNT.Reports.Windows
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");
             dr2["Notes"] = _salesTransaction.Notes;
-            using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+            using (var context = UtilityMethods.createContext())
             {
                 dr2["Warehouse"] = context.Warehouses.Where(e => e.ID.Equals(4)).FirstOrDefault().Name;
             }

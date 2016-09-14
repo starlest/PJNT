@@ -64,7 +64,7 @@ namespace PutraJayaNT.ViewModels.Master
 
                 if (value == "All")
                 {
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         var accounts = context.Ledger_Accounts
                             .Include("LedgerGeneral")
@@ -81,7 +81,7 @@ namespace PutraJayaNT.ViewModels.Master
                 else
                 {
                     _displayAccounts.Clear();
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         var accounts = context.Ledger_Accounts
                             .Where(e => e.Class == value && !e.Name.Equals("- Accounts Payable"))
@@ -117,7 +117,7 @@ namespace PutraJayaNT.ViewModels.Master
                 {
                     if (MessageBox.Show("Confirm adding this account?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
 
-                    using (var context = new ERPContext(UtilityMethods.GetDBName(), UtilityMethods.GetIpAddress()))
+                    using (var context = UtilityMethods.createContext())
                     {
                         CreateNewAccount(context);
                         context.SaveChanges();

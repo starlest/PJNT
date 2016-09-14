@@ -6,6 +6,7 @@ using System.Windows;
 
 namespace PutraJayaNT.Reports.Windows
 {
+    using Utilities.ModelHelpers;
     using ViewModels.Customers.SalesReturn;
 
     /// <summary>
@@ -28,34 +29,35 @@ namespace PutraJayaNT.Reports.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            DataTable dt1 = new DataTable();
-            DataTable dt2 = new DataTable();
+            var dt1 = new DataTable();
+            var dt2 = new DataTable();
 
             dt1.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             dt1.Columns.Add(new DataColumn("ItemID", typeof(string)));
             dt1.Columns.Add(new DataColumn("ItemName", typeof(string)));
-            dt1.Columns.Add(new DataColumn("Unit", typeof(string)));
-            dt1.Columns.Add(new DataColumn("Units", typeof(int)));
-            dt1.Columns.Add(new DataColumn("Pieces", typeof(int)));
+            dt1.Columns.Add(new DataColumn("UnitName", typeof(string)));
+            dt1.Columns.Add(new DataColumn("QuantityPerUnit", typeof(string)));
+            dt1.Columns.Add(new DataColumn("Quantity", typeof(string)));
             dt1.Columns.Add(new DataColumn("ReturnPrice", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
 
-            int count = 1;
+            var count = 1;
             foreach (var line in _salesReturnTransaction.DisplayedSalesReturnTransactionLines)
             {
-                DataRow dr = dt1.NewRow();
+                var dr = dt1.NewRow();
                 dr["LineNumber"] = count++;
                 dr["ItemID"] = line.Item.ItemID;
                 dr["ItemName"] = line.Item.Name;
-                dr["Unit"] = line.Item.UnitName + "/" + line.Item.PiecesPerUnit;
-                dr["Units"] = line.Units;
-                dr["Pieces"] = line.Pieces;
-                dr["ReturnPrice"] = line.ReturnPrice;
+                dr["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
+                dr["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
+                dr["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
+                dr["ReturnPrice"] = line.ReturnPrice * line.Item.PiecesPerUnit;
                 dr["Total"] = line.Total;
+
                 dt1.Rows.Add(dr);
             }
 
-            DataRow dr2 = dt2.NewRow();
+            var dr2 = dt2.NewRow();
             dt2.Columns.Add(new DataColumn("Customer", typeof(string)));
             dt2.Columns.Add(new DataColumn("Address", typeof(string)));
             dt2.Columns.Add(new DataColumn("SalesInvoiceNumber", typeof(string)));
@@ -79,11 +81,16 @@ namespace PutraJayaNT.Reports.Windows
             reportViewer.LocalReport.DataSources.Add(reportDataSource2);
             reportViewer.PageCountMode = PageCountMode.Actual;
 
-            var pg = new PageSettings();
-            pg.Margins.Top = 0;
-            pg.Margins.Bottom = 0;
-            pg.Margins.Left = 0;
-            pg.Margins.Right = 0;
+            var pg = new PageSettings
+            {
+                Margins =
+                {
+                    Top = 0,
+                    Bottom = 0,
+                    Left = 0,
+                    Right = 0
+                }
+            };
             var size = new PaperSize("Custom", 827, 550);
             pg.PaperSize = size;
             pg.Landscape = false;
