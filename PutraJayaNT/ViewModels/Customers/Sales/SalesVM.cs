@@ -428,7 +428,7 @@
                         if (!UtilityMethods.GetVerification()) return;
                     }
 
-                    SalesTransactionPrintHelper.PrintSalesTransactionFromDatabaseDO(Model);
+                    SalesTransactionPrintHelper.PrintSalesTransactionDOFromDatabase(Model);
                     Model.DOPrinted = true;
                 }));
             }

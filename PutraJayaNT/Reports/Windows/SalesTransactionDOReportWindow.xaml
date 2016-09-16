@@ -13,25 +13,16 @@
                   WindowState="Maximized"
                   Loaded="Window_Loaded">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="0.2*" />
+            <ColumnDefinition Width="0.8*" />
         </Grid.ColumnDefinitions>
-        <WindowsFormsHost>
-            <rv:ReportViewer x:Name="reportViewer1" RenderingComplete="reportViewer_RenderingComplete" />
-        </WindowsFormsHost>
-        <WindowsFormsHost Grid.Row="0" Grid.Column="1">
-            <rv:ReportViewer x:Name="reportViewer2" RenderingComplete="reportViewer_RenderingComplete" />
-        </WindowsFormsHost>
-        <WindowsFormsHost Grid.Row="1" Grid.Column="0">
-            <rv:ReportViewer x:Name="reportViewer3" RenderingComplete="reportViewer_RenderingComplete" />
-        </WindowsFormsHost>
-        <WindowsFormsHost Grid.Row="1" Grid.Column="1">
-            <rv:ReportViewer x:Name="reportViewer4" RenderingComplete="reportViewer_RenderingComplete" />
+        <Border BorderBrush="Blue" BorderThickness="1">
+            <ListBox x:Name="Warehouses" DisplayMemberPath="Name" SelectionChanged="Warehouses_OnSelectionChanged" />
+        </Border>
+        <WindowsFormsHost Grid.Column="1">
+            <rv:ReportViewer x:Name="reportViewer" RenderingComplete="reportViewer_RenderingComplete" />
         </WindowsFormsHost>
     </Grid>
 </mui:ModernWindow>
+

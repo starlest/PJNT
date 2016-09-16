@@ -36,7 +36,7 @@
             <Button Grid.Column="4" Content="Delete" Command="{Binding DeleteTransactionCommand}" IsEnabled="{Binding IsDeletionAllowed}" />
             <Button Grid.Column="5" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding IsTransactionNotPaid}" />
         </Grid>
-        <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
+        <Border Grid.Row="1" BorderBrush="Red" BorderThickness="2" Margin="0, 5, 0, 5">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />

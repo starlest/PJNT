@@ -12,7 +12,7 @@
 
     public static class SalesTransactionPrintHelper
     {
-        public static void PrintSalesTransactionFromDatabaseDO(SalesTransaction salesTransaction)
+        public static void PrintSalesTransactionDOFromDatabase(SalesTransaction salesTransaction)
         {
             var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(salesTransaction);
             var localReports = CreateSalesInvoiceDOLocalReports(salesTransactionFromDatabase);

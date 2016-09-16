@@ -171,7 +171,7 @@
                 return _confirmCollectionCommand ?? (_confirmCollectionCommand = new RelayCommand(() =>
                 {
                     if (!IsThereAmountCollected() || !IsPaymentModeSelected() || !IsCollectionConfirmationYes()) return;
-                    SalesTransactionHelper.Collect(_selectedSalesTransaction, _salesReturnCredits, _collectionAmount, _selectedPaymentMode);
+                    SalesTransactionHelper.Collect(_selectedSalesTransaction, _useCredits, _collectionAmount, _selectedPaymentMode);
                     MessageBox.Show("Succesfully collected!", "Success", MessageBoxButton.OK);
                     ResetTransaction();
                 }));
