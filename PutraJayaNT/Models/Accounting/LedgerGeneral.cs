@@ -1,14 +1,9 @@
-﻿using MVVMFramework;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PutraJayaNT.Models.Accounting
+﻿namespace ECRP.Models.Accounting
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using MVVMFramework;
+
     [Table("Ledger_General")]
     public class LedgerGeneral : ObservableObject
     {

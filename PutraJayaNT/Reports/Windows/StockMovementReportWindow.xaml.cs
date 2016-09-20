@@ -1,13 +1,13 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
-using PutraJayaNT.ViewModels.Inventory;
-using System;
-using System.Data;
-using System.Drawing.Printing;
-using System.Windows;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace ECRP.Reports.Windows
 {
+    using System;
+    using System.Data;
+    using System.Drawing.Printing;
+    using System.Windows;
+    using FirstFloor.ModernUI.Windows.Controls;
+    using Microsoft.Reporting.WinForms;
+    using ViewModels.Inventory;
+
     /// <summary>
     /// Interaction logic for StockCardMovementWindow.xaml
     /// </summary>

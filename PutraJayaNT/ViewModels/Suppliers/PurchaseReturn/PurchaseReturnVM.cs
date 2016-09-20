@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Suppliers.PurchaseReturn
+﻿namespace ECRP.ViewModels.Suppliers.PurchaseReturn
 {
     using System;
     using System.Collections.ObjectModel;

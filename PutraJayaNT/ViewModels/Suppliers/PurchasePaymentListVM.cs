@@ -1,15 +1,14 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Purchase;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-
-namespace PutraJayaNT.ViewModels.Suppliers
+﻿namespace ECRP.ViewModels.Suppliers
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows;
     using System.Windows.Input;
+    using Models.Purchase;
+    using Models.Supplier;
+    using MVVMFramework;
+    using Utilities;
 
     internal class PurchasePaymentListVM : ViewModelBase
     {

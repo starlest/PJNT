@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Reports.Windows
+﻿namespace ECRP.Reports.Windows
 {
-    using Microsoft.Reporting.WinForms;
     using System;
     using System.Collections.ObjectModel;
     using System.Data;
     using System.Windows;
+    using Microsoft.Reporting.WinForms;
     using ViewModels.Sales;
 
     /// <summary>

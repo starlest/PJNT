@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using PutraJayaNT.Models.Salesman;
-    using PutraJayaNT.Utilities;
+    using ECRP.Models.Salesman;
+    using ECRP.Utilities;
 
     public static class DatabaseSalesmanCommisionHelper
     {

@@ -1,13 +1,13 @@
-﻿namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace ECRP.ViewModels.Inventory
 {
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Input;
     using Item;
     using Models.StockCorrection;
     using MVVMFramework;
     using Utilities;
-    using System.Linq;
 
     internal class StockAdjustmentNewEntryVM : ViewModelBase
     {

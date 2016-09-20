@@ -1,8 +1,8 @@
-﻿namespace PutraJayaNT.ViewModels.Salesman
+﻿namespace ECRP.ViewModels.Salesman
 {
     using Models.Inventory;
-    using MVVMFramework;
     using Models.Salesman;
+    using MVVMFramework;
 
     public class SalesCommissionVM : ViewModelBase<SalesCommission>
     {

@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Reports.DatasetObjects
+﻿namespace ECRP.Reports.DatasetObjects
 {
     class StockCardLine
     {

@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Views.Customers
+﻿namespace ECRP.Views.Customers
 {
     using System.Windows.Controls;
     using System.Windows.Input;

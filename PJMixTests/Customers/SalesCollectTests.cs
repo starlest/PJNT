@@ -3,11 +3,11 @@
     using System.Data.Entity;
     using System.Linq;
     using System.Transactions;
+    using ECRP.Models.Accounting;
+    using ECRP.Models.Sales;
+    using ECRP.Utilities;
+    using ECRP.Utilities.ModelHelpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using PutraJayaNT.Models.Accounting;
-    using PutraJayaNT.Models.Sales;
-    using PutraJayaNT.Utilities;
-    using PutraJayaNT.Utilities.ModelHelpers;
 
     [TestClass]
     public class SalesCollectTests

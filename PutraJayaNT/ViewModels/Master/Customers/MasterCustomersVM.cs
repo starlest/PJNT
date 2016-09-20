@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Customers
+﻿namespace ECRP.ViewModels.Master.Customers
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -6,10 +6,10 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using MVVMFramework;
-    using Models.Customer;
-    using Utilities;
     using Customer;
+    using Models.Customer;
+    using MVVMFramework;
+    using Utilities;
     using Views.Master.Customers;
 
     public class MasterCustomersVM : ViewModelBase

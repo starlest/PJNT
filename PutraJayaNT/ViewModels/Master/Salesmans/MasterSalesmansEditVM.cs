@@ -1,15 +1,14 @@
-﻿using System.Transactions;
-using System.Windows;
-using System.Windows.Input;
-using MVVMFramework;
-using PutraJayaNT.Models.Salesman;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Salesman;
-
-namespace PutraJayaNT.ViewModels.Master.Salesmans
+﻿namespace ECRP.ViewModels.Master.Salesmans
 {
     using System;
     using System.Linq;
+    using System.Transactions;
+    using System.Windows;
+    using System.Windows.Input;
+    using Models.Salesman;
+    using MVVMFramework;
+    using Salesman;
+    using Utilities;
 
     public class MasterSalesmansEditVM : ViewModelBase
     {

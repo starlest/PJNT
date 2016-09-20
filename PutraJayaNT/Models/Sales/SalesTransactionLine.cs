@@ -1,10 +1,10 @@
-namespace PutraJayaNT.Models.Sales
+namespace ECRP.Models.Sales
 {
-    using Inventory;
-    using PutraJayaNT.Models.Salesman;
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using Inventory;
+    using Salesman;
 
     public partial class SalesTransactionLine
     {

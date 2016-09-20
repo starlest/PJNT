@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Utilities.Analysis
+﻿namespace ECRP.Utilities.Analysis
 {
     using System.Linq;
     using ViewModels.Item;

@@ -1,8 +1,8 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-
-namespace PutraJayaNT.ViewModels.Item
+﻿namespace ECRP.ViewModels.Item
 {
+    using Models.Inventory;
+    using MVVMFramework;
+
     public class AlternativeSalesPriceVM : ViewModelBase<AlternativeSalesPrice>
     {
         public Models.Inventory.Item Item

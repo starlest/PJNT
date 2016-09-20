@@ -2,8 +2,8 @@
 {
     using System;
     using System.Linq;
-    using PutraJayaNT.Models.Inventory;
-    using PutraJayaNT.Utilities;
+    using ECRP.Models.Inventory;
+    using ECRP.Utilities;
 
     public static class DatabaseStockBalanceHelper
     {

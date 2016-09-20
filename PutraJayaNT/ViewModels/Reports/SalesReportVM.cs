@@ -1,9 +1,5 @@
-﻿namespace PutraJayaNT.ViewModels.Reports
+﻿namespace ECRP.ViewModels.Reports
 {
-    using MVVMFramework;
-    using Models.Inventory;
-    using Models.Sales;
-    using Utilities;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -11,12 +7,15 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Models.Customer;
     using Customer;
-    using PutraJayaNT.Reports.Windows;
+    using Models.Customer;
+    using Models.Inventory;
+    using Models.Sales;
+    using MVVMFramework;
     using Sales;
-    using DetailedSalesReportWindow = PutraJayaNT.Reports.Windows.Reports.SalesReport.DetailedSalesReportWindow;
-    using GlobalSalesReportWindow = PutraJayaNT.Reports.Windows.Reports.SalesReport.GlobalSalesReportWindow;
+    using Utilities;
+    using DetailedSalesReportWindow = ECRP.Reports.Windows.Reports.SalesReport.DetailedSalesReportWindow;
+    using GlobalSalesReportWindow = ECRP.Reports.Windows.Reports.SalesReport.GlobalSalesReportWindow;
 
     internal class SalesReportVM : ViewModelBase
     {

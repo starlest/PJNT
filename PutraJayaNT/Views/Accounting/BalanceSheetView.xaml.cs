@@ -1,8 +1,8 @@
-﻿using PutraJayaNT.ViewModels.Accounting;
-using System.Windows.Controls;
-
-namespace PutraJayaNT.Views.Accounting
+﻿namespace ECRP.Views.Accounting
 {
+    using System.Windows.Controls;
+    using ViewModels.Accounting;
+
     /// <summary>
     /// Interaction logic for BalanceSheetView.xaml
     /// </summary>

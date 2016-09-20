@@ -1,15 +1,13 @@
-﻿using Microsoft.Reporting.WinForms;
-using System;
-using System.Data;
-using System.Windows;
-using System.Linq;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.Models.Sales;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace ECRP.Reports.Windows
 {
+    using System;
     using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
+    using System.Windows;
     using System.Windows.Controls;
+    using Microsoft.Reporting.WinForms;
+    using Models.Sales;
     using Utilities.ModelHelpers;
     using ViewModels.Item;
 

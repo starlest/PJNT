@@ -1,0 +1,783 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E59C0673-7A62-4081-A85B-5C7EB6B20967}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ECRP</RootNamespace>
+    <AssemblyName>ECERP</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FirstFloor.ModernUI, Version=1.0.6.0, Culture=neutral, PublicKeyToken=2d21ec3cd074c59a, processorArchitecture=MSIL">
+      <HintPath>..\packages\ModernUI.WPF.1.0.6\lib\net45\FirstFloor.ModernUI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data.Entity.EF6, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.Entity.6.9.8\lib\net45\MySql.Data.Entity.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySqlBackup, Version=2.0.9.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySqlBackup.NET.2.0.9.2\lib\net45\MySqlBackup.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Telegram.Bot, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Telegram.Bot.9.0.0\lib\net45\Telegram.Bot.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Update1.cs" />
+    <Compile Include="Migrations\Update1.Designer.cs">
+      <DependentUpon>Update1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TelegramBotNotification.cs" />
+    <Compile Include="Reports\DatasetObjects\GeneralLedgerReport.cs" />
+    <Compile Include="Reports\DatasetObjects\DetailedSalesTransactionLine.cs" />
+    <Compile Include="Reports\DatasetObjects\LedgerTransactionLine.cs" />
+    <Compile Include="Reports\DatasetObjects\GlobalSalesTransactionLine.cs" />
+    <Compile Include="Reports\Windows\GeneralLedgerReportWindow.xaml.cs">
+      <DependentUpon>GeneralLedgerReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\Reports\SalesReport\DetailedSalesReportWindow.xaml.cs">
+      <DependentUpon>DetailedSalesReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\Reports\SalesReport\GlobalSalesReportWindow.xaml.cs">
+      <DependentUpon>GlobalSalesReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Services\AccountingService.cs" />
+    <Compile Include="Utilities\Analysis\SalesAnalysisHelper.cs" />
+    <Compile Include="Utilities\Constants.cs" />
+    <Compile Include="Utilities\FocusAdvancement.cs" />
+    <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\PurchaseReturnTransactionHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\PurchaseTransactionHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SalesmanHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SalesReturnTransactionLineHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\StockAdjustmentHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\StockMovementTransactionHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SupplierHelper.cs" />
+    <Compile Include="Utilities\ModelHelpers\SalesTransactionHelper.cs" />
+    <Compile Include="Utilities\PrintHelpers\SalesTransactionPrintHelper.cs" />
+    <Compile Include="Utilities\TelegramBot.cs" />
+    <Compile Include="ViewModels\Accounting\CashBankTransactionNewEntryVM.cs" />
+    <Compile Include="ViewModels\Analysis\SalesAnalysisMonthlyLineVM.cs" />
+    <Compile Include="ViewModels\Analysis\SalesAnalysisMonthlyVM.cs" />
+    <Compile Include="ViewModels\Analysis\SalesForecastMonthlyLineVM.cs" />
+    <Compile Include="ViewModels\Analysis\SalesForecastMonthlyVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
+    <Compile Include="ViewModels\Customers\Sales\SalesEditVM.cs" />
+    <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockAdjustmentNewEntryVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnNewEntryVM.cs" />
+    <Compile Include="ViewModels\Suppliers\Purchase\PurchaseEditVM.cs" />
+    <Compile Include="ViewModels\Suppliers\Purchase\PurchaseNewEntryVM.cs" />
+    <Compile Include="Views\Analysis\SalesForecastMonthlyView.xaml.cs">
+      <DependentUpon>SalesForecastMonthlyView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Analysis\SalesAnalysisMonthlyView.xaml.cs">
+      <DependentUpon>SalesAnalysisMonthlyView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Date.cs" />
+    <Compile Include="Models\Inventory\StockBalance.cs" />
+    <Compile Include="Models\Salesman\SalesCommission.cs" />
+    <Compile Include="Models\Inventory\AlternativeSalesPrice.cs" />
+    <Compile Include="Models\StockCorrection\StockAdjustmentTransactionLine.cs" />
+    <Compile Include="Models\StockCorrection\StockAdjustmentTransaction.cs" />
+    <Compile Include="Models\StockCorrection\StockMovementTransaction.cs" />
+    <Compile Include="Models\StockCorrection\StockMovementTransactionLine.cs" />
+    <Compile Include="Reports\DatasetObjects\DailyCashFlowReport.cs" />
+    <Compile Include="Reports\DatasetObjects\DailyCashFlowReportLine.cs" />
+    <Compile Include="Reports\DatasetObjects\CommissionReport.cs" />
+    <Compile Include="Reports\DatasetObjects\CommissionsReportLine.cs" />
+    <Compile Include="Reports\DatasetObjects\InventoryReport.cs" />
+    <Compile Include="Reports\DatasetObjects\InventoryReportLine.cs" />
+    <Compile Include="Reports\DatasetObjects\StockCard.cs" />
+    <Compile Include="Reports\DatasetObjects\StockCardLine.cs" />
+    <Compile Include="Reports\DatasetObjects\StockMovement.cs" />
+    <Compile Include="Reports\DatasetObjects\StockMovementLine.cs" />
+    <Compile Include="Reports\DatasetObjects\SalesInvoice.cs" />
+    <Compile Include="Reports\DatasetObjects\SalesReturnInvoiceLine.cs" />
+    <Compile Include="Reports\DatasetObjects\SalesInvoiceLine.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Accounting\LedgerAccount.cs" />
+    <Compile Include="Models\Accounting\LedgerAccountBalance.cs" />
+    <Compile Include="Models\Accounting\LedgerGeneral.cs" />
+    <Compile Include="Models\Accounting\LedgerTransaction.cs" />
+    <Compile Include="Models\Accounting\LedgerTransactionLine.cs" />
+    <Compile Include="Models\Inventory\Category.cs" />
+    <Compile Include="Models\Customer\Customer.cs" />
+    <Compile Include="Models\Customer\CustomerGroup.cs" />
+    <Compile Include="Models\Inventory\Item.cs" />
+    <Compile Include="Models\Inventory\Warehouse.cs" />
+    <Compile Include="Models\Purchase\PurchaseReturnTransaction.cs" />
+    <Compile Include="Models\Purchase\PurchaseReturnTransactionLine.cs" />
+    <Compile Include="Models\Purchase\PurchaseTransaction.cs" />
+    <Compile Include="Models\Purchase\PurchaseTransactionLine.cs" />
+    <Compile Include="Models\Salesman\Salesman.cs" />
+    <Compile Include="Models\Sales\SalesReturnTransaction.cs" />
+    <Compile Include="Models\Sales\SalesReturnTransactionLine.cs" />
+    <Compile Include="Models\Supplier\Supplier.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\OverallSalesReportWindow.xaml.cs">
+      <DependentUpon>OverallSalesReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\CollectionReportPerSalesmanWindow.cs">
+      <DependentUpon>CollectionReportPerSalesman.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\SalesTransactionsReportWindow.xaml.cs">
+      <DependentUpon>SalesTransactionsReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\InventoryReportWindow.xaml.cs">
+      <DependentUpon>InventoryReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\DailyCashFlowReportWindow.xaml.cs">
+      <DependentUpon>DailyCashFlowReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\CommissionsReportWindow.xaml.cs">
+      <DependentUpon>CommissionsReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\StockMovementReportWindow.xaml.cs">
+      <DependentUpon>StockMovementReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\StockCardReportWindow.xaml.cs">
+      <DependentUpon>StockCardReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\SalesTransactionDOReportWindow.xaml.cs">
+      <DependentUpon>SalesTransactionDOReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\CollectionReportPerCityWindow.xaml.cs">
+      <DependentUpon>CollectionReportPerCityWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\SalesReturnInvoiceWindow.xaml.cs">
+      <DependentUpon>SalesReturnInvoiceWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\SalesInvoiceReportWindow.xaml.cs">
+      <DependentUpon>SalesInvoiceReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\DatasetObjects\SalesReturnInvoice.cs" />
+    <Compile Include="Utilities\ERPContext.cs" />
+    <Compile Include="Models\Inventory\Stock.cs" />
+    <Compile Include="Models\Sales\SalesTransaction.cs" />
+    <Compile Include="Models\Sales\SalesTransactionLine.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Utilities\ModelHelpers\LedgerTransactionHelper.cs" />
+    <Compile Include="Utilities\ObservableCollectionExtensions.cs" />
+    <Compile Include="Utilities\PasswordHelper.cs" />
+    <Compile Include="Utilities\PrintHelpers\PrintHelper.cs" />
+    <Compile Include="Utilities\UtilityMethods.cs" />
+    <Compile Include="Views\Customers\Sales\SalesEditView.xaml.cs">
+      <DependentUpon>SalesEditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Customers\MasterCustomersEditView.xaml.cs">
+      <DependentUpon>MasterCustomersEditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\Purchase\PurchaseEditView.xaml.cs">
+      <DependentUpon>PurchaseEditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VerificationWindow.xaml.cs">
+      <DependentUpon>VerificationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Accounting\BalanceSheetVM.cs" />
+    <Compile Include="ViewModels\Accounting\CashBankTransactionVM.cs" />
+    <Compile Include="ViewModels\Accounting\ClosingVM.cs" />
+    <Compile Include="ViewModels\Accounting\DailyCashFlowVM.cs" />
+    <Compile Include="ViewModels\Accounting\GeneralLedgerVM.cs" />
+    <Compile Include="ViewModels\Accounting\IncomeStatementVM.cs" />
+    <Compile Include="ViewModels\Item\CategoryVM.cs" />
+    <Compile Include="ViewModels\Customer\CustomerGroupVM.cs" />
+    <Compile Include="ViewModels\Item\AlternativeSalesPriceVM.cs" />
+    <Compile Include="ViewModels\Customers\Sales\BrowseSalesTransactionsVM.cs" />
+    <Compile Include="ViewModels\Sales\SalesTransactionVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesCollectionListVM.cs" />
+    <Compile Include="ViewModels\Customers\Sales\PrintListVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesCollectVM.cs" />
+    <Compile Include="ViewModels\Sales\SalesReturnTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnVM.cs" />
+    <Compile Include="ViewModels\Sales\SalesTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Customers\Sales\SalesVM.cs" />
+    <Compile Include="ViewModels\Customer\CustomerVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockAdjustmentTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockAdjustmentVM.cs" />
+    <Compile Include="ViewModels\Inventory\CloseStockVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockMovementTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Inventory\StockMovementVM.cs" />
+    <Compile Include="ViewModels\Item\ItemVM.cs" />
+    <Compile Include="ViewModels\Ledger\LedgerAccountVM.cs" />
+    <Compile Include="ViewModels\Ledger\LedgerTransactionLineVM.cs" />
+    <Compile Include="ViewModels\LoginVM.cs" />
+    <Compile Include="ViewModels\Master\Customers\MasterCustomersEditVM.cs" />
+    <Compile Include="ViewModels\Master\Customers\MasterCustomersNewEntryVM.cs" />
+    <Compile Include="ViewModels\Master\Customers\MasterCustomersVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryEditAddAlternativeSalesPriceVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryEditAddSupplierVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryEditVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryNewEntryVM.cs" />
+    <Compile Include="ViewModels\Master\Inventory\MasterInventoryVM.cs" />
+    <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
+    <Compile Include="ViewModels\Master\Salesmans\MasterSalesmansEditVM.cs" />
+    <Compile Include="ViewModels\Master\Salesmans\MasterSalesmansNewEntryVM.cs" />
+    <Compile Include="ViewModels\Master\Salesmans\MasterSalesmansVM.cs" />
+    <Compile Include="ViewModels\Master\Suppliers\MasterSuppliersEditVM.cs" />
+    <Compile Include="ViewModels\Master\Suppliers\MasterSuppliersNewEntryVM.cs" />
+    <Compile Include="ViewModels\Master\Suppliers\MasterSuppliersVM.cs" />
+    <Compile Include="ViewModels\Reports\CommissionsReportVM.cs" />
+    <Compile Include="ViewModels\Reports\InventoryReportLineVM.cs" />
+    <Compile Include="ViewModels\Reports\InventoryReportVM.cs" />
+    <Compile Include="ViewModels\Reports\OverallSalesReportVM.cs" />
+    <Compile Include="ViewModels\Reports\PurchasesReportVM.cs" />
+    <Compile Include="ViewModels\Reports\SalesReportVM.cs" />
+    <Compile Include="ViewModels\Reports\StockCardLineVM.cs" />
+    <Compile Include="ViewModels\Reports\StockCardReportVM.cs" />
+    <Compile Include="ViewModels\Salesman\SalesCommissionVM.cs" />
+    <Compile Include="ViewModels\Salesman\SalesmanVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchasePaymentListVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchasePaymentVM.cs" />
+    <Compile Include="ViewModels\Purchase\PurchaseReturnTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnVM.cs" />
+    <Compile Include="ViewModels\Purchase\PurchaseTransactionLineVM.cs" />
+    <Compile Include="ViewModels\Suppliers\Purchase\PurchaseVM.cs" />
+    <Compile Include="ViewModels\SupplierVM.cs" />
+    <Compile Include="ViewModels\Test\TestVM.cs" />
+    <Compile Include="ViewModels\VerificationVM.cs" />
+    <Compile Include="ViewModels\Item\WarehouseVM.cs" />
+    <Compile Include="Views\Accounting\BalanceSheetView.xaml.cs">
+      <DependentUpon>BalanceSheetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\CashBankTransactionView.xaml.cs">
+      <DependentUpon>CashBankTransactionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\ClosingView.xaml.cs">
+      <DependentUpon>ClosingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\GeneralLedgerView.xaml.cs">
+      <DependentUpon>GeneralLedgerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\IncomeStatementView.xaml.cs">
+      <DependentUpon>IncomeStatementView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounting\DailyCashFlowView.xaml.cs">
+      <DependentUpon>DailyCashFlowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\Sales\PrintListView.xaml.cs">
+      <DependentUpon>PrintListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\Sales\BrowseSalesTransactionsView.xaml.cs">
+      <DependentUpon>BrowseSalesTransactionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\SalesCollectionListView.xaml.cs">
+      <DependentUpon>SalesCollectionListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\SalesCollectView.xaml.cs">
+      <DependentUpon>SalesCollectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\SalesReturnView.xaml.cs">
+      <DependentUpon>SalesReturnView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Customers\Sales\SalesView.xaml.cs">
+      <DependentUpon>SalesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Inventory\CloseStockView.xaml.cs">
+      <DependentUpon>CloseStockView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Inventory\StockMovementView.xaml.cs">
+      <DependentUpon>StockMovementView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Inventory\StockAdjustmentView.xaml.cs">
+      <DependentUpon>StockAdjustmentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Customers\MasterCustomersView.xaml.cs">
+      <DependentUpon>MasterCustomersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Inventory\MasterInventoryEditAddAlternativeSalesPriceView.xaml.cs">
+      <DependentUpon>MasterInventoryEditAddAlternativeSalesPriceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Inventory\MasterInventoryEditAddSupplierView.xaml.cs">
+      <DependentUpon>MasterInventoryEditAddSupplierView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Inventory\MasterInventoryEditView.xaml.cs">
+      <DependentUpon>MasterInventoryEditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Salesmans\MasterSalesmansEditView.xaml.cs">
+      <DependentUpon>MasterSalesmansEditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Salesmans\MasterSalesmansView.xaml.cs">
+      <DependentUpon>MasterSalesmansView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Suppliers\MasterSuppliersEditView.xaml.cs">
+      <DependentUpon>MasterSuppliersEditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Menu\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Inventory\MasterInventoryView.xaml.cs">
+      <DependentUpon>MasterInventoryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Menu\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\InventoryReportView.xaml.cs">
+      <DependentUpon>InventoryReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\LedgerView.xaml.cs">
+      <DependentUpon>LedgerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Master\Suppliers\MasterSuppliersView.xaml.cs">
+      <DependentUpon>MasterSuppliersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\OverallSalesReportView.xaml.cs">
+      <DependentUpon>OverallSalesReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\PurchasesReportView.xaml.cs">
+      <DependentUpon>PurchasesReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\SalesReportView.xaml.cs">
+      <DependentUpon>SalesReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\SalesReturnsReportView.xaml.cs">
+      <DependentUpon>SalesReturnsReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\StockCardReportView.xaml.cs">
+      <DependentUpon>StockCardReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\CommissionsReportView.xaml.cs">
+      <DependentUpon>CommissionsReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\PurchasePaymentListView.xaml.cs">
+      <DependentUpon>PurchasePaymentListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\PurchasePaymentView.xaml.cs">
+      <DependentUpon>PurchasePaymentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\PurchaseReturnView.xaml.cs">
+      <DependentUpon>PurchaseReturnView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\Purchase\PurchaseView.xaml.cs">
+      <DependentUpon>PurchaseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Test\TestView.xaml.cs">
+      <DependentUpon>TestView.xaml</DependentUpon>
+    </Compile>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Reports\Windows\GeneralLedgerReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\Reports\SalesReport\DetailedSalesReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\Reports\SalesReport\GlobalSalesReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Analysis\SalesForecastMonthlyView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Analysis\SalesAnalysisMonthlyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoginWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Reports\Windows\OverallSalesReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\CollectionReportPerSalesman.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\SalesTransactionsReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\InventoryReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\DailyCashFlowReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\CommissionsReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\StockMovementReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\StockCardReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\SalesTransactionDOReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\CollectionReportPerCityWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Reports\Windows\SalesReturnInvoiceWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\SalesInvoiceReportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Customers\Sales\SalesEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Customers\MasterCustomersEditView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Suppliers\Purchase\PurchaseEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VerificationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\BalanceSheetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\CashBankTransactionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\ClosingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\GeneralLedgerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\IncomeStatementView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounting\DailyCashFlowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Customers\Sales\PrintListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Customers\Sales\BrowseSalesTransactionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Customers\SalesCollectionListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Customers\SalesCollectView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Customers\SalesReturnView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Customers\Sales\SalesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Inventory\CloseStockView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Inventory\StockMovementView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Inventory\StockAdjustmentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Customers\MasterCustomersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Inventory\MasterInventoryEditAddAlternativeSalesPriceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Inventory\MasterInventoryEditAddSupplierView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Inventory\MasterInventoryEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Salesmans\MasterSalesmansEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Salesmans\MasterSalesmansView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Master\Suppliers\MasterSuppliersEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Menu\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Inventory\MasterInventoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Menu\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\InventoryReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\LedgerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Master\Suppliers\MasterSuppliersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\OverallSalesReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\PurchasesReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\SalesReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\SalesReturnsReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Reports\StockCardReportView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Reports\CommissionsReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Suppliers\PurchasePaymentListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Suppliers\PurchasePaymentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Suppliers\PurchaseReturnView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Suppliers\Purchase\PurchaseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Test\TestView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\PutraJayaNT.Reports.DatasetObjects.GeneralLedgerReport.datasource" />
+    <None Include="Properties\DataSources\PutraJayaNT.Reports.DatasetObjects.GeneralLedgerReport1.datasource" />
+    <None Include="Properties\DataSources\PutraJayaNT.Reports.DatasetObjects.LedgerTransactionLine.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\Update1.resx">
+      <DependentUpon>Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\GeneralLedgerReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\Reports\SalesReport\DetailedSalesReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\Reports\SalesReport\GlobalSalesReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\SalesTransactionsReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\CollectionReportPerSalesman.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\InventoryReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\DailyCashFlowReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\CollectionReportPerCity.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\CommissionsReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\StockMovementReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\StockCardReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\SalesDOReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\SalesReturnInvoiceReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\SalesInvoiceReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MVVMFramework\MVVMFramework.csproj">
+      <Project>{13282864-5854-4b8c-bd10-5a4e9f24eedb}</Project>
+      <Name>MVVMFramework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

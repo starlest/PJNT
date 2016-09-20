@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Utilities.PrintHelpers
+﻿namespace ECRP.Utilities.PrintHelpers
 {
     using System;
     using System.Collections.Generic;

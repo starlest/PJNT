@@ -1,16 +1,15 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-
-namespace PutraJayaNT.ViewModels.Accounting
+﻿namespace ECRP.ViewModels.Accounting
 {
-    class BalanceSheetVM : ViewModelBase
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Linq;
+    using Models.Accounting;
+    using MVVMFramework;
+    using Utilities;
+
+    internal class BalanceSheetVM : ViewModelBase
     {
-        List<int> _months;
+        readonly List<int> _months;
 
         int _periodYear;
         int _periodMonth;

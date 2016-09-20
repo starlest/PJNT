@@ -1,8 +1,7 @@
-﻿using System.Windows.Controls;
-using System.Windows.Input;
-
-namespace PutraJayaNT.Views.Suppliers
+﻿namespace ECRP.Views.Suppliers
 {
+    using System.Windows.Controls;
+    using System.Windows.Input;
     using ViewModels.Suppliers.PurchaseReturn;
 
     /// <summary>

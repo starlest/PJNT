@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using PutraJayaNT.Models.StockCorrection;
-    using PutraJayaNT.Utilities;
+    using ECRP.Models.StockCorrection;
+    using ECRP.Utilities;
 
     public static class DatabaseStockAdjustmentTransactionLineHelper
     {

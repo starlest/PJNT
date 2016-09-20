@@ -1,11 +1,11 @@
-﻿using MVVMFramework;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Accounting
+﻿namespace ECRP.Models.Accounting
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using MVVMFramework;
+
     [Table("Ledger_Transactions")]
     public class LedgerTransaction : ObservableObject
     { 

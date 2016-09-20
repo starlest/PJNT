@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Reports
+﻿namespace ECRP.ViewModels.Reports
 {
     using System;
     using System.Collections.ObjectModel;
@@ -6,12 +6,12 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using MVVMFramework;
-    using Models;
-    using Models.Inventory;
-    using Utilities;
     using Item;
+    using Models.Inventory;
+    using Models.Supplier;
+    using MVVMFramework;
     using Purchase;
+    using Utilities;
 
     internal class PurchasesReportVM : ViewModelBase
     {

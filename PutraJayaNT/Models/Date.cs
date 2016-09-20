@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace PutraJayaNT.Models
+﻿namespace ECRP.Models
 {
+    using System;
+
     public class Date
     {
         public int ID { get; set; }

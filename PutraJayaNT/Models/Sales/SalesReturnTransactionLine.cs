@@ -1,10 +1,10 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Sales
+﻿namespace ECRP.Models.Sales
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using Inventory;
+    using MVVMFramework;
+
     public class SalesReturnTransactionLine : ObservableObject
     {
         int _quantity;

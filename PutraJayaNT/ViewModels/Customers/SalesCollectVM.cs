@@ -1,13 +1,13 @@
-﻿namespace PutraJayaNT.ViewModels.Customers
+﻿namespace ECRP.ViewModels.Customers
 {
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using MVVMFramework;
-    using Models.Sales;
-    using Utilities;
     using Customer;
+    using Models.Sales;
+    using MVVMFramework;
+    using Utilities;
     using Utilities.ModelHelpers;
     using ViewModels.Sales;
 

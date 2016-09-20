@@ -1,7 +1,7 @@
-﻿using PutraJayaNT.ViewModels.Master.Salesmans;
-
-namespace PutraJayaNT.Views.Master.Salesmans
+﻿namespace ECRP.Views.Master.Salesmans
 {
+    using ViewModels.Master.Salesmans;
+
     /// <summary>
     /// Interaction logic forMasterSalesmanView.xaml
     /// </summary>

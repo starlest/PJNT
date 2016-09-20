@@ -1,11 +1,10 @@
-﻿using Microsoft.Reporting.WinForms;
-using System;
-using System.Data;
-using System.Drawing.Printing;
-using System.Windows;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace ECRP.Reports.Windows
 {
+    using System;
+    using System.Data;
+    using System.Drawing.Printing;
+    using System.Windows;
+    using Microsoft.Reporting.WinForms;
     using Utilities.ModelHelpers;
     using ViewModels.Customers.SalesReturn;
 

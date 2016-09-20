@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Item
+﻿namespace ECRP.ViewModels.Item
 {
     using Models.Inventory;
     using MVVMFramework;

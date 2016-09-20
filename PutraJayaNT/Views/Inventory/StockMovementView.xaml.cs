@@ -1,10 +1,10 @@
-﻿using PutraJayaNT.ViewModels.Inventory;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
-
-namespace PutraJayaNT.Views.Inventory
+﻿namespace ECRP.Views.Inventory
 {
+    using System.Windows.Controls;
+    using System.Windows.Data;
+    using System.Windows.Input;
+    using ViewModels.Inventory;
+
     /// <summary>
     /// Interaction logic for DecreaseStockView.xaml
     /// </summary>

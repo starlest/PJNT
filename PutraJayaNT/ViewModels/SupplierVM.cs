@@ -1,8 +1,7 @@
-﻿namespace PutraJayaNT.ViewModels.Suppliers
+﻿namespace ECRP.ViewModels
 {
     using System.Collections.ObjectModel;
-    using Models;
-    using Models.Inventory;
+    using Models.Supplier;
     using MVVMFramework;
 
     public class SupplierVM : ViewModelBase<Supplier>
@@ -52,7 +51,7 @@
             }
         }
 
-        public ObservableCollection<Item> Items
+        public ObservableCollection<Models.Inventory.Item> Items
         {
             get { return Model.Items; }
         }

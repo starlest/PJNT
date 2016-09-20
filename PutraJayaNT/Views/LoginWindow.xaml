@@ -1,8 +1,8 @@
-﻿<mui:ModernWindow x:Class="PutraJayaNT.Views.LoginWindow"
+﻿<mui:ModernWindow x:Class="ECRP.Views.LoginWindow"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:w="clr-namespace:PutraJayaNT.Utilities"
                   xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+                  xmlns:utilities="clr-namespace:ECRP.Utilities"
                   Height="600"
                   Width="800"
                   ResizeMode="NoResize"
@@ -36,9 +36,9 @@
                  Text="{Binding Username, Mode=TwoWay}" Margin="10" />
         <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right"
                    VerticalAlignment="Center" FontSize="28" Text="Password: " />
-        <PasswordBox Grid.Row="3" Grid.Column="2" x:Name="passwordBox" w:PasswordHelper.Attach="True"
+        <PasswordBox Grid.Row="3" Grid.Column="2" x:Name="passwordBox" utilities:PasswordHelper.Attach="True"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="30"
-                     Margin="10, 0, 10, 0" w:PasswordHelper.Password="{Binding Password, Mode=TwoWay}" />
+                     Margin="10, 0, 10, 0" utilities:PasswordHelper.Password="{Binding Password, Mode=TwoWay}" />
         <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right"
                    VerticalAlignment="Center" Foreground="Red" FontSize="28" Text="IP Address: " />
         <TextBox Name="IpAddressTextBox" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center"

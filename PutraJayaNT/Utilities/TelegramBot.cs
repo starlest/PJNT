@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Utilities
+﻿namespace ECRP.Utilities
 {
     using System;
     using System.Collections.Generic;

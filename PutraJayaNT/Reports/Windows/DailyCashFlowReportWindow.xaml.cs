@@ -1,11 +1,11 @@
-﻿using Microsoft.Reporting.WinForms;
-using PutraJayaNT.ViewModels.Accounting;
-using System;
-using System.Data;
-using System.Windows;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace ECRP.Reports.Windows
 {
+    using System;
+    using System.Data;
+    using System.Windows;
+    using Microsoft.Reporting.WinForms;
+    using ViewModels.Accounting;
+
     /// <summary>
     /// Interaction logic for DailyCashFlowReportWindow.xaml
     /// </summary>

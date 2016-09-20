@@ -1,11 +1,10 @@
-﻿using Microsoft.Reporting.WinForms;
-using PutraJayaNT.Models.Sales;
-using System;
-using System.Data;
-using System.Windows;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace ECRP.Reports.Windows
 {
+    using System;
+    using System.Data;
+    using System.Windows;
+    using Microsoft.Reporting.WinForms;
+    using Models.Sales;
     using Utilities.ModelHelpers;
 
     /// <summary>

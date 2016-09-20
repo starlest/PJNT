@@ -1,11 +1,11 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using MVVMFramework;
-using PutraJayaNT.Models;
-using PutraJayaNT.Utilities.ModelHelpers;
-
-namespace PutraJayaNT.ViewModels.Master.Suppliers
+﻿namespace ECRP.ViewModels.Master.Suppliers
 {
+    using System.Windows;
+    using System.Windows.Input;
+    using Models.Supplier;
+    using MVVMFramework;
+    using Utilities.ModelHelpers;
+
     public class MasterSuppliersNewEntryVM : ViewModelBase
     {
         private readonly MasterSuppliersVM _parentVM;

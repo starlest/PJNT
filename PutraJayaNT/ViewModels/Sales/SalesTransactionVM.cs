@@ -1,16 +1,16 @@
-﻿namespace PutraJayaNT.ViewModels.Sales
+﻿namespace ECRP.ViewModels.Sales
 {
     using System;
-    using MVVMFramework;
-    using Models;
-    using Models.Sales;
-    using Utilities;
-    using Models.Salesman;
-    using Models.Customer;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using Models;
+    using Models.Customer;
+    using Models.Sales;
+    using Models.Salesman;
+    using MVVMFramework;
+    using Utilities;
 
-    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class SalesTransactionVM : ViewModelBase<SalesTransaction>
     {
         private bool _isSelected;

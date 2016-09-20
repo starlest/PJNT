@@ -1,9 +1,8 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using System.Windows;
-using PutraJayaNT.ViewModels.Master.Suppliers;
-
-namespace PutraJayaNT.Views.Master.Suppliers
+﻿namespace ECRP.Views.Master.Suppliers
 {
+    using System.Windows;
+    using ViewModels.Master.Suppliers;
+
     /// <summary>
     /// Interaction logic for MasterSuppliersEditView.xaml
     /// </summary>

@@ -1,10 +1,9 @@
-﻿namespace PutraJayaNT.ViewModels.Suppliers.Purchase
+﻿namespace ECRP.ViewModels.Suppliers.Purchase
 {
     using System;
     using System.Windows;
     using System.Windows.Input;
     using MVVMFramework;
-    using Utilities;
     using ViewModels.Purchase;
 
     public class PurchaseEditVM : ViewModelBase

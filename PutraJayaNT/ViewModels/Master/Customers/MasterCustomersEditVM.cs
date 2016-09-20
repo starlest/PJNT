@@ -1,16 +1,15 @@
-﻿using PutraJayaNT.Utilities.ModelHelpers;
-
-namespace PutraJayaNT.ViewModels.Master.Customers
+﻿namespace ECRP.ViewModels.Master.Customers
 {
     using System;
-    using MVVMFramework;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Utilities;
-    using System.Collections.ObjectModel;
-    using Models.Customer;
     using Customer;
+    using Models.Customer;
+    using MVVMFramework;
+    using Utilities;
+    using Utilities.ModelHelpers;
 
     public class MasterCustomersEditVM : ViewModelBase
     {

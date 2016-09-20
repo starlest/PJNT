@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Views.Customers
+﻿namespace ECRP.Views.Customers
 {
     using ViewModels.Customers;
 

@@ -1,11 +1,10 @@
-﻿using PutraJayaNT.Models.Salesman;
-
-namespace PJMixTests.Master
+﻿namespace PJMixTests.Master
 {
     using System.Linq;
+    using ECRP.Models.Salesman;
+    using ECRP.Utilities;
+    using ECRP.Utilities.ModelHelpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using PutraJayaNT.Utilities;
-    using PutraJayaNT.Utilities.ModelHelpers;
 
     [TestClass]
     public class MasterSalesmansTests

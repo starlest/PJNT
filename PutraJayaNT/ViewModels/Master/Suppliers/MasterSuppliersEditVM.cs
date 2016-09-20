@@ -1,14 +1,13 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Suppliers
+﻿namespace ECRP.ViewModels.Master.Suppliers
 {
     using System;
-    using ViewModels.Suppliers;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Input;
+    using Models.Supplier;
     using MVVMFramework;
-    using Models;
     using Utilities;
     using Utilities.ModelHelpers;
-    using System.Linq;
 
     public class MasterSuppliersEditVM : ViewModelBase
     { 

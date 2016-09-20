@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Suppliers.Purchase
+﻿namespace ECRP.ViewModels.Suppliers.Purchase
 {
     using System;
     using System.Collections.ObjectModel;

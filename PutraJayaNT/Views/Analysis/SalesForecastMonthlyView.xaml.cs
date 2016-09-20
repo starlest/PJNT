@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Views.Analysis
+﻿namespace ECRP.Views.Analysis
 {
     using System.Windows.Controls;
     using ViewModels.Analysis;

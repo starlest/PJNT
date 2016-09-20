@@ -1,7 +1,6 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Inventory
+﻿namespace ECRP.ViewModels.Master.Inventory
 {
     using System;
-    using ViewModels.Suppliers;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows.Input;

@@ -1,17 +1,18 @@
-﻿namespace PutraJayaNT.ViewModels.Reports
+﻿namespace ECRP.ViewModels.Reports
 {
-    using MVVMFramework;
-    using Models.Sales;
-    using Models.Salesman;
-    using Utilities;
-    using Salesman;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using PutraJayaNT.Reports.Windows;
+    using ECRP.Reports.Windows;
+    using Models.Sales;
+    using Models.Salesman;
+    using MVVMFramework;
+    using Salesman;
+    using Utilities;
+
     public class CommissionsReportVM : ViewModelBase
     {
         ObservableCollection<SalesmanVM> _salesmen;

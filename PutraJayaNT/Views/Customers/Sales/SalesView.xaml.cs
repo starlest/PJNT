@@ -1,9 +1,8 @@
-﻿namespace PutraJayaNT.Views.Customers.Sales
+﻿namespace ECRP.Views.Customers.Sales
 {
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using Utilities;
     using ViewModels.Customers.Sales;
 
     /// <summary>

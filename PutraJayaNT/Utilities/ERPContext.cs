@@ -1,17 +1,17 @@
-using PutraJayaNT.Models.Customer;
-
-namespace PutraJayaNT.Utilities
+namespace ECRP.Utilities
 {
     using System.Configuration;
+    using System.Data.Entity;
+    using System.Data.Entity.ModelConfiguration.Conventions;
     using Models;
     using Models.Accounting;
+    using Models.Customer;
     using Models.Inventory;
-    using System.Data.Entity;
-    using Models.Sales;
     using Models.Purchase;
-    using Models.StockCorrection;
+    using Models.Sales;
     using Models.Salesman;
-    using System.Data.Entity.ModelConfiguration.Conventions;
+    using Models.StockCorrection;
+    using Models.Supplier;
 
     public class ERPContext : DbContext
     {

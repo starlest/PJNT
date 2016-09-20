@@ -1,12 +1,11 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities;
-using System.ComponentModel;
-using System.Linq;
-using System.Transactions;
-
-namespace PutraJayaNT.ViewModels.Accounting
+﻿namespace ECRP.ViewModels.Accounting
 {
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Transactions;
+    using Models.Accounting;
+    using MVVMFramework;
+    using Utilities;
     using Utilities.ModelHelpers;
 
     internal class ClosingVM : ViewModelBase

@@ -1,14 +1,13 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Input;
-using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using PutraJayaNT.ViewModels.Item;
-
-namespace PutraJayaNT.ViewModels.Master.Inventory
+﻿namespace ECRP.ViewModels.Master.Inventory
 {
     using System;
+    using System.Collections.ObjectModel;
+    using System.Diagnostics;
+    using System.Windows;
+    using System.Windows.Input;
+    using Item;
+    using Models.Inventory;
+    using MVVMFramework;
 
     public class MasterInventoryEditAddAlternativeSalesPriceVM : ViewModelBase
     { 

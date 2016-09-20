@@ -1,8 +1,8 @@
-﻿using PutraJayaNT.ViewModels.Test;
-using System.Windows.Controls;
-
-namespace PutraJayaNT.Views.Test
+﻿namespace ECRP.Views.Test
 {
+    using System.Windows.Controls;
+    using ViewModels.Test;
+
     /// <summary>
     /// Interaction logic for TestView.xaml
     /// </summary>

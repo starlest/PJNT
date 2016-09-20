@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PJMix", "PutraJayaNT\PJMix.csproj", "{E59C0673-7A62-4081-A85B-5C7EB6B20967}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECERP", "PutraJayaNT\ECERP.csproj", "{E59C0673-7A62-4081-A85B-5C7EB6B20967}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVMFramework", "..\MVVMFramework\MVVMFramework.csproj", "{13282864-5854-4B8C-BD10-5A4E9F24EEDB}"
 EndProject

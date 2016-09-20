@@ -1,11 +1,11 @@
-﻿using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Accounting;
-using System;
-using System.ComponentModel;
-using System.Windows;
-
-namespace PutraJayaNT.Views.Accounting
+﻿namespace ECRP.Views.Accounting
 {
+    using System;
+    using System.ComponentModel;
+    using System.Windows;
+    using Utilities;
+    using ViewModels.Accounting;
+
     /// <summary>
     /// Interaction logic for ClosingView.xaml
     /// </summary>

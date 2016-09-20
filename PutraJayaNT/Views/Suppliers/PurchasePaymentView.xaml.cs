@@ -1,7 +1,7 @@
-﻿using PutraJayaNT.ViewModels.Suppliers;
-
-namespace PutraJayaNT.Views.Suppliers
+﻿namespace ECRP.Views.Suppliers
 {
+    using ViewModels.Suppliers;
+
     /// <summary>
     /// Interaction logic for PaymentView.xaml
     /// </summary>

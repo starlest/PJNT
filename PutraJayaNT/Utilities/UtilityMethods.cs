@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Utilities
+﻿namespace ECRP.Utilities
 {
-    using Views;
-    using Models.Inventory;
     using System;
     using System.Linq;
     using System.Windows;
+    using Models.Inventory;
+    using Views;
 
     public static class UtilityMethods
     {

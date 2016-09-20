@@ -1,14 +1,14 @@
-﻿namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace ECRP.ViewModels.Inventory
 {
-    using MVVMFramework;
-    using Models.Inventory;
-    using Utilities;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
     using System.Windows;
+    using Models.Inventory;
+    using MVVMFramework;
+    using Utilities;
 
     internal class CloseStockVM : ViewModelBase
     {

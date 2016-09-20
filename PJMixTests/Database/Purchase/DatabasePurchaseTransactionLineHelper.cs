@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using PutraJayaNT.Models.Purchase;
-    using PutraJayaNT.Utilities;
+    using ECRP.Models.Purchase;
+    using ECRP.Utilities;
 
     public static class DatabasePurchaseTransactionLineHelper
     {

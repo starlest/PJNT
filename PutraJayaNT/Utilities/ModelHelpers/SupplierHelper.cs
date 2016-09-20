@@ -1,12 +1,11 @@
-﻿using System.Transactions;
-using PutraJayaNT.Models;
-using PutraJayaNT.Models.Accounting;
-using System.Linq;
-
-namespace PutraJayaNT.Utilities.ModelHelpers
+﻿namespace ECRP.Utilities.ModelHelpers
 {
     using System.Data.Entity;
+    using System.Linq;
+    using System.Transactions;
     using System.Windows;
+    using Models.Accounting;
+    using Models.Supplier;
 
     public static class SupplierHelper
     {

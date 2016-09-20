@@ -1,10 +1,10 @@
-﻿<mui:ModernWindow x:Class="PutraJayaNT.Views.VerificationWindow"
+﻿<mui:ModernWindow x:Class="ECRP.Views.VerificationWindow"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                  xmlns:w="clr-namespace:PutraJayaNT.Utilities"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+                  xmlns:utilities="clr-namespace:ECRP.Utilities"
                   mc:Ignorable="d" 
                   Height="220"
                   Width="500"
@@ -29,8 +29,8 @@
         <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18" Text="Username: " />
         <TextBox Name="UsernameBox" Grid.Row="1" Grid.Column="2" Height="20"  Margin="10, 5, 10, 0" Text="{Binding Username, Mode=TwoWay}" />
         <TextBlock Grid.Row="2"  Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18" Text="Password: " />
-        <PasswordBox Grid.Row="2" Grid.Column="2" x:Name ="PasswordBox" w:PasswordHelper.Attach="True" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="20"
-                     Margin="10, 5, 10, 0" w:PasswordHelper.Password="{Binding Password, Mode=TwoWay}" />
+        <PasswordBox Grid.Row="2" Grid.Column="2" x:Name ="PasswordBox" utilities:PasswordHelper.Attach="True" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="20"
+                     Margin="10, 5, 10, 0" utilities:PasswordHelper.Password="{Binding Password, Mode=TwoWay}" />
         <Button Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Content="Submit" Command="{Binding SubmitCommand}" Margin="60, 3, 60, 0"/>
     </Grid>
 </mui:ModernWindow>

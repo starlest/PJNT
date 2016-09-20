@@ -1,10 +1,10 @@
-namespace PutraJayaNT.Models.Sales
+namespace ECRP.Models.Sales
 {
-    using Salesman;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using Salesman;
 
     public class SalesTransaction
     {

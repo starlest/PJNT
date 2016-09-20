@@ -1,17 +1,16 @@
-﻿namespace PutraJayaNT.ViewModels.Reports
+﻿namespace ECRP.ViewModels.Reports
 {
-    using MVVMFramework;
-    using Models;
-    using Models.Inventory;
-    using PutraJayaNT.Reports.Windows;
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Suppliers;
-    using Utilities;
-    using System;
+    using ECRP.Reports.Windows;
     using Item;
+    using Models.Inventory;
+    using Models.Supplier;
+    using MVVMFramework;
+    using Utilities;
 
     public class InventoryReportVM : ViewModelBase
     {

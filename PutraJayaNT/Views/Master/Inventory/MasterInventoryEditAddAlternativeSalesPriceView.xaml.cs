@@ -1,7 +1,7 @@
-﻿using PutraJayaNT.ViewModels.Master.Inventory;
-
-namespace PutraJayaNT.Views.Master.Inventory
+﻿namespace ECRP.Views.Master.Inventory
 {
+    using ViewModels.Master.Inventory;
+
     /// <summary>
     /// Interaction logic for MasterInventoryEditAddAlternativeSalesPriceView.xaml
     /// </summary>

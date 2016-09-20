@@ -1,13 +1,13 @@
-﻿namespace PutraJayaNT.ViewModels.Customers.Sales
+﻿namespace ECRP.ViewModels.Customers.Sales
 {
     using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
+    using ECRP.Reports.Windows;
     using Models.Sales;
     using MVVMFramework;
-    using PutraJayaNT.Reports.Windows;
     using Utilities;
 
     internal class BrowseSalesTransactionsVM : ViewModelBase

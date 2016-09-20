@@ -1,9 +1,9 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Salesmans
+﻿namespace ECRP.ViewModels.Master.Salesmans
 {
     using System.Windows;
     using System.Windows.Input;
-    using MVVMFramework;
     using Models.Salesman;
+    using MVVMFramework;
     using Utilities.ModelHelpers;
 
     public class MasterSalesmansNewEntryVM : ViewModelBase

@@ -1,7 +1,7 @@
 ﻿<Application
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:Class="PutraJayaNT.App"
+    x:Class="ECRP.App"
     StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

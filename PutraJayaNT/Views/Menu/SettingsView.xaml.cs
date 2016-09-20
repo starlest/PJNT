@@ -1,12 +1,12 @@
-﻿using MySql.Data.MySqlClient;
-using System.ComponentModel;
-using System.Windows;
-using System.Configuration;
-using PutraJayaNT.Utilities;
-using System.Linq;
-
-namespace PutraJayaNT.Views.Menu
+﻿namespace ECRP.Views.Menu
 {
+    using System.ComponentModel;
+    using System.Configuration;
+    using System.Linq;
+    using System.Windows;
+    using MySql.Data.MySqlClient;
+    using Utilities;
+
     public partial class SettingsView
     {
         private bool _isRunning;

@@ -1,12 +1,12 @@
-﻿namespace PutraJayaNT.ViewModels.Sales
+﻿namespace ECRP.ViewModels.Sales
 {
     using System;
-    using MVVMFramework;
     using Models.Inventory;
     using Models.Sales;
     using Models.Salesman;
+    using MVVMFramework;
 
-    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class SalesTransactionLineVM : ViewModelBase<SalesTransactionLine>
     {
         public Item Item

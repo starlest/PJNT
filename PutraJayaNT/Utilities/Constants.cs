@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Utilities
+﻿namespace ECRP.Utilities
 {
     public static class Constants
     {

@@ -1,9 +1,8 @@
-﻿using PutraJayaNT.ViewModels.Customers;
-using System.Windows.Controls;
-using PutraJayaNT.ViewModels.Sales;
-
-namespace PutraJayaNT.Views.Customers
+﻿namespace ECRP.Views.Customers
 {
+    using System.Windows.Controls;
+    using ViewModels.Customers;
+
     /// <summary>
     /// Interaction logic for SalesCollectView.xaml
     /// </summary>

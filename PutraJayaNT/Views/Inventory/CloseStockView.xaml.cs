@@ -1,10 +1,10 @@
-﻿using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Inventory;
-using System;
-using System.ComponentModel;
-
-namespace PutraJayaNT.Views.Inventory
+﻿namespace ECRP.Views.Inventory
 {
+    using System;
+    using System.ComponentModel;
+    using Utilities;
+    using ViewModels.Inventory;
+
     /// <summary>
     /// Interaction logic for CloseStockView.xaml
     /// </summary>

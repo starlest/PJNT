@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Models.Inventory
+﻿namespace ECRP.Models.Inventory
 {
     #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class Warehouse

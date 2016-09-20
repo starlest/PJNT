@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Views.Suppliers.Purchase
+﻿namespace ECRP.Views.Suppliers.Purchase
 {
     using System.Windows;
     using System.Windows.Controls;

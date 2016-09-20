@@ -1,13 +1,13 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
-using PutraJayaNT.Models.Sales;
-using System;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Windows;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace ECRP.Reports.Windows
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Data;
+    using System.Windows;
+    using FirstFloor.ModernUI.Windows.Controls;
+    using Microsoft.Reporting.WinForms;
+    using Models.Sales;
+
     /// <summary>
     /// Interaction logic for SalesInvoiceWindow.xaml
     /// </summary>

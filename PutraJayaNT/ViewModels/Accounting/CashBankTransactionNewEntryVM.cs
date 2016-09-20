@@ -1,17 +1,17 @@
-﻿namespace PutraJayaNT.ViewModels.Accounting
+﻿namespace ECRP.ViewModels.Accounting
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Transactions;
     using System.Windows;
     using System.Windows.Input;
     using Ledger;
     using Models.Accounting;
     using MVVMFramework;
+    using Services;
     using Utilities;
     using Utilities.ModelHelpers;
-    using System.Linq;
-    using Services;
 
     internal class CashBankTransactionNewEntryVM : ViewModelBase
     {

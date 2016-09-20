@@ -1,18 +1,14 @@
-﻿namespace PutraJayaNT.ViewModels.Suppliers
+﻿namespace ECRP.ViewModels.Suppliers
 {
-    using MVVMFramework;
-    using Models;
-    using Models.Accounting;
-    using Utilities;
     using System.Collections.ObjectModel;
     using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using System.Linq;
-    using System;
-    using System.Transactions;
     using Models.Purchase;
+    using Models.Supplier;
+    using MVVMFramework;
+    using Utilities;
     using Utilities.ModelHelpers;
     using ViewModels.Purchase;
 

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using MVVMFramework;
-
-namespace PutraJayaNT.Models.Inventory
+﻿namespace ECRP.Models.Inventory
 {
+    using System.Collections.Generic;
+    using MVVMFramework;
+
     // TODO rename to Category
     #pragma warning disable CS0659
     public class Category : ObservableObject

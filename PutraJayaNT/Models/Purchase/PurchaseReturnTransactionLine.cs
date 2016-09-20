@@ -1,10 +1,10 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Inventory;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Purchase
+﻿namespace ECRP.Models.Purchase
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using Inventory;
+    using MVVMFramework;
+
     public class PurchaseReturnTransactionLine : ObservableObject
     {
         [Key]

@@ -1,9 +1,8 @@
-﻿using System.Windows.Controls;
-using PutraJayaNT.ViewModels.Master;
-using PutraJayaNT.ViewModels.Master.Suppliers;
-
-namespace PutraJayaNT.Views.Master.Suppliers
+﻿namespace ECRP.Views.Master.Suppliers
 {
+    using System.Windows.Controls;
+    using ViewModels.Master.Suppliers;
+
     /// <summary>
     /// Interaction logic for MasterSuppliersView.xaml
     /// </summary>

@@ -1,8 +1,8 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using PutraJayaNT.ViewModels.Master.Salesmans;
-
-namespace PutraJayaNT.Views.Master.Salesmans
+﻿namespace ECRP.Views.Master.Salesmans
 {
+    using FirstFloor.ModernUI.Windows.Controls;
+    using ViewModels.Master.Salesmans;
+
     /// <summary>
     /// Interaction logic for MasterSalesmansEditView.xaml
     /// </summary>

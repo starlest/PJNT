@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using System.Transactions;
-using PutraJayaNT.Models.Accounting;
-namespace PutraJayaNT.Utilities.ModelHelpers
+﻿namespace ECRP.Utilities.ModelHelpers
 {
+    using System.Linq;
+    using System.Transactions;
     using System.Windows;
+    using Models.Accounting;
     using Models.Customer;
 
     public static class CustomerHelper

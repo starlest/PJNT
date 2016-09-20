@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Reports.Windows.Reports.SalesReport
+﻿namespace ECRP.Reports.Windows.Reports.SalesReport
 {
     using System;
     using System.Collections.ObjectModel;

@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Views.Menu
+﻿namespace ECRP.Views.Menu
 {
     /// <summary>
     /// Interaction logic for HomeView.xaml

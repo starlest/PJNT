@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Views.Customers.Sales
+﻿namespace ECRP.Views.Customers.Sales
 {
     using FirstFloor.ModernUI.Windows.Controls;
     using ViewModels.Customers.Sales;

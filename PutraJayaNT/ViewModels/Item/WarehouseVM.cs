@@ -1,9 +1,9 @@
-﻿namespace PutraJayaNT.ViewModels.Item
+﻿namespace ECRP.ViewModels.Item
 {
     using Models.Inventory;
     using MVVMFramework;
 
-    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class WarehouseVM : ViewModelBase<Warehouse>
     {
         private bool _isSelected;

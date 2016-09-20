@@ -1,13 +1,11 @@
-﻿using PutraJayaNT.Utilities.ModelHelpers;
-
-namespace PJMixTests.Master
+﻿namespace PJMixTests.Master
 {
     using System.Linq;
     using Database.Supplier;
+    using ECRP.Models.Supplier;
+    using ECRP.Utilities;
+    using ECRP.Utilities.ModelHelpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using PutraJayaNT.Utilities;
-    using PutraJayaNT.ViewModels.Master.Suppliers;
-    using PutraJayaNT.Models;
 
     [TestClass]
     public class MasterSuppliersTests

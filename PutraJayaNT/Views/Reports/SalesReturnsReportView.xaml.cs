@@ -1,8 +1,7 @@
-﻿using PutraJayaNT.ViewModels;
-using System.Windows.Controls;
-
-namespace PutraJayaNT.Views.Reports
+﻿namespace ECRP.Views.Reports
 {
+    using System.Windows.Controls;
+
     /// <summary>
     /// Interaction logic for SalesReturnsReportView.xaml
     /// </summary>

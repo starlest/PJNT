@@ -1,8 +1,8 @@
-﻿namespace PutraJayaNT.ViewModels.Sales
+﻿namespace ECRP.ViewModels.Sales
 {
-    using MVVMFramework;
     using Models.Inventory;
     using Models.Sales;
+    using MVVMFramework;
 
     public class SalesReturnTransactionLineVM : ViewModelBase<SalesReturnTransactionLine>
     {

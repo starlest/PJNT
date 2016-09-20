@@ -1,10 +1,10 @@
-﻿using System.Windows;
-using System.Windows.Media;
-using FirstFloor.ModernUI.Presentation;
-using PutraJayaNT.ViewModels.Master.Customers;
-
-namespace PutraJayaNT.Views.Master.Customers
+﻿namespace ECRP.Views.Master.Customers
 {
+    using System.Windows;
+    using System.Windows.Media;
+    using FirstFloor.ModernUI.Presentation;
+    using ViewModels.Master.Customers;
+
     /// <summary>
     /// Interaction logic for MasterCustomersEditView.xaml
     /// </summary>

@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using PutraJayaNT.Models.Customer;
-    using PutraJayaNT.Utilities;
+    using ECRP.Models.Customer;
+    using ECRP.Utilities;
 
     public static class DatabaseCustomerHelper
     {
@@ -20,13 +20,13 @@
                 return context.Customers.Include("Group").Where(condition).OrderBy(customer => customer.Name).ToList();
         }
 
-        public static PutraJayaNT.Models.Customer.Customer FirstOrDefault(Func<Customer, bool> condition)
+        public static Customer FirstOrDefault(Func<Customer, bool> condition)
         {
             using (var context = UtilityMethods.createContext())
                 return context.Customers.Include("Group").Where(condition).FirstOrDefault();
         }
 
-        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref PutraJayaNT.Models.Customer.Customer customerToBeAttached)
+        public static void AttachToObjectFromDatabaseContext(ERPContext context, ref Customer customerToBeAttached)
         {
             var customerID = customerToBeAttached.ID;
             var customerGroupID = customerToBeAttached.Group.ID;

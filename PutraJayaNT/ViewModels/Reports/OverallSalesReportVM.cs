@@ -1,16 +1,16 @@
-﻿namespace PutraJayaNT.ViewModels.Reports
+﻿namespace ECRP.ViewModels.Reports
 {
-    using MVVMFramework;
-    using Models.Sales;
-    using PutraJayaNT.Reports.Windows;
-    using Utilities;
     using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using Models.Customer;
     using Customer;
+    using ECRP.Reports.Windows;
+    using Models.Customer;
+    using Models.Sales;
+    using MVVMFramework;
+    using Utilities;
 
     internal class OverallSalesReportVM : ViewModelBase
     {

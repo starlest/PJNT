@@ -1,8 +1,8 @@
-﻿using System.Windows;
-using PutraJayaNT.ViewModels.Master.Inventory;
-
-namespace PutraJayaNT.Views.Master.Inventory
+﻿namespace ECRP.Views.Master.Inventory
 {
+    using System.Windows;
+    using ViewModels.Master.Inventory;
+
     /// <summary>
     /// Interaction logic for MasterInventoryEditAddSupplierView.xaml
     /// </summary>

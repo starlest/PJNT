@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
-
-namespace PutraJayaNT.Utilities
+﻿namespace ECRP.Utilities
 {
+    using System;
+    using System.Collections.ObjectModel;
+
     public static class ObservableCollectionExtensions
     {
         public static void RemoveAll<T>(this ObservableCollection<T> collection, Func<T, bool> condition)

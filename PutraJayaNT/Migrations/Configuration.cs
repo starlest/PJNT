@@ -1,15 +1,16 @@
-using System.Data.Entity.Migrations;
-
-namespace PutraJayaNT.Migrations
+namespace ECRP.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<PutraJayaNT.Utilities.ERPContext>
+    using System.Data.Entity.Migrations;
+    using Utilities;
+
+    internal sealed class Configuration : DbMigrationsConfiguration<ERPContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(PutraJayaNT.Utilities.ERPContext context)
+        protected override void Seed(ERPContext context)
         {
             //  This method will be called after migrating to the latest version.
 

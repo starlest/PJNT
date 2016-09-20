@@ -1,16 +1,14 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.ViewModels.Accounting;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-
-namespace PutraJayaNT.ViewModels.Master
+﻿namespace ECRP.ViewModels.Master
 {
+    using System.Collections.ObjectModel;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Input;
     using Ledger;
+    using Models.Accounting;
+    using MVVMFramework;
+    using Utilities;
 
     class MasterLedgerVM : ViewModelBase
     {

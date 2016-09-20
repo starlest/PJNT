@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Customers.Sales
+﻿namespace ECRP.ViewModels.Customers.Sales
 {
     using System;
     using System.Collections.ObjectModel;
@@ -7,11 +7,11 @@
     using System.Windows;
     using System.Windows.Input;
     using Customer;
+    using ECRP.Reports.Windows;
     using Models;
     using Models.Inventory;
     using Models.Sales;
     using MVVMFramework;
-    using PutraJayaNT.Reports.Windows;
     using Utilities;
     using Utilities.ModelHelpers;
     using Utilities.PrintHelpers;

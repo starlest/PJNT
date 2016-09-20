@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Views
+﻿namespace ECRP.Views
 {
     using System.Windows.Input;
     using ViewModels;

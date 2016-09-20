@@ -1,9 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Inventory
+﻿namespace ECRP.Models.Inventory
 {
+    using System.Collections.ObjectModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using Supplier;
+
     [Table("Inventory")]
     #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class Item

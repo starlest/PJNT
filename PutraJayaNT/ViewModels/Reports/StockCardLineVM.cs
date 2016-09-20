@@ -1,8 +1,8 @@
-﻿namespace PutraJayaNT.ViewModels.Reports
+﻿namespace ECRP.ViewModels.Reports
 {
-    using MVVMFramework;
-    using Models.Inventory;
     using System;
+    using Models.Inventory;
+    using MVVMFramework;
 
     public class StockCardLineVM : ViewModelBase
     {

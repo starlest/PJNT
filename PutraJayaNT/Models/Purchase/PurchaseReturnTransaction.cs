@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Purchase
+﻿namespace ECRP.Models.Purchase
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public class PurchaseReturnTransaction
     {
         public PurchaseReturnTransaction()

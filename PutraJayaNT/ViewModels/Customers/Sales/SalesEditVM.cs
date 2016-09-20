@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Customers.Sales
+﻿namespace ECRP.ViewModels.Customers.Sales
 {
     using System;
     using System.Collections.ObjectModel;

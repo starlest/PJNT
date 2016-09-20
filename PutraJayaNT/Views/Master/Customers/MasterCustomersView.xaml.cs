@@ -1,8 +1,8 @@
-﻿using System.Windows.Controls;
-using PutraJayaNT.ViewModels.Master.Customers;
-
-namespace PutraJayaNT.Views.Master.Customers
+﻿namespace ECRP.Views.Master.Customers
 {
+    using System.Windows.Controls;
+    using ViewModels.Master.Customers;
+
     /// <summary>
     /// Interaction logic for MasterCustomersView.xaml
     /// </summary>

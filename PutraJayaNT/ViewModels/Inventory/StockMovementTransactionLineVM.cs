@@ -1,8 +1,8 @@
-﻿namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace ECRP.ViewModels.Inventory
 {
-    using MVVMFramework;
     using Models.Inventory;
     using Models.StockCorrection;
+    using MVVMFramework;
 
     public class StockMovementTransactionLineVM : ViewModelBase<StockMovementTransactionLine>
     {

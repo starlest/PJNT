@@ -1,15 +1,14 @@
 ﻿namespace PJMixTests.Master
 {
-    using PutraJayaNT.Utilities.ModelHelpers;
     using System.Collections.ObjectModel;
     using System.Linq;
     using Database.Item;
     using Database.Supplier;
+    using ECRP.Models.Inventory;
+    using ECRP.Models.Supplier;
+    using ECRP.Utilities;
+    using ECRP.Utilities.ModelHelpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using PutraJayaNT.Models;
-    using PutraJayaNT.Models.Inventory;
-    using PutraJayaNT.Utilities;
-    using PutraJayaNT.ViewModels.Master.Inventory;
 
     [TestClass]
     public class MasterInventoryTests

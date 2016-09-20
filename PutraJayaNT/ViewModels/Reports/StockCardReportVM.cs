@@ -1,15 +1,15 @@
-﻿namespace PutraJayaNT.ViewModels.Reports
+﻿namespace ECRP.ViewModels.Reports
 {
-    using MVVMFramework;
-    using PutraJayaNT.Reports.Windows;
-    using Utilities;
     using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
+    using ECRP.Reports.Windows;
     using Item;
     using Models.Inventory;
+    using MVVMFramework;
+    using Utilities;
 
     public class StockCardReportVM : ViewModelBase
     {

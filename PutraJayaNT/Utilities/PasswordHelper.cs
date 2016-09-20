@@ -1,8 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-
-namespace PutraJayaNT.Utilities
+﻿namespace ECRP.Utilities
 {
+    using System.Windows;
+    using System.Windows.Controls;
+
     public static class PasswordHelper
     {
         public static readonly DependencyProperty PasswordProperty =

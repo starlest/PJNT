@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Reports.Windows
+﻿namespace ECRP.Reports.Windows
 {
-    using Microsoft.Reporting.WinForms;
-    using ViewModels.Reports;
     using System;
     using System.Data;
     using System.Windows;
+    using Microsoft.Reporting.WinForms;
+    using ViewModels.Reports;
 
     /// <summary>
     /// Interaction logic for InventoryReportWindow.xaml

@@ -1,17 +1,17 @@
-﻿namespace PutraJayaNT.ViewModels.Inventory
+﻿namespace ECRP.ViewModels.Inventory
 {
-    using MVVMFramework;
-    using Models.Inventory;
-    using Models.StockCorrection;
-    using PutraJayaNT.Reports.Windows;
-    using Utilities;
     using System;
     using System.Collections.ObjectModel;
     using System.Data.Entity;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
+    using ECRP.Reports.Windows;
     using Item;
+    using Models.Inventory;
+    using Models.StockCorrection;
+    using MVVMFramework;
+    using Utilities;
     using Utilities.ModelHelpers;
 
     public class StockMovementVM : ViewModelBase<StockMovementTransaction>

@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Accounting
+﻿namespace ECRP.Models.Accounting
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     [Table("Ledger_Transaction_Lines")]
     public class LedgerTransactionLine
     {

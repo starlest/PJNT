@@ -1,14 +1,14 @@
-﻿namespace PutraJayaNT.ViewModels.Test
+﻿namespace ECRP.ViewModels.Test
 {
+    using System;
+    using System.Linq;
+    using System.Transactions;
+    using System.Windows;
     using System.Windows.Input;
+    using Models.Accounting;
+    using Models.Inventory;
     using MVVMFramework;
     using Utilities;
-    using System.Linq;
-    using System.Windows;
-    using Models.Accounting;
-    using System;
-    using System.Transactions;
-    using Models.Inventory;
     using Utilities.ModelHelpers;
 
     class TestVM : ViewModelBase

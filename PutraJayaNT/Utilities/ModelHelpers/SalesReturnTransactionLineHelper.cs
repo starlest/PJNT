@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.Utilities.ModelHelpers
+﻿namespace ECRP.Utilities.ModelHelpers
 {
     using System.Linq;
     using Models.Sales;

@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.ViewModels.Customers.SalesReturn
+﻿namespace ECRP.ViewModels.Customers.SalesReturn
 {
+    using System.Linq;
     using System.Windows;
     using System.Windows.Input;
     using Models.Sales;
     using MVVMFramework;
-    using System.Linq;
     using Utilities;
     using Utilities.ModelHelpers;
     using ViewModels.Sales;

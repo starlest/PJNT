@@ -1,8 +1,9 @@
-﻿using MVVMFramework;
-
-namespace PutraJayaNT.ViewModels.Salesman
+﻿namespace ECRP.ViewModels.Salesman
 {
-    public class SalesmanVM : ViewModelBase<PutraJayaNT.Models.Salesman.Salesman>
+    using Models.Salesman;
+    using MVVMFramework;
+
+    public class SalesmanVM : ViewModelBase<Salesman>
     {
         public int ID
         {

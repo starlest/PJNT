@@ -1,6 +1,7 @@
-﻿namespace PutraJayaNT.Utilities.ModelHelpers
+﻿namespace ECRP.Utilities.ModelHelpers
 {
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Transactions;
     using System.Windows;
     using Models;
@@ -8,7 +9,6 @@
     using Models.Inventory;
     using Models.Purchase;
     using Models.StockCorrection;
-    using System.Linq;
 
     public static class StockAdjustmentHelper
     {

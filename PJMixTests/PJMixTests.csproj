@@ -99,9 +99,9 @@
       <Project>{13282864-5854-4B8C-BD10-5A4E9F24EEDB}</Project>
       <Name>MVVMFramework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PutraJayaNT\PJMix.csproj">
+    <ProjectReference Include="..\PutraJayaNT\ECERP.csproj">
       <Project>{e59c0673-7a62-4081-a85b-5c7eb6b20967}</Project>
-      <Name>PJMix</Name>
+      <Name>ECERP</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

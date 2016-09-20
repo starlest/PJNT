@@ -1,15 +1,14 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Inventory
+﻿namespace ECRP.ViewModels.Master.Inventory
 {
-    using MVVMFramework;
-    using Models.Inventory;
-    using Utilities;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
     using Item;
+    using Models.Inventory;
+    using MVVMFramework;
+    using Utilities;
     using Utilities.ModelHelpers;
-    using ViewModels.Suppliers;
     using Views.Master.Inventory;
 
     public class MasterInventoryVM : ViewModelBase

@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Suppliers
+﻿namespace ECRP.ViewModels.Master.Suppliers
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -7,13 +7,11 @@
     using System.Windows;
     using System.Windows.Input;
     using Item;
-    using MVVMFramework;
-    using Models;
     using Models.Inventory;
+    using Models.Supplier;
+    using MVVMFramework;
     using Utilities;
-    using ViewModels.Inventory;
     using Views.Master.Suppliers;
-    using ViewModels.Suppliers;
 
     public class MasterSuppliersVM : ViewModelBase
     {

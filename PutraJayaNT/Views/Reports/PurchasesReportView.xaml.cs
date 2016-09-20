@@ -1,9 +1,8 @@
-﻿using PutraJayaNT.ViewModels;
-using System.Windows.Controls;
-using PutraJayaNT.ViewModels.Reports;
-
-namespace PutraJayaNT.Views.Reports
+﻿namespace ECRP.Views.Reports
 {
+    using System.Windows.Controls;
+    using ViewModels.Reports;
+
     /// <summary>
     /// Interaction logic for PurchasesReportView.xaml
     /// </summary>

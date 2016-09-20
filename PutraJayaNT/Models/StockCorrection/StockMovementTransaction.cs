@@ -1,11 +1,11 @@
-﻿using PutraJayaNT.Models.Inventory;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.StockCorrection
+﻿namespace ECRP.Models.StockCorrection
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using Inventory;
+
     public class StockMovementTransaction
     {
         [Key]

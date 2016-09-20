@@ -1,13 +1,12 @@
-﻿using MVVMFramework;
-using PutraJayaNT.Models.Accounting;
-using PutraJayaNT.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-
-namespace PutraJayaNT.ViewModels.Accounting
+﻿namespace ECRP.ViewModels.Accounting
 {
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Linq;
+    using Models.Accounting;
+    using MVVMFramework;
+    using Utilities;
+
     class IncomeStatementVM : ViewModelBase
     {
         List<int> _months;

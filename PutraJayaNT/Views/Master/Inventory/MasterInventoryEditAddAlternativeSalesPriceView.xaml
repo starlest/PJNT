@@ -1,4 +1,4 @@
-﻿<mui:ModernWindow x:Class="PutraJayaNT.Views.Master.Inventory.MasterInventoryEditAddAlternativeSalesPriceView"
+﻿<mui:ModernWindow x:Class="ECRP.Views.Master.Inventory.MasterInventoryEditAddAlternativeSalesPriceView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

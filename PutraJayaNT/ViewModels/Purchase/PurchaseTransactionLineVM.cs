@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Purchase
+﻿namespace ECRP.ViewModels.Purchase
 {
     using System.Linq;
     using Models.Inventory;

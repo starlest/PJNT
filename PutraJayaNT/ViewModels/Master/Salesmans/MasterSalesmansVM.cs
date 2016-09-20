@@ -1,15 +1,14 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Salesmans 
+﻿namespace ECRP.ViewModels.Master.Salesmans 
 {
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using MVVMFramework;
     using Models.Salesman;
+    using MVVMFramework;
     using Salesman;
     using Utilities;
     using Views.Master.Salesmans;
-
 
     public class MasterSalesmansVM : ViewModelBase
     {

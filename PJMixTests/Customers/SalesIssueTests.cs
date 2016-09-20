@@ -5,10 +5,9 @@
     using System.Windows.Input;
     using System.Windows;
     using System.Windows.Forms;
+    using ECRP.Utilities;
+    using ECRP.Utilities.ModelHelpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using PutraJayaNT.Models.Accounting;
-    using PutraJayaNT.Utilities;
-    using PutraJayaNT.Utilities.ModelHelpers;
 
     [TestClass]
     public class SalesIssueTests

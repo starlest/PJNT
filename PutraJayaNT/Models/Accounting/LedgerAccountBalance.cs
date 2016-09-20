@@ -1,9 +1,9 @@
-﻿using MVVMFramework;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Accounting
+﻿namespace ECRP.Models.Accounting
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using MVVMFramework;
+
     [Table("Ledger_Account_Balances")]
     public class LedgerAccountBalance : ObservableObject
     {

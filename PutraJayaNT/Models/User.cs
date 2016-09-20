@@ -1,4 +1,4 @@
-namespace PutraJayaNT.Models
+namespace ECRP.Models
 {
     using System.ComponentModel.DataAnnotations;
 

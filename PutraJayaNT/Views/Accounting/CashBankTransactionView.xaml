@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="PutraJayaNT.Views.Accounting.CashBankTransactionView"
+﻿<UserControl x:Class="ECRP.Views.Accounting.CashBankTransactionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

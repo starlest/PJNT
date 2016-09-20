@@ -1,13 +1,11 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using Microsoft.Reporting.WinForms;
-using PutraJayaNT.ViewModels.Reports;
-using System;
-using System.Data;
-using System.Windows;
-
-namespace PutraJayaNT.Reports.Windows
+﻿namespace ECRP.Reports.Windows
 {
-    
+    using System;
+    using System.Data;
+    using System.Windows;
+    using Microsoft.Reporting.WinForms;
+    using ViewModels.Reports;
+
     /// <summary>
     /// Interaction logic for StockCardReportWindow.xaml
     /// </summary>

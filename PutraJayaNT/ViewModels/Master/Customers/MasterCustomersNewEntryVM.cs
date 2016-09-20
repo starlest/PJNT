@@ -1,12 +1,12 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Customers
+﻿namespace ECRP.ViewModels.Master.Customers
 {
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using MVVMFramework;
     using Customer;
     using Models.Customer;
+    using MVVMFramework;
     using Utilities;
     using Utilities.ModelHelpers;
 

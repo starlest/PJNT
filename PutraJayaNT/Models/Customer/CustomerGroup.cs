@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Customer
+﻿namespace ECRP.Models.Customer
 {
+    using System.ComponentModel.DataAnnotations.Schema;
+
     [Table("CustomerGroups")]
     #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class CustomerGroup

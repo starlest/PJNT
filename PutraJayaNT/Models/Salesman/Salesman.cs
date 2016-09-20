@@ -1,10 +1,9 @@
-﻿using PutraJayaNT.Models.Sales;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Salesman
+﻿namespace ECRP.Models.Salesman
 {
+    using System.Collections.ObjectModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public class Salesman
     {
         public int ID { get; set; }

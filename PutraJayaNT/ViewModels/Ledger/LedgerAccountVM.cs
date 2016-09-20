@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.ViewModels.Ledger
+﻿namespace ECRP.ViewModels.Ledger
 {
     using System.Collections.ObjectModel;
     using Models.Accounting;
     using MVVMFramework;
 
-    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class LedgerAccountVM : ViewModelBase<LedgerAccount>
     {
         readonly ObservableCollection<LedgerTransactionLineVM> _transactionLines;

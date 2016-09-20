@@ -1,12 +1,13 @@
-﻿using MVVMFramework;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PutraJayaNT.Models.Purchase
+﻿namespace ECRP.Models.Purchase
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using MVVMFramework;
+    using Supplier;
+
     public class PurchaseTransaction : ObservableObject
     {
         public PurchaseTransaction()

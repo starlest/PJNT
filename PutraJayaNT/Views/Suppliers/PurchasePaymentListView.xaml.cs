@@ -1,8 +1,7 @@
-﻿using PutraJayaNT.ViewModels.Suppliers;
-using System.Windows.Controls;
-
-namespace PutraJayaNT.Views.Suppliers
+﻿namespace ECRP.Views.Suppliers
 {
+    using ViewModels.Suppliers;
+
     /// <summary>
     /// Interaction logic for CollectionView.xaml
     /// </summary>

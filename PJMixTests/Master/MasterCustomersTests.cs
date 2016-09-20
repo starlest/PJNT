@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PutraJayaNT.Models.Customer;
-using PutraJayaNT.Utilities;
-using PutraJayaNT.Utilities.ModelHelpers;
-using PutraJayaNT.ViewModels.Master.Customers;
 
 namespace PJMixTests.Master
 {
     using Database.Customer;
+    using ECRP.Models.Customer;
+    using ECRP.Utilities;
+    using ECRP.Utilities.ModelHelpers;
+    using ECRP.ViewModels.Master.Customers;
 
     [TestClass]
     public class MasterCustomersTests

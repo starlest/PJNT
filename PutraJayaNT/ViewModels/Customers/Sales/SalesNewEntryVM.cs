@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Customers.Sales
+﻿namespace ECRP.ViewModels.Customers.Sales
 {
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -7,8 +7,8 @@
     using Item;
     using Models.Inventory;
     using Models.Sales;
-    using MVVMFramework;
     using Models.Salesman;
+    using MVVMFramework;
     using Utilities;
     using ViewModels.Sales;
 

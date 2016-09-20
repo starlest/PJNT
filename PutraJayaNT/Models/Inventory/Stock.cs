@@ -1,4 +1,4 @@
-namespace PutraJayaNT.Models.Inventory
+namespace ECRP.Models.Inventory
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;

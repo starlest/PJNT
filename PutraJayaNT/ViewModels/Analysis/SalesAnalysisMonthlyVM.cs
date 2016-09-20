@@ -1,4 +1,4 @@
-﻿namespace PutraJayaNT.ViewModels.Analysis
+﻿namespace ECRP.ViewModels.Analysis
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

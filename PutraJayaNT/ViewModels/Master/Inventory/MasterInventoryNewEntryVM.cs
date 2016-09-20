@@ -1,14 +1,13 @@
-﻿namespace PutraJayaNT.ViewModels.Master.Inventory
+﻿namespace ECRP.ViewModels.Master.Inventory
 {
     using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Input;
     using Item;
-    using Models;
     using Models.Inventory;
+    using Models.Supplier;
     using MVVMFramework;
     using Utilities.ModelHelpers;
-    using ViewModels.Suppliers;
 
     public class MasterInventoryNewEntryVM : ViewModelBase
     {
