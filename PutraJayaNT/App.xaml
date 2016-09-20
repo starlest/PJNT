@@ -17,7 +17,7 @@
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="Height" Value="30" />
+                <Setter Property="Height" Value="25" />
                 <Setter Property="Margin" Value="10, 5, 10, 0"/>
             </Style>
             <Style TargetType="{x:Type CheckBox}">
@@ -40,7 +40,7 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="Height" Value="30" />
+                <Setter Property="Height" Value="25" />
                 <Setter Property="Margin" Value="10, 5, 10, 0"/>
                 <Setter Property="IsEditable" Value="True" />
                 <Setter Property="MaxDropDownHeight" Value="300"/>

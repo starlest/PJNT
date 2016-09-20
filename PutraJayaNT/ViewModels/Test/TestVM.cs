@@ -484,28 +484,30 @@
                             foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 8))
                             {
                                 count++;
-                                if (line.Amount < 0) MessageBox.Show(string.Format("Check {0} - {1}", line.LedgerTransactionID, line.Seq), "Error", MessageBoxButton.OK);
+                                if (line.Amount < 0) MessageBox.Show($"Check {line.LedgerTransactionID} - {line.Seq}", "Error", MessageBoxButton.OK);
 
-                                if (line.Seq == "Debit") totalDebit += line.Amount;
-                                else if (line.Seq == "Credit") totalCredit += line.Amount;
-
-                                else
+                                switch (line.Seq)
                                 {
-                                    MessageBox.Show(string.Format("Check {0} - {1}", line.LedgerTransactionID, line.Seq), "Error", MessageBoxButton.OK);
+                                    case Constants.DEBIT:
+                                        totalDebit += line.Amount;
+                                        break;
+                                    case Constants.CREDIT:
+                                        totalCredit += line.Amount;
+                                        break;
+                                    default:
+                                        MessageBox.Show($"Check {line.LedgerTransactionID} - {line.Seq}", "Error", MessageBoxButton.OK);
+                                        break;
                                 }
                             }
 
-                            if ((totalDebit - a.LedgerGeneral.Debit) != 0 || (totalCredit - a.LedgerGeneral.Credit) != 0)
-                            {
-                                if (MessageBox.Show(string.Format("Account {0}: \n Total Debit: {1}/{2} \n Total Credit: {3}/{4} \n Fix?", 
-                                    a.Name, totalDebit, a.LedgerGeneral.Debit, totalCredit, a.LedgerGeneral.Credit), "Error", MessageBoxButton.YesNo)
-                                    == MessageBoxResult.Yes)
-                                {
-                                    a.LedgerGeneral.Debit = totalDebit;
-                                    a.LedgerGeneral.Credit = totalCredit;
-                                    context.SaveChanges();
-                                }
-                            }
+                            if (totalDebit - a.LedgerGeneral.Debit == 0 && totalCredit - a.LedgerGeneral.Credit == 0)
+                                continue;
+                            if (MessageBox.Show(
+                                $"Account {a.Name}: \n Total Debit: {totalDebit}/{a.LedgerGeneral.Debit} \n Total Credit: {totalCredit}/{a.LedgerGeneral.Credit} \n Fix?",
+                                "Error", MessageBoxButton.YesNo) != MessageBoxResult.Yes) continue;
+                            a.LedgerGeneral.Debit = totalDebit;
+                            a.LedgerGeneral.Credit = totalCredit;
+                            context.SaveChanges();
                         }
 
                         var ledgerGenerals = context.Ledger_General.ToList();
@@ -519,15 +521,15 @@
 
                         if (accounts.Count != ledgerGenerals.Count)
                         {
-                            MessageBox.Show(string.Format("Th {0}/{1}", accounts.Count, ledgerGenerals.Count), "Error", MessageBoxButton.OK);
+                            MessageBox.Show($"Th {accounts.Count}/{ledgerGenerals.Count}", "Error", MessageBoxButton.OK);
                         }
 
                         if (totalD != totalC)
                         {
-                            MessageBox.Show(string.Format("Total Debit: {0} \n Total Credit: {1}", totalD, totalC), "Error", MessageBoxButton.OK);
+                            MessageBox.Show($"Total Debit: {totalD} \n Total Credit: {totalC}", "Error", MessageBoxButton.OK);
                         }
 
-                        MessageBox.Show(string.Format("Check done. \n Total Lines: {0}", count), "Successful", MessageBoxButton.OK);
+                        MessageBox.Show($"Check done. \n Total Lines: {count}", "Successful", MessageBoxButton.OK);
                     }
                 }));
             }

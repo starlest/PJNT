@@ -6,6 +6,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
     <Grid>
-        <TextBlock Text="Puja Group" FontSize="68" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Blue" FontWeight="Bold" />
+        <Image Height="300" Width="400" Loaded="Image_Loaded" />
     </Grid>
 </UserControl>

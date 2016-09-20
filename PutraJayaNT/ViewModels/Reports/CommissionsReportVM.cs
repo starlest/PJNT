@@ -15,20 +15,17 @@
 
     public class CommissionsReportVM : ViewModelBase
     {
-        ObservableCollection<SalesmanVM> _salesmen;
-        ObservableCollection<SalesCommissionVM> _lines;
+        private SalesmanVM _selectedSalesman;
+        private DateTime _fromDate;
+        private DateTime _toDate;
+        private decimal _total;
 
-        SalesmanVM _selectedSalesman;
-        DateTime _fromDate;
-        DateTime _toDate;
-        decimal _total;
-
-        ICommand _printCommand;
+        private ICommand _printCommand;
 
         public CommissionsReportVM()
         {
-            _salesmen = new ObservableCollection<SalesmanVM>();
-            _lines = new ObservableCollection<SalesCommissionVM>();
+            Salesmen = new ObservableCollection<SalesmanVM>();
+            Lines = new ObservableCollection<SalesCommissionVM>();
 
             _fromDate = UtilityMethods.GetCurrentDate().Date.AddDays(-UtilityMethods.GetCurrentDate().Day + 1);
             _toDate = UtilityMethods.GetCurrentDate().Date;
@@ -36,25 +33,17 @@
             UpdateSalesmen();
         }
 
-        public ObservableCollection<SalesmanVM> Salesmen
-        {
-            get { return _salesmen; }
-        }
+        public ObservableCollection<SalesmanVM> Salesmen { get; }
 
-        public ObservableCollection<SalesCommissionVM> Lines
-        {
-            get { return _lines; }
-        }
+        public ObservableCollection<SalesCommissionVM> Lines { get; }
 
         public SalesmanVM SelectedSalesman
         {
             get { return _selectedSalesman; }
             set
             {
-                SetProperty(ref _selectedSalesman, value, "SelectedSalesman");
-
+                SetProperty(ref _selectedSalesman, value, () => SelectedSalesman);
                 if (_selectedSalesman == null) return;
-
                 UpdateLines();
             }
         }
@@ -70,7 +59,7 @@
                     return;
                 }
 
-                SetProperty(ref _fromDate, value, "FromDate");
+                SetProperty(ref _fromDate, value, () => FromDate);
 
                 if (_selectedSalesman == null) return;
 
@@ -109,7 +98,7 @@
             {
                 return _printCommand ?? (_printCommand = new RelayCommand(() =>
                 {
-                    if (_lines.Count == 0) return;
+                    if (Lines.Count == 0) return;
 
                     var commissionsReportWindow = new CommissionsReportWindow(this);
                     commissionsReportWindow.Owner = App.Current.MainWindow;
@@ -120,10 +109,11 @@
         }
 
         #region Helper Methods
+
         private void UpdateSalesmen()
         {
-            _salesmen.Clear();
-            _salesmen.Add(new SalesmanVM
+            Salesmen.Clear();
+            Salesmen.Add(new SalesmanVM
             {
                 Model = new Salesman { ID = -1, Name = "All" }
             });
@@ -133,13 +123,13 @@
                 var salesmen = context.Salesmans.ToList().OrderBy(e => e.Name);
 
                 foreach (var salesman in salesmen)
-                    if (!salesman.Name.Equals(" ")) _salesmen.Add(new SalesmanVM { Model = salesman });
+                    if (!salesman.Name.Equals(" ")) Salesmen.Add(new SalesmanVM { Model = salesman });
             }
         }
 
         private void UpdateLines()
         {
-            _lines.Clear();
+            Lines.Clear();
             using (var context = UtilityMethods.createContext())
             {
                 var categories = context.ItemCategories.OrderBy(e => e.Name).ToList();
@@ -153,7 +143,7 @@
                         .Include("Item")
                         .Include("Item.Category")
                         .Where(e => e.SalesTransaction.Date >= _fromDate &&
-                        e.SalesTransaction.Date <= _toDate)
+                                    e.SalesTransaction.Date <= _toDate)
                         .ToList();
                 }
 
@@ -164,13 +154,13 @@
                         .Include("Item")
                         .Include("Item.Category")
                         .Where(e => e.SalesTransaction.Date >= _fromDate &&
-                        e.SalesTransaction.Date <= _toDate && e.Salesman.ID.Equals(_selectedSalesman.ID))
+                                    e.SalesTransaction.Date <= _toDate && e.Salesman.ID.Equals(_selectedSalesman.ID))
                         .ToList();
                 }
 
                 if (_selectedSalesman.Name.Equals("All"))
                 {
-                    foreach (var salesman in _salesmen)
+                    foreach (var salesman in Salesmen)
                     {
                         foreach (var category in categories)
                         {
@@ -180,7 +170,7 @@
                                     .Include("Salesman")
                                     .Include("Category")
                                     .Where(e => e.Category_ID.Equals(category.ID) &&
-                                    e.Salesman_ID.Equals(salesman.ID))
+                                                e.Salesman_ID.Equals(salesman.ID))
                                     .FirstOrDefault();
 
                                 SalesCommissionVM categoryCommission;
@@ -201,13 +191,14 @@
 
                                 var categorySalesTransactionLines = transactionLines
                                     .Where(e => e.Item.Category.ID.Equals(category.ID)
-                                    && e.Salesman_ID.Equals(salesman.ID));
+                                                && e.Salesman_ID.Equals(salesman.ID));
 
                                 foreach (var l in categorySalesTransactionLines)
                                     categoryCommission.Total += GetLineNetTotal(l);
-                                categoryCommission.Commission = categoryCommission.Total * (categoryCommission.Percentage / 100);
+                                categoryCommission.Commission = categoryCommission.Total*
+                                                                (categoryCommission.Percentage/100);
 
-                                _lines.Add(categoryCommission);
+                                Lines.Add(categoryCommission);
                                 _total += categoryCommission.Commission;
                             }
                         }
@@ -219,11 +210,11 @@
                     foreach (var category in categories)
                     {
                         var commission = context.SalesCommissions
-                        .Include("Salesman")
-                        .Include("Category")
-                        .Where(e => e.Salesman_ID.Equals(_selectedSalesman.ID) &&
-                        e.Category_ID.Equals(category.ID))
-                        .FirstOrDefault();
+                            .Include("Salesman")
+                            .Include("Category")
+                            .Where(e => e.Salesman_ID.Equals(_selectedSalesman.ID) &&
+                                        e.Category_ID.Equals(category.ID))
+                            .FirstOrDefault();
 
                         SalesCommissionVM categoryCommission;
                         if (commission != null)
@@ -241,12 +232,13 @@
                             };
                         }
 
-                        var categorySalesTransactionLines = transactionLines.Where(e => e.Item.Category.ID.Equals(category.ID));
+                        var categorySalesTransactionLines =
+                            transactionLines.Where(e => e.Item.Category.ID.Equals(category.ID));
                         foreach (var l in categorySalesTransactionLines)
                             categoryCommission.Total += GetLineNetTotal(l);
-                        categoryCommission.Commission = categoryCommission.Total * (categoryCommission.Percentage / 100);
+                        categoryCommission.Commission = categoryCommission.Total*(categoryCommission.Percentage/100);
 
-                        _lines.Add(categoryCommission);
+                        Lines.Add(categoryCommission);
                         _total += categoryCommission.Commission;
                     }
                 }
@@ -266,17 +258,18 @@
                     .FirstOrDefault()
                     .SalesTransaction;
 
-                var lineDiscount = line.Discount / line.Item.PiecesPerUnit;
-                var lineSalesPrice = line.SalesPrice / line.Item.PiecesPerUnit;
+                var lineDiscount = line.Discount/line.Item.PiecesPerUnit;
+                var lineSalesPrice = line.SalesPrice/line.Item.PiecesPerUnit;
                 var lineTotal = line.SalesPrice - line.Discount;
                 if (lineTotal == 0) return 0;
-                var fractionOfTransaction = (line.Quantity * (lineSalesPrice - lineDiscount)) / transaction.GrossTotal;
-                var fractionOfTransactionDiscount = (fractionOfTransaction * transaction.Discount) / line.Quantity;
+                var fractionOfTransaction = line.Quantity*(lineSalesPrice - lineDiscount)/transaction.GrossTotal;
+                var fractionOfTransactionDiscount = fractionOfTransaction*transaction.Discount/line.Quantity;
                 var discount = lineDiscount + fractionOfTransactionDiscount;
-                netTotal = line.Quantity * (line.SalesPrice - discount);
+                netTotal = line.Quantity*(line.SalesPrice - discount);
             }
             return netTotal;
         }
+
         #endregion
     }
 }

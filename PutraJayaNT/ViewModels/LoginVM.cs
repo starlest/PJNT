@@ -96,8 +96,8 @@
                         }
                     }
                     catch (Exception e)
-                    {
-                        MessageBox.Show("Failed to connect to server.", "Connection Failure", MessageBoxButton.OK);
+                    { 
+                        MessageBox.Show($"Failed to connect to server. {e}", "Connection Failure", MessageBoxButton.OK);
                     }
                     finally
                     {

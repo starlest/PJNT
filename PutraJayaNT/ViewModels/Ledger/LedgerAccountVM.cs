@@ -7,7 +7,7 @@
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class LedgerAccountVM : ViewModelBase<LedgerAccount>
     {
-        readonly ObservableCollection<LedgerTransactionLineVM> _transactionLines;
+        private readonly ObservableCollection<LedgerTransactionLineVM> _transactionLines;
 
         public LedgerAccountVM()
         {
@@ -22,7 +22,7 @@
 
         public string Name
         {
-            get {  return Model.Name; }
+            get { return Model.Name; }
             set { Model.Name = value; }
         }
 
@@ -62,6 +62,12 @@
             set { Model.LedgerGeneral.Credit = value; }
         }
 
+        public LedgerAccountClass LedgerAccountClass
+        {
+            get { return Model.LedgerAccountClass; }
+            set { Model.LedgerAccountClass = value; }
+        }
+
         public ObservableCollection<LedgerTransactionLineVM> TransactionLines
         {
             get
@@ -70,7 +76,7 @@
 
                 foreach (var line in Model.LedgerTransactionLines)
                 {
-                    _transactionLines.Add(new LedgerTransactionLineVM { Model = line } );
+                    _transactionLines.Add(new LedgerTransactionLineVM { Model = line });
                 }
                 return _transactionLines;
             }

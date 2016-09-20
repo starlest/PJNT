@@ -102,6 +102,7 @@
     <Compile Include="Migrations\Update1.Designer.cs">
       <DependentUpon>Update1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Accounting\LedgerAccountClass.cs" />
     <Compile Include="Models\TelegramBotNotification.cs" />
     <Compile Include="Reports\DatasetObjects\GeneralLedgerReport.cs" />
     <Compile Include="Reports\DatasetObjects\DetailedSalesTransactionLine.cs" />
@@ -294,7 +295,7 @@
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryEditVM.cs" />
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryNewEntryVM.cs" />
     <Compile Include="ViewModels\Master\Inventory\MasterInventoryVM.cs" />
-    <Compile Include="ViewModels\Master\MasterLedgerVM.cs" />
+    <Compile Include="ViewModels\Master\Ledger\MasterLedgerVM.cs" />
     <Compile Include="ViewModels\Master\Salesmans\MasterSalesmansEditVM.cs" />
     <Compile Include="ViewModels\Master\Salesmans\MasterSalesmansNewEntryVM.cs" />
     <Compile Include="ViewModels\Master\Salesmans\MasterSalesmansVM.cs" />
@@ -399,7 +400,7 @@
     <Compile Include="Views\Reports\InventoryReportView.xaml.cs">
       <DependentUpon>InventoryReportView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Master\LedgerView.xaml.cs">
+    <Compile Include="Views\Master\Ledger\LedgerView.xaml.cs">
       <DependentUpon>LedgerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Master\Suppliers\MasterSuppliersView.xaml.cs">
@@ -643,7 +644,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Master\LedgerView.xaml">
+    <Page Include="Views\Master\Ledger\LedgerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -711,6 +712,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <EmbeddedResource Include="Images\PJLogo.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\Update1.resx">

@@ -25,6 +25,8 @@
         [Required]
         public string Class { get; set; }
 
+        public virtual LedgerAccountClass LedgerAccountClass { get; set; }
+
         public virtual LedgerGeneral LedgerGeneral { get; set; }
 
         public virtual ObservableCollection<LedgerAccountBalance> LedgerAccountBalances { get; set; }

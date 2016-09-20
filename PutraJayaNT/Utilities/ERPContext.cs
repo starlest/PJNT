@@ -15,6 +15,10 @@ namespace ECRP.Utilities
 
     public class ERPContext : DbContext
     {
+//        public ERPContext()
+//        {
+//        }
+
         public ERPContext(string dbName, string ipAddress)
             : base(GetConnectionString(dbName, ipAddress))
         {
@@ -47,21 +51,28 @@ namespace ECRP.Utilities
         public virtual DbSet<SalesReturnTransactionLine> SalesReturnTransactionLines { get; set; }
         public virtual DbSet<AlternativeSalesPrice> AlternativeSalesPrices { get; set; }
 
+        #region Purchase
         public virtual DbSet<PurchaseReturnTransaction> PurchaseReturnTransactions { get; set; }
         public virtual DbSet<PurchaseReturnTransactionLine> PurchaseReturnTransactionLines { get; set; }
         public virtual DbSet<PurchaseTransactionLine> PurchaseTransactionLines { get; set; }
         public virtual DbSet<PurchaseTransaction> PurchaseTransactions { get; set; }
+        #endregion
 
+        #region Entities
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Supplier> Suppliers { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<CustomerGroup> CustomerGroups { get; set; }
+        #endregion
 
+        #region Accounting 
         public virtual DbSet<LedgerAccount> Ledger_Accounts { get; set; }
+        public virtual DbSet<LedgerAccountClass> Ledger_Account_Classes { get; set; }
         public virtual DbSet<LedgerTransaction> Ledger_Transactions { get; set; }
         public virtual DbSet<LedgerTransactionLine> Ledger_Transaction_Lines { get; set; }
         public virtual DbSet<LedgerGeneral> Ledger_General { get; set; }
         public virtual DbSet<LedgerAccountBalance> Ledger_Account_Balances { get; set; }
+        #endregion
 
         public virtual DbSet<Date> Dates { get; set; }
 

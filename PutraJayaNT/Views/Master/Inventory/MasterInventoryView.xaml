@@ -7,7 +7,7 @@
              d:DesignHeight="768" d:DesignWidth="1024">
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
-            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontSize" Value="18" />
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -19,6 +19,7 @@
         <Border BorderBrush="Blue" BorderThickness="2">
             <Grid DataContext="{Binding NewEntryVM}">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="0.5*" />
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
@@ -31,32 +32,34 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
+
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Foreground="Blue" Text="ID:" />
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding NewEntryID, Mode=TwoWay}" />
-                <TextBlock Grid.Row="0" Grid.Column="2" Foreground="Blue" Text="Name:" />
-                <TextBox Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" Text="{Binding NewEntryName, Mode=TwoWay}" />
-                <TextBlock Grid.Row="0" Grid.Column="4" Foreground="Blue" Text="Category:" />
-                <ComboBox Grid.Row="0" Grid.Column="5" ItemsSource="{Binding Categories}" DisplayMemberPath="Name" 
+                <TextBlock HorizontalAlignment="Left" Text="New Item" Foreground="Blue" FontSize="14"
+                           FontStyle="Italic" FontWeight="Bold" Margin="30, 0, 0, 0" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Foreground="Blue" Text="ID:" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NewEntryID, Mode=TwoWay}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Foreground="Blue" Text="Name:" />
+                <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Text="{Binding NewEntryName, Mode=TwoWay}" />
+                <TextBlock Grid.Row="1" Grid.Column="4" Foreground="Blue" Text="Category:" />
+                <ComboBox Grid.Row="1" Grid.Column="5" ItemsSource="{Binding Categories}" DisplayMemberPath="Name" 
                           SelectedItem="{Binding NewEntryCategory, Mode=TwoWay}" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Foreground="Blue" Text="Supplier:" />
-                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Suppliers}" DisplayMemberPath="Name" 
+                <TextBlock Grid.Row="2" Grid.Column="0" Foreground="Blue" Text="Supplier:" />
+                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Suppliers}" DisplayMemberPath="Name" 
                           SelectedItem="{Binding NewEntrySupplier, Mode=TwoWay}" />
-                <TextBlock Grid.Row="1" Grid.Column="2" Foreground="Blue" Text="Purchase Price:" />
-                <TextBox Grid.Row="1"  Grid.Column="3" Text="{Binding NewEntryPurchasePrice, Mode=TwoWay, StringFormat=N2}" />
-                <TextBlock Grid.Row="1" Grid.Column="4" Foreground="Blue" Text="Sales Price:" />
-                <TextBox Grid.Row="1"  Grid.Column="5" Text="{Binding NewEntrySalesPrice, Mode=TwoWay, StringFormat=N2}" />
-                <TextBlock Grid.Row="2" Grid.Column="0" Foreground="Blue" Text="Unit Name:" />
-                <TextBox Grid.Row="2"  Grid.Column="1" Text="{Binding NewEntryUnitName, Mode=TwoWay}" />
-                <TextBlock Grid.Row="2" Grid.Column="2" Foreground="Blue" Text="Pieces/Unit:" />
-                <TextBox Grid.Row="2"  Grid.Column="3" Text="{Binding NewEntryPiecesPerUnit, Mode=TwoWay}" />
-                <TextBlock Grid.Row="3" Grid.Column="0" Foreground="Blue" Text="SUnit Name:" />
-                <TextBox Grid.Row="3"  Grid.Column="1" Text="{Binding NewEntrySecondaryUnitName, Mode=TwoWay}" />
-                <TextBlock Grid.Row="3" Grid.Column="2" Foreground="Blue" Text="Pieces/SUnit:" />
-                <TextBox Grid.Row="3"  Grid.Column="3" Text="{Binding NewEntryPiecesPerSecondaryUnit, Mode=TwoWay}" />
-                <Button Content="Add" Grid.Row="2" Grid.Column="6" Command="{Binding NewEntryCommand}" />
-                <Button Content="Cancel" Grid.Row="3" Grid.Column="6" Command="{Binding CancelEntryCommand}" />
+                <TextBlock Grid.Row="2" Grid.Column="2" Foreground="Blue" Text="Purchase Price:" />
+                <TextBox Grid.Row="2"  Grid.Column="3" Text="{Binding NewEntryPurchasePrice, Mode=TwoWay, StringFormat=N2}" />
+                <TextBlock Grid.Row="2" Grid.Column="4" Foreground="Blue" Text="Sales Price:" />
+                <TextBox Grid.Row="2"  Grid.Column="5" Text="{Binding NewEntrySalesPrice, Mode=TwoWay, StringFormat=N2}" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Foreground="Blue" Text="Unit Name:" />
+                <TextBox Grid.Row="3"  Grid.Column="1" Text="{Binding NewEntryUnitName, Mode=TwoWay}" />
+                <TextBlock Grid.Row="3" Grid.Column="2" Foreground="Blue" Text="Pieces/Unit:" />
+                <TextBox Grid.Row="3"  Grid.Column="3" Text="{Binding NewEntryPiecesPerUnit, Mode=TwoWay}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Foreground="Blue" Text="SUnit Name:" />
+                <TextBox Grid.Row="4"  Grid.Column="1" Text="{Binding NewEntrySecondaryUnitName, Mode=TwoWay}" />
+                <TextBlock Grid.Row="4" Grid.Column="2" Foreground="Blue" Text="Pieces/SUnit:" />
+                <TextBox Grid.Row="4"  Grid.Column="3" Text="{Binding NewEntryPiecesPerSecondaryUnit, Mode=TwoWay}" />
+                <Button Content="Add" Grid.Row="3" Grid.Column="5" Command="{Binding NewEntryCommand}" Margin="30, 5, 30, 5" />
+                <Button Content="Cancel" Grid.Row="4" Grid.Column="5" Command="{Binding CancelEntryCommand}" Margin="30, 5, 30, 5" />
             </Grid>
         </Border>
         <Grid Grid.Row="1">

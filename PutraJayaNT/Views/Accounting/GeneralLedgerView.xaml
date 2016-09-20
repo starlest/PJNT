@@ -51,7 +51,8 @@
                       SelectedItem="{Binding SelectedAccount, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="0" Grid.Column="7" Margin="10" Content="Display" Command="{Binding DisplayCommand}" />
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Class:" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedClass, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Grid.Row="1" Grid.Column="1"
+                     Text="{Binding SelectedAccountClass, UpdateSourceTrigger=PropertyChanged}"
                      IsEnabled="False" />
             <TextBlock Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Text="Beginning Balance:" />
             <TextBox Grid.Row="1" Grid.Column="4"

@@ -85,10 +85,7 @@
 
         private void SetColorTheme()
         {
-            if (_selectedServerName.Equals("Mix"))
-                AppearanceManager.Current.AccentColor = Colors.Blue;
-            else
-                AppearanceManager.Current.AccentColor = Colors.Yellow;
+            AppearanceManager.Current.AccentColor = _selectedServerName.Equals(Constants.MIX) ? Colors.Blue : Colors.Yellow;
         }
 
         private void SetUpBackgroundWorker()

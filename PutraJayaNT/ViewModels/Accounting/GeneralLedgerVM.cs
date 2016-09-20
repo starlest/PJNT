@@ -13,11 +13,12 @@
     public class GeneralLedgerVM : ViewModelBase
     {
         #region Backing Fields
+
         private int _selectedMonth;
         private int _selectedYear;
 
-        private string _selectedClass;
         private LedgerAccountVM _selectedAccount;
+        private string _selectedAccountClass;
         private string _normalSeq;
         private decimal _selectedBeginningBalance;
         private decimal _selectedEndingBalance;
@@ -34,24 +35,27 @@
             DisplayedTransactionLines = new ObservableCollection<LedgerTransactionLineVM>();
             Months = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            _selectedMonth = UtilityMethods.GetCurrentDate().Month;              
+            _selectedMonth = UtilityMethods.GetCurrentDate().Month;
             _selectedYear = UtilityMethods.GetCurrentDate().Year;
             UpdateAccounts();
         }
 
         #region Collections
+
         public ObservableCollection<LedgerAccountVM> Accounts { get; }
 
         public ObservableCollection<LedgerTransactionLineVM> DisplayedTransactionLines { get; }
 
         public ObservableCollection<int> Months { get; }
+
         #endregion
 
         #region Properties
+
         public int SelectedMonth
         {
             get { return _selectedMonth; }
-            set {  SetProperty(ref _selectedMonth, value, () => SelectedMonth); }
+            set { SetProperty(ref _selectedMonth, value, () => SelectedMonth); }
         }
 
         public int SelectedYear
@@ -63,28 +67,19 @@
         public LedgerAccountVM SelectedAccount
         {
             get { return _selectedAccount; }
-            set
-            {
-                SetProperty(ref _selectedAccount, value, () => SelectedAccount);
-                UpdateSelectedClass();
-            }
+            set { SetProperty(ref _selectedAccount, value, () => SelectedAccount); }
         }
 
-        private void UpdateSelectedClass()
+        public string SelectedAccountClass
         {
-            SelectedClass = _selectedAccount?.Class;
-        }
-
-        public string SelectedClass
-        {
-            get { return _selectedClass; }
-            set { SetProperty(ref _selectedClass, value, () => SelectedClass); }
+            get { return _selectedAccountClass;  }
+            set { SetProperty(ref _selectedAccountClass, value, () => SelectedAccountClass); }
         }
 
         public decimal SelectedBeginningBalance
         {
             get { return _selectedBeginningBalance; }
-            set {  SetProperty(ref _selectedBeginningBalance, value, () => SelectedBeginningBalance); }
+            set { SetProperty(ref _selectedBeginningBalance, value, () => SelectedBeginningBalance); }
         }
 
         public decimal SelectedEndingBalance
@@ -104,6 +99,7 @@
             get { return _totalCredit; }
             set { SetProperty(ref _totalCredit, value, () => TotalCredit); }
         }
+
         #endregion
 
         public ICommand DisplayCommand
@@ -114,6 +110,7 @@
                 {
                     ResetUI();
                     if (_selectedAccount == null) return;
+                    SetSelectedAccountClass();
                     RefreshDisplayLines();
                     UpdateUI();
                     UpdateAccounts();
@@ -134,6 +131,7 @@
         }
 
         #region Helper Methods
+
         public void UpdateAccounts()
         {
             var oldSelectedAccount = _selectedAccount;
@@ -143,6 +141,7 @@
             {
                 var accounts = context.Ledger_Accounts
                     .Where(e => !e.Name.Equals("- Accounts Payable"))
+                    .Include("LedgerAccountClass")
                     .OrderBy(e => e.Name);
                 foreach (var account in accounts)
                     Accounts.Add(new LedgerAccountVM { Model = account });
@@ -166,23 +165,26 @@
                 var balanceTracker = _selectedBeginningBalance;
 
                 var transactionLines = context.Ledger_Transaction_Lines
-                    .Where(e => e.LedgerAccountID == _selectedAccount.ID && e.LedgerTransaction.Date.Month == _selectedMonth)
+                    .Where(
+                        e =>
+                            e.LedgerAccountID == _selectedAccount.ID && e.LedgerTransaction.Date.Month == _selectedMonth)
                     .Include("LedgerTransaction")
                     .Include("LedgerAccount")
                     .OrderBy(e => e.LedgerTransaction.Date);
 
-                if (_selectedClass.Equals("Asset" ) || _selectedClass.Equals("Expense")) _normalSeq = "Debit";
-                else _normalSeq = "Credit";
+                if (_selectedAccount.LedgerAccountClass.Name.Equals(Constants.ASSET) ||
+                    _selectedAccount.LedgerAccountClass.Name.Equals(Constants.EXPENSE)) _normalSeq = Constants.DEBIT;
+                else _normalSeq = Constants.CREDIT;
 
                 foreach (var opposingLine in transactionLines.ToList().Select(
                     line => new LedgerTransactionLineVM { Model = line }).SelectMany(lineVM => lineVM.OpposingLines))
                 {
-                    opposingLine.Seq = opposingLine.Seq.Equals("Debit") ? "Credit" : "Debit";
+                    opposingLine.Seq = opposingLine.Seq.Equals(Constants.DEBIT) ? Constants.CREDIT : Constants.DEBIT;
 
                     if (_normalSeq.Equals(opposingLine.Seq)) balanceTracker += opposingLine.Amount;
                     else balanceTracker -= opposingLine.Amount;
 
-                    if (opposingLine.Seq.Equals("Debit")) _totalDebit += opposingLine.Amount;
+                    if (opposingLine.Seq.Equals(Constants.DEBIT)) _totalDebit += opposingLine.Amount;
                     else _totalCredit += opposingLine.Amount;
 
                     opposingLine.Balance = balanceTracker;
@@ -239,9 +241,14 @@
             }
         }
 
+
+        private void SetSelectedAccountClass()
+        {
+            SelectedAccountClass = _selectedAccount.LedgerAccountClass.Name;
+        }
+
         private void UpdateUI()
         {
-            SelectedClass = _selectedAccount.Class;
             OnPropertyChanged("SelectedBeginningBalance");
             OnPropertyChanged("SelectedEndingBalance");
             OnPropertyChanged("TotalDebit");
@@ -250,6 +257,7 @@
 
         private void ResetUI()
         {
+            SelectedAccountClass = null;
             TotalDebit = 0;
             TotalCredit = 0;
             DisplayedTransactionLines.Clear();
