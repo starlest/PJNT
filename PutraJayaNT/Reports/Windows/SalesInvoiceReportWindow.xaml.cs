@@ -68,6 +68,7 @@ namespace PutraJayaNT.Reports.Windows
             dt2.Columns.Add(new DataColumn("DueDate", typeof(string)));
             dt2.Columns.Add(new DataColumn("Notes", typeof(string)));
             dt2.Columns.Add(new DataColumn("Copy", typeof(string)));
+
             dr2["InvoiceGrossTotal"] = _salesTransaction.GrossTotal;
             dr2["InvoiceDiscount"] = _salesTransaction.Discount;
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;

@@ -15,6 +15,8 @@
     using Customer;
     using PutraJayaNT.Reports.Windows;
     using Sales;
+    using DetailedSalesReportWindow = PutraJayaNT.Reports.Windows.Reports.SalesReport.DetailedSalesReportWindow;
+    using GlobalSalesReportWindow = PutraJayaNT.Reports.Windows.Reports.SalesReport.GlobalSalesReportWindow;
 
     internal class SalesReportVM : ViewModelBase
     {
@@ -33,6 +35,8 @@
 
         private ICommand _displayCommand;
         private ICommand _printCommand;
+
+        private const string GLOBAL = "Global";
 
         public SalesReportVM()
         {
@@ -57,6 +61,7 @@
         }
 
         #region Collections
+
         public ObservableCollection<Category> Categories { get; }
 
         public ObservableCollection<Item> CategoryItems { get; }
@@ -68,9 +73,11 @@
         public ObservableCollection<SalesTransactionLineVM> GlobalDisplayLines { get; }
 
         public ObservableCollection<string> Modes { get; }
+
         #endregion
 
         #region Properties
+
         public Visibility DetailedVisibility
         {
             get { return _detailedVisibility; }
@@ -141,7 +148,6 @@
             {
                 SetProperty(ref _selectedMode, value, () => SelectedMode);
                 SetDisplayMode();
-                
             }
         }
 
@@ -156,16 +162,18 @@
             get { return _quantitySold; }
             set { SetProperty(ref _quantitySold, value, () => QuantitySold); }
         }
+
         #endregion
 
         #region Commands
+
         public ICommand DisplayCommand
         {
             get
             {
                 return _displayCommand ?? (_displayCommand = new RelayCommand(() =>
                 {
-                    if (_selectedItem != null && _selectedCustomer!= null) RefreshDisplayLines();
+                    if (_selectedItem != null && _selectedCustomer != null) RefreshDisplayLines();
                     UpdateCategories();
                     RefreshCustomers();
                 }));
@@ -183,9 +191,11 @@
                 }));
             }
         }
+
         #endregion
 
         #region Helper Methods
+
         private void UpdateCategories()
         {
             var oldSelectedCategory = _selectedCategory;
@@ -193,7 +203,7 @@
             Categories.Clear();
             using (var context = UtilityMethods.createContext())
             {
-                Categories.Add(new Category { ID = -1, Name = "All" });
+                Categories.Add(new Category {ID = -1, Name = "All"});
                 var categories = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categories)
                     Categories.Add(category);
@@ -213,7 +223,7 @@
             var oldSelectedItem = _selectedItem;
 
             CategoryItems.Clear();
-            CategoryItems.Add(new Item { ItemID = "-1", Name = "All" });
+            CategoryItems.Add(new Item {ItemID = "-1", Name = "All"});
             if (_selectedCategory.Name == "All")
             {
                 using (var context = UtilityMethods.createContext())
@@ -250,12 +260,12 @@
             var oldSelectedCustomer = _selectedCustomer;
 
             Customers.Clear();
-            Customers.Add(new CustomerVM {  Model = new Customer { ID = -1, Name = "All" } });
+            Customers.Add(new CustomerVM {Model = new Customer {ID = -1, Name = "All"}});
             using (var context = UtilityMethods.createContext())
             {
                 var customers = context.Customers.Include("Group").OrderBy(customer => customer.Name);
                 foreach (var customer in customers)
-                    Customers.Add(new CustomerVM { Model = customer });
+                    Customers.Add(new CustomerVM {Model = customer});
             }
 
             UpdateSelectedCustomer(oldSelectedCustomer);
@@ -294,17 +304,19 @@
                         .Include("Warehouse")
                         .Include("SalesTransaction")
                         .Include("SalesTransaction.Customer")
-                        .Where(e => e.Item.Name == _selectedItem.Name && e.SalesTransaction.Date >= _fromDate && e.SalesTransaction.Date <= _toDate)
+                        .Where(
+                            e =>
+                                e.Item.Name == _selectedItem.Name && e.SalesTransaction.Date >= _fromDate &&
+                                e.SalesTransaction.Date <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .ToList();
                 }
 
                 else if (_selectedCategory.Name != "All" && _selectedItem.Name == "All")
                 {
-
                     transactionLines = context.SalesTransactionLines
                         .Where(e => e.Item.Category.Name == _selectedCategory.Name
-                        && e.SalesTransaction.Date >= _fromDate && e.SalesTransaction.Date <= _toDate)
+                                    && e.SalesTransaction.Date >= _fromDate && e.SalesTransaction.Date <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .Include("Item")
                         .Include("Warehouse")
@@ -317,9 +329,9 @@
                 {
                     transactionLines = context.SalesTransactionLines
                         .Where(e => e.Item.Category.Name == _selectedCategory.Name
-                        && e.Item.Name == _selectedItem.Name
-                        && e.SalesTransaction.Date >= _fromDate
-                        && e.SalesTransaction.Date <= _toDate)
+                                    && e.Item.Name == _selectedItem.Name
+                                    && e.SalesTransaction.Date >= _fromDate
+                                    && e.SalesTransaction.Date <= _toDate)
                         .OrderBy(e => e.Item.Name)
                         .Include("Item")
                         .Include("Warehouse")
@@ -329,7 +341,12 @@
                 }
 
 
-                foreach (var line in transactionLines.Where(line => _selectedCustomer.ID == -1 || _selectedCustomer.ID == line.SalesTransaction.Customer.ID))
+                foreach (
+                    var line in
+                        transactionLines.Where(
+                            line =>
+                                _selectedCustomer.ID == -1 || _selectedCustomer.ID == line.SalesTransaction.Customer.ID)
+                    )
                 {
                     var vm = new SalesTransactionLineVM {Model = line};
                     DetailedDisplayLines.Add(vm);
@@ -358,7 +375,7 @@
             }
 
             if (_selectedItem.Name != "All")
-                QuantitySold = quantitySold / _selectedItem.PiecesPerUnit + "/" + quantitySold % _selectedItem.PiecesPerUnit;
+                QuantitySold = quantitySold/_selectedItem.PiecesPerUnit + "/" + quantitySold%_selectedItem.PiecesPerUnit;
             else
                 QuantitySold = "";
             OnPropertyChanged("Total");
@@ -366,7 +383,7 @@
 
         private void SetDisplayMode()
         {
-            if (_selectedMode.Equals("Global"))
+            if (_selectedMode.Equals(GLOBAL))
             {
                 GlobalVisibility = Visibility.Visible;
                 DetailedVisibility = Visibility.Collapsed;
@@ -380,14 +397,26 @@
 
         private void ShowPrintWindow()
         {
-            var overallSalesReportWindow = new GlobalSalesReportWindow(GlobalDisplayLines)
+            if (_selectedMode == GLOBAL)
             {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-            overallSalesReportWindow.Show();
+                var overallSalesReportWindow = new GlobalSalesReportWindow(GlobalDisplayLines)
+                {
+                    Owner = Application.Current.MainWindow,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+                overallSalesReportWindow.Show();
+            }
+            else
+            {
+                var detailedSalesReportWindow = new DetailedSalesReportWindow(DetailedDisplayLines)
+                {
+                    Owner = Application.Current.MainWindow,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+                detailedSalesReportWindow.Show();
+            }
         }
+
         #endregion
     }
-
 }

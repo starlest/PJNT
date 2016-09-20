@@ -104,14 +104,19 @@
     </Compile>
     <Compile Include="Models\TelegramBotNotification.cs" />
     <Compile Include="Reports\DatasetObjects\GeneralLedgerReport.cs" />
+    <Compile Include="Reports\DatasetObjects\DetailedSalesTransactionLine.cs" />
     <Compile Include="Reports\DatasetObjects\LedgerTransactionLine.cs" />
     <Compile Include="Reports\DatasetObjects\GlobalSalesTransactionLine.cs" />
     <Compile Include="Reports\Windows\GeneralLedgerReportWindow.xaml.cs">
       <DependentUpon>GeneralLedgerReportWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\Windows\GlobalSalesReportWindow.xaml.cs">
+    <Compile Include="Reports\Windows\Reports\SalesReport\DetailedSalesReportWindow.xaml.cs">
+      <DependentUpon>DetailedSalesReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\Reports\SalesReport\GlobalSalesReportWindow.xaml.cs">
       <DependentUpon>GlobalSalesReportWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\AccountingService.cs" />
     <Compile Include="Utilities\Analysis\SalesAnalysisHelper.cs" />
     <Compile Include="Utilities\Constants.cs" />
     <Compile Include="Utilities\FocusAdvancement.cs" />
@@ -441,7 +446,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Reports\Windows\GlobalSalesReportWindow.xaml">
+    <Page Include="Reports\Windows\Reports\SalesReport\DetailedSalesReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Reports\Windows\Reports\SalesReport\GlobalSalesReportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -710,13 +719,13 @@
     <EmbeddedResource Include="Reports\RDLC\GeneralLedgerReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\RDLC\DetailedSalesReport.rdlc">
+    <EmbeddedResource Include="Reports\RDLC\Reports\SalesReport\DetailedSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\OverallSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\RDLC\GlobalSalesReport.rdlc">
+    <EmbeddedResource Include="Reports\RDLC\Reports\SalesReport\GlobalSalesReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\SalesTransactionsReport.rdlc">

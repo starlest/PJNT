@@ -1,10 +1,10 @@
-﻿namespace PutraJayaNT.Reports.Windows
+﻿namespace PutraJayaNT.Reports.Windows.Reports.SalesReport
 {
-    using Microsoft.Reporting.WinForms;
     using System;
     using System.Collections.ObjectModel;
     using System.Data;
     using System.Windows;
+    using Microsoft.Reporting.WinForms;
     using ViewModels.Sales;
 
     /// <summary>
@@ -52,7 +52,7 @@
 
             var reportDataSource = new ReportDataSource("GlobalSalesTransactionLineDataSet", dt);
 
-            reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\GlobalSalesReport.rdlc"); // Path of the rdlc file
+            reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"Reports\\RDLC\\Reports\\SalesReport\\GlobalSalesReport.rdlc"); // Path of the rdlc file
 
             reportViewer.LocalReport.DataSources.Add(reportDataSource);
             reportViewer.PageCountMode = PageCountMode.Actual;
