@@ -29,6 +29,7 @@
         public ObservableCollection<LedgerTransactionLineVM> DisplayedLines { get; }
 
         #region Properties
+
         public DateTime Date
         {
             get { return _date; }
@@ -50,6 +51,7 @@
             get { return _endingBalance; }
             set { SetProperty(ref _endingBalance, value, () => EndingBalance); }
         }
+
         #endregion
 
         public ICommand PrintCommand
@@ -65,6 +67,7 @@
         }
 
         #region Helper Methods
+
         private void UpdateDisplayedLines()
         {
             DisplayedLines.Clear();
@@ -76,12 +79,30 @@
                     .Include("LedgerAccount")
                     .Include("LedgerTransaction")
                     .Where(line => line.LedgerAccount.Name.Equals("Cash") &&
-                    line.LedgerTransaction.Date.Equals(_date))
+                                   line.LedgerTransaction.Date.Equals(_date))
                     .ToList();
 
-                var account = new LedgerAccount { ID = -1, Name = "Sales Receipt", Class = "Asset" };
-                var transaction = new LedgerTransaction { ID = -1, Date = _date, Description = "Sales Receipt", Documentation = "Sales Receipt" };
-                var salesreceiptLine = new LedgerTransactionLine { LedgerTransaction = transaction, LedgerAccount = account, Seq = "Debit" };
+                var accountClasses = context.Ledger_Account_Classes.ToList();
+
+                var account = new LedgerAccount
+                {
+                    ID = -1,
+                    Name = "Sales Receipt",
+                    LedgerAccountClass = accountClasses.First(accountClass => accountClass.Name.Equals(Constants.ASSET))
+                };
+                var transaction = new LedgerTransaction
+                {
+                    ID = -1,
+                    Date = _date,
+                    Description = "Sales Receipt",
+                    Documentation = "Sales Receipt"
+                };
+                var salesreceiptLine = new LedgerTransactionLine
+                {
+                    LedgerTransaction = transaction,
+                    LedgerAccount = account,
+                    Seq = Constants.DEBIT
+                };
                 foreach (var line in lines)
                 {
                     var lineVM = new LedgerTransactionLineVM { Model = line };
@@ -90,18 +111,26 @@
                         if (!oppositeLine.Description.Equals("Sales Transaction Receipt"))
                         {
                             if (line.Seq == "Credit") oppositeLine.Amount = -oppositeLine.Amount;
-                            DisplayedLines.Add(new LedgerTransactionLineVM { Model = oppositeLine.Model, Balance = _beginningBalance + oppositeLine.Amount });
+                            DisplayedLines.Add(new LedgerTransactionLineVM
+                            {
+                                Model = oppositeLine.Model,
+                                Balance = _beginningBalance + oppositeLine.Amount
+                            });
                         }
 
                         else
                             salesreceiptLine.Amount += oppositeLine.Amount;
-                        
+
                         _endingBalance += oppositeLine.Amount;
                         oppositeLine.Balance = _endingBalance;
                     }
                 }
                 if (salesreceiptLine.Amount > 0)
-                    DisplayedLines.Add(new LedgerTransactionLineVM { Model = salesreceiptLine, Balance = _endingBalance });
+                    DisplayedLines.Add(new LedgerTransactionLineVM
+                    {
+                        Model = salesreceiptLine,
+                        Balance = _endingBalance
+                    });
             }
             OnPropertyChanged("EndingBalance");
         }
@@ -125,8 +154,8 @@
 
                 var lines = context.Ledger_Transaction_Lines.Include("LedgerTransaction")
                     .Where(line => line.LedgerAccount.Name.Equals("Cash") &&
-                    line.LedgerTransaction.Date >= beginningPeriodDate &&
-                    line.LedgerTransaction.Date < _date)
+                                   line.LedgerTransaction.Date >= beginningPeriodDate &&
+                                   line.LedgerTransaction.Date < _date)
                     .ToList();
 
                 foreach (var line in lines)
@@ -181,6 +210,7 @@
             };
             dailyCashFlowReportWindow.Show();
         }
+
         #endregion
     }
 }

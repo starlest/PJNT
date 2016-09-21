@@ -38,6 +38,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Rectangle Grid.RowSpan="1" Grid.ColumnSpan="12" Stroke="Blue" StrokeThickness="2" />
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Year:" />
@@ -50,6 +51,7 @@
                       DisplayMemberPath="Name"
                       SelectedItem="{Binding SelectedAccount, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="0" Grid.Column="7" Margin="10" Content="Display" Command="{Binding DisplayCommand}" />
+            <Button Grid.Row="0" Grid.Column="8" Margin="10" Content="Clear" Command="{Binding ClearCommand}" />
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Class:" />
             <TextBox Grid.Row="1" Grid.Column="1"
                      Text="{Binding SelectedAccountClass, UpdateSourceTrigger=PropertyChanged}"

@@ -6,6 +6,7 @@
     using System.Windows;
     using Models.Accounting;
     using Models.Supplier;
+    using Services;
 
     public static class SupplierHelper
     {
@@ -55,43 +56,8 @@
         #region Add Supplier Helper Methods
         private static void CreateAndAddSupplierLedgerToDatabaseContext(ERPContext context, Supplier suppplier)
         {
-            var ledgerAccount = CreateSupplierLedgerAccount(suppplier);
-            context.Ledger_Accounts.Add(ledgerAccount);
-
-            var ledgerGeneral = CreateSupplierLedgerGeneral(ledgerAccount);
-            context.Ledger_General.Add(ledgerGeneral);
-
-            var ledgerAccountBalance = CreateSupplierLedgerAccountBalance(ledgerAccount);
-            context.Ledger_Account_Balances.Add(ledgerAccountBalance);
-        }
-
-        private static LedgerAccountBalance CreateSupplierLedgerAccountBalance(LedgerAccount ledgerAccount)
-        {
-            return new LedgerAccountBalance
-            {
-                LedgerAccount = ledgerAccount,
-                PeriodYear = UtilityMethods.GetCurrentDate().Year,
-            };
-        }
-
-        private static LedgerGeneral CreateSupplierLedgerGeneral(LedgerAccount ledgerAccount)
-        {
-            return new LedgerGeneral
-            {
-                LedgerAccount = ledgerAccount,
-                PeriodYear = UtilityMethods.GetCurrentDate().Year,
-                Period = UtilityMethods.GetCurrentDate().Month,
-            };
-        }
-
-        private static LedgerAccount CreateSupplierLedgerAccount(Supplier supplier)
-        {
-            return new LedgerAccount
-            {
-                Name = supplier.Name + " Accounts Payable",
-                Notes = "Accounts Payable",
-                Class = "Liability"
-            };
+            var accountName = suppplier.Name + " Accounts Payable";
+            AccountingService.CreateNewAccount(context, accountName, Constants.ACCOUNTS_PAYABLE);
         }
         #endregion
 

@@ -34,7 +34,7 @@
             _parentVM = parentVM;
             _newEntryDate = UtilityMethods.GetCurrentDate().Date;
             Accounts = new ObservableCollection<LedgerAccountVM>();
-            Sequences = new ObservableCollection<string> {"Debit", "Credit"};
+            Sequences = new ObservableCollection<string> { "Debit", "Credit" };
             UpdateAccounts();
         }
 
@@ -121,15 +121,18 @@
             {
                 Accounts.Clear();
                 var accounts = context.Ledger_Accounts
-                    .Where(account => !protectedAccounts.Contains(account.Name) && !account.Class.Equals("Equity")
-                                      && !account.Name.Contains("Revenue") &&
-                                      !account.Name.Contains("Accounts Receivable") &&
-                                      !account.Name.Contains("Accounts Payable"))
+                    .Where(
+                        account =>
+                            !protectedAccounts.Contains(account.Name) &&
+                            !account.LedgerAccountClass.Name.Equals(Constants.EQUITY)
+                            && !account.Name.Contains(Constants.REVENUE) &&
+                            !account.Name.Contains(Constants.ACCOUNTS_RECEIVABLE) &&
+                            !account.Name.Contains(Constants.ACCOUNTS_PAYABLE))
                     .OrderBy(account => account.Name)
                     .ToList();
                 foreach (var account in accounts.Where(
                     account => _parentVM.SelectedBank == null || !account.Name.Equals(_parentVM.SelectedBank.Name)))
-                    Accounts.Add(new LedgerAccountVM {Model = account});
+                    Accounts.Add(new LedgerAccountVM { Model = account });
             }
         }
 

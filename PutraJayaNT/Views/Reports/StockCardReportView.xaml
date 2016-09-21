@@ -20,7 +20,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="0.2*" />
+                <ColumnDefinition Width="0.15*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Print" Command="{Binding PrintCommand}"/>
         </Grid>
@@ -72,7 +72,7 @@
                 <TextBlock Grid.Row="2" Grid.Column="5" FontSize="16" Text="Ending Balance: " />
                 <TextBox Grid.Row="2" Grid.Column="6" Foreground="Red" Text="{Binding EndingBalanceString, Mode=OneWay}" 
                          IsReadOnly="True" IsTabStop="False" />
-                <Button Grid.Row="2" Grid.Column="7" Margin="10"  Content="Display" Command="{Binding DisplayCommand}" />
+                <Button Grid.Row="2" Grid.Column="7" Margin="10" MaxHeight="50" MaxWidth="150"  Content="Display" Command="{Binding DisplayCommand}" />
             </Grid>
         </Border>
         <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40" ItemsSource="{Binding DisplayedLines}" CanUserSortColumns="False" IsReadOnly="True">

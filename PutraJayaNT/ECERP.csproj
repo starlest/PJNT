@@ -98,6 +98,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609210223539_Update2.cs" />
+    <Compile Include="Migrations\201609210223539_Update2.Designer.cs">
+      <DependentUpon>201609210223539_Update2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Update1.cs" />
     <Compile Include="Migrations\Update1.Designer.cs">
       <DependentUpon>Update1.cs</DependentUpon>
@@ -717,6 +721,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\201609210223539_Update2.resx">
+      <DependentUpon>201609210223539_Update2.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\Update1.resx">
       <DependentUpon>Update1.cs</DependentUpon>
     </EmbeddedResource>

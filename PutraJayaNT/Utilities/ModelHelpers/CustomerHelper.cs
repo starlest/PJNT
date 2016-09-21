@@ -5,6 +5,7 @@
     using System.Windows;
     using Models.Accounting;
     using Models.Customer;
+    using Services;
 
     public static class CustomerHelper
     {
@@ -64,43 +65,8 @@
 
         private static void CreateAndAddCustomerLedgerToDatabaseContext(ERPContext context, Customer customer)
         {
-            var ledgerAccount = CreateCustomerLedgerAccount(customer);
-            context.Ledger_Accounts.Add(ledgerAccount);
-
-            var ledgerGeneral = CreateCustomerLedgerGeneral(ledgerAccount);
-            context.Ledger_General.Add(ledgerGeneral);
-
-            var ledgerAccountBalance = CreateCustomerLedgerAccountBalance(ledgerAccount);
-            context.Ledger_Account_Balances.Add(ledgerAccountBalance);
-        }
-
-        private static LedgerAccountBalance CreateCustomerLedgerAccountBalance(LedgerAccount ledgerAccount)
-        {
-            return new LedgerAccountBalance
-            {
-                LedgerAccount = ledgerAccount,
-                PeriodYear = UtilityMethods.GetCurrentDate().Year,
-            };
-        }
-
-        private static LedgerAccount CreateCustomerLedgerAccount(Customer customer)
-        {
-            return new LedgerAccount
-            {
-                Name = customer.Name + " Accounts Receivable",
-                Notes = "Accounts Receivable",
-                Class = "Asset"
-            };
-        }
-
-        private static LedgerGeneral CreateCustomerLedgerGeneral(LedgerAccount ledgerAccount)
-        {
-            return new LedgerGeneral
-            {
-                LedgerAccount = ledgerAccount,
-                PeriodYear = UtilityMethods.GetCurrentDate().Year,
-                Period = UtilityMethods.GetCurrentDate().Month,
-            };
+            var accountName = customer.Name + " Accounts Receivable";
+            AccountingService.CreateNewAccount(context, accountName, Constants.ACCOUNTS_RECEIVABLE);
         }
         #endregion
 

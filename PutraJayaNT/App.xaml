@@ -33,7 +33,7 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="Height" Value="30" />
+                <Setter Property="Height" Value="25" />
                 <Setter Property="Margin" Value="10, 5, 10, 0"/>
             </Style>
             <Style TargetType="{x:Type ComboBox}">

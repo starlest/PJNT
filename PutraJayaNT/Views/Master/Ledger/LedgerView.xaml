@@ -38,7 +38,7 @@
                 <TextBlock Grid.Row="1" Grid.Column="2" Foreground="Blue" Text="Group:" />
                 <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding Groups}"
                           SelectedItem="{Binding NewEntryGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Button Grid.Row="1" Grid.Column="4" Margin="20, 25, 20, 15" Content="Add"
+                <Button Grid.Row="1" Grid.Column="4" Margin="20, 25, 20, 15" MaxWidth="150" Content="Add"
                         Command="{Binding NewEntryCommand}" />
             </Grid>
         </Border>

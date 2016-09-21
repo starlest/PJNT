@@ -27,6 +27,8 @@
 
         private ICommand _displayCommand;
         private ICommand _printCommand;
+        private ICommand _clearCommand;
+
         #endregion
 
         public GeneralLedgerVM()
@@ -113,6 +115,18 @@
                     SetSelectedAccountClass();
                     RefreshDisplayLines();
                     UpdateUI();
+                    UpdateAccounts();
+                }));
+            }
+        }
+
+        public ICommand ClearCommand
+        {
+            get
+            {
+                return _clearCommand ?? (_clearCommand = new RelayCommand(() =>
+                {
+                    ResetUI();
                     UpdateAccounts();
                 }));
             }
@@ -241,7 +255,6 @@
             }
         }
 
-
         private void SetSelectedAccountClass()
         {
             SelectedAccountClass = _selectedAccount.LedgerAccountClass.Name;
@@ -258,6 +271,8 @@
         private void ResetUI()
         {
             SelectedAccountClass = null;
+            SelectedBeginningBalance = 0;
+            SelectedEndingBalance = 0;
             TotalDebit = 0;
             TotalCredit = 0;
             DisplayedTransactionLines.Clear();

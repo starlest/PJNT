@@ -458,7 +458,7 @@
                             }
                         }
 
-                        MessageBox.Show(string.Format("Check done. \n Total Lines: {0}", transactionLines.Count), "Successful", MessageBoxButton.OK);
+                        MessageBox.Show($"Check done. \n Total Lines: {transactionLines.Count}", "Successful", MessageBoxButton.OK);
                     }
                 }));
             }
@@ -476,6 +476,7 @@
                         .Include("LedgerTransactionLines")
                         .Include("LedgerGeneral")
                         .ToList();
+
                         var count = 0;
                         foreach (var a in accounts)
                         {

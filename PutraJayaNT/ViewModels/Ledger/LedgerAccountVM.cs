@@ -32,12 +32,6 @@
             set { Model.Notes = value; }
         }
 
-        public string Class
-        {
-            get { return Model.Class; }
-            set { Model.Class = value; }
-        }
-
         public int PeriodYear
         {
             get { return Model.LedgerGeneral.PeriodYear; }

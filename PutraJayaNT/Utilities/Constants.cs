@@ -21,6 +21,7 @@
         public const string EXPENSE = "Expense";
         public const string REVENUE = "Revenue";
 
+        public const string CURRENT_ASSET = "Current Asset";
         public const string ACCOUNTS_RECEIVABLE = "Accounts Receivable";
         public const string ACCOUNTS_PAYABLE = "Accounts Payable";
         public const string OPERATING_EXPENSE = "Operating Expense";

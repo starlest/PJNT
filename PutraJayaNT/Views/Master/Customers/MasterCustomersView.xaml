@@ -9,6 +9,10 @@
         <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="FontSize" Value="20" />
         </Style>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="MaxWidth" Value="150" />
+            <Setter Property="MaxHeight" Value="50" />
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -78,7 +82,8 @@
             <TextBlock Grid.Column="6" Foreground="Red" Text="City:" />
             <ComboBox Grid.Column="7" ItemsSource="{Binding Cities}"
                       SelectedItem="{Binding SelectedCity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Column="8" Content="Search" Margin="10" Command="{Binding SearchCommand}" />
+            <Button Grid.Column="8" Foreground="Black" Content="Search" Margin="10" Command="{Binding SearchCommand}"
+                    MaxWidth="150" />
         </Grid>
         <DataGrid Grid.Row="2" LoadingRow="DataGrid_LoadingRow" RowHeaderWidth="40"
                   ItemsSource="{Binding DisplayedCustomers}" SelectedItem="{Binding SelectedLine}"
