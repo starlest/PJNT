@@ -140,6 +140,7 @@
                 SetProperty(ref _selectedSupplier, value, () => SelectedSupplier);
                 if (_selectedSupplier == null) return;
                 UpdateSuppliers();
+                ResetUI();
                 UpdateSupplierUnpaidPurchases();
                 PurchaseReturnCredits = value.PurchaseReturnCredits;
             }
@@ -274,6 +275,17 @@
             UpdatePaymentMethods();
             SelectedPurchaseLines.Clear();
             SupplierUnpaidPurchases.Clear();
+        }
+
+        private void ResetUI()
+        {
+            SelectedPurchaseTransaction = null;
+            PurchaseReturnCredits = 0;
+            PurchaseTransactionGrossTotal = 0;
+            PurchaseTransactionTotal = 0;
+            Remaining = 0;
+            UseCredits = 0;
+            Pay = 0;
         }
 
         private void TriggerPaymentButtonStyle()

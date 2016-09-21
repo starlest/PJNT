@@ -26,11 +26,11 @@
             Classes = new ObservableCollection<string>
             {
                 Constants.ALL,
-                Constants.ASSET,
-                Constants.LIABILITY,
-                Constants.EQUITY,
-                Constants.EXPENSE,
-                Constants.REVENUE
+                Constants.LedgerAccountClasses.ASSET,
+                Constants.LedgerAccountClasses.LIABILITY,
+                Constants.LedgerAccountClasses.EQUITY,
+                Constants.LedgerAccountClasses.EXPENSE,
+                Constants.LedgerAccountClasses.REVENUE
             };
 
             Groups = new ObservableCollection<string>

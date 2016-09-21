@@ -53,7 +53,7 @@
                     Name = accountName,
                     Notes = Constants.CURRENT_ASSET,
                     LedgerAccountClass =
-                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.ASSET)),
+                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
@@ -65,7 +65,7 @@
                     Name = accountName,
                     Notes = Constants.OPERATING_EXPENSE,
                     LedgerAccountClass =
-                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.EXPENSE)),
+                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
@@ -77,7 +77,7 @@
                     Name = accountName,
                     Notes = Constants.ACCOUNTS_RECEIVABLE,
                     LedgerAccountClass =
-                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.ASSET)),
+                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
@@ -89,7 +89,7 @@
                     Name = accountName,
                     Notes = Constants.ACCOUNTS_PAYABLE,
                     LedgerAccountClass =
-                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LIABILITY)),
+                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.LIABILITY)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
@@ -97,9 +97,9 @@
             return new LedgerAccount
             {
                 Name = accountName,
-                Notes = Constants.EXPENSE,
+                Notes = Constants.LedgerAccountClasses.EXPENSE,
                 LedgerAccountClass =
-                    ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.EXPENSE)),
+                    ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)),
                 LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
             };
         }

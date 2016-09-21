@@ -15,9 +15,9 @@ namespace ECRP.Utilities
 
     public class ERPContext : DbContext
     {
-//        public ERPContext()
-//        {
-//        }
+        public ERPContext()
+        {
+        }
 
         public ERPContext(string dbName, string ipAddress)
             : base(GetConnectionString(dbName, ipAddress))
@@ -68,6 +68,7 @@ namespace ECRP.Utilities
         #region Accounting 
         public virtual DbSet<LedgerAccount> Ledger_Accounts { get; set; }
         public virtual DbSet<LedgerAccountClass> Ledger_Account_Classes { get; set; }
+        public virtual DbSet<LedgerAccountGroup> Ledger_Account_Groups { get; set; }
         public virtual DbSet<LedgerTransaction> Ledger_Transactions { get; set; }
         public virtual DbSet<LedgerTransactionLine> Ledger_Transaction_Lines { get; set; }
         public virtual DbSet<LedgerGeneral> Ledger_General { get; set; }

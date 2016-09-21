@@ -186,8 +186,8 @@
                     .Include("LedgerAccount")
                     .OrderBy(e => e.LedgerTransaction.Date);
 
-                if (_selectedAccount.LedgerAccountClass.Name.Equals(Constants.ASSET) ||
-                    _selectedAccount.LedgerAccountClass.Name.Equals(Constants.EXPENSE)) _normalSeq = Constants.DEBIT;
+                if (_selectedAccount.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET) ||
+                    _selectedAccount.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)) _normalSeq = Constants.DEBIT;
                 else _normalSeq = Constants.CREDIT;
 
                 foreach (var opposingLine in transactionLines.ToList().Select(

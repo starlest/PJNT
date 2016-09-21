@@ -124,8 +124,8 @@
                     .Where(
                         account =>
                             !protectedAccounts.Contains(account.Name) &&
-                            !account.LedgerAccountClass.Name.Equals(Constants.EQUITY)
-                            && !account.Name.Contains(Constants.REVENUE) &&
+                            !account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EQUITY)
+                            && !account.Name.Contains(Constants.LedgerAccountClasses.REVENUE) &&
                             !account.Name.Contains(Constants.ACCOUNTS_RECEIVABLE) &&
                             !account.Name.Contains(Constants.ACCOUNTS_PAYABLE))
                     .OrderBy(account => account.Name)

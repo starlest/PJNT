@@ -9,8 +9,6 @@
 
     internal class BalanceSheetVM : ViewModelBase
     {
-        readonly List<int> _months;
-
         int _periodYear;
         int _periodMonth;
 
@@ -30,21 +28,18 @@
 
         public BalanceSheetVM()
         {
-            _months = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            Months = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
             _periodYear = UtilityMethods.GetCurrentDate().Year;
-            _periodMonth = UtilityMethods.GetCurrentDate().Month;
+            _periodMonth = UtilityMethods.GetCurrentDate().Month - 1;
         }
 
-        public List<int> Months
-        {
-            get { return _months;  }
-        }
+        public List<int> Months { get; }
 
         public int PeriodYear
         {
             get { return _periodYear; }
-            set { SetProperty(ref _periodYear, value, "PeriodYear"); }
+            set { SetProperty(ref _periodYear, value, () => PeriodYear); }
         }
 
         public int PeriodMonth
@@ -52,18 +47,12 @@
             get { return _periodMonth; }
             set
             {
-                SetProperty(ref _periodMonth, value, "PeriodMonth");
+                SetProperty(ref _periodMonth, value, () => PeriodMonth);
                 RefreshBalanceSheet();
             }
         }
 
-        public string AsOfDate
-        { 
-            get
-            {
-                return "As of 31/" + _periodMonth + "/" + _periodYear;
-            }
-        }
+        public string AsOfDate => "As of 31/" + _periodMonth + "/" + _periodYear;
 
         public decimal CashAndCashEquivalents
         {

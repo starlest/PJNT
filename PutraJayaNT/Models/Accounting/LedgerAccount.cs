@@ -24,6 +24,8 @@
 
         public virtual LedgerAccountClass LedgerAccountClass { get; set; }
 
+        public virtual LedgerAccountGroup LedgerAccountGroup { get; set; }
+
         public virtual LedgerGeneral LedgerGeneral { get; set; }
 
         public virtual ObservableCollection<LedgerAccountBalance> LedgerAccountBalances { get; set; }

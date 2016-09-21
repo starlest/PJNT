@@ -8,30 +8,29 @@ namespace ECRP.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationsEnabled = false;
         }
 
         protected override void Seed(ERPContext context)
         {
             context.Ledger_Account_Classes.AddOrUpdate(
-                new LedgerAccountClass { Name = "Asset" },
-                new LedgerAccountClass { Name = "Liability" },
-                new LedgerAccountClass { Name = "Equity" },
-                new LedgerAccountClass { Name = "Expense" },
-                new LedgerAccountClass { Name = "Revenue" }
+                accountClass => accountClass.Name,
+                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.ASSET },
+                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.LIABILITY },
+                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.EQUITY },
+                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.EXPENSE },
+                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.REVENUE }
                 );
-            //  This method will be called after migrating to the latest version.
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            context.Ledger_Account_Groups.AddOrUpdate(
+                accountGroup => accountGroup.Name,
+                new LedgerAccountGroup { Name = Constants.CURRENT_ASSET },
+                new LedgerAccountGroup { Name = Constants.OPERATING_EXPENSE },
+                new LedgerAccountGroup { Name = Constants.ACCOUNTS_PAYABLE },
+                new LedgerAccountGroup { Name = Constants.ACCOUNTS_RECEIVABLE },
+                new LedgerAccountGroup { Name = Constants.COST_OF_GOODS_SOLD },
+                new LedgerAccountGroup { Name = Constants.RETAINED_EARNINGS }
+                );
         }
     }
 }

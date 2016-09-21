@@ -7,12 +7,10 @@ namespace ECRP.Migrations
     {
         public override void Up()
         {
-            DropColumn("dbo.Ledger_Accounts", "Class");
         }
         
         public override void Down()
         {
-            AddColumn("dbo.Ledger_Accounts", "Class", c => c.String(nullable: false, unicode: false));
         }
     }
 }

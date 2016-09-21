@@ -58,7 +58,7 @@
             get { return _selectedCustomer; }
             set
             {
-                SetProperty(ref _selectedCustomer, value, "SelectedCustomer");
+                SetProperty(ref _selectedCustomer, value, () => SelectedCustomer);
                 if (_selectedCustomer == null) return;
                 UpdateUIAccordingToSelectedCustomer();
                 UpdateCustomers();
@@ -70,7 +70,7 @@
             get { return _selectedSalesTransaction; }
             set
             {
-                SetProperty(ref _selectedSalesTransaction, value, "SelectedSalesTransaction");
+                SetProperty(ref _selectedSalesTransaction, value, () => SelectedSalesTransaction);
 
                 if (_selectedSalesTransaction == null) return;
 
@@ -87,13 +87,13 @@
         public string SelectedPaymentMode
         {
             get { return _selectedPaymentMode; }
-            set { SetProperty(ref _selectedPaymentMode, value, "SelectedPaymentMode"); }
+            set { SetProperty(ref _selectedPaymentMode, value, () => SelectedPaymentMode); }
         }
 
         public decimal SalesReturnCredits
         {
             get { return _salesReturnCredits; }
-            set { SetProperty(ref _salesReturnCredits, value, "SalesReturnCredits"); }
+            set { SetProperty(ref _salesReturnCredits, value, () => SalesReturnCredits); }
         }
         #endregion
 
@@ -230,6 +230,7 @@
 
         private void UpdateUIAccordingToSelectedCustomer()
         {
+            ResetUI();
             SalesReturnCredits = _selectedCustomer.SalesReturnCredits;
             UpdateCustomerUnpaidSalesTransactions();
             SelectedSalesTransactionLines.Clear();
@@ -300,15 +301,20 @@
             SelectedCustomer = null;
             SelectedPaymentMode = null;
             SelectedSalesTransaction = null;
+            ResetUI();
+            SelectedSalesTransactionLines.Clear();
+            CustomerUnpaidSalesTransactions.Clear();
+            IsCollectionSuccess = true;
+        }
+
+        private void ResetUI()
+        {
             SalesTransactionTotal = 0;
             SalesReturnCredits = 0;
             SalesTransactionGrossTotal = 0;
             UseCredits = 0;
             Remaining = 0;
             CollectionAmount = 0;
-            SelectedSalesTransactionLines.Clear();
-            CustomerUnpaidSalesTransactions.Clear();
-            IsCollectionSuccess = true;
         }
 
         private void UpdateRemaining()

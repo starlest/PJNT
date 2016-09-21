@@ -88,7 +88,7 @@
                 {
                     ID = -1,
                     Name = "Sales Receipt",
-                    LedgerAccountClass = accountClasses.First(accountClass => accountClass.Name.Equals(Constants.ASSET))
+                    LedgerAccountClass = accountClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET))
                 };
                 var transaction = new LedgerTransaction
                 {
