@@ -45,7 +45,8 @@
             {
                 var context = UtilityMethods.createContext();
                 RecordEditedPurchaseTransactionLedgerTransactionsInDatabaseContext(context, editedPurchaseTransaction);
-                SetPurchaseTransactionInDatabaseContextToEditedPurchaseTransactionProperties(context, editedPurchaseTransaction);
+                SetPurchaseTransactionInDatabaseContextToEditedPurchaseTransactionProperties(context,
+                    editedPurchaseTransaction);
                 ts.Complete();
             }
 
@@ -89,6 +90,12 @@
         public static void MakePayment(PurchaseTransaction purchaseTransaction, decimal paymentAmount,
             decimal useCreditsAmount, string paymentMode)
         {
+            if (purchaseTransaction.Paid + useCreditsAmount + paymentAmount > purchaseTransaction.Total)
+            {
+                MessageBox.Show("There was a problem making the payment. Please contact Edwin.", "Invalid Amount",
+                    MessageBoxButton.OK);
+                return;
+            }
             using (var ts = new TransactionScope())
             {
                 var context = UtilityMethods.createContext();
@@ -105,7 +112,9 @@
         }
 
         #region Add New Transaction Helper Methods
-        private static void AttachPurchaseTransactionLineToDatabaseContext(ERPContext context, PurchaseTransactionLine line)
+
+        private static void AttachPurchaseTransactionLineToDatabaseContext(ERPContext context,
+            PurchaseTransactionLine line)
         {
             line.Item = context.Inventory.Single(item => item.ItemID.Equals(line.Item.ItemID));
             line.Warehouse = context.Warehouses.Single(warehouse => warehouse.ID.Equals(line.Warehouse.ID));
@@ -125,29 +134,39 @@
                 stockFromDatabase.Pieces += line.Quantity;
         }
 
-        private static void RecordPurchaseLedgerTransactionInDatabaseContext(ERPContext context, PurchaseTransaction purchaseTransaction)
+        private static void RecordPurchaseLedgerTransactionInDatabaseContext(ERPContext context,
+            PurchaseTransaction purchaseTransaction)
         {
             var purchaseLedgerTransaction = new LedgerTransaction();
             var accountsPayableName = purchaseTransaction.Supplier.Name + " Accounts Payable";
-            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, purchaseLedgerTransaction, UtilityMethods.GetCurrentDate(), purchaseTransaction.PurchaseID, "Purchase Transaction")) return;
+            if (
+                !LedgerTransactionHelper.AddTransactionToDatabase(context, purchaseLedgerTransaction,
+                    UtilityMethods.GetCurrentDate(), purchaseTransaction.PurchaseID, "Purchase Transaction")) return;
             context.SaveChanges();
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, "Inventory", "Debit", purchaseTransaction.Total);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, accountsPayableName, "Credit", purchaseTransaction.Total);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, "Inventory",
+                "Debit", purchaseTransaction.Total);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, accountsPayableName,
+                "Credit", purchaseTransaction.Total);
             context.SaveChanges();
         }
 
-        private static void AttachPurchaseTransactionPropertiesToDatabaseContext(ERPContext context, PurchaseTransaction purchaseTransaction)
+        private static void AttachPurchaseTransactionPropertiesToDatabaseContext(ERPContext context,
+            PurchaseTransaction purchaseTransaction)
         {
-            purchaseTransaction.Supplier = context.Suppliers.Single(supplier => supplier.ID.Equals(purchaseTransaction.Supplier.ID));
+            purchaseTransaction.Supplier =
+                context.Suppliers.Single(supplier => supplier.ID.Equals(purchaseTransaction.Supplier.ID));
             var currentUser = Application.Current.FindResource("CurrentUser") as User;
             purchaseTransaction.User = context.Users.Single(user => user.Username.Equals(currentUser.Username));
             context.PurchaseTransactions.Add(purchaseTransaction);
             context.SaveChanges();
         }
+
         #endregion
-  
+
         #region Edit Transaction Helper Methods
-        private static void RecordEditedPurchaseTransactionLedgerTransactionsInDatabaseContext(ERPContext context, PurchaseTransaction editedPurchaseTransaction)
+
+        private static void RecordEditedPurchaseTransactionLedgerTransactionsInDatabaseContext(ERPContext context,
+            PurchaseTransaction editedPurchaseTransaction)
         {
             var transactionFromDatabase = context.PurchaseTransactions
                 .Include("PurchaseTransactionLines")
@@ -158,36 +177,45 @@
             if (transactionFromDatabase.Total != editedPurchaseTransaction.Total)
             {
                 var valueChanged = editedPurchaseTransaction.Total - transactionFromDatabase.Total;
-                RecordEditedPurchaseTransactionNetTotalChangedLedgerTransactionInDatabaseContext(context, editedPurchaseTransaction, valueChanged);
+                RecordEditedPurchaseTransactionNetTotalChangedLedgerTransactionInDatabaseContext(context,
+                    editedPurchaseTransaction, valueChanged);
             }
 
             var transactionFromDatabaseTotalCOGS = CalculatePurchaseTransactionTotalCOGS(transactionFromDatabase);
             var editedtransactionTotalCOGS = CalculatePurchaseTransactionTotalCOGS(editedPurchaseTransaction);
             var totalCOGSChanged = editedtransactionTotalCOGS - transactionFromDatabaseTotalCOGS;
             if (totalCOGSChanged != 0)
-                RecordEditedPurchaseTransactionTotalCOGSChangedLedgerTransactionInDatabaseContext(context, editedPurchaseTransaction, totalCOGSChanged);
+                RecordEditedPurchaseTransactionTotalCOGSChangedLedgerTransactionInDatabaseContext(context,
+                    editedPurchaseTransaction, totalCOGSChanged);
         }
 
-        private static void RecordEditedPurchaseTransactionNetTotalChangedLedgerTransactionInDatabaseContext(ERPContext context, PurchaseTransaction editedPurchaseTransaction, decimal valueChanged)
+        private static void RecordEditedPurchaseTransactionNetTotalChangedLedgerTransactionInDatabaseContext(
+            ERPContext context, PurchaseTransaction editedPurchaseTransaction, decimal valueChanged)
         {
             var purchaseTransactionNetTotalChangedLedgerTransaction = new LedgerTransaction();
 
-            LedgerTransactionHelper.AddTransactionToDatabase(context, purchaseTransactionNetTotalChangedLedgerTransaction,
-                UtilityMethods.GetCurrentDate().Date, editedPurchaseTransaction.PurchaseID, "Purchase Transaction Adjustment");
+            LedgerTransactionHelper.AddTransactionToDatabase(context,
+                purchaseTransactionNetTotalChangedLedgerTransaction,
+                UtilityMethods.GetCurrentDate().Date, editedPurchaseTransaction.PurchaseID,
+                "Purchase Transaction Adjustment");
             context.SaveChanges();
 
             if (valueChanged > 0)
             {
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseTransactionNetTotalChangedLedgerTransaction, "Inventory",
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context,
+                    purchaseTransactionNetTotalChangedLedgerTransaction, "Inventory",
                     "Debit", valueChanged);
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseTransactionNetTotalChangedLedgerTransaction,
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context,
+                    purchaseTransactionNetTotalChangedLedgerTransaction,
                     $"{editedPurchaseTransaction.Supplier.Name} Accounts Payable", "Credit", valueChanged);
             }
             else
             {
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseTransactionNetTotalChangedLedgerTransaction,
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context,
+                    purchaseTransactionNetTotalChangedLedgerTransaction,
                     $"{editedPurchaseTransaction.Supplier.Name} Accounts Payable", "Debit", -valueChanged);
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseTransactionNetTotalChangedLedgerTransaction, "Inventory",
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context,
+                    purchaseTransactionNetTotalChangedLedgerTransaction, "Inventory",
                     "Credit", -valueChanged);
             }
             context.SaveChanges();
@@ -216,23 +244,32 @@
             ERPContext context, PurchaseTransaction editedPurchaseTransaction, decimal totalCOGSChanged)
         {
             var purchaseTransactionTotalCOGSChangedLedgerTransaction = new LedgerTransaction();
-            LedgerTransactionHelper.AddTransactionToDatabase(context, purchaseTransactionTotalCOGSChangedLedgerTransaction, UtilityMethods.GetCurrentDate().Date, editedPurchaseTransaction.PurchaseID, "Purchase Transaction Adjustment (COGS)");
+            LedgerTransactionHelper.AddTransactionToDatabase(context,
+                purchaseTransactionTotalCOGSChangedLedgerTransaction, UtilityMethods.GetCurrentDate().Date,
+                editedPurchaseTransaction.PurchaseID, "Purchase Transaction Adjustment (COGS)");
             context.SaveChanges();
 
             if (totalCOGSChanged > 0)
             {
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseTransactionTotalCOGSChangedLedgerTransaction, "Cost of Goods Sold", "Debit", totalCOGSChanged);
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseTransactionTotalCOGSChangedLedgerTransaction, "Inventory", "Credit", totalCOGSChanged);
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context,
+                    purchaseTransactionTotalCOGSChangedLedgerTransaction, "Cost of Goods Sold", "Debit",
+                    totalCOGSChanged);
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context,
+                    purchaseTransactionTotalCOGSChangedLedgerTransaction, "Inventory", "Credit", totalCOGSChanged);
             }
             else
             {
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseTransactionTotalCOGSChangedLedgerTransaction, "Inventory", "Debit", -totalCOGSChanged);
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseTransactionTotalCOGSChangedLedgerTransaction, "Cost of Goods Sold", "Credit", -totalCOGSChanged);
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context,
+                    purchaseTransactionTotalCOGSChangedLedgerTransaction, "Inventory", "Debit", -totalCOGSChanged);
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context,
+                    purchaseTransactionTotalCOGSChangedLedgerTransaction, "Cost of Goods Sold", "Credit",
+                    -totalCOGSChanged);
             }
             context.SaveChanges();
         }
 
-        private static void SetPurchaseTransactionInDatabaseContextToEditedPurchaseTransactionProperties(ERPContext context, PurchaseTransaction editedPurchaseTransaction)
+        private static void SetPurchaseTransactionInDatabaseContextToEditedPurchaseTransactionProperties(
+            ERPContext context, PurchaseTransaction editedPurchaseTransaction)
         {
             var transactionFromDatabase = context.PurchaseTransactions
                 .Include("Supplier")
@@ -262,21 +299,25 @@
             {
                 editedLine.PurchaseTransaction = transactionFromDatabase;
                 editedLine.Item = context.Inventory.Single(item => item.ItemID.Equals(editedLine.Item.ItemID));
-                editedLine.Warehouse = context.Warehouses.Single(warehouse => warehouse.ID.Equals(editedLine.Warehouse.ID));
+                editedLine.Warehouse =
+                    context.Warehouses.Single(warehouse => warehouse.ID.Equals(editedLine.Warehouse.ID));
                 context.PurchaseTransactionLines.Add(editedLine);
                 context.SaveChanges();
             }
 
             context.SaveChanges();
         }
+
         #endregion
 
         #region Delete Transaction Helper Methods
-        private static bool IsThereEnoughLineItemStockInDatabaseContext(ERPContext context, PurchaseTransactionLine purchaseTransactionLine)
+
+        private static bool IsThereEnoughLineItemStockInDatabaseContext(ERPContext context,
+            PurchaseTransactionLine purchaseTransactionLine)
         {
             var stockFromDatabase = context.Stocks.SingleOrDefault(
                 stock => stock.Item.ItemID.Equals(purchaseTransactionLine.Item.ItemID) &&
-                stock.Warehouse.ID.Equals(purchaseTransactionLine.Warehouse.ID));
+                         stock.Warehouse.ID.Equals(purchaseTransactionLine.Warehouse.ID));
             if (stockFromDatabase != null && stockFromDatabase.Pieces >= purchaseTransactionLine.Quantity)
                 return true;
             var availableQuantity = stockFromDatabase?.Pieces ?? 0;
@@ -286,16 +327,18 @@
             return false;
         }
 
-        private static void DecreasePurchaseTransactionLineItemStockInDatabaseContext(ERPContext context, PurchaseTransactionLine purchaseTransactionLine)
+        private static void DecreasePurchaseTransactionLineItemStockInDatabaseContext(ERPContext context,
+            PurchaseTransactionLine purchaseTransactionLine)
         {
             var stockFromDatabase = context.Stocks.Single(
                 stock => stock.Item.ItemID.Equals(purchaseTransactionLine.Item.ItemID) &&
-                stock.Warehouse.ID.Equals(purchaseTransactionLine.Warehouse.ID));
+                         stock.Warehouse.ID.Equals(purchaseTransactionLine.Warehouse.ID));
             stockFromDatabase.Pieces -= purchaseTransactionLine.Quantity;
             if (stockFromDatabase.Pieces == 0) context.Stocks.Remove(stockFromDatabase);
         }
 
-        private static void AddPurchaseTransactionDeletionLedgerTransactionToDatabaseContext(ERPContext context, PurchaseTransaction purchaseTransaction)
+        private static void AddPurchaseTransactionDeletionLedgerTransactionToDatabaseContext(ERPContext context,
+            PurchaseTransaction purchaseTransaction)
         {
             var purchaseDeletionLedgerTransaction = new LedgerTransaction();
             if (
@@ -309,21 +352,29 @@
                 "Credit", purchaseTransaction.Total);
             context.SaveChanges();
         }
+
         #endregion
 
         #region Payment helper Methods
-        private static void RecordPaymentLedgerTransactionInDatabaseContext(ERPContext context, PurchaseTransaction purchaseTransaction, decimal paymentAmount, string paymentMode)
+
+        private static void RecordPaymentLedgerTransactionInDatabaseContext(ERPContext context,
+            PurchaseTransaction purchaseTransaction, decimal paymentAmount, string paymentMode)
         {
             var accountsPayableName = purchaseTransaction.Supplier.Name + " Accounts Payable";
             var paymentLedgerTransaction = new LedgerTransaction();
 
-            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, paymentLedgerTransaction, UtilityMethods.GetCurrentDate(), purchaseTransaction.PurchaseID, "Purchase Payment")) return;
+            if (
+                !LedgerTransactionHelper.AddTransactionToDatabase(context, paymentLedgerTransaction,
+                    UtilityMethods.GetCurrentDate(), purchaseTransaction.PurchaseID, "Purchase Payment")) return;
             context.SaveChanges();
 
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, paymentLedgerTransaction, accountsPayableName, "Debit", paymentAmount);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, paymentLedgerTransaction, paymentMode, "Credit", paymentAmount);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, paymentLedgerTransaction, accountsPayableName,
+                "Debit", paymentAmount);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, paymentLedgerTransaction, paymentMode,
+                "Credit", paymentAmount);
             context.SaveChanges();
         }
+
         #endregion
     }
 }

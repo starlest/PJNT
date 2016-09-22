@@ -42,7 +42,8 @@
                 var context = UtilityMethods.createContext();
                 var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context,
                     editedSalesTransaction);
-                AssignEditedPropertiesToSalesTransactionFromDatabaseContext(editedSalesTransaction, salesTransactionFromDatabaseContext);
+                AssignEditedPropertiesToSalesTransactionFromDatabaseContext(editedSalesTransaction,
+                    salesTransactionFromDatabaseContext);
                 AttachSalesTransactionPropertiesToDatabaseContext(context, salesTransactionFromDatabaseContext);
                 AssignEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(context, editedSalesTransaction,
                     salesTransactionFromDatabaseContext);
@@ -61,14 +62,17 @@
             {
                 var context = UtilityMethods.createContext();
 
-                var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context, editedSalesTransaction);
+                var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context,
+                    editedSalesTransaction);
 
                 if (salesTransactionFromDatabaseContext.NetTotal != editedSalesTransaction.NetTotal)
-                    RecordSalesRevenueAdjustmentLedgerTransaction(context, editedSalesTransaction, salesTransactionFromDatabaseContext);
+                    RecordSalesRevenueAdjustmentLedgerTransaction(context, editedSalesTransaction,
+                        salesTransactionFromDatabaseContext);
 
                 AssignEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(context, editedSalesTransaction,
                     salesTransactionFromDatabaseContext);
-                AssignEditedInvoiceIssuedSalesTransactionPropertiesToSalesTransactionFromDatabaseContext(editedSalesTransaction, salesTransactionFromDatabaseContext);
+                AssignEditedInvoiceIssuedSalesTransactionPropertiesToSalesTransactionFromDatabaseContext(
+                    editedSalesTransaction, salesTransactionFromDatabaseContext);
                 context.SaveChanges();
                 ts.Complete();
             }
@@ -102,21 +106,8 @@
             IsLastSaveSuccessful = false;
         }
 
-        public static void Collect(SalesTransaction salesTransaction, decimal creditsUsed, decimal collectionAmount, string paymentMode)
-        {
-            using (var ts = new TransactionScope())
-            {
-                var context = UtilityMethods.createContext();
-                context.Entry(salesTransaction).State = EntityState.Modified;
-                salesTransaction.Paid += collectionAmount + creditsUsed;
-                salesTransaction.Customer.SalesReturnCredits -= creditsUsed;
-                SaveCollectionLedgerTransactionInDatabase(context, salesTransaction, collectionAmount, paymentMode);
-                context.SaveChanges();
-                ts.Complete();
-            }
-        }
-
         #region Add Transaction Helper Methods
+
         private static void AttachSalesTransactionLineToDatabaseContext(ERPContext context, SalesTransactionLine line)
         {
             line.Item = context.Inventory.Single(item => item.ItemID.Equals(line.Item.ItemID));
@@ -132,18 +123,23 @@
             if (stockFromDatabase.Pieces == 0) context.Stocks.Remove(stockFromDatabase);
         }
 
-        private static void AttachSalesTransactionPropertiesToDatabaseContext(ERPContext context, SalesTransaction salesTransaction)
+        private static void AttachSalesTransactionPropertiesToDatabaseContext(ERPContext context,
+            SalesTransaction salesTransaction)
         {
-            salesTransaction.Customer = context.Customers.Single(customer => customer.ID.Equals(salesTransaction.Customer.ID));
+            salesTransaction.Customer =
+                context.Customers.Single(customer => customer.ID.Equals(salesTransaction.Customer.ID));
             salesTransaction.User = context.Users.Single(user => user.Username.Equals(salesTransaction.User.Username));
-            salesTransaction.CollectionSalesman = salesTransaction.CollectionSalesman == null ? 
-                context.Salesmans.Single(salesman => salesman.Name.Equals(" ")) : 
-                context.Salesmans.Single(salesman => salesman.ID.Equals(salesTransaction.CollectionSalesman.ID));
+            salesTransaction.CollectionSalesman = salesTransaction.CollectionSalesman == null
+                ? context.Salesmans.Single(salesman => salesman.Name.Equals(" "))
+                : context.Salesmans.Single(salesman => salesman.ID.Equals(salesTransaction.CollectionSalesman.ID));
         }
+
         #endregion
 
         #region Edit Not Issued Invoice Transaction Helper Methods
-        private static void AssignEditedPropertiesToSalesTransactionFromDatabaseContext(SalesTransaction editedSalesTransaction, SalesTransaction salesTransactionFromDatabaseContext)
+
+        private static void AssignEditedPropertiesToSalesTransactionFromDatabaseContext(
+            SalesTransaction editedSalesTransaction, SalesTransaction salesTransactionFromDatabaseContext)
         {
             salesTransactionFromDatabaseContext.Date = editedSalesTransaction.Date;
             salesTransactionFromDatabaseContext.DueDate = editedSalesTransaction.DueDate;
@@ -158,7 +154,8 @@
             salesTransactionFromDatabaseContext.User = editedSalesTransaction.User;
         }
 
-        private static void AssignEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(ERPContext context, SalesTransaction editedSalesTransaction, SalesTransaction salesTransactionFromDatabaseContext)
+        private static void AssignEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(ERPContext context,
+            SalesTransaction editedSalesTransaction, SalesTransaction salesTransactionFromDatabaseContext)
         {
             RemoveAllSalesTransactionLinesFromSalesTransactionFromDatabaseContext(
                 context, salesTransactionFromDatabaseContext);
@@ -166,7 +163,8 @@
                 context, editedSalesTransaction);
         }
 
-        private static void RemoveAllSalesTransactionLinesFromSalesTransactionFromDatabaseContext(ERPContext context, SalesTransaction salesTransactionFromDatabaseContext)
+        private static void RemoveAllSalesTransactionLinesFromSalesTransactionFromDatabaseContext(ERPContext context,
+            SalesTransaction salesTransactionFromDatabaseContext)
         {
             var originalTransactionLines = salesTransactionFromDatabaseContext.SalesTransactionLines.ToList();
             foreach (var line in originalTransactionLines)
@@ -194,7 +192,8 @@
             }
         }
 
-        private static void AddAllEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(ERPContext context, SalesTransaction editedSalesTransaction)
+        private static void AddAllEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(ERPContext context,
+            SalesTransaction editedSalesTransaction)
         {
             var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context, editedSalesTransaction);
             foreach (var line in editedSalesTransaction.SalesTransactionLines.ToList())
@@ -207,26 +206,31 @@
             }
         }
 
-        private static SalesTransaction GetDatabaseContextSalesTransaction(ERPContext context, SalesTransaction salesTransaction)
+        private static SalesTransaction GetDatabaseContextSalesTransaction(ERPContext context,
+            SalesTransaction salesTransaction)
         {
             return context.SalesTransactions
-                    .Include("Customer")
-                    .Include("SalesTransactionLines")
-                    .Include("SalesTransactionLines.Salesman")
-                    .Include("SalesTransactionLines.Warehouse")
-                    .Include("SalesTransactionLines.Item")
-                    .Single(e => e.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
+                .Include("Customer")
+                .Include("SalesTransactionLines")
+                .Include("SalesTransactionLines.Salesman")
+                .Include("SalesTransactionLines.Warehouse")
+                .Include("SalesTransactionLines.Item")
+                .Single(e => e.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
         }
+
         #endregion
 
         #region Edit Issued Invoice Transaction Helper Methods
-        private static void RecordSalesRevenueAdjustmentLedgerTransaction(ERPContext context, SalesTransaction editedSalesTransaction, SalesTransaction transactionFromDatabaseContext)
+
+        private static void RecordSalesRevenueAdjustmentLedgerTransaction(ERPContext context,
+            SalesTransaction editedSalesTransaction, SalesTransaction transactionFromDatabaseContext)
         {
             var transactionTotalDifference = editedSalesTransaction.NetTotal - transactionFromDatabaseContext.NetTotal;
 
             var salesRevenueAdjustmentLedgerTransaction = new LedgerTransaction();
             LedgerTransactionHelper.AddTransactionToDatabase(context, salesRevenueAdjustmentLedgerTransaction,
-                UtilityMethods.GetCurrentDate().Date, editedSalesTransaction.SalesTransactionID, "Sales Revenue Adjustment");
+                UtilityMethods.GetCurrentDate().Date, editedSalesTransaction.SalesTransactionID,
+                "Sales Revenue Adjustment");
             context.SaveChanges();
 
             if (transactionTotalDifference > 0)
@@ -250,7 +254,8 @@
             context.SaveChanges();
         }
 
-        private static void AssignEditedInvoiceIssuedSalesTransactionPropertiesToSalesTransactionFromDatabaseContext(SalesTransaction editedSalesTransaction, SalesTransaction salesTransactionFromDatabaseContext)
+        private static void AssignEditedInvoiceIssuedSalesTransactionPropertiesToSalesTransactionFromDatabaseContext(
+            SalesTransaction editedSalesTransaction, SalesTransaction salesTransactionFromDatabaseContext)
         {
             salesTransactionFromDatabaseContext.Notes = editedSalesTransaction.Notes;
             salesTransactionFromDatabaseContext.GrossTotal = editedSalesTransaction.GrossTotal;
@@ -259,33 +264,46 @@
             salesTransactionFromDatabaseContext.SalesExpense = editedSalesTransaction.SalesExpense;
             salesTransactionFromDatabaseContext.NetTotal = editedSalesTransaction.NetTotal;
         }
+
         #endregion
 
         #region Issue Invoice Helper Methods
-        private static void RecordSalesRevenueRecognitionLedgerTransactionInDatabaseContext(ERPContext context, SalesTransaction salesTransaction)
+
+        private static void RecordSalesRevenueRecognitionLedgerTransactionInDatabaseContext(ERPContext context,
+            SalesTransaction salesTransaction)
         {
             var salesRevenueRecognitionLedgerTransaction = new LedgerTransaction();
-            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, salesRevenueRecognitionLedgerTransaction, UtilityMethods.GetCurrentDate().Date, salesTransaction.SalesTransactionID, "Sales Revenue")) return;
+            if (
+                !LedgerTransactionHelper.AddTransactionToDatabase(context, salesRevenueRecognitionLedgerTransaction,
+                    UtilityMethods.GetCurrentDate().Date, salesTransaction.SalesTransactionID, "Sales Revenue")) return;
             context.SaveChanges();
             LedgerTransactionHelper.AddTransactionLineToDatabase(context, salesRevenueRecognitionLedgerTransaction,
                 $"{salesTransaction.Customer.Name} Accounts Receivable", "Debit", salesTransaction.NetTotal);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, salesRevenueRecognitionLedgerTransaction, "Sales Revenue", "Credit", salesTransaction.NetTotal);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, salesRevenueRecognitionLedgerTransaction,
+                "Sales Revenue", "Credit", salesTransaction.NetTotal);
             context.SaveChanges();
         }
 
-        private static void RecordCostOfGoodsSoldLedgerTransactionInDatabaseContext(ERPContext context, SalesTransaction salesTransaction)
+        private static void RecordCostOfGoodsSoldLedgerTransactionInDatabaseContext(ERPContext context,
+            SalesTransaction salesTransaction)
         {
             var costOfGoodsSoldAmount = CalculateCOGSAndIncreaseSoldOrReturned(context, salesTransaction);
 
             var costOfGoodsSoldLedgerTransaction = new LedgerTransaction();
-            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, costOfGoodsSoldLedgerTransaction, UtilityMethods.GetCurrentDate().Date, salesTransaction.SalesTransactionID, "Cost of Goods Sold")) return;
+            if (
+                !LedgerTransactionHelper.AddTransactionToDatabase(context, costOfGoodsSoldLedgerTransaction,
+                    UtilityMethods.GetCurrentDate().Date, salesTransaction.SalesTransactionID, "Cost of Goods Sold"))
+                return;
             context.SaveChanges();
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, costOfGoodsSoldLedgerTransaction, "Cost of Goods Sold", "Debit", costOfGoodsSoldAmount);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, costOfGoodsSoldLedgerTransaction, "Inventory", "Credit", costOfGoodsSoldAmount);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, costOfGoodsSoldLedgerTransaction,
+                "Cost of Goods Sold", "Debit", costOfGoodsSoldAmount);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, costOfGoodsSoldLedgerTransaction, "Inventory",
+                "Credit", costOfGoodsSoldAmount);
             context.SaveChanges();
         }
 
-        private static decimal CalculateCOGSAndIncreaseSoldOrReturned(ERPContext context, SalesTransaction salesTransaction)
+        private static decimal CalculateCOGSAndIncreaseSoldOrReturned(ERPContext context,
+            SalesTransaction salesTransaction)
         {
             var costOfGoodsSoldAmount = 0m;
 
@@ -295,9 +313,14 @@
 
                 var purchases = context.PurchaseTransactionLines
                     .Include("PurchaseTransaction")
-                    .Where(purchaseTransactionLine => purchaseTransactionLine.ItemID.Equals(itemID) && purchaseTransactionLine.SoldOrReturned < purchaseTransactionLine.Quantity)
+                    .Where(
+                        purchaseTransactionLine =>
+                            purchaseTransactionLine.ItemID.Equals(itemID) &&
+                            purchaseTransactionLine.SoldOrReturned < purchaseTransactionLine.Quantity)
                     .OrderBy(purchaseTransaction => purchaseTransaction.PurchaseTransactionID)
-                    .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
+                    .ThenByDescending(
+                        purchaseTransactionLine =>
+                            purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
                     .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.PurchasePrice)
                     .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Discount)
                     .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.WarehouseID)
@@ -344,23 +367,7 @@
             context.SaveChanges();
             return costOfGoodsSoldAmount;
         }
-        #endregion
 
-        #region Collection Helper Methods
-        private static void SaveCollectionLedgerTransactionInDatabase(ERPContext context, SalesTransaction salesTransaction, decimal collectionAmount, string paymentMode)
-        {
-            if (collectionAmount <= 0) return;
-
-            var accountsReceivableName = salesTransaction.Customer.Name + " Accounts Receivable";
-            var date = UtilityMethods.GetCurrentDate().Date;
-            var transaction = new LedgerTransaction();
-
-            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, date, salesTransaction.SalesTransactionID, "Sales Transaction Receipt")) return;
-            context.SaveChanges();
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, paymentMode, "Debit", collectionAmount);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, accountsReceivableName, "Credit", collectionAmount);
-            context.SaveChanges();
-        }
         #endregion
     }
 }

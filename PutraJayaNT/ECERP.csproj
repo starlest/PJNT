@@ -127,6 +127,7 @@
       <DependentUpon>GlobalSalesReportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\AccountingService.cs" />
+    <Compile Include="Services\SalesTransactionService.cs" />
     <Compile Include="Utilities\Analysis\SalesAnalysisHelper.cs" />
     <Compile Include="Utilities\Constants.cs" />
     <Compile Include="Utilities\FocusAdvancement.cs" />

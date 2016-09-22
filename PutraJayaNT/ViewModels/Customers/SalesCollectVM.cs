@@ -7,12 +7,15 @@
     using Customer;
     using Models.Sales;
     using MVVMFramework;
+    using Services;
     using Utilities;
     using Utilities.ModelHelpers;
     using ViewModels.Sales;
 
     public class SalesCollectVM : ViewModelBase
     {
+        #region Backing Fields
+
         private CustomerVM _selectedCustomer;
         private SalesTransaction _selectedSalesTransaction;
         private string _selectedPaymentMode;
@@ -31,6 +34,8 @@
 
         private ICommand _confirmCollectionCommand;
 
+        #endregion
+
         public SalesCollectVM()
         {
             Customers = new ObservableCollection<CustomerVM>();
@@ -43,6 +48,7 @@
         }
 
         #region Collections
+
         public ObservableCollection<CustomerVM> Customers { get; }
 
         public ObservableCollection<string> PaymentModes { get; }
@@ -50,9 +56,11 @@
         public ObservableCollection<SalesTransaction> CustomerUnpaidSalesTransactions { get; }
 
         public ObservableCollection<SalesTransactionLineVM> SelectedSalesTransactionLines { get; }
+
         #endregion
 
         #region Properties
+
         public CustomerVM SelectedCustomer
         {
             get { return _selectedCustomer; }
@@ -60,7 +68,7 @@
             {
                 SetProperty(ref _selectedCustomer, value, () => SelectedCustomer);
                 if (_selectedCustomer == null) return;
-                UpdateUIAccordingToSelectedCustomer();
+                UpdatePropertiesAccordingToSelectedCustomer();
                 UpdateCustomers();
             }
         }
@@ -75,19 +83,9 @@
                 if (_selectedSalesTransaction == null) return;
 
                 UpdatePaymentModes();
-                UpdateSelectedSalesTransactionLines();
-                SalesTransactionGrossTotal = _selectedSalesTransaction.GrossTotal;
-                SalesTransactionDiscount = _selectedSalesTransaction.Discount;
-                SalesTransactionSalesExpense = _selectedSalesTransaction.SalesExpense;
-                SalesTransactionTotal = _selectedSalesTransaction.NetTotal;
-                Remaining = _selectedSalesTransaction.NetTotal - _selectedSalesTransaction.Paid;
+                ResetSalesTransactionAndCollectionProperties();
+                UpdateSalesTransactionProperties();
             }
-        }
-
-        public string SelectedPaymentMode
-        {
-            get { return _selectedPaymentMode; }
-            set { SetProperty(ref _selectedPaymentMode, value, () => SelectedPaymentMode); }
         }
 
         public decimal SalesReturnCredits
@@ -95,9 +93,41 @@
             get { return _salesReturnCredits; }
             set { SetProperty(ref _salesReturnCredits, value, () => SalesReturnCredits); }
         }
+
+        public bool IsCollectionSuccess
+        {
+            get { return _isCollectionSuccess; }
+            set { SetProperty(ref _isCollectionSuccess, value, () => IsCollectionSuccess); }
+        }
+
+        public ICommand ConfirmCollectionCommand
+        {
+            get
+            {
+                return _confirmCollectionCommand ?? (_confirmCollectionCommand = new RelayCommand(() =>
+                {
+                    if (!IsThereAmountCollected() || !IsPaymentModeSelected() || !IsCollectionConfirmationYes()) return;
+
+                    IsCollectionSuccess = SalesTransactionService.Collect(_selectedSalesTransaction, _useCredits,
+                        _collectionAmount, _selectedPaymentMode);
+
+                    if (_isCollectionSuccess)
+                    {
+                        MessageBox.Show("Succesfully collected!", "Success", MessageBoxButton.OK);
+                        ResetTransaction();
+                    }
+                    else
+                        MessageBox.Show("There was a problem making the collection. Please contact Edwin.",
+                            "Invalid Amounts",
+                            MessageBoxButton.OK);
+                }));
+            }
+        }
+
         #endregion
 
         #region Sales Transaction Properties
+
         public decimal SalesTransactionGrossTotal
         {
             get { return _salesTransactionGrossTotal; }
@@ -126,9 +156,11 @@
                 Remaining = _salesTransactionTotal - _selectedSalesTransaction.Paid - _useCredits;
             }
         }
+
         #endregion
 
         #region Collection Properties
+
         public decimal UseCredits
         {
             get { return _useCredits; }
@@ -144,7 +176,7 @@
         public decimal Remaining
         {
             get { return _remaining; }
-            set { SetProperty(ref _remaining, value, () => Remaining);  }
+            set { SetProperty(ref _remaining, value, () => Remaining); }
         }
 
         public decimal CollectionAmount
@@ -156,29 +188,17 @@
                 SetProperty(ref _collectionAmount, value, () => CollectionAmount);
             }
         }
+
+        public string SelectedPaymentMode
+        {
+            get { return _selectedPaymentMode; }
+            set { SetProperty(ref _selectedPaymentMode, value, () => SelectedPaymentMode); }
+        }
+
         #endregion
 
-        public bool IsCollectionSuccess
-        {
-            get { return _isCollectionSuccess; }
-            set { SetProperty(ref _isCollectionSuccess, value, () => IsCollectionSuccess); }
-        }
-
-        public ICommand ConfirmCollectionCommand
-        {
-            get
-            {
-                return _confirmCollectionCommand ?? (_confirmCollectionCommand = new RelayCommand(() =>
-                {
-                    if (!IsThereAmountCollected() || !IsPaymentModeSelected() || !IsCollectionConfirmationYes()) return;
-                    SalesTransactionHelper.Collect(_selectedSalesTransaction, _useCredits, _collectionAmount, _selectedPaymentMode);
-                    MessageBox.Show("Succesfully collected!", "Success", MessageBoxButton.OK);
-                    ResetTransaction();
-                }));
-            }
-        }
-
         #region Helper Methods
+
         private void UpdateCustomers()
         {
             var oldSelectedCustomer = _selectedCustomer;
@@ -188,7 +208,7 @@
             {
                 var customersFromDatabase = context.Customers.OrderBy(customer => customer.Name);
                 foreach (var customer in customersFromDatabase)
-                    Customers.Add(new CustomerVM {Model = customer});
+                    Customers.Add(new CustomerVM { Model = customer });
             }
 
             UpdateSelectedCustomer(oldSelectedCustomer);
@@ -228,9 +248,19 @@
             SelectedPaymentMode = PaymentModes.FirstOrDefault(paymentMode => paymentMode.Equals(oldSelectedPaymentMode));
         }
 
-        private void UpdateUIAccordingToSelectedCustomer()
+        private void UpdateSalesTransactionProperties()
         {
-            ResetUI();
+            UpdateSelectedSalesTransactionLines();
+            SalesTransactionGrossTotal = _selectedSalesTransaction.GrossTotal;
+            SalesTransactionDiscount = _selectedSalesTransaction.Discount;
+            SalesTransactionSalesExpense = _selectedSalesTransaction.SalesExpense;
+            SalesTransactionTotal = _selectedSalesTransaction.NetTotal;
+            Remaining = _selectedSalesTransaction.NetTotal - _selectedSalesTransaction.Paid;
+        }
+
+        private void UpdatePropertiesAccordingToSelectedCustomer()
+        {
+            ResetSalesTransactionAndCollectionProperties();
             SalesReturnCredits = _selectedCustomer.SalesReturnCredits;
             UpdateCustomerUnpaidSalesTransactions();
             SelectedSalesTransactionLines.Clear();
@@ -246,7 +276,10 @@
                     .Include("SalesTransactionLines")
                     .Include("SalesTransactionLines.Item")
                     .Include("SalesTransactionLines.Warehouse")
-                    .Where(e => e.InvoiceIssued != null && e.Customer.ID.Equals(_selectedCustomer.ID) && (e.Paid < e.NetTotal))
+                    .Where(
+                        e =>
+                            e.InvoiceIssued != null && e.Customer.ID.Equals(_selectedCustomer.ID) &&
+                            (e.Paid < e.NetTotal))
                     .ToList();
 
                 foreach (var transaction in transactions)
@@ -262,6 +295,36 @@
                 SelectedSalesTransactionLines.Add(new SalesTransactionLineVM { Model = line });
         }
 
+        private void ResetSalesTransactionAndCollectionProperties()
+        {
+            SelectedPaymentMode = null;
+            SalesTransactionTotal = 0;
+            SalesReturnCredits = 0;
+            SalesTransactionGrossTotal = 0;
+            UseCredits = 0;
+            Remaining = 0;
+            CollectionAmount = 0;
+        }
+
+        private void ResetTransaction()
+        {
+            SelectedCustomer = null;
+            SelectedSalesTransaction = null;
+            ResetSalesTransactionAndCollectionProperties();
+            SelectedSalesTransactionLines.Clear();
+            CustomerUnpaidSalesTransactions.Clear();
+        }
+
+        private void UpdateRemaining()
+        {
+            CollectionAmount = 0;
+            Remaining = _salesTransactionTotal - _selectedSalesTransaction.Paid - _useCredits;
+        }
+
+        #endregion
+
+        #region Checker Methods
+
         private bool IsThereAmountCollected()
         {
             if (_useCredits != 0 || _collectionAmount != 0) return true;
@@ -272,7 +335,8 @@
         private bool IsCreditsValueValid(decimal value)
         {
             if (value >= 0 && value <= _salesReturnCredits) return true;
-            MessageBox.Show($"The available number of credits is {_salesReturnCredits}", "Invalid Value", MessageBoxButton.OK);
+            MessageBox.Show($"The available number of credits is {_salesReturnCredits}", "Invalid Value",
+                MessageBoxButton.OK);
             return false;
         }
 
@@ -296,32 +360,6 @@
                    MessageBoxResult.Yes;
         }
 
-        private void ResetTransaction()
-        {
-            SelectedCustomer = null;
-            SelectedPaymentMode = null;
-            SelectedSalesTransaction = null;
-            ResetUI();
-            SelectedSalesTransactionLines.Clear();
-            CustomerUnpaidSalesTransactions.Clear();
-            IsCollectionSuccess = true;
-        }
-
-        private void ResetUI()
-        {
-            SalesTransactionTotal = 0;
-            SalesReturnCredits = 0;
-            SalesTransactionGrossTotal = 0;
-            UseCredits = 0;
-            Remaining = 0;
-            CollectionAmount = 0;
-        }
-
-        private void UpdateRemaining()
-        {
-            CollectionAmount = 0;
-            Remaining = _salesTransactionTotal - _selectedSalesTransaction.Paid - _useCredits;
-        }
         #endregion
     }
 }

@@ -19,7 +19,7 @@
                     return false;
                 }
 
-                if ((date.Date.Day != UtilityMethods.GetCurrentDate().Date.Day))
+                if (date.Date.Day != UtilityMethods.GetCurrentDate().Date.Day)
                 {
                     if (!(date.AddDays(2).Day <= UtilityMethods.GetCurrentDate().Day && date.AddDays(2).Day >= date.Day))
                     {

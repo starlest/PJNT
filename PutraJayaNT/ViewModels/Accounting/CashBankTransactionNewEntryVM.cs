@@ -34,7 +34,7 @@
             _parentVM = parentVM;
             _newEntryDate = UtilityMethods.GetCurrentDate().Date;
             Accounts = new ObservableCollection<LedgerAccountVM>();
-            Sequences = new ObservableCollection<string> { "Debit", "Credit" };
+            Sequences = new ObservableCollection<string> { Constants.DEBIT, Constants.CREDIT };
             UpdateAccounts();
         }
 
@@ -88,7 +88,7 @@
             {
                 return _newEntryConfirmCommand ?? (_newEntryConfirmCommand = new RelayCommand(() =>
                 {
-                    if (!IsBankSelected() || !AreAllFieldsFilled() || !IsConfirmationYes()) return;
+                    if (!IsBankSelected() || AreAccountsTheSame() || !AreAllFieldsFilled() || !IsConfirmationYes()) return;
                     AddEntryToDatabase();
                     ResetEntryFields();
                     _parentVM.UpdateDisplayedLines();
@@ -124,8 +124,8 @@
                     .Where(
                         account =>
                             !protectedAccounts.Contains(account.Name) &&
-                            !account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EQUITY)
-                            && !account.Name.Contains(Constants.LedgerAccountClasses.REVENUE) &&
+                            !account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EQUITY) &&
+                            !account.Name.Contains(Constants.LedgerAccountClasses.REVENUE) &&
                             !account.Name.Contains(Constants.ACCOUNTS_RECEIVABLE) &&
                             !account.Name.Contains(Constants.ACCOUNTS_PAYABLE))
                     .OrderBy(account => account.Name)
@@ -142,6 +142,14 @@
             MessageBox.Show("Please select a bank.", "Missing Selection", MessageBoxButton.OK);
             return false;
         }
+
+        private bool AreAccountsTheSame()
+        {
+            if (!_parentVM.SelectedBank.Name.Equals(_newEntryAccount.Name)) return false;
+            MessageBox.Show("Please make sure the accounts are not the same.", "Invalid Selection", MessageBoxButton.OK);
+            return true;
+        }
+
 
         private bool AreAllFieldsFilled()
         {
