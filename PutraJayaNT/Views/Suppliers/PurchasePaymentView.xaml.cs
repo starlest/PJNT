@@ -1,5 +1,8 @@
 ﻿namespace ECRP.Views.Suppliers
 {
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Controls.Primitives;
     using ViewModels.Suppliers;
 
     /// <summary>
@@ -12,6 +15,15 @@
             InitializeComponent();
             var vm = new PurchasePaymentVM();
             DataContext = vm;
+        }
+
+        private void PaymentModeComboBox_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var cb = sender as ComboBox;
+            if (cb == null) return;
+            var ct = cb.Template;
+            var pop = ct.FindName("PART_Popup", cb) as Popup;
+            if (pop != null) pop.Placement = PlacementMode.Top;
         }
     }
 }

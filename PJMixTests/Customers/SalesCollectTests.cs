@@ -5,6 +5,7 @@
     using System.Transactions;
     using ECRP.Models.Accounting;
     using ECRP.Models.Sales;
+    using ECRP.Services;
     using ECRP.Utilities;
     using ECRP.Utilities.ModelHelpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,7 +27,7 @@
             var remainingAmount = testSalesTransaction.NetTotal - testSalesTransaction.Paid;
             const string paymentMode = "Cash";
 
-            SalesTransactionHelper.Collect(testSalesTransaction, 0, remainingAmount, paymentMode);
+            SalesTransactionService.Collect(testSalesTransaction, 0, remainingAmount, paymentMode);
             var result1 = IsSalesTransactionInDatabaseFullyPaid(testSalesTransaction) &&
                           IsSalesReceiptLedgerTransactionRecordedInDatabase(testSalesTransaction);
             Assert.AreEqual(result1, true);

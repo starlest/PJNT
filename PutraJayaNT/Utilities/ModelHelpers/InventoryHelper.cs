@@ -83,7 +83,7 @@
         public static string GetItemQuantityPerUnit(Item item)
         {
             return item.PiecesPerSecondaryUnit != 0
-                ? $"{item.PiecesPerUnit}/{item.PiecesPerSecondaryUnit}"
+                ? $"{item.PiecesPerUnit/item.PiecesPerSecondaryUnit}/{item.PiecesPerSecondaryUnit}"
                 : $"{item.PiecesPerUnit}";
         }
 

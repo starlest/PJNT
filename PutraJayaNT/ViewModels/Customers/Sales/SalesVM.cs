@@ -493,7 +493,7 @@
             {
                 var customers = context.Customers
                     .Where(customer => customer.Active)
-                    .OrderBy(e => e.Name)
+                    .OrderBy(customer => customer.Name)
                     .Include("Group")
                     .ToList();
 

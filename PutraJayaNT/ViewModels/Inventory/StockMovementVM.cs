@@ -43,8 +43,10 @@
 
         public StockMovementVM()
         {
-            Model = new StockMovementTransaction();
-            Model.StockMovementTransactionLines = new ObservableCollection<StockMovementTransactionLine>();
+            Model = new StockMovementTransaction
+            {
+                StockMovementTransactionLines = new ObservableCollection<StockMovementTransactionLine>()
+            };
 
             ListedProducts = new ObservableCollection<ItemVM>();
             Warehouses = new ObservableCollection<WarehouseVM>();

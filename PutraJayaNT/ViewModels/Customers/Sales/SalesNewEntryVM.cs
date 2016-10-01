@@ -10,6 +10,7 @@
     using Models.Salesman;
     using MVVMFramework;
     using Utilities;
+    using Utilities.ModelHelpers;
     using ViewModels.Sales;
 
     public class SalesNewEntryVM : ViewModelBase
@@ -24,8 +25,8 @@
         private decimal _newEntryPrice;
         private decimal? _newEntryDiscountPercent;
         private decimal _newEntryDiscount;
-        private string _newEntryUnit;
-        private string _newEntrySecondaryUnit;
+        private string _newEntryUnitName;
+        private string _newEntryQuantityPerUnit;
         private bool _isSecondaryUnitUsed;
         private int? _newEntryUnits;
         private int? _newEntrySecondaryUnits;
@@ -48,8 +49,6 @@
 
             UpdateWarehouses();
             UpdateSalesmans();
-
-            _remainingStock = "0/0/0";
         }
 
         #region Collections
@@ -145,10 +144,10 @@
             }
         }
 
-        public string NewEntryUnit
+        public string NewEntryUnitName
         {
-            get { return _newEntryUnit; }
-            set { SetProperty(ref _newEntryUnit, value, () => NewEntryUnit); }
+            get { return _newEntryUnitName; }
+            set { SetProperty(ref _newEntryUnitName, value, () => NewEntryUnitName); }
         }
 
         public bool IsSecondaryUnitUsed
@@ -157,10 +156,10 @@
             set { SetProperty(ref _isSecondaryUnitUsed, value, () => IsSecondaryUnitUsed); }
         }
 
-        public string NewEntrySecondaryUnit
+        public string NewEntryQuantityPerUnit
         {
-            get { return _newEntrySecondaryUnit; }
-            set { SetProperty(ref _newEntrySecondaryUnit, value, () => NewEntrySecondaryUnit); }
+            get { return _newEntryQuantityPerUnit; }
+            set { SetProperty(ref _newEntryQuantityPerUnit, value, () => NewEntryQuantityPerUnit); }
         }
 
         public int? NewEntryUnits
@@ -231,25 +230,17 @@
         #region Helper Methods
         private void SetNewEntryProductPropertiesToUI()
         {
+            IsSecondaryUnitUsed = _newEntryProduct.PiecesPerSecondaryUnit != 0;
             NewEntryPrice = _newEntryProduct.SalesPrice;
-            NewEntryUnit = _newEntryProduct.PiecesPerSecondaryUnit != 0 ? _newEntryProduct.UnitName + "/" + 
-                _newEntryProduct.PiecesPerUnit / _newEntryProduct.PiecesPerSecondaryUnit : 
-                _newEntryProduct.UnitName + "/" + _newEntryProduct.PiecesPerUnit;
-            NewEntrySecondaryUnit = _newEntryProduct.PiecesPerSecondaryUnit  != 0 ?_newEntryProduct.SecondaryUnitName + "/" + _newEntryProduct.PiecesPerSecondaryUnit : null;
+            NewEntryUnitName = _isSecondaryUnitUsed
+                ? _newEntryProduct.UnitName + "/" + _newEntryProduct.SecondaryUnitName
+                : _newEntryProduct.UnitName;
+            NewEntryQuantityPerUnit = InventoryHelper.GetItemQuantityPerUnit(_newEntryProduct.Model);
             var remainingStock = _parentVM.GetAvailableQuantity(_newEntryProduct.Model, _newEntryWarehouse);
-            if (_newEntryProduct.PiecesPerSecondaryUnit == 0)
-            {
-                RemainingStock =
-                    $"{remainingStock/_newEntryProduct.PiecesPerUnit}/0/{remainingStock%_newEntryProduct.PiecesPerUnit}";
-                IsSecondaryUnitUsed = false;
-            }
-            else
-            {
-                RemainingStock =
-                    $"{remainingStock/_newEntryProduct.PiecesPerUnit}/{remainingStock%_newEntryProduct.PiecesPerUnit/_newEntryProduct.PiecesPerSecondaryUnit}/" +
-                    $"{remainingStock%_newEntryProduct.PiecesPerUnit%_newEntryProduct.PiecesPerSecondaryUnit}";
-                IsSecondaryUnitUsed = true;
-            }
+            RemainingStock = _isSecondaryUnitUsed
+                ? $"{remainingStock/_newEntryProduct.PiecesPerUnit}/{remainingStock%_newEntryProduct.PiecesPerUnit/_newEntryProduct.PiecesPerSecondaryUnit}/" +
+                  $"{remainingStock%_newEntryProduct.PiecesPerUnit%_newEntryProduct.PiecesPerSecondaryUnit}"
+                : $"{remainingStock/_newEntryProduct.PiecesPerUnit}/0/{remainingStock%_newEntryProduct.PiecesPerUnit}";
             UpdateNewEntryAlternativeSalesPrices();
         }
 
@@ -329,10 +320,19 @@
             var availableQuantity = _parentVM.GetAvailableQuantity(_newEntryProduct.Model, _newEntryWarehouse);
 
             if (availableQuantity >= newEntryQuantity && newEntryQuantity > 0) return true;
-            MessageBox.Show(
-                $"{_newEntryProduct.Name} has only {availableQuantity / _newEntryProduct.PiecesPerUnit} units, " +
-                $"{availableQuantity % _newEntryProduct.PiecesPerUnit} pieces left.",
-                "Insufficient Stock", MessageBoxButton.OK);
+
+            if (_isSecondaryUnitUsed)
+                MessageBox.Show(
+                    $"{_newEntryProduct.Name} has only {availableQuantity/_newEntryProduct.PiecesPerUnit} units, " +
+                    $"{availableQuantity%_newEntryProduct.PiecesPerUnit/_newEntryProduct.PiecesPerSecondaryUnit} secondary units, " +
+                    $"{availableQuantity%_newEntryProduct.PiecesPerUnit%_newEntryProduct.PiecesPerSecondaryUnit} pieces left.",
+                    "Insufficient Stock", MessageBoxButton.OK);
+            else
+                MessageBox.Show(
+                    $"{_newEntryProduct.Name} has only {availableQuantity/_newEntryProduct.PiecesPerUnit} units, " +
+                    $"{availableQuantity%_newEntryProduct.PiecesPerUnit} pieces left.",
+                    "Insufficient Stock", MessageBoxButton.OK);
+
             return false;
         }
 
@@ -396,8 +396,8 @@
             NewEntryProduct = null;
             NewEntryPrice = 0;
             NewEntryDiscount = 0;
-            NewEntryUnit = null;
-            NewEntrySecondaryUnit = null;
+            NewEntryUnitName = null;
+            NewEntryQuantityPerUnit = null;
             NewEntryUnits = null;
             NewEntrySecondaryUnits = null;
             NewEntryPieces = null;

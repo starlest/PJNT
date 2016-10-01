@@ -21,11 +21,11 @@
         #region Edit Line Backing Fields
         private AlternativeSalesPrice _selectedAlternativeSalesPrice;
         private int _editLineUnits;
+        private int? _editLineSecondaryUnits;
         private int _editLinePieces;
         private decimal _editLineDiscount;
         private decimal _editLineSalesPrice;
         private Salesman _editLineSalesman;
-        private Warehouse _editLineWarehouse;
         private ICommand _editConfirmCommand;
 
         #endregion
@@ -36,9 +36,11 @@
             _selectedLine = _parentVM.SelectedLine;
 
             Salesmans = new ObservableCollection<Salesman>();
+            Warehouses = new ObservableCollection<Warehouse>();
             AlternativeSalesPrices = new ObservableCollection<AlternativeSalesPrice>();
 
             UpdateSalesmans();
+            UpdateWarehouses();
             UpdateAlternativeSalesPrices();
             SetEditProperties();
         }
@@ -46,6 +48,8 @@
         public bool InvoiceNotIssued => _parentVM.InvoiceNotIssued;
 
         public ObservableCollection<Salesman> Salesmans { get; }
+
+        public ObservableCollection<Warehouse> Warehouses { get; }
 
         public ObservableCollection<AlternativeSalesPrice> AlternativeSalesPrices { get; }
 
@@ -66,6 +70,12 @@
         {
             get { return _editLineUnits; }
             set { SetProperty(ref _editLineUnits, value, () => EditLineUnits); }
+        }
+
+        public int? EditLineSecondaryUnits
+        {
+            get { return _editLineSecondaryUnits; }
+            set { SetProperty(ref _editLineSecondaryUnits, value, () => EditLineSecondaryUnits); }
         }
 
         public int EditLinePieces
@@ -137,6 +147,18 @@
             }
         }
 
+        private void UpdateWarehouses()
+        {
+            Warehouses.Clear();
+            using (var context = UtilityMethods.createContext())
+            {
+                var warehousesFromDatabase = context.Warehouses.OrderBy(warehouse => warehouse.Name);
+
+                foreach (var warehouse in warehousesFromDatabase)
+                    Warehouses.Add(warehouse);
+            }
+        }
+
         private void UpdateAlternativeSalesPrices()
         {
             AlternativeSalesPrices.Clear();
@@ -153,27 +175,44 @@
 
         private void SetEditProperties()
         {
-            _editLineUnits = _selectedLine.Units;
-            _editLinePieces = _selectedLine.Pieces;
-            _editLineSalesPrice = _selectedLine.SalesPrice;
-            _editLineDiscount = _selectedLine.Discount;
-            _editLineSalesman = _selectedLine.Salesman;
-            _editLineWarehouse = _selectedLine.Warehouse;
+            EditLineUnits = _selectedLine.Units;
+            EditLineSecondaryUnits = _selectedLine.SecondaryUnits;
+            EditLinePieces = _selectedLine.Pieces;
+            EditLineSalesPrice = _selectedLine.SalesPrice;
+            EditLineDiscount = _selectedLine.Discount;
+            EditLineSalesman = _selectedLine.Salesman;
         }
 
         private bool IsEditedQuantityValid()
         {
             var availableQuantity = _parentVM.GetAvailableQuantity(_selectedLine.Item, _selectedLine.Warehouse);
 
-            var oldQuantity = _selectedLine.Units * _selectedLine.Item.PiecesPerUnit + _selectedLine.Pieces;
-            var newQuantity = _editLineUnits * _selectedLine.Item.PiecesPerUnit + _editLinePieces;
+            var oldSecondaryUnitsAsPieces = (int) (_selectedLine.SecondaryUnits == null
+                ? 0
+                : _selectedLine.SecondaryUnits*_selectedLine.Item.PiecesPerSecondaryUnit);
+            var oldQuantity = _selectedLine.Units*_selectedLine.Item.PiecesPerUnit + oldSecondaryUnitsAsPieces +
+                              _selectedLine.Pieces;
+            var newSecondaryUnitsAsPieces = (int) (_editLineSecondaryUnits == null
+                ? 0
+                : _editLineSecondaryUnits*_selectedLine.Item.PiecesPerSecondaryUnit);
+            var newQuantity = _editLineUnits*_selectedLine.Item.PiecesPerUnit + newSecondaryUnitsAsPieces +
+                              _editLinePieces;
             var quantityDifference = newQuantity - oldQuantity;
 
             if (availableQuantity - quantityDifference >= 0) return true;
-            MessageBox.Show(
-                $"{_selectedLine.Item.Name} has only {availableQuantity / _selectedLine.Item.PiecesPerUnit + _selectedLine.Units} units, " +
-                $"{availableQuantity % _selectedLine.Item.PiecesPerUnit + _selectedLine.Pieces} pieces available.",
-                "Insufficient Stock", MessageBoxButton.OK);
+
+            if (_editLineSecondaryUnits == null)
+                MessageBox.Show(
+                    $"{_selectedLine.Item.Name} has only {availableQuantity/_selectedLine.Item.PiecesPerUnit + _selectedLine.Units} units, " +
+                    $"{availableQuantity%_selectedLine.Item.PiecesPerUnit + _selectedLine.Pieces} pieces available.",
+                    "Insufficient Stock", MessageBoxButton.OK);
+            else
+                MessageBox.Show(
+                    $"{_selectedLine.Item.Name} has only {availableQuantity/_selectedLine.Item.PiecesPerUnit + _selectedLine.Units} units, " +
+                    $"{availableQuantity%_selectedLine.Item.PiecesPerUnit/_selectedLine.Item.PiecesPerSecondaryUnit + _selectedLine.SecondaryUnits} secondary units, " +
+                    $"{availableQuantity%_selectedLine.Item.PiecesPerSecondaryUnit%_selectedLine.Item.PiecesPerUnit + _selectedLine.Pieces} pieces available.",
+                    "Insufficient Stock", MessageBoxButton.OK);
+
             return false;
         }
 
@@ -188,11 +227,12 @@
 
         private void AssignEditPropertiesToSelectedLine()
         {
-            _selectedLine.Quantity = _editLineUnits * _selectedLine.Item.PiecesPerUnit + _editLinePieces;
+            var secondaryUnitsAsPieces = (int) (_editLineSecondaryUnits == null ? 0
+                : _editLineSecondaryUnits *_selectedLine.Item.PiecesPerSecondaryUnit);
+            _selectedLine.Quantity = _editLineUnits * _selectedLine.Item.PiecesPerUnit + secondaryUnitsAsPieces + _editLinePieces;
             _selectedLine.Discount = _editLineDiscount;
             _selectedLine.SalesPrice = _editLineSalesPrice;
             _selectedLine.Salesman = _editLineSalesman;
-            _selectedLine.Warehouse = _editLineWarehouse;
         }
 
         private bool CompareLineToEditProperties(SalesTransactionLine line)

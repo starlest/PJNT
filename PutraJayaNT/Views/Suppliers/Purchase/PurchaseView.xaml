@@ -36,7 +36,7 @@
             <Button Grid.Column="4" Content="Delete" Command="{Binding DeleteTransactionCommand}" IsEnabled="{Binding IsDeletionAllowed}" />
             <Button Grid.Column="5" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding IsTransactionNotPaid}" />
         </Grid>
-        <Border Grid.Row="1" BorderBrush="Red" BorderThickness="2" Margin="0, 5, 0, 5">
+        <Border Grid.Row="1" BorderBrush="Red" BorderThickness="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -70,7 +70,7 @@
                             SelectedDateFormat="Long" IsEnabled="{Binding IsTransactionNotPaid}" />
             </Grid>
         </Border>
-        <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2" IsEnabled="{Binding NotEditMode}">
+        <Border Grid.Row="2" BorderBrush="Blue" BorderThickness="2" IsEnabled="{Binding NotEditMode}" Margin="0, 10">
             <Grid DataContext="{Binding NewEntryVM}">
                 <Grid.Style>
                     <Style>

@@ -124,7 +124,7 @@
             Products.Clear();
             using (var context = UtilityMethods.createContext())
             {
-                var items = context.Inventory.OrderBy(item => item.Name);
+                var items = context.Inventory.Where(item => item.Active).OrderBy(item => item.Name);
                 foreach (var item in items)
                     Products.Add(new ItemVM { Model = item });
             }
@@ -190,7 +190,6 @@
             _parentVM.DisplayedLines.Add(newEntry);
         }
 
-
         public void ResetEntryFields()
         {
             NewEntryProduct = null;
@@ -200,6 +199,7 @@
             NewEntryPieces = null;
             NewEntryRemainingStock = null;
         }
+
         #endregion
     }
 }

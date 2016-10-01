@@ -15,13 +15,16 @@
     internal class PurchasePaymentVM : ViewModelBase
     {
         #region Purchase Transaction Backing Fields
+
         private decimal _purchaseTransactionGrossTotal;
         private decimal _purchaseTransactionDiscount;
         private decimal _purchaseTransactionTax;
         private decimal _purchaseTransactionTotal;
+
         #endregion
 
         #region Backing Fields
+
         private decimal _purchaseReturnCredits;
 
         private decimal _remaining;
@@ -35,6 +38,7 @@
         private ICommand _confirmPaymentCommand;
 
         private bool _isPaymentButtonPressed;
+
         #endregion
 
         public PurchasePaymentVM()
@@ -55,6 +59,7 @@
         }
 
         #region Collections
+
         public ObservableCollection<Supplier> Suppliers { get; }
 
         public ObservableCollection<PurchaseTransaction> SupplierUnpaidPurchases { get; }
@@ -62,9 +67,11 @@
         public ObservableCollection<PurchaseTransactionLineVM> SelectedPurchaseLines { get; }
 
         public ObservableCollection<string> PaymentModes { get; }
+
         #endregion
 
         #region Purchase Transaction Properties
+
         public decimal PurchaseTransactionGrossTotal
         {
             get { return _purchaseTransactionGrossTotal; }
@@ -88,14 +95,50 @@
             get { return _purchaseTransactionTotal; }
             set { SetProperty(ref _purchaseTransactionTotal, value, () => PurchaseTransactionTotal); }
         }
+
         #endregion
 
         #region Properties
+
+        public Supplier SelectedSupplier
+        {
+            get { return _selectedSupplier; }
+            set
+            {
+                SelectedPurchaseLines.Clear();
+                SetProperty(ref _selectedSupplier, value, () => SelectedSupplier);
+                if (_selectedSupplier == null) return;
+                UpdateSuppliers();
+                ResetPaymentAndPurchaseTransactionProperties();
+                UpdateSupplierUnpaidPurchases();
+                PurchaseReturnCredits = value.PurchaseReturnCredits;
+            }
+        }
+
+        public PurchaseTransaction SelectedPurchaseTransaction
+        {
+            get { return _selectedPurchaseTransaction; }
+            set
+            {
+                SetProperty(ref _selectedPurchaseTransaction, value, () => SelectedPurchaseTransaction);
+
+                if (_selectedPurchaseTransaction == null) return;
+
+                UpdatePaymentMethods();
+                ResetPaymentAndPurchaseTransactionProperties();
+                UpdatePurchaseTransactionProperties();
+            }
+        }
+
         public decimal PurchaseReturnCredits
         {
             get { return _purchaseReturnCredits; }
             set { SetProperty(ref _purchaseReturnCredits, value, () => PurchaseReturnCredits); }
         }
+
+        #endregion
+
+        #region Payment Properties
 
         public decimal UseCredits
         {
@@ -122,48 +165,22 @@
             get { return _pay; }
             set
             {
-                if (_selectedPurchaseTransaction != null && (value <= 0 || value > _remaining))
+                if (_selectedPurchaseTransaction != null && (value < 0 || value > _remaining))
                 {
-                    MessageBox.Show($"Please input a valid amount. {0} - {_remaining}", "Invalid Value", MessageBoxButton.OK);
+                    MessageBox.Show($"Please input a valid amount. {0} - {_remaining}", "Invalid Value",
+                        MessageBoxButton.OK);
                     return;
                 }
                 SetProperty(ref _pay, value, () => Pay);
             }
         }
 
-        public Supplier SelectedSupplier
-        {
-            get { return _selectedSupplier; }
-            set
-            {
-                SelectedPurchaseLines.Clear();
-                SetProperty(ref _selectedSupplier, value, () => SelectedSupplier);
-                if (_selectedSupplier == null) return;
-                UpdateSuppliers();
-                ResetUI();
-                UpdateSupplierUnpaidPurchases();
-                PurchaseReturnCredits = value.PurchaseReturnCredits;
-            }
-        }
-
-        public PurchaseTransaction SelectedPurchaseTransaction
-        {
-            get { return _selectedPurchaseTransaction; }
-            set
-            {
-                if (value == null)
-                    SelectedPurchaseLines.Clear();
-                else
-                    AssignSelectedPurchaseTransactionPropertiesToUI(value);
-                SetProperty(ref _selectedPurchaseTransaction, value, () => SelectedPurchaseTransaction);
-            }
-        }
-
         public string SelectedPaymentMode
         {
             get { return _selectedPaymentMode; }
-            set { SetProperty(ref _selectedPaymentMode, value, () =>SelectedPaymentMode); }
+            set { SetProperty(ref _selectedPaymentMode, value, () => SelectedPaymentMode); }
         }
+
         #endregion
 
         public ICommand ConfirmPaymentCommand
@@ -173,16 +190,17 @@
                 return _confirmPaymentCommand ?? (_confirmPaymentCommand = new RelayCommand(() =>
                 {
                     if (!IsPaymentModeSelected() || !IsPaymentConfirmationYes()) return;
-                    PurchaseTransactionHelper.MakePayment(_selectedPurchaseTransaction, _pay, _useCredits, _selectedPaymentMode);
+                    PurchaseTransactionHelper.MakePayment(_selectedPurchaseTransaction, _pay, _useCredits,
+                        _selectedPaymentMode);
                     ResetTransaction();
                     TriggerPaymentButtonStyle();
                     MessageBox.Show("Payment successfully made!", "Success", MessageBoxButton.OK);
-
                 }));
             }
         }
 
         #region Helper Methods
+
         public void UpdateSuppliers()
         {
             var oldSelectedSupplier = _selectedSupplier;
@@ -206,6 +224,8 @@
 
         private void UpdatePaymentMethods()
         {
+            PaymentModes.Clear();
+
             PaymentModes.Add("Cash");
             using (var context = UtilityMethods.createContext())
             {
@@ -230,16 +250,20 @@
             }
         }
 
-        private void AssignSelectedPurchaseTransactionPropertiesToUI(PurchaseTransaction purchaseTransaction)
+        private void UpdatePurchaseTransactionProperties()
         {
             SelectedPurchaseLines.Clear();
-            foreach (var lineVM in purchaseTransaction.PurchaseTransactionLines.Select(line => new PurchaseTransactionLineVM { Model = line }))
-                SelectedPurchaseLines.Add(lineVM);   
-            PurchaseTransactionGrossTotal = purchaseTransaction.GrossTotal;
-            PurchaseTransactionDiscount = purchaseTransaction.Discount;
-            PurchaseTransactionTax = purchaseTransaction.Tax;
-            PurchaseTransactionTotal = purchaseTransaction.Total;
-            Remaining = purchaseTransaction.Total - purchaseTransaction.Paid;
+            foreach (
+                var lineVM in
+                    _selectedPurchaseTransaction.PurchaseTransactionLines.Select(
+                        line => new PurchaseTransactionLineVM { Model = line }))
+                SelectedPurchaseLines.Add(lineVM);
+
+            PurchaseTransactionGrossTotal = _selectedPurchaseTransaction.GrossTotal;
+            PurchaseTransactionDiscount = _selectedPurchaseTransaction.Discount;
+            PurchaseTransactionTax = _selectedPurchaseTransaction.Tax;
+            PurchaseTransactionTotal = _selectedPurchaseTransaction.Total;
+            Remaining = _selectedPurchaseTransaction.Total - _selectedPurchaseTransaction.Paid;
         }
 
         private bool IsPaymentModeSelected()
@@ -254,38 +278,26 @@
             return MessageBox.Show("Confirm Payment?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
         }
 
+        private void ResetPaymentAndPurchaseTransactionProperties()
+        {
+            SelectedPaymentMode = null;
+            PurchaseReturnCredits = 0;
+            PurchaseTransactionGrossTotal = 0;
+            PurchaseTransactionTotal = 0;
+            Remaining = 0;
+            UseCredits = 0;
+            Pay = 0;
+        }
+
         private void ResetTransaction()
         {
-            SelectedSupplier = null;
-            PurchaseReturnCredits = 0;
-            
-            SelectedPaymentMode = null;
             SelectedPurchaseTransaction = null;
-
-            PurchaseTransactionGrossTotal = 0;
-            PurchaseTransactionDiscount = 0;
-            PurchaseTransactionTax = 0;
-            PurchaseTransactionTotal = 0;
-
-            UseCredits = 0;
-            Remaining = 0;
-            Pay = 0;
-
+            SelectedSupplier = null;
+            ResetPaymentAndPurchaseTransactionProperties();
             UpdateSuppliers();
             UpdatePaymentMethods();
             SelectedPurchaseLines.Clear();
             SupplierUnpaidPurchases.Clear();
-        }
-
-        private void ResetUI()
-        {
-            SelectedPurchaseTransaction = null;
-            PurchaseReturnCredits = 0;
-            PurchaseTransactionGrossTotal = 0;
-            PurchaseTransactionTotal = 0;
-            Remaining = 0;
-            UseCredits = 0;
-            Pay = 0;
         }
 
         private void TriggerPaymentButtonStyle()
@@ -293,6 +305,7 @@
             IsPaymentButtonPressed = true;
             IsPaymentButtonPressed = false;
         }
+
         #endregion
     }
 }

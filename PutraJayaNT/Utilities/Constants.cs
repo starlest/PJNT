@@ -31,6 +31,7 @@
         public const string BANK = "Bank";
         public const string CAPITAL = "Capital";
         public const string RETAINED_EARNINGS = "Retained Earnings";
+        public const string INVENTORY = "Inventory";
         public const string COST_OF_GOODS_SOLD = "Cost of Goods Sold";
 
         #endregion

@@ -5,6 +5,7 @@
     using Models.Sales;
     using Models.Salesman;
     using MVVMFramework;
+    using Utilities.ModelHelpers;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class SalesTransactionLineVM : ViewModelBase<SalesTransactionLine>
@@ -69,6 +70,11 @@
 
         public string SecondaryUnit => Model.Item.PiecesPerSecondaryUnit == 0 ? null : 
             Model.Item.SecondaryUnitName + "/" + Model.Item.PiecesPerSecondaryUnit;
+
+        public string UnitName => Model.Item.PiecesPerSecondaryUnit == 0 ? Model.Item.UnitName :
+            Model.Item.UnitName + "/" + Model.Item.SecondaryUnitName;
+
+        public string QuantityPerUnit => InventoryHelper.GetItemQuantityPerUnit(Model.Item);
 
         public int Units => Model.Quantity / Model.Item.PiecesPerUnit;
 

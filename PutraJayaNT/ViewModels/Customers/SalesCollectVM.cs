@@ -9,7 +9,6 @@
     using MVVMFramework;
     using Services;
     using Utilities;
-    using Utilities.ModelHelpers;
     using ViewModels.Sales;
 
     public class SalesCollectVM : ViewModelBase
@@ -184,7 +183,7 @@
             get { return _collectionAmount; }
             set
             {
-                if (!IsCollectValueValid(value)) return;
+                if (!IsCollectionValueValid(value)) return;
                 SetProperty(ref _collectionAmount, value, () => CollectionAmount);
             }
         }
@@ -340,7 +339,7 @@
             return false;
         }
 
-        private bool IsCollectValueValid(decimal value)
+        private bool IsCollectionValueValid(decimal value)
         {
             if (value >= 0 && value <= _remaining) return true;
             MessageBox.Show($"The valid range is 0 - {_remaining}", "Invalid Value", MessageBoxButton.OK);

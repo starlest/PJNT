@@ -183,13 +183,13 @@
             if (!LedgerTransactionHelper.AddTransactionToDatabase(context, ledgerTransaction, UtilityMethods.GetCurrentDate().Date,
                 stockAdjustmentTransaction.StockAdjustmentTransactionID, "Stock Adjustment (Decrement)")) return;
             context.SaveChanges();
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction, "Cost of Goods Sold", "Debit", totalCOGSAdjustment);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction, "Inventory", "Credit", totalCOGSAdjustment);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction, Constants.COST_OF_GOODS_SOLD, Constants.DEBIT, totalCOGSAdjustment);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction, Constants.INVENTORY, Constants.CREDIT, totalCOGSAdjustment);
         }
 
         private static void AddStockAdjustmentTransactionToDatabaseContext(ERPContext context, StockAdjustmentTransaction stockAdjustmentTransaction)
         {
-            var user = Application.Current.FindResource("CurrentUser") as User;
+            var user = Application.Current.FindResource(Constants.CURRENTUSER) as User;
             stockAdjustmentTransaction.User = context.Users.Single(e => e.Username.Equals(user.Username));
             context.StockAdjustmentTransactions.Add(stockAdjustmentTransaction);
         }
