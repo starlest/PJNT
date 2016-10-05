@@ -237,7 +237,7 @@
                 : _newEntryProduct.UnitName;
             NewEntryQuantityPerUnit = InventoryHelper.GetItemQuantityPerUnit(_newEntryProduct.Model);
             var remainingStock = _parentVM.GetAvailableQuantity(_newEntryProduct.Model, _newEntryWarehouse);
-            RemainingStock = _isSecondaryUnitUsed
+            RemainingStock =  _isSecondaryUnitUsed
                 ? $"{remainingStock/_newEntryProduct.PiecesPerUnit}/{remainingStock%_newEntryProduct.PiecesPerUnit/_newEntryProduct.PiecesPerSecondaryUnit}/" +
                   $"{remainingStock%_newEntryProduct.PiecesPerUnit%_newEntryProduct.PiecesPerSecondaryUnit}"
                 : $"{remainingStock/_newEntryProduct.PiecesPerUnit}/0/{remainingStock%_newEntryProduct.PiecesPerUnit}";
@@ -321,17 +321,15 @@
 
             if (availableQuantity >= newEntryQuantity && newEntryQuantity > 0) return true;
 
-            if (_isSecondaryUnitUsed)
-                MessageBox.Show(
-                    $"{_newEntryProduct.Name} has only {availableQuantity/_newEntryProduct.PiecesPerUnit} units, " +
-                    $"{availableQuantity%_newEntryProduct.PiecesPerUnit/_newEntryProduct.PiecesPerSecondaryUnit} secondary units, " +
-                    $"{availableQuantity%_newEntryProduct.PiecesPerUnit%_newEntryProduct.PiecesPerSecondaryUnit} pieces left.",
-                    "Insufficient Stock", MessageBoxButton.OK);
-            else
-                MessageBox.Show(
-                    $"{_newEntryProduct.Name} has only {availableQuantity/_newEntryProduct.PiecesPerUnit} units, " +
-                    $"{availableQuantity%_newEntryProduct.PiecesPerUnit} pieces left.",
-                    "Insufficient Stock", MessageBoxButton.OK);
+            var insufficientStockMessage = _isSecondaryUnitUsed
+                ? $"{_newEntryProduct.Name} has only {availableQuantity/_newEntryProduct.PiecesPerUnit} units, " +
+                  $"{availableQuantity%_newEntryProduct.PiecesPerUnit/_newEntryProduct.PiecesPerSecondaryUnit} secondary units, " +
+                  $"{availableQuantity%_newEntryProduct.PiecesPerUnit%_newEntryProduct.PiecesPerSecondaryUnit} pieces left."
+                : $"{_newEntryProduct.Name} has only {availableQuantity/_newEntryProduct.PiecesPerUnit} units, " +
+                  $"{availableQuantity%_newEntryProduct.PiecesPerUnit} pieces left."
+                ;
+            MessageBox.Show(insufficientStockMessage, "Insufficient Stock", MessageBoxButton.OK);
+
 
             return false;
         }
@@ -348,6 +346,7 @@
         {
             var newEntryQuantity = (_newEntryPieces ?? 0) + (_newEntryUnits * _newEntryProduct.PiecesPerUnit ?? 0) +
                 (_newEntrySecondaryUnits * _newEntryProduct.PiecesPerSecondaryUnit ?? 0);
+             
             foreach (var line in _parentVM.DisplayedSalesTransactionLines)
             {
                 if (!line.Item.ItemID.Equals(_newEntryProduct.Model.ItemID) ||

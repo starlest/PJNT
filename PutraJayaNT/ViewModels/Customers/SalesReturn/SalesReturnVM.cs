@@ -328,7 +328,6 @@
 
         private void UpdateUINetTotal()
         {
-
             OnPropertyChanged("SalesReturnTransactionNetTotal");
         }
         #endregion

@@ -106,6 +106,18 @@
     <Compile Include="Migrations\201609210351542_Update3.Designer.cs">
       <DependentUpon>201609210351542_Update3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610030427006_AddInvoiceDateToPurchaseTransaction.cs" />
+    <Compile Include="Migrations\201610030427006_AddInvoiceDateToPurchaseTransaction.Designer.cs">
+      <DependentUpon>201610030427006_AddInvoiceDateToPurchaseTransaction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610030435482_AddInvoiceDateToPurchaseTransaction2.cs" />
+    <Compile Include="Migrations\201610030435482_AddInvoiceDateToPurchaseTransaction2.Designer.cs">
+      <DependentUpon>201610030435482_AddInvoiceDateToPurchaseTransaction2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610030514439_AddInvoiceDateToPurchaseTransaction3.cs" />
+    <Compile Include="Migrations\201610030514439_AddInvoiceDateToPurchaseTransaction3.Designer.cs">
+      <DependentUpon>201610030514439_AddInvoiceDateToPurchaseTransaction3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Update1.cs" />
     <Compile Include="Migrations\Update1.Designer.cs">
       <DependentUpon>Update1.cs</DependentUpon>
@@ -153,6 +165,7 @@
     <Compile Include="ViewModels\Customers\Sales\SalesEditVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
     <Compile Include="ViewModels\Inventory\StockAdjustmentNewEntryVM.cs" />
+    <Compile Include="ViewModels\Reports\StockAdjustmentsReportVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Suppliers\Purchase\PurchaseEditVM.cs" />
     <Compile Include="ViewModels\Suppliers\Purchase\PurchaseNewEntryVM.cs" />
@@ -262,6 +275,9 @@
     </Compile>
     <Compile Include="Views\Master\Customers\MasterCustomersEditView.xaml.cs">
       <DependentUpon>MasterCustomersEditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Reports\StockAdjustmentsReportView.xaml.cs">
+      <DependentUpon>StockAdjustmentsReportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Suppliers\Purchase\PurchaseEditView.xaml.cs">
       <DependentUpon>PurchaseEditView.xaml</DependentUpon>
@@ -542,6 +558,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Reports\StockAdjustmentsReportView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Suppliers\Purchase\PurchaseEditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -732,6 +752,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609210351542_Update3.resx">
       <DependentUpon>201609210351542_Update3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610030427006_AddInvoiceDateToPurchaseTransaction.resx">
+      <DependentUpon>201610030427006_AddInvoiceDateToPurchaseTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610030435482_AddInvoiceDateToPurchaseTransaction2.resx">
+      <DependentUpon>201610030435482_AddInvoiceDateToPurchaseTransaction2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610030514439_AddInvoiceDateToPurchaseTransaction3.resx">
+      <DependentUpon>201610030514439_AddInvoiceDateToPurchaseTransaction3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\Update1.resx">
       <DependentUpon>Update1.cs</DependentUpon>

@@ -84,7 +84,7 @@
                     <TextBox Grid.Column="5" Text="{Binding TransactionCustomerCity, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
                     <TextBlock Grid.Column="6" Text="Date:" />
                     <DatePicker Grid.Column="7" SelectedDateFormat="Long" SelectedDate="{Binding TransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                IsEnabled="{Binding InvoiceNotIssued}"/>
+                                IsEnabled="False" />
                     <TextBlock Grid.Column="8" Text="Due Date:" />
                     <DatePicker Grid.Column="9" SelectedDateFormat="Long" SelectedDate="{Binding TransactionDueDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 IsEnabled="{Binding InvoiceNotIssued}"/>

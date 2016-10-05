@@ -45,6 +45,8 @@
         [Required]
         public decimal Paid { get; set; }
 
+        public DateTime InvoiceDate { get; set; }
+
         public string Note { get; set; }
 
         public virtual User User { get; set; }

@@ -284,21 +284,30 @@
 
         private void SetTransactionID()
         {
-            var month = UtilityMethods.GetCurrentDate().Month;
-            var year = UtilityMethods.GetCurrentDate().Year;
-            _transactionID = "MS" + (long)((year - 2000) * 100 + month) * 1000000;
+            var month = _transactionDate.Month;
+            var year = _transactionDate.Year;
+            var leadingIDString = "MS" + (long)((year - 2000) * 100 + month) + "-";
+            var endingIDString = 0.ToString().PadLeft(4, '0');
+            _transactionID = leadingIDString + endingIDString;
 
             string lastTransactionID = null;
             using (var context = UtilityMethods.createContext())
             {
                 var IDs = from StockMovementTransaction in context.StockMovementTransactions
-                          where string.Compare(StockMovementTransaction.StockMovementTransactionID, _transactionID, StringComparison.Ordinal) >= 0
+                          where StockMovementTransaction.StockMovementTransactionID.Substring(0, 6).Equals(leadingIDString)
+                          && string.Compare(StockMovementTransaction.StockMovementTransactionID, _transactionID, StringComparison.Ordinal) >= 0
                           orderby StockMovementTransaction.StockMovementTransactionID descending
                           select StockMovementTransaction.StockMovementTransactionID;
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
-            if (lastTransactionID != null) _transactionID = "MS" + (Convert.ToInt64(lastTransactionID.Substring(2)) + 1);
+            if (lastTransactionID != null)
+            {
+                var newIDIndex = Convert.ToInt64(lastTransactionID.Substring(6, 4)) + 1;
+                endingIDString = newIDIndex.ToString().PadLeft(4, '0');
+                _transactionID = leadingIDString + endingIDString;
+            }
+
             Model.StockMovementTransactionID = _transactionID;
             OnPropertyChanged("TransactionID");
         }

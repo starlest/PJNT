@@ -149,21 +149,29 @@
 
         private void SetTransactionID()
         {
-            var month = UtilityMethods.GetCurrentDate().Month;
-            var year = UtilityMethods.GetCurrentDate().Year;
-            _transactionID = "SA" + (long)((year - 2000) * 100 + month) * 1000000;
+            var month = _transactionDate.Month;
+            var year = _transactionDate.Year;
+            var leadingIDString = "SA" + (long)((year - 2000) * 100 + month) + "-";
+            var endingIDString = 0.ToString().PadLeft(4, '0');
+            _transactionID = leadingIDString + endingIDString;
 
             string lastTransactionID = null;
             using (var context = UtilityMethods.createContext())
             {
                 var IDs = from StockAdjustmentTransaction in context.StockAdjustmentTransactions
-                    where string.Compare(StockAdjustmentTransaction.StockAdjustmentTransactionID, _transactionID, StringComparison.Ordinal) >= 0 && StockAdjustmentTransaction.StockAdjustmentTransactionID.Substring(0, 2).Equals("SA")
-                    orderby StockAdjustmentTransaction.StockAdjustmentTransactionID descending
-                    select StockAdjustmentTransaction.StockAdjustmentTransactionID;
+                          where StockAdjustmentTransaction.StockAdjustmentTransactionID.Substring(0, 6).Equals(leadingIDString)
+                          && string.Compare(StockAdjustmentTransaction.StockAdjustmentTransactionID, _transactionID, StringComparison.Ordinal) >= 0
+                          orderby StockAdjustmentTransaction.StockAdjustmentTransactionID descending
+                          select StockAdjustmentTransaction.StockAdjustmentTransactionID;
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
-            if (lastTransactionID != null) _transactionID = "SA" + (Convert.ToInt64(lastTransactionID.Substring(2)) + 1);
+            if (lastTransactionID != null)
+            {
+                var newIDIndex = Convert.ToInt64(lastTransactionID.Substring(6, 4)) + 1;
+                endingIDString = newIDIndex.ToString().PadLeft(4, '0');
+                _transactionID = leadingIDString + endingIDString;
+            }
 
             Model.StockAdjustmentTransactionID = _transactionID;
             OnPropertyChanged("TransactionID");

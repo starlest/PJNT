@@ -280,13 +280,14 @@
 
             transactionFromDatabase.Date = editedPurchaseTransaction.Date;
             transactionFromDatabase.DueDate = editedPurchaseTransaction.DueDate;
+            transactionFromDatabase.InvoiceDate = editedPurchaseTransaction.InvoiceDate;
             transactionFromDatabase.DOID = editedPurchaseTransaction.DOID;
             transactionFromDatabase.Note = editedPurchaseTransaction.Note;
             transactionFromDatabase.Tax = editedPurchaseTransaction.Tax;
             transactionFromDatabase.GrossTotal = editedPurchaseTransaction.GrossTotal;
             transactionFromDatabase.Discount = editedPurchaseTransaction.Discount;
             transactionFromDatabase.Total = editedPurchaseTransaction.Total;
-            var currentUser = Application.Current.FindResource("CurrentUser") as User;
+            var currentUser = Application.Current.FindResource(Constants.CURRENTUSER) as User;
             transactionFromDatabase.User = context.Users.Single(user => user.Username.Equals(currentUser.Username));
 
             foreach (var line in transactionFromDatabase.PurchaseTransactionLines.ToList())

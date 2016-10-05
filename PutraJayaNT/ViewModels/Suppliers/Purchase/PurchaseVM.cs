@@ -145,15 +145,6 @@
             set { SetProperty(ref _transactionDoid, value, () => TransactionDOID); }
         }
 
-        public DateTime TransactionInvoiceDate
-        {
-            get { return _transactionInvoiceDate; }
-            set
-            {
-                SetProperty(ref _transactionInvoiceDate, value, () => TransactionInvoiceDate);
-            }
-        }
-
         public DateTime TransactionDate
         {
             get { return _transactionDate; }
@@ -182,6 +173,12 @@
 
                 SetProperty(ref _transactionDueDate, value, () => TransactionDueDate);
             }
+        }
+
+        public DateTime TransactionInvoiceDate
+        {
+            get { return _transactionInvoiceDate; }
+            set { SetProperty(ref _transactionInvoiceDate, value, () => TransactionInvoiceDate); }
         }
 
         public SupplierVM TransactionSupplier
@@ -428,6 +425,7 @@
             TransactionDate = transaction.Date;
             TransactionDueDate = transaction.DueDate;
             TransactionNote = transaction.Note;
+            TransactionInvoiceDate = transaction.InvoiceDate;
 
             DisplayedLines.Clear();
             foreach (var line in transaction.PurchaseTransactionLines.OrderBy(e => e.Item.Name).ThenBy(e => e.Warehouse.Name).ThenBy(e => e.PurchasePrice).ThenBy(e => e.Discount).ToList())
@@ -487,6 +485,7 @@
             var currentDate = UtilityMethods.GetCurrentDate().Date;
             TransactionDate = currentDate;
             TransactionDueDate = currentDate;
+            TransactionInvoiceDate = currentDate;
 
             Warehouses.Clear();
             SupplierItems.Clear();
@@ -519,6 +518,7 @@
             Model.DOID = _transactionDoid;
             Model.Date = _transactionDate;
             Model.DueDate = _transactionDueDate;
+            Model.InvoiceDate = _transactionInvoiceDate;
             Model.Note = _transactionNote;
             Model.GrossTotal = _transactionGrossTotal;
             Model.Discount = _transactionDiscount;

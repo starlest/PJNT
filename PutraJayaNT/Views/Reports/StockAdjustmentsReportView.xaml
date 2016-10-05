@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="ECRP.Views.Reports.StockAdjustmentsReportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding  Key="F1"  Command="{Binding PrintCommand}"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.125*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Border BorderBrush="Blue" BorderThickness="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="From:" />
+                <DatePicker Grid.Column="1" SelectedDateFormat="Long" SelectedDate="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Column="2" Text="To:" />
+                <DatePicker Grid.Column="3" SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Column="4" Margin="10, 20,10, 20" Content="Display" Command="{Binding DisplayCommand}" />
+            </Grid>
+        </Border>
+        <DataGrid Grid.Row="1" RowHeaderWidth="40" LoadingRow="DataGrid_LoadingRow" ItemsSource="{Binding DisplayedStockAdjustments}" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Width="1*" Binding="{Binding StockAdjustmentTransaction.Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="User" Width="1*" Binding="{Binding StockAdjustmentTransaction.User.Username}" />
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding StockAdjustmentTransaction.StockAdjustmentTransactionID}" />
+                <DataGridTextColumn Header="Description" Width="2*" Binding="{Binding StockAdjustmentTransaction.Description}" />
+                <DataGridTextColumn Header="Item ID" Width="1*" Binding="{Binding Item.ItemID}" />
+                <DataGridTextColumn Header="Item" Width="1.5*" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

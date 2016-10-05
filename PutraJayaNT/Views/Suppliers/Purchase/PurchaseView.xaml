@@ -26,15 +26,13 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="5*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Button Content="(F5) New" Command="{Binding NewTransactionCommand}" />
-            <Button Grid.Column="4" Content="Delete" Command="{Binding DeleteTransactionCommand}" IsEnabled="{Binding IsDeletionAllowed}" />
-            <Button Grid.Column="5" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding IsTransactionNotPaid}" />
+            <Button Grid.Column="2" Content="Delete" Command="{Binding DeleteTransactionCommand}" IsEnabled="{Binding IsDeletionAllowed}" />
+            <Button Grid.Column="3" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding IsTransactionNotPaid}" />
         </Grid>
         <Border Grid.Row="1" BorderBrush="Red" BorderThickness="2">
             <Grid>
@@ -64,7 +62,7 @@
                          IsEnabled="{Binding IsTransactionNotPaid}" />
                 <TextBlock Grid.Row="0" Grid.Column="4" Text="Date:" />
                 <DatePicker Grid.Row="0" Grid.Column="5" SelectedDate="{Binding TransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            SelectedDateFormat="Long" IsEnabled="{Binding IsTransactionNotPaid}" />
+                            SelectedDateFormat="Long" IsEnabled="False" />
                 <TextBlock Grid.Row="1" Grid.Column="4" Text="Due Date:" />
                 <DatePicker Grid.Row="1" Grid.Column="5" SelectedDate="{Binding TransactionDueDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                             SelectedDateFormat="Long" IsEnabled="{Binding IsTransactionNotPaid}" />
