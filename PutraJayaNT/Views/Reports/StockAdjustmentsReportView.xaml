@@ -43,8 +43,10 @@
                 <DataGridTextColumn Header="Description" Width="2*" Binding="{Binding StockAdjustmentTransaction.Description}" />
                 <DataGridTextColumn Header="Item ID" Width="1*" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Item" Width="1.5*" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding UnitName}" />
+                <DataGridTextColumn Header="QPU" Width="1*" Binding="{Binding QuantityPerUnit}" />
                 <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="SUnits" Width="1*" Binding="{Binding SecondaryUnits}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
             </DataGrid.Columns>
         </DataGrid>

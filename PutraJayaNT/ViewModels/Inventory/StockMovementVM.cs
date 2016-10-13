@@ -294,7 +294,7 @@
             using (var context = UtilityMethods.createContext())
             {
                 var IDs = from StockMovementTransaction in context.StockMovementTransactions
-                          where StockMovementTransaction.StockMovementTransactionID.Substring(0, 6).Equals(leadingIDString)
+                          where StockMovementTransaction.StockMovementTransactionID.Substring(0, 7).Equals(leadingIDString)
                           && string.Compare(StockMovementTransaction.StockMovementTransactionID, _transactionID, StringComparison.Ordinal) >= 0
                           orderby StockMovementTransaction.StockMovementTransactionID descending
                           select StockMovementTransaction.StockMovementTransactionID;
@@ -303,7 +303,7 @@
 
             if (lastTransactionID != null)
             {
-                var newIDIndex = Convert.ToInt64(lastTransactionID.Substring(6, 4)) + 1;
+                var newIDIndex = Convert.ToInt64(lastTransactionID.Substring(7, 4)) + 1;
                 endingIDString = newIDIndex.ToString().PadLeft(4, '0');
                 _transactionID = leadingIDString + endingIDString;
             }

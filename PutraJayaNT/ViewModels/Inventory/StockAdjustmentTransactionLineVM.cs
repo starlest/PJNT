@@ -3,6 +3,7 @@
     using Models.Inventory;
     using Models.StockCorrection;
     using MVVMFramework;
+    using Utilities.ModelHelpers;
 
     internal class StockAdjustmentTransactionLineVM : ViewModelBase<StockAdjustmentTransactionLine>
     {
@@ -36,34 +37,22 @@
                 Model.Quantity = value;
                 OnPropertyChanged("Quantity");
                 OnPropertyChanged("Units");
+                OnPropertyChanged("SecondaryUnits");
                 OnPropertyChanged("Pieces");
             }
         }
 
-        public int Units
-        {
-            get { return Model.Quantity / Model.Item.PiecesPerUnit; }
-            set
-            {
-                var pieces = Model.Quantity % Model.Item.PiecesPerUnit;
-                Model.Quantity = value * Model.Item.PiecesPerUnit + pieces;
-                OnPropertyChanged("Units");
-                OnPropertyChanged("Pieces");
-            }
-        }
+        public string UnitName => Model.Item.PiecesPerSecondaryUnit == 0 ? Model.Item.UnitName :
+            Model.Item.UnitName + "/" + Model.Item.SecondaryUnitName;
 
-        public int Pieces
-        {
-            get { return Model.Quantity % Model.Item.PiecesPerUnit; }
-            set
-            {
-                var units = Model.Quantity / Model.Item.PiecesPerUnit;
-                Model.Quantity = units * Model.Item.PiecesPerUnit + value;
-                OnPropertyChanged("Units");
-                OnPropertyChanged("Pieces");
-            }
-        }
+        public string QuantityPerUnit => InventoryHelper.GetItemQuantityPerUnit(Model.Item);
 
-        public string Unit => Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit;
+        public int Units => Model.Quantity / Model.Item.PiecesPerUnit;
+
+        public int? SecondaryUnits => Model.Item.PiecesPerSecondaryUnit == 0 ? (int?)null :
+            Model.Quantity % Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
+
+        public int Pieces => Model.Item.PiecesPerSecondaryUnit == 0 ? Model.Quantity % Item.PiecesPerUnit :
+            Model.Quantity % Model.Item.PiecesPerUnit % Model.Item.PiecesPerSecondaryUnit;
     }
 }

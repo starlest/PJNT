@@ -74,10 +74,12 @@
                     .Include("StockAdjustmentTransaction.User")
                     .Include("Item")
                     .Include("Warehouse")
-                    .Where(stockAdjustmentLine => stockAdjustmentLine.StockAdjustmentTransaction.Date >= _fromDate && 
-                    stockAdjustmentLine.StockAdjustmentTransaction.Date <= _toDate)
+                    .Where(stockAdjustmentLine => stockAdjustmentLine.StockAdjustmentTransaction.Date >= _fromDate &&
+                                                  stockAdjustmentLine.StockAdjustmentTransaction.Date <= _toDate)
                     .OrderBy(stockAdjustmentLine => stockAdjustmentLine.StockAdjustmentTransaction.Date)
-                    .ThenBy(stockAdjustmentLine => stockAdjustmentLine.StockAdjustmentTransaction.StockAdjustmentTransactionID);
+                    .ThenBy(
+                        stockAdjustmentLine =>
+                                stockAdjustmentLine.StockAdjustmentTransaction.StockAdjustmentTransactionID);
 
                 foreach (var stockAdjustment in stockAdjustmentsFromDB)
                 {

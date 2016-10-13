@@ -5,6 +5,7 @@
     using Models.Inventory;
     using Models.Supplier;
     using MVVMFramework;
+    using Utilities.ModelHelpers;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class ItemVM : ViewModelBase<Item>
@@ -83,10 +84,7 @@
 
         public int PiecesPerUnit
         {
-            get
-            {
-                return Model.PiecesPerUnit;
-            }
+            get { return Model.PiecesPerUnit; }
             set
             {
                 Model.PiecesPerUnit = value;
@@ -104,13 +102,6 @@
             }
         }
 
-        public string Unit => Model.PiecesPerSecondaryUnit == 0 ?
-            Model.UnitName + "/" + Model.PiecesPerUnit :
-            Model.UnitName + "/" + Model.PiecesPerUnit / Model.PiecesPerSecondaryUnit;
-
-        public string SecondaryUnit => Model.PiecesPerSecondaryUnit == 0 ? null :
-            Model.SecondaryUnitName + "/" + Model.PiecesPerSecondaryUnit;
-
         public decimal SalesExpense
         {
             get { return Model.SalesExpense; }
@@ -120,6 +111,20 @@
                 OnPropertyChanged("SalesExpense");
             }
         }
+
+        public string Unit => Model.PiecesPerSecondaryUnit == 0
+            ? Model.UnitName + "/" + Model.PiecesPerUnit
+            : Model.UnitName + "/" + Model.PiecesPerUnit / Model.PiecesPerSecondaryUnit;
+
+        public string SecondaryUnit => Model.PiecesPerSecondaryUnit == 0
+            ? null
+            : Model.SecondaryUnitName + "/" + Model.PiecesPerSecondaryUnit;
+
+        public string QuantityPerUnit => InventoryHelper.GetItemQuantityPerUnit(Model);
+
+        public string CombinedUnitName => Model.PiecesPerSecondaryUnit == 0
+            ? Model.UnitName
+            : Model.UnitName + "/" + Model.SecondaryUnitName;
 
         public ObservableCollection<Supplier> Suppliers => Model.Suppliers;
 

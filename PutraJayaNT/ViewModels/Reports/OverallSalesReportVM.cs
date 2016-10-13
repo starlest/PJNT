@@ -155,7 +155,8 @@
                     .Include("Customer")
                     .Where(searchCondition)
                     .OrderBy(salesTransaction => salesTransaction.Date)
-                    .ThenBy(salesTransaction => salesTransaction.SalesTransactionID);
+                    .ThenBy(salesTransaction => salesTransaction.SalesTransactionID)
+                    .ToList();
 
                 foreach (var salesTransaction in salesTransactionsFromDatabase)
                 {

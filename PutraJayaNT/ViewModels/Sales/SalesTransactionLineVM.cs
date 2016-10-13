@@ -59,8 +59,8 @@
                 UpdateTotal();
                 OnPropertyChanged("Quantity");
                 OnPropertyChanged("Pieces");
-                OnPropertyChanged("Units");
                 OnPropertyChanged("SecondaryUnits");
+                OnPropertyChanged("Units");
             }
         }
 
