@@ -5,6 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="18" />
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.10*" />
@@ -30,15 +35,12 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Year:" />
-            <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 10, 0"
-                         Text="{Binding Year, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" Text="Month:" />
-            <ComboBox Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="30" Margin="10, 10, 0, 0" 
-                          ItemsSource="{Binding Months}" SelectedItem="{Binding Month, UpdateSourceTrigger=Explicit}" 
-                          IsEditable="True" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Year:" />
+            <TextBox Name="YearTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding Year, UpdateSourceTrigger=Explicit}" KeyDown="YearTextBox_KeyDown" />
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="Month:" />
+            <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Months}" SelectedItem="{Binding Month, UpdateSourceTrigger=Explicit}" />
         </Grid>
-        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+        <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
@@ -46,7 +48,7 @@
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="Income Statement for PUJA Supermarket" />
             <TextBlock Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="{Binding ForTheDate}" />
         </Grid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Column="0" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
@@ -70,26 +72,26 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.5*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Revenues" />  
-            <TextBlock Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Less Sales Returns/Allowances" />
-            <TextBlock Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Less Cost of Goods Sold" />
-            <TextBlock Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Gross Margin" />
-            <TextBlock Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Operating Expenses" />
-            <TextBlock Grid.Row="7" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Operating Income" />
-            <TextBlock Grid.Row="8" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Other Income" />
-            <TextBlock Grid.Row="9" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Interest Expense:" />
-            <TextBlock Grid.Row="10" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Earnings Before Taxes" />
-            <TextBlock Grid.Row="12" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="Tax" />
-            <TextBlock Grid.Row="13" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="Net Income" />
+            <TextBlock Grid.Row="1" HorizontalAlignment="Left" Text="Revenues" />
+            <TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Text="Less Sales Returns/Allowances" />
+            <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Text="Less Cost of Goods Sold" />
+            <TextBlock Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" FontWeight="Bold" Text="Gross Margin" />
+            <TextBlock Grid.Column="0" Grid.Row="6" HorizontalAlignment="Left" FontWeight="Bold" Text="Operating Expenses" />
+            <TextBlock Grid.Column="0" Grid.Row="7" HorizontalAlignment="Left" FontWeight="Bold" Text="Operating Income" />
+            <TextBlock Grid.Column="0" Grid.Row="8" HorizontalAlignment="Left" FontWeight="Bold" Text="Other Income" />
+            <TextBlock Grid.Column="0" Grid.Row="9" HorizontalAlignment="Left" Text="Interest Expense:" />
+            <TextBlock Grid.Column="0" Grid.Row="10" HorizontalAlignment="Left" FontWeight="Bold" Text="Earnings Before Taxes" />
+            <TextBlock Grid.Column="0" Grid.Row="12" HorizontalAlignment="Left" Text="Tax" />
+            <TextBlock Grid.Column="0" Grid.Row="13" HorizontalAlignment="Left" FontWeight="Bold" Text="Net Income" />
 
-            <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding Revenues, StringFormat=N2}" />
-            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding SalesReturnsAndAllowances, StringFormat=N2}" />
-            <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" Text="{Binding CostOfGoodsSold, StringFormat=N2}" />
-            <TextBlock Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding GrossMargin, StringFormat=N2}" />
-            <TextBlock Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding OperatingExpenses, StringFormat=N2}" />
-            <TextBlock Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding OperatingIncome, StringFormat=N2}" />
-            <TextBlock Grid.Row="8" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding OtherIncome, StringFormat=N2}" />
-            <TextBlock Grid.Row="13" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Text="{Binding NetIncome, StringFormat=N2}" />
+            <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Revenues, StringFormat=N2}" />
+            <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding SalesReturnsAndAllowances, StringFormat=N2}" />
+            <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding CostOfGoodsSold, StringFormat=N2}" />
+            <TextBlock Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding GrossMargin, StringFormat=N2}" />
+            <TextBlock Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding OperatingExpenses, StringFormat=N2}" />
+            <TextBlock Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding OperatingIncome, StringFormat=N2}" />
+            <TextBlock Grid.Row="8" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding OtherIncome, StringFormat=N2}" />
+            <TextBlock Grid.Row="13" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding NetIncome, StringFormat=N2}" />
         </Grid>
     </Grid>
 </UserControl>

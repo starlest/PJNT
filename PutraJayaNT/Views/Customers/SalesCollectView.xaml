@@ -60,8 +60,8 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding Item.ItemID}" />
                     <DataGridTextColumn Header="Name" Width="1*" Binding="{Binding Item.Name}" />
-                    <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding Unit}" />
-                    <DataGridTextColumn Header="SUnit" Width="1*" Binding="{Binding SecondaryUnit}" />
+                    <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding UnitName}" />
+                    <DataGridTextColumn Header="QPU" Width="1*" Binding="{Binding QuantityPerUnit}" />
                     <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
                     <DataGridTextColumn Header="SUnits" Width="1*" Binding="{Binding SecondaryUnits}" />
                     <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />

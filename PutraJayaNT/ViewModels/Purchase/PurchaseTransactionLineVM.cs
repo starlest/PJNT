@@ -5,6 +5,7 @@
     using Models.Purchase;
     using MVVMFramework;
     using Utilities;
+    using Utilities.ModelHelpers;
 
     public class PurchaseTransactionLineVM : ViewModelBase<PurchaseTransactionLine>
     {
@@ -54,19 +55,30 @@
             }
         }
 
-        public string Unit => Model.Item.PiecesPerSecondaryUnit == 0 ? Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit :
-            Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
+        public string Unit
+            => Model.Item.PiecesPerSecondaryUnit == 0
+                ? Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit
+                : Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
 
-        public string SecondaryUnit => Model.Item.PiecesPerSecondaryUnit == 0 ? null : 
-            Model.Item.SecondaryUnitName + "/" + Model.Item.PiecesPerSecondaryUnit;
+        public string SecondaryUnit => Model.Item.PiecesPerSecondaryUnit == 0
+            ? null
+            : Model.Item.SecondaryUnitName + "/" + Model.Item.PiecesPerSecondaryUnit;
+
+        public string UnitName => Model.Item.PiecesPerSecondaryUnit == 0
+            ? Model.Item.UnitName
+            : Model.Item.UnitName + "/" + Model.Item.SecondaryUnitName;
+
+        public string QuantityPerUnit => InventoryHelper.GetItemQuantityPerUnit(Model.Item);
 
         public int Units => Model.Quantity / Model.Item.PiecesPerUnit;
 
-        public int? SecondaryUnits => Model.Item.PiecesPerSecondaryUnit == 0 ? (int?)null : 
-            Model.Quantity % Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
+        public int? SecondaryUnits => Model.Item.PiecesPerSecondaryUnit == 0
+            ? (int?) null
+            : Model.Quantity % Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
 
-        public int Pieces => Model.Item.PiecesPerSecondaryUnit == 0 ? Model.Quantity % Item.PiecesPerUnit :
-            Model.Quantity % Model.Item.PiecesPerUnit % Model.Item.PiecesPerSecondaryUnit;
+        public int Pieces => Model.Item.PiecesPerSecondaryUnit == 0
+            ? Model.Quantity % Item.PiecesPerUnit
+            : Model.Quantity % Model.Item.PiecesPerUnit % Model.Item.PiecesPerSecondaryUnit;
 
         public decimal Discount
         {
@@ -94,10 +106,7 @@
 
         public decimal Total
         {
-            get
-            {
-                return Model.Total;
-            }
+            get { return Model.Total; }
             set
             {
                 Model.Total = value;
@@ -114,40 +123,18 @@
                 OnPropertyChanged("SoldOrReturned");
             }
         }
-            
-        public int GetStock()
-        {
-            using (var context = UtilityMethods.createContext())
-            {
-                var itemStock = context.Stocks.FirstOrDefault(stock => stock.ItemID.Equals(Model.Item.ItemID) && stock.WarehouseID.Equals(Model.Warehouse.ID));
-                return itemStock?.Pieces ?? 0;
-            }
-        }
-       
+
         public decimal GetNetDiscount()
         {
             var lineDiscount = Model.Discount / Model.Item.PiecesPerUnit;
             var lineSalesPrice = Model.PurchasePrice / Model.Item.PiecesPerUnit;
             if (lineSalesPrice - lineDiscount == 0) return 0;
-            var fractionOfTransaction = Model.Quantity * (lineSalesPrice - lineDiscount) / Model.PurchaseTransaction.GrossTotal;
-            var fractionOfTransactionDiscount = fractionOfTransaction * Model.PurchaseTransaction.Discount / Model.Quantity;
+            var fractionOfTransaction = Model.Quantity * (lineSalesPrice - lineDiscount) /
+                                        Model.PurchaseTransaction.GrossTotal;
+            var fractionOfTransactionDiscount = fractionOfTransaction * Model.PurchaseTransaction.Discount /
+                                                Model.Quantity;
             var discount = (lineDiscount + fractionOfTransactionDiscount) * Model.Item.PiecesPerUnit;
             return discount;
-        }
-
-        public PurchaseTransactionLineVM Clone()
-        {
-            var newLine = new PurchaseTransactionLine
-            {
-                Item = Model.Item,
-                Warehouse = Model.Warehouse,
-                PurchasePrice = Model.PurchasePrice * Model.Item.PiecesPerUnit,
-                Discount = Model.Discount * Model.Item.PiecesPerUnit,
-                SoldOrReturned = Model.SoldOrReturned,
-                Total = Model.Total
-            };
-
-            return new PurchaseTransactionLineVM { Model = newLine };
         }
 
         public void UpdateTotal()
