@@ -10,13 +10,15 @@
     using Models.Inventory;
     using MVVMFramework;
     using Utilities;
+    using Utilities.ModelHelpers;
 
     public class StockCardReportVM : ViewModelBase
     {
         private ItemVM _selectedProduct;
         private DateTime _fromDate;
         private DateTime _toDate;
-        private string _productUnit;
+        private string _productUnitName;
+        private string _productQuantityPerUnit;
         private string _beginningBalanceString;
         private string _endingBalanceString;
         private string _totalInString;
@@ -50,7 +52,7 @@
         public ItemVM SelectedProduct
         {
             get { return _selectedProduct; }
-            set { SetProperty(ref _selectedProduct, value, "SelectedProduct"); }
+            set { SetProperty(ref _selectedProduct, value, () => SelectedProduct); }
         }
 
         public DateTime FromDate
@@ -64,7 +66,7 @@
                     return;
                 }
 
-                SetProperty(ref _fromDate, value, "FromDate");
+                SetProperty(ref _fromDate, value, () => FromDate);
             }
         }
 
@@ -79,38 +81,44 @@
                     return;
                 }
 
-                SetProperty(ref _toDate, value, "ToDate");
+                SetProperty(ref _toDate, value, () => ToDate);
             }
         }
 
         public string BeginningBalanceString
         {
             get { return _beginningBalanceString; }
-            set { SetProperty(ref _beginningBalanceString, value, "BeginningBalanceString"); }
+            set { SetProperty(ref _beginningBalanceString, value, () => BeginningBalanceString); }
         }
 
         public string EndingBalanceString
         {
             get { return _endingBalanceString; }
-            set { SetProperty(ref _endingBalanceString, value, "EndingBalanceString"); }
+            set { SetProperty(ref _endingBalanceString, value, () => EndingBalanceString); }
         }
 
         public string TotalInString
         {
             get { return _totalInString; }
-            set { SetProperty(ref _totalInString, value, "TotalInString"); }
+            set { SetProperty(ref _totalInString, value, () => TotalInString); }
         }
 
         public string TotalOutString
         {
             get { return _totalOutString; }
-            set { SetProperty(ref _totalOutString, value, "TotalOutString"); }
+            set { SetProperty(ref _totalOutString, value, () => TotalOutString); }
         }
 
-        public string ProductUnit
+        public string ProductUnitName
         {
-            get { return _productUnit; }
-            set { SetProperty(ref _productUnit, value, "ProductUnit"); }
+            get { return _productUnitName; }
+            set { SetProperty(ref _productUnitName, value, () => ProductUnitName); }
+        }
+
+        public string ProductQuantityPerUnit
+        {
+            get { return _productQuantityPerUnit; }
+            set { SetProperty(ref _productQuantityPerUnit, value, () => ProductQuantityPerUnit); }
         }
         #endregion
 
@@ -139,7 +147,8 @@
                 return _displayCommand ?? (_displayCommand = new RelayCommand(() =>
                 {
                     if (_selectedProduct == null) return;
-                    ProductUnit = _selectedProduct.UnitName + "/" + _selectedProduct.PiecesPerUnit;
+                    ProductUnitName = InventoryHelper.GetItemUnitName(_selectedProduct.Model);
+                    ProductQuantityPerUnit = InventoryHelper.GetItemQuantityPerUnit(_selectedProduct.Model);
                     SetBeginningBalance();
                     UpdateDisplayedLines();
                     UpdateProducts();
@@ -184,7 +193,8 @@
         private void SetBeginningBalance()
         {
             _beginningBalance = GetBeginningBalance(_fromDate);
-            BeginningBalanceString = _beginningBalance / _selectedProduct.PiecesPerUnit + "/" + _beginningBalance % _selectedProduct.PiecesPerUnit;
+            BeginningBalanceString = InventoryHelper.ConvertItemQuantityTostring(_selectedProduct.Model,
+                _beginningBalance);
         }
 
         private int GetBeginningBalance(DateTime fromDate)
@@ -550,9 +560,9 @@
                 else totalIn += l.Amount;
             }
 
-            EndingBalanceString = balance / _selectedProduct.PiecesPerUnit + "/" + balance % _selectedProduct.PiecesPerUnit;
-            TotalInString = totalIn / _selectedProduct.PiecesPerUnit + "/" + totalIn % _selectedProduct.PiecesPerUnit;
-            TotalOutString = totalOut / _selectedProduct.PiecesPerUnit + "/" + totalOut % _selectedProduct.PiecesPerUnit;
+            EndingBalanceString = InventoryHelper.ConvertItemQuantityTostring(_selectedProduct.Model, balance);
+            TotalInString = InventoryHelper.ConvertItemQuantityTostring(_selectedProduct.Model, totalIn);
+            TotalOutString = InventoryHelper.ConvertItemQuantityTostring(_selectedProduct.Model, totalOut);
         }
         #endregion
     }

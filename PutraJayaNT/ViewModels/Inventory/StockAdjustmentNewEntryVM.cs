@@ -36,6 +36,7 @@
             _parentVM = parentVM;
             Warehouses = new ObservableCollection<WarehouseVM>();
             Products = new ObservableCollection<ItemVM>();
+            _newEntryRemainingStock = "0/0/0";
             UpdateWarehouses();
         }
 
@@ -225,7 +226,7 @@
             NewEntryUnits = null;
             NewEntrySecondaryUnits = null;
             NewEntryPieces = null;
-            NewEntryRemainingStock = null;
+            NewEntryRemainingStock = "0/0/0";
             IsSecondaryUnitUsed = false;
         }
 

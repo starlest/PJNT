@@ -3,6 +3,7 @@
     using System;
     using Models.Inventory;
     using MVVMFramework;
+    using Utilities.ModelHelpers;
 
     public class StockCardLineVM : ViewModelBase
     {
@@ -18,40 +19,50 @@
         public DateTime Date
         {
             get { return _date; }
-            set { SetProperty(ref _date, value, "Date"); }
+            set { SetProperty(ref _date, value, () => Date); }
         }
 
         public string Documentation
         {
             get { return _documentation; }
-            set { SetProperty(ref _documentation, value, "Documentation"); }
+            set { SetProperty(ref _documentation, value, () => Documentation); }
         }
 
         public string Description
         {
             get { return _description; }
-            set { SetProperty(ref _description, value, "Description"); }
+            set { SetProperty(ref _description, value, () => Description); }
         }
 
         public string CustomerSupplier
         {
             get { return _customerSupplier; }
-            set { SetProperty(ref _customerSupplier, value, "CustomerSupplier"); }
+            set { SetProperty(ref _customerSupplier, value, () => CustomerSupplier); }
         }
 
         public int Amount
         {
             get { return _amount; }
-            set { SetProperty(ref _amount, value, "Amount"); }
+            set { SetProperty(ref _amount, value, () => Amount); }
         }
 
-        public string InQuantity => _amount > 0 ? Units + "/" + Pieces : "0/0";
+        public string DefaultQuantityString => Item.PiecesPerSecondaryUnit == 0 ? "0/0" : "0/0/0";
 
-        public string OutQuantity => _amount < 0 ? -Units + "/" + -Pieces : "0/0";
+        public string InQuantity
+            => _amount > 0 ? InventoryHelper.ConvertItemQuantityTostring(Item, _amount) : DefaultQuantityString;
+
+        public string OutQuantity
+            => _amount < 0 ? InventoryHelper.ConvertItemQuantityTostring(Item, -_amount) : DefaultQuantityString;
 
         public int Units => _amount / Item.PiecesPerUnit;
 
-        public int Pieces => _amount % Item.PiecesPerUnit;
+        public int? SecondaryUnits => Item.PiecesPerSecondaryUnit == 0
+            ? (int?) null
+            : _amount % Item.PiecesPerUnit / Item.PiecesPerSecondaryUnit;
+
+        public int Pieces => Item.PiecesPerSecondaryUnit == 0
+            ? _amount % Item.PiecesPerUnit
+            : _amount % Item.PiecesPerUnit % Item.PiecesPerSecondaryUnit;
 
         public int Balance
         {

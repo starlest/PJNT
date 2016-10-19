@@ -26,6 +26,8 @@
         private WarehouseVM _transactionFromWarehouse;
         private WarehouseVM _transactionToWarehouse;
         private string _newEntryRemainingStock;
+        private string _newEntryUnitName;
+        private string _newEntryPiecesPerUnit;
         private int? _newEntryUnits;
         private int? _newEntrySecondaryUnits;
         private int? _newEntryPieces;
@@ -63,6 +65,7 @@
             _isNotEditMode = true;
             _isFromWarehouseNotSelected = true;
             _isToWarehouseNotSelected = true;
+            _newEntryRemainingStock = "0/0/0";
 
             UpdateWarehouses();
             SetTransactionID();
@@ -104,12 +107,24 @@
             set
             {
                 SetProperty(ref _newEntryProduct, value, () => NewEntryProduct);
-                if (_newEntryProduct != null)
-                {
-                    IsSecondaryUnitUsed = _newEntryProduct.PiecesPerSecondaryUnit != 0;
-                    SetRemainingStock();
-                }
+                if (_newEntryProduct == null) return;
+                NewEntryUnitName = _newEntryProduct.CombinedUnitName;
+                NewEntryQPU = _newEntryProduct.QuantityPerUnit;
+                IsSecondaryUnitUsed = _newEntryProduct.PiecesPerSecondaryUnit != 0;
+                SetRemainingStock();
             }
+        }
+
+        public string NewEntryUnitName
+        {
+            get { return _newEntryUnitName; }
+            set { SetProperty(ref _newEntryUnitName, value, () => NewEntryUnitName); }
+        }
+
+        public string NewEntryQPU
+        {
+            get { return _newEntryPiecesPerUnit; }
+            set { SetProperty(ref _newEntryPiecesPerUnit, value, () => NewEntryQPU); }
         }
 
         public string NewEntryRemainingStock
@@ -348,16 +363,6 @@
             OnPropertyChanged("TransactionID");
         }
 
-        private void ResetEntryFields()
-        {
-            NewEntryProduct = null;
-            NewEntryRemainingStock = null;
-            NewEntryUnits = null;
-            NewEntrySecondaryUnits = null;
-            NewEntryPieces = null;
-            IsSecondaryUnitUsed = false;
-        }
-
         private void ResetTransaction()
         {
             ResetEntryFields();
@@ -429,6 +434,18 @@
         #endregion
 
         #region New Entry Helper Methods
+
+        private void ResetEntryFields()
+        {
+            NewEntryProduct = null;
+            NewEntryUnitName = null;
+            NewEntryQPU = null;
+            NewEntryRemainingStock = "0/0/0";
+            NewEntryUnits = null;
+            NewEntrySecondaryUnits = null;
+            NewEntryPieces = null;
+            IsSecondaryUnitUsed = false;
+        }
 
         private void SetRemainingStock()
         {
