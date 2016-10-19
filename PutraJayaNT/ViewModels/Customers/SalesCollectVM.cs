@@ -298,7 +298,6 @@
         {
             SelectedPaymentMode = null;
             SalesTransactionTotal = 0;
-            SalesReturnCredits = 0;
             SalesTransactionGrossTotal = 0;
             UseCredits = 0;
             Remaining = 0;
@@ -309,6 +308,7 @@
         {
             SelectedCustomer = null;
             SelectedSalesTransaction = null;
+            SalesReturnCredits = 0;
             ResetSalesTransactionAndCollectionProperties();
             SelectedSalesTransactionLines.Clear();
             CustomerUnpaidSalesTransactions.Clear();

@@ -19,6 +19,7 @@
     public class SalesCollectionListVM : ViewModelBase
     {
         #region Backing Fields
+
         private string _selectedCity;
         private SalesmanVM _selectedSalesman;
         private CustomerVM _selectedCustomer;
@@ -33,6 +34,7 @@
         private ICommand _searchCollectionDateSelectionCommand;
         private ICommand _printPerCityCommand;
         private ICommand _printPerSalesmanCommand;
+
         #endregion
 
         public SalesCollectionListVM()
@@ -53,6 +55,7 @@
         }
 
         #region Collections
+
         public ObservableCollection<string> Cities { get; }
 
         public ObservableCollection<SalesmanVM> Salesmans { get; }
@@ -60,9 +63,11 @@
         public ObservableCollection<CustomerVM> Customers { get; }
 
         public ObservableCollection<SalesTransactionVM> DisplayedSalesTransactions { get; }
+
         #endregion
 
         #region Properties
+
         public bool IsPaidChecked
         {
             get { return _isPaidChecked; }
@@ -160,20 +165,22 @@
             get { return _total; }
             set { SetProperty(ref _total, value, "Total"); }
         }
+
         #endregion
 
         #region Commands
+
         public ICommand SearchCommand
         {
             get
             {
                 return _searchCommand ?? (_searchCommand = new RelayCommand(() =>
-                {
-                    UpdateDisplayedSalesTransactions();
-                    UpdateCities();
-                    UpdateSalesmen();
-                    UpdateCustomers();
-                }));
+                       {
+                           UpdateDisplayedSalesTransactions();
+                           UpdateCities();
+                           UpdateSalesmen();
+                           UpdateCustomers();
+                       }));
             }
         }
 
@@ -181,16 +188,17 @@
         {
             get
             {
-                return _searchCollectionDateSelectionCommand ?? (_searchCollectionDateSelectionCommand = new RelayCommand(() =>
-                {
-                    SelectedCustomer = null;
-                    SelectedCity = null;
-                    SelectedSalesman = null;
-                    UpdateDisplayedSalesTransactionsAccordingToCollectionDateSalesTransactions();
-                    UpdateCities();
-                    UpdateSalesmen();
-                    UpdateCustomers();
-                }));
+                return _searchCollectionDateSelectionCommand ??
+                       (_searchCollectionDateSelectionCommand = new RelayCommand(() =>
+                       {
+                           SelectedCustomer = null;
+                           SelectedCity = null;
+                           SelectedSalesman = null;
+                           UpdateDisplayedSalesTransactionsAccordingToCollectionDateSalesTransactions();
+                           UpdateCities();
+                           UpdateSalesmen();
+                           UpdateCustomers();
+                       }));
             }
         }
 
@@ -199,16 +207,16 @@
             get
             {
                 return _printPerCityCommand ?? (_printPerCityCommand = new RelayCommand(() =>
-                {
-                    if (DisplayedSalesTransactions.Count == 0) return;
+                       {
+                           if (DisplayedSalesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportPerCityWindow(DisplayedSalesTransactions)
-                    {
-                        Owner = Application.Current.MainWindow,
-                        WindowStartupLocation = WindowStartupLocation.CenterOwner
-                    };
-                    collectionReportWindow.Show();
-                }));
+                           var collectionReportWindow = new CollectionReportPerCityWindow(DisplayedSalesTransactions)
+                           {
+                               Owner = Application.Current.MainWindow,
+                               WindowStartupLocation = WindowStartupLocation.CenterOwner
+                           };
+                           collectionReportWindow.Show();
+                       }));
             }
         }
 
@@ -217,22 +225,25 @@
             get
             {
                 return _printPerSalesmanCommand ?? (_printPerSalesmanCommand = new RelayCommand(() =>
-                {
-                    if (DisplayedSalesTransactions.Count == 0) return;
+                       {
+                           if (DisplayedSalesTransactions.Count == 0) return;
 
-                    var collectionReportWindow = new CollectionReportPerSalesmanWindow(DisplayedSalesTransactions,
-                        _collectionDate)
-                    {
-                        Owner = Application.Current.MainWindow,
-                        WindowStartupLocation = WindowStartupLocation.CenterOwner
-                    };
-                    collectionReportWindow.Show();
-                }));
+                           var collectionReportWindow = new CollectionReportPerSalesmanWindow(
+                               DisplayedSalesTransactions,
+                               _collectionDate)
+                           {
+                               Owner = Application.Current.MainWindow,
+                               WindowStartupLocation = WindowStartupLocation.CenterOwner
+                           };
+                           collectionReportWindow.Show();
+                       }));
             }
         }
-        #endregion 
+
+        #endregion
 
         #region Helper Methods 
+
         private void UpdateCities()
         {
             var oldSelectedCity = _selectedCity;
@@ -241,7 +252,8 @@
             using (var context = UtilityMethods.createContext())
             {
                 var customersReturnedFromDatabase = context.Customers.ToList();
-                foreach (var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
+                foreach (
+                    var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
                     Cities.Add(customer.City);
             }
 
@@ -271,11 +283,12 @@
 
             using (var context = UtilityMethods.createContext())
             {
-                var salesmansFromDatabase = context.Salesmans.Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name);
-                var allSalesman = new Salesman {ID = -1, Name = "All"};
-                Salesmans.Add(new SalesmanVM {Model = allSalesman});
+                var salesmansFromDatabase =
+                    context.Salesmans.Where(salesman => !salesman.Name.Equals(" ")).OrderBy(salesman => salesman.Name);
+                var allSalesman = new Salesman { ID = -1, Name = "All" };
+                Salesmans.Add(new SalesmanVM { Model = allSalesman });
                 foreach (var salesman in salesmansFromDatabase)
-                    Salesmans.Add(new SalesmanVM {Model = salesman});
+                    Salesmans.Add(new SalesmanVM { Model = salesman });
             }
 
             UpdateSelectedSalesman(oldSelectedSalesman);
@@ -294,11 +307,11 @@
 
             using (var context = UtilityMethods.createContext())
             {
-                var allCustomer = new Customer {ID = -1, Name = "All"};
-                Customers.Add(new CustomerVM {Model = allCustomer});
+                var allCustomer = new Customer { ID = -1, Name = "All" };
+                Customers.Add(new CustomerVM { Model = allCustomer });
                 var customersFromDatabase = context.Customers.OrderBy(customer => customer.Name);
                 foreach (var customer in customersFromDatabase)
-                    Customers.Add(new CustomerVM {Model = customer});
+                    Customers.Add(new CustomerVM { Model = customer });
             }
 
             UpdateSelectedCustomer(oldSelectedCustomer);
@@ -329,7 +342,8 @@
         {
             if (_selectedCity != null && _selectedSalesman != null)
                 UpdateDisplayedSalesTransactionsAccordingToCitySalesmanSalesTransactions();
-            if ((_selectedCity != null && _selectedSalesman == null) || (_selectedCity == null && _selectedSalesman != null))
+            if ((_selectedCity != null && _selectedSalesman == null) ||
+                (_selectedCity == null && _selectedSalesman != null))
                 DisplayedSalesTransactions.Clear();
             if (_selectedCustomer != null)
                 UpdateDisplayedSalesTransactionsAccordingToCustomerSalesTransactions();
@@ -342,17 +356,20 @@
             var searchCondition = GetCitySalesmanSelectionSearchCondition();
             using (var context = UtilityMethods.createContext())
             {
-                var salesTransactionsFromDatabase = 
+                var salesTransactionsFromDatabase =
                     context.SalesTransactions
-                    .Include("Customer")
-                    .Include("CollectionSalesman")
-                    .Where(searchCondition)
-                    .OrderBy(salesTransaction => salesTransaction.DueDate)
-                    .ThenBy(salesTransaction => salesTransaction.Date)
-                    .ThenBy(salesTransaction => salesTransaction.Customer.Name);
+                        .Include("Customer")
+                        .Include("CollectionSalesman")
+                        .Where(searchCondition)
+                        .OrderBy(salesTransaction => salesTransaction.DueDate)
+                        .ThenBy(salesTransaction => salesTransaction.Date)
+                        .ThenBy(salesTransaction => salesTransaction.Customer.Name);
 
                 DisplayedSalesTransactions.Clear();
-                foreach (var salesTransactionVM in salesTransactionsFromDatabase.Select(salesTransaction => new SalesTransactionVM { Model = salesTransaction }))
+                foreach (
+                    var salesTransactionVM in
+                    salesTransactionsFromDatabase.Select(
+                        salesTransaction => new SalesTransactionVM { Model = salesTransaction }))
                 {
                     DisplayedSalesTransactions.Add(salesTransactionVM);
                     _total += salesTransactionVM.Remaining;
@@ -367,43 +384,45 @@
             if (!_isPaidChecked)
             {
                 if (_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
-                    searchCondition = 
+                    searchCondition =
                         salesTransaction =>
-                        salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
+                                salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
 
                 else if (_selectedCity.Equals("All") && !_selectedSalesman.Name.Equals("All"))
                     searchCondition =
-                        salesTransaction => 
-                        salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
-                        && salesTransaction.Paid < salesTransaction.NetTotal &&
-                        salesTransaction.DueDate <= _toDate;
+                        salesTransaction =>
+                            salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
+                            && salesTransaction.Paid < salesTransaction.NetTotal &&
+                            salesTransaction.DueDate <= _toDate;
 
                 else if (!_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
                     searchCondition =
                         salesTransaction =>
-                        salesTransaction.Customer.City.Equals(_selectedCity) &&
-                        salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
+                            salesTransaction.Customer.City.Equals(_selectedCity) &&
+                            salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
 
                 else
                     searchCondition =
                         salesTransaction =>
-                        salesTransaction.Customer.City.Equals(_selectedCity) &&
-                        salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
-                        && salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
+                            salesTransaction.Customer.City.Equals(_selectedCity) &&
+                            salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
+                            && salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
             }
 
             else
             {
                 if (_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
-                    searchCondition = 
-                        salesTransaction => 
-                        salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate <= _toDate;
+                    searchCondition =
+                        salesTransaction =>
+                            salesTransaction.Paid >= salesTransaction.NetTotal &&
+                            salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate <= _toDate;
 
                 else if (_selectedCity.Equals("All") && !_selectedSalesman.Name.Equals("All"))
-                    searchCondition = 
+                    searchCondition =
                         salesTransaction =>
-                        salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID) && salesTransaction.Paid >= salesTransaction.NetTotal &&
-                        salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate <= _toDate;
+                            salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID) &&
+                            salesTransaction.Paid >= salesTransaction.NetTotal &&
+                            salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate <= _toDate;
 
                 else if (!_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
                     searchCondition =
@@ -415,10 +434,10 @@
                 else
                     searchCondition =
                         salesTransaction =>
-                        salesTransaction.Customer.City.Equals(_selectedCity) &&
-                        salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID) &&
-                        salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate &&
-                        salesTransaction.DueDate <= _toDate;
+                            salesTransaction.Customer.City.Equals(_selectedCity) &&
+                            salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID) &&
+                            salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate &&
+                            salesTransaction.DueDate <= _toDate;
             }
 
             return searchCondition;
@@ -432,19 +451,19 @@
             {
                 var salesTransactionsFromDatabase =
                     context.SalesTransactions
-                    .Include("Customer")
-                    .Include("CollectionSalesman")
-                    .Where(searchCondition)
-                    .OrderBy(salesTransaction => salesTransaction.DueDate)
-                    .ThenBy(salesTransaction => salesTransaction.Date)
-                    .ThenBy(salesTransaction => salesTransaction.Customer.Name)
-                    .ToList();
+                        .Include("Customer")
+                        .Include("CollectionSalesman")
+                        .Where(searchCondition)
+                        .OrderBy(salesTransaction => salesTransaction.DueDate)
+                        .ThenBy(salesTransaction => salesTransaction.Date)
+                        .ThenBy(salesTransaction => salesTransaction.Customer.Name)
+                        .ToList();
 
                 DisplayedSalesTransactions.Clear();
                 foreach (
                     var salesTransactionVM in
-                        salesTransactionsFromDatabase.Select(
-                            salesTransaction => new SalesTransactionVM {Model = salesTransaction}))
+                    salesTransactionsFromDatabase.Select(
+                        salesTransaction => new SalesTransactionVM { Model = salesTransaction }))
                 {
                     DisplayedSalesTransactions.Add(salesTransactionVM);
                     _total += salesTransactionVM.Remaining;
@@ -455,17 +474,23 @@
         private Func<SalesTransaction, bool> GetCustomerSelectionSearchCondition()
         {
             if (_selectedCustomer.Name.Equals("All") && !_isPaidChecked)
-                return salesTransaction => salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
+                return
+                    salesTransaction =>
+                            salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
 
             if (_selectedCustomer.Name.Equals("All") && _isPaidChecked)
-                return salesTransaction => salesTransaction.Paid >= salesTransaction.NetTotal && 
+                return salesTransaction => salesTransaction.Paid >= salesTransaction.NetTotal &&
                                            salesTransaction.DueDate <= _toDate && salesTransaction.DueDate >= _fromDate;
 
             if (!_selectedCustomer.Name.Equals("All") && !_isPaidChecked)
-                return salesTransaction => salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.Customer.ID.Equals(_selectedCustomer.ID);
+                return
+                    salesTransaction =>
+                        salesTransaction.Paid < salesTransaction.NetTotal &&
+                        salesTransaction.Customer.ID.Equals(_selectedCustomer.ID);
 
             return salesTransaction => salesTransaction.Customer.ID.Equals(_selectedCustomer.ID) &&
-                                       salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate >= _fromDate &&
+                                       salesTransaction.Paid >= salesTransaction.NetTotal &&
+                                       salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate >= _fromDate &&
                                        salesTransaction.DueDate <= _toDate;
         }
 
@@ -476,7 +501,10 @@
             {
                 var emptyCollectionSalesman = context.Salesmans.SingleOrDefault(e => e.Name.Equals(" "));
                 var ledgerTransactions = context.Ledger_Transactions
-                    .Where(transaction => transaction.Description.Equals("Sales Transaction Receipt") && transaction.Date.Equals(_collectionDate));
+                    .Where(
+                        transaction =>
+                            transaction.Description.Equals("Sales Transaction Receipt") &&
+                            transaction.Date.Equals(_collectionDate));
 
                 DisplayedSalesTransactions.Clear();
                 foreach (var ledgerTransaction in ledgerTransactions)
@@ -499,8 +527,9 @@
                 var salesTransactionFromDatabase = context.SalesTransactions
                     .Include("CollectionSalesman")
                     .Include("Customer")
-                    .SingleOrDefault(salesTransaction => salesTransaction.SalesTransactionID.Equals(ledgerTransaction.Documentation));
-                return new SalesTransactionVM {Model = salesTransactionFromDatabase};
+                    .SingleOrDefault(
+                        salesTransaction => salesTransaction.SalesTransactionID.Equals(ledgerTransaction.Documentation));
+                return new SalesTransactionVM { Model = salesTransactionFromDatabase };
             }
         }
 
@@ -516,6 +545,7 @@
         {
             OnPropertyChanged("Total");
         }
+
         #endregion
     }
 }
