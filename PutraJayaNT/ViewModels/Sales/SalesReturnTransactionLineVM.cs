@@ -3,6 +3,7 @@
     using Models.Inventory;
     using Models.Sales;
     using MVVMFramework;
+    using Utilities.ModelHelpers;
 
     public class SalesReturnTransactionLineVM : ViewModelBase<SalesReturnTransactionLine>
     {
@@ -36,7 +37,29 @@
             }
         }
 
-        public string Unit => Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit;
+        public string Unit => Model.Item.PiecesPerSecondaryUnit == 0
+            ? Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit
+            : Model.Item.UnitName + "/" + Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
+
+        public string SecondaryUnit => Model.Item.PiecesPerSecondaryUnit == 0
+            ? null
+            : Model.Item.SecondaryUnitName + "/" + Model.Item.PiecesPerSecondaryUnit;
+
+        public string UnitName => Model.Item.PiecesPerSecondaryUnit == 0
+            ? Model.Item.UnitName
+            : Model.Item.UnitName + "/" + Model.Item.SecondaryUnitName;
+
+        public string QuantityPerUnit => InventoryHelper.GetItemQuantityPerUnit(Model.Item);
+
+        public int Units => Model.Quantity / Model.Item.PiecesPerUnit;
+
+        public int? SecondaryUnits => Model.Item.PiecesPerSecondaryUnit == 0
+            ? (int?) null
+            : Model.Quantity % Model.Item.PiecesPerUnit / Model.Item.PiecesPerSecondaryUnit;
+
+        public int Pieces => Model.Item.PiecesPerSecondaryUnit == 0
+            ? Model.Quantity % Item.PiecesPerUnit
+            : Model.Quantity % Model.Item.PiecesPerUnit % Model.Item.PiecesPerSecondaryUnit;
 
         public int Quantity
         {
@@ -44,15 +67,13 @@
             set
             {
                 Model.Quantity = value;
+                UpdateTotal();
                 OnPropertyChanged("Quantity");
                 OnPropertyChanged("Units");
+                OnPropertyChanged("SecondaryUnits");
                 OnPropertyChanged("Pieces");
             }
         }
-
-        public int Pieces => Model.Quantity%Model.Item.PiecesPerUnit;
-
-        public int Units => Model.Quantity/Model.Item.PiecesPerUnit;
 
         public decimal SalesPrice
         {

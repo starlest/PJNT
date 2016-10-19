@@ -7,7 +7,7 @@
              d:DesignHeight="768" d:DesignWidth="1024">
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
-            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontSize" Value="18" />
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -78,10 +78,12 @@
                 <DataGridTextColumn Header="Warehouse" Width="1*" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="1*" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding UnitName}" />
+                <DataGridTextColumn Header="QPU" Width="1*" Binding="{Binding QuantityPerUnit}" />
                 <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="SUnits" Width="1*" Binding="{Binding SecondaryUnits}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
-                <DataGridTextColumn Header="Sales Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
+                <DataGridTextColumn Header="Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Discount" Width="1*" Binding="{Binding Discount, StringFormat=N2}" />
                 <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Total, StringFormat=N2}" />
             </DataGrid.Columns>
@@ -98,16 +100,20 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Product:" />
                 <TextBox Grid.Column="1" Text="{Binding SalesReturnNewEntryProduct}" IsEnabled="False" />
                 <TextBlock Grid.Column="2" Text="Units:" />
                 <TextBox Grid.Column="3" Text="{Binding SalesReturnNewEntryUnits}" />
-                <TextBlock Grid.Column="4" Text="Pieces:" />
-                <TextBox Grid.Column="5" Text="{Binding SalesReturnNewEntryPieces}" />
-                <TextBlock Grid.Column="6" Text="Return Price:" />
-                <TextBox Grid.Column="7" Text="{Binding SalesReturnNewEntryPrice, StringFormat=N2}" />
-                <Button Grid.Column="8" Content="Add" Command="{Binding SalesReturnNewEntryAddCommand}"
+                <TextBlock Grid.Column="4" Text="SUnits:" />
+                <TextBox Grid.Column="5" Text="{Binding SalesReturnNewEntrySecondaryUnits}" IsEnabled="{Binding IsSecondaryUnitUsed}"/>
+                <TextBlock Grid.Column="6" Text="Pieces:" />
+                <TextBox Grid.Column="7" Text="{Binding SalesReturnNewEntryPieces}" />
+                <TextBlock Grid.Column="8" Text="Ret. Price:" />
+                <TextBox Grid.Column="9" Text="{Binding SalesReturnNewEntryPrice, StringFormat=N2}" />
+                <Button Grid.Column="10" Content="Add" Command="{Binding SalesReturnNewEntryAddCommand}"
                         Margin="10, 15, 10, 10" />
             </Grid>
         </Border>
@@ -123,12 +129,12 @@
                 <DataGridTextColumn Header="Warehouse" Width="1*" Binding="{Binding Warehouse.Name}" />
                 <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding Item.ItemID}" />
                 <DataGridTextColumn Header="Name" Width="1*" Binding="{Binding Item.Name}" />
-                <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Unit" Width="1*" Binding="{Binding UnitName}" />
+                <DataGridTextColumn Header="QPU" Width="1*" Binding="{Binding QuantityPerUnit}" />
                 <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="SUnits" Width="1*" Binding="{Binding SecondaryUnits}" />
                 <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
-                <DataGridTextColumn Header="Sales Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
-                <DataGridTextColumn Header="Discount" Width="1*" Binding="{Binding Discount, StringFormat=N2}" />
-                <DataGridTextColumn Header="Return Price" Width="1*" Binding="{Binding ReturnPrice, StringFormat=N2}" />
+                <DataGridTextColumn Header="Ret. Price" Width="1*" Binding="{Binding ReturnPrice, StringFormat=N2}" />
                 <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Total, StringFormat=N2}" />
             </DataGrid.Columns>
         </DataGrid>

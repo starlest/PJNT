@@ -7,9 +7,6 @@
 
     public class SalesReturnTransactionLine : ObservableObject
     {
-        int _quantity;
-        decimal _costOfGoodsSold;
-
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -40,21 +37,13 @@
         public decimal ReturnPrice { get; set; }
 
         [Required]
-        public int Quantity
-        {
-            get { return _quantity; }
-            set { SetProperty(ref _quantity, value, "Quantity"); }
-        }
+        public int Quantity { get; set; }
 
         [Required]
         public decimal Total { get; set; }
 
         [Required]
-        public decimal CostOfGoodsSold
-        {
-            get { return _costOfGoodsSold; }
-            set { SetProperty(ref _costOfGoodsSold, value, "CostOfGoodsSold"); }
-        }
+        public decimal CostOfGoodsSold { get; set; }
 
         [ForeignKey("ItemID")]
         public virtual Item Item { get; set; }

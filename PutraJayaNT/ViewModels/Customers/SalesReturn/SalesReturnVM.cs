@@ -216,8 +216,14 @@
             SelectedSalesTransactionID = Model.SalesTransaction.SalesTransactionID;
             SalesReturnTransactionDate = Model.Date;
 
-            _salesReturnTransactionNetTotal = 0;
             DisplayedSalesTransactionLines.Clear();
+            foreach (var line in Model.SalesTransaction.SalesTransactionLines)
+            {
+                DisplayedSalesTransactionLines.Add(new SalesTransactionLineVM { Model = line });
+            }
+
+            _salesReturnTransactionNetTotal = 0;
+            DisplayedSalesReturnTransactionLines.Clear();
             foreach (var line in Model.SalesReturnTransactionLines)
             {
                 DisplayedSalesReturnTransactionLines.Add(new SalesReturnTransactionLineVM {Model = line});
@@ -286,6 +292,7 @@
         private void UpdateReturnEntryProperties()
         {
             NewEntryVM.SalesReturnNewEntryProduct = _selectedSalesTransactionLine.Item.Name;
+            NewEntryVM.IsSecondaryUnitUsed = _selectedSalesTransactionLine.Item.PiecesPerSecondaryUnit != 0;
             NewEntryVM.SalesReturnNewEntryUnits = 0;
             NewEntryVM.SalesReturnNewEntryPieces = 0;
             NewEntryVM.SalesReturnNewEntryPrice = 0;
