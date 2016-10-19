@@ -103,10 +103,8 @@
         {
             var availableReturnQuantity = GetAvailableReturnQuantity();
             var quantity = _salesReturnNewEntryUnits * _parentVM.SelectedSalesTransactionLine.Item.PiecesPerUnit +
-                           (_isSecondaryUnitUsed
-                               ? _salesReturnNewEntrySecondaryUnits *
-                                 _parentVM.SelectedSalesTransactionLine.Item.PiecesPerSecondaryUnit
-                               : 0)
+                           _salesReturnNewEntrySecondaryUnits *
+                           _parentVM.SelectedSalesTransactionLine.Item.PiecesPerSecondaryUnit
                            +
                            _salesReturnNewEntryPieces;
 
@@ -189,10 +187,8 @@
         {
             var salesReturnNewEntryQuantity = _salesReturnNewEntryUnits *
                                               _parentVM.SelectedSalesTransactionLine.Item.PiecesPerUnit +
-                                              (_isSecondaryUnitUsed
-                                                  ? _salesReturnNewEntrySecondaryUnits *
-                                                    _parentVM.SelectedSalesTransactionLine.Item.PiecesPerSecondaryUnit
-                                                  : 0) +
+                                              _salesReturnNewEntrySecondaryUnits *
+                                              _parentVM.SelectedSalesTransactionLine.Item.PiecesPerSecondaryUnit +
                                               _salesReturnNewEntryPieces;
             var salesReturnTransactionLine = new SalesReturnTransactionLine
             {

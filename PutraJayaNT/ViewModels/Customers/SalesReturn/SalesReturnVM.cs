@@ -110,6 +110,8 @@
             {
                 SetProperty(ref _selectedSalesTransactionID, value, () => SelectedSalesTransactionID);
                 if (_selectedSalesTransactionID == null) return;
+                DisplayedSalesReturnTransactionLines.Clear();
+                SalesReturnTransactionNetTotal = 0;
                 using (var context = UtilityMethods.createContext())
                 {
                     var salesTransactionFromDatabase = context.SalesTransactions
