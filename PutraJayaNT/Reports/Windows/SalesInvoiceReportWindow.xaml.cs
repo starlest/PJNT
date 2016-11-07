@@ -28,8 +28,7 @@
         {
             var dt1 = new DataTable();
             var dt2 = new DataTable();
-
-            dt1.Columns.Add(new DataColumn("LineNumber", typeof(int)));
+            
             dt1.Columns.Add(new DataColumn("ItemID", typeof(string)));
             dt1.Columns.Add(new DataColumn("ItemName", typeof(string)));
             dt1.Columns.Add(new DataColumn("UnitName", typeof(string)));
@@ -39,11 +38,9 @@
             dt1.Columns.Add(new DataColumn("Discount", typeof(decimal)));
             dt1.Columns.Add(new DataColumn("Total", typeof(decimal)));
 
-            var count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines)
             {
                 var dr = dt1.NewRow();
-                dr["LineNumber"] = count++;
                 dr["ItemID"] = line.Item.ItemID;
                 dr["ItemName"] = line.Item.Name;
                 dr["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
@@ -55,7 +52,7 @@
                 dt1.Rows.Add(dr);
             }
 
-            DataRow dr2 = dt2.NewRow();
+            var dr2 = dt2.NewRow();
             dt2.Columns.Add(new DataColumn("InvoiceGrossTotal", typeof(decimal)));
             dt2.Columns.Add(new DataColumn("InvoiceDiscount", typeof(decimal)));
             dt2.Columns.Add(new DataColumn("InvoiceSalesExpense", typeof(decimal)));
@@ -82,8 +79,8 @@
 
             dt2.Rows.Add(dr2);
 
-            ReportDataSource reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
-            ReportDataSource reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
+            var reportDataSource1 = new ReportDataSource("SalesInvoiceLineDataSet", dt1);
+            var reportDataSource2 = new ReportDataSource("SalesInvoiceDataSet", dt2);
 
             reportViewer.LocalReport.ReportPath = System.IO.Path.Combine(Environment.CurrentDirectory,
                 @"Reports\\RDLC\\SalesInvoiceReport.rdlc"); // Path of the rdlc file

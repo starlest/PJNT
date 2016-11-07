@@ -6,16 +6,16 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.20284cm</Width>
+              <Width>2.21602cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.18743cm</Width>
+              <Width>3.91757cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>3.03957cm</Width>
+              <Width>2.42661cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.19278cm</Width>
+              <Width>1.64243cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.19278cm</Width>
@@ -27,7 +27,7 @@
               <Width>2.07277cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.12723cm</Width>
+              <Width>2.5472cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -43,7 +43,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>No.</Value>
+                              <Value>Kode</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -310,14 +310,14 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="LineNumber">
+                    <Textbox Name="ItemID">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!LineNumber.Value</Value>
+                              <Value>=Fields!ItemID.Value</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                               </Style>
@@ -328,7 +328,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>LineNumber</rd:DefaultName>
+                      <rd:DefaultName>ItemID</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1027,7 +1027,7 @@
     <Height>2.45373in</Height>
     <Style />
   </Body>
-  <Width>8.13898in</Width>
+  <Width>8.25775in</Width>
   <Page>
     <PageHeader>
       <Height>2.84069cm</Height>

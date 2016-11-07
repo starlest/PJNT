@@ -6,19 +6,19 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.90353cm</Width>
+              <Width>3.59371cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>7.90791cm</Width>
+              <Width>8.90519cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>3.02833cm</Width>
+              <Width>2.26917cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>3.04554cm</Width>
+              <Width>1.98721cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.8447cm</Width>
+              <Width>2.17724cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -34,7 +34,20 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>No.</Value>
+                              <Value>Kode</Value>
+                              <Style>
+                                <FontSize>11pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
                               <Style>
                                 <FontSize>11pt</FontSize>
                               </Style>
@@ -216,14 +229,14 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="LineNumber">
+                    <Textbox Name="ItemID">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!LineNumber.Value</Value>
+                              <Value>=Fields!ItemID.Value</Value>
                               <Style>
                                 <FontSize>11pt</FontSize>
                               </Style>
@@ -234,7 +247,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>LineNumber</rd:DefaultName>
+                      <rd:DefaultName>ItemID</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -572,7 +585,7 @@
         <Top>0.62301cm</Top>
         <Left>0.97916cm</Left>
         <Height>1.8cm</Height>
-        <Width>18.73001cm</Width>
+        <Width>18.93252cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -742,7 +755,7 @@
     <Height>2.82924in</Height>
     <Style />
   </Body>
-  <Width>7.96438in</Width>
+  <Width>8.20383in</Width>
   <Page>
     <PageHeader>
       <Height>3.88938cm</Height>

@@ -170,7 +170,7 @@
                 var context = UtilityMethods.createContext();
 
                 var actualCOGS =
-                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance9 +
+                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance10 +
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Debit -
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Credit;
                 // change beginningbalaance
@@ -482,7 +482,7 @@
                         {
                             decimal totalDebit = 0;
                             decimal totalCredit = 0;
-                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 8))
+                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 10))
                             {
                                 count++;
                                 if (line.Amount < 0) MessageBox.Show($"Check {line.LedgerTransactionID} - {line.Seq}", "Error", MessageBoxButton.OK);
@@ -619,7 +619,7 @@
             var beginningBalance = 0;
             using (var context = UtilityMethods.createContext())
             {
-                var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == year).FirstOrDefault();
+                var stockBalance = context.StockBalances.FirstOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == year);
 
                 if (stockBalance == null)
                 {

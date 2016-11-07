@@ -485,8 +485,8 @@
             if (!_selectedCustomer.Name.Equals("All") && !_isPaidChecked)
                 return
                     salesTransaction =>
-                        salesTransaction.Paid < salesTransaction.NetTotal &&
-                        salesTransaction.Customer.ID.Equals(_selectedCustomer.ID);
+                        salesTransaction.Customer.ID.Equals(_selectedCustomer.ID) &&
+                        salesTransaction.Paid < salesTransaction.NetTotal;
 
             return salesTransaction => salesTransaction.Customer.ID.Equals(_selectedCustomer.ID) &&
                                        salesTransaction.Paid >= salesTransaction.NetTotal &&

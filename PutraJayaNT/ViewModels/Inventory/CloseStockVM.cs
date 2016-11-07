@@ -12,21 +12,27 @@
 
     internal class CloseStockVM : ViewModelBase
     {
-        readonly List<Warehouse> _warehouses;
-        int _periodYear;
-        int _period;
+        private readonly List<Warehouse> _warehouses;
+        private int _periodYear;
+        private int _periodMonth;
+        private readonly DateTime currentPeriod;
 
         public CloseStockVM()
         {
             using (var context = UtilityMethods.createContext())
             {
-                PeriodYears = new ObservableCollection<int> { DateTime.Now.Year - 1, DateTime.Now.Year };
+                PeriodYears = new ObservableCollection<int> { DateTime.Now.Year - 1, DateTime.Now.Year, DateTime.Now.Year + 1 };
+
                 var firstOrDefault = context.Ledger_General.FirstOrDefault();
                 if (firstOrDefault != null)
+                {
                     _periodYear = firstOrDefault.PeriodYear;
-                Periods = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-                _period = UtilityMethods.GetCurrentDate().Month;
+                    _periodMonth = firstOrDefault.Period;
+                    currentPeriod = new DateTime(_periodYear, _periodMonth, 1);
+                }
 
+                Periods = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+                _periodMonth = UtilityMethods.GetCurrentDate().Month;
                 _warehouses = context.Warehouses.ToList();
             }
         }
@@ -38,20 +44,24 @@
         public int PeriodYear
         {
             get { return _periodYear; }
-            set
-            {
-                SetProperty(ref _periodYear, value, "PeriodYear");
-            }
+            set { SetProperty(ref _periodYear, value, () => PeriodYear); }
         }
 
-        public int Period
+        public int PeriodMonth
         {
-            get { return _period; }
-            set { SetProperty(ref _period, value, "Period"); }
+            get { return _periodMonth; }
+            set { SetProperty(ref _periodMonth, value, () => PeriodMonth); }
         }
 
         public void Close(BackgroundWorker worker)
         {
+            var selectedPeriod = new DateTime(_periodYear, _periodMonth, 1);
+            if (selectedPeriod.AddMonths(-1) > currentPeriod)
+            {
+                MessageBox.Show("This period cannot be closed at the moment.", "Invalid Command", MessageBoxButton.OK);
+                return;
+            }
+
             using (var context = UtilityMethods.createContext())
             {
                 var items = context.Inventory.ToList();
@@ -66,7 +76,7 @@
                         SetEndingBalance(context, warehouse, item, endingBalance);
                     }
 
-                    var status = (index++ * (items.Count / 100)) - 1;
+                    var status = index++ * (items.Count / 100) - 1;
                     if (status < 0) status = 0;
                     worker.ReportProgress(status);
                 }
@@ -74,17 +84,20 @@
                 context.SaveChanges();
             }
 
-            MessageBox.Show("Successfully closed stock!", "Succecss", MessageBoxButton.OK);
+            MessageBox.Show("Successfully closed stock!", "Success", MessageBoxButton.OK);
         }
 
         #region Helper Methods
+
         private int GetBeginningBalance(ERPContext context, Warehouse warehouse, Item item)
         {
-            var periodYearBalances = context.StockBalances.FirstOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == _periodYear);
+            var periodYearBalances =
+                context.StockBalances.FirstOrDefault(
+                    e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == _periodYear);
 
             if (periodYearBalances == null) return 0;
 
-            switch (_period)
+            switch (_periodMonth)
             {
                 case 1:
                     return periodYearBalances.BeginningBalance;
@@ -120,36 +133,46 @@
             var purchaseLines = context.PurchaseTransactionLines
                 .Include("PurchaseTransaction")
                 .Include("PurchaseTransaction.Supplier")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
-                e.PurchaseTransaction.Date.Month == _period && e.PurchaseTransaction.Date.Year == _periodYear &&
-                !e.PurchaseTransaction.Supplier.Name.Equals("-") && !e.PurchaseTransactionID.Substring(0, 2).Equals("SA"))
+                .Where(line =>
+                    line.PurchaseTransaction.Date.Month == _periodMonth &&
+                    line.PurchaseTransaction.Date.Year == _periodYear &&
+                    line.ItemID.Equals(item.ItemID) && line.WarehouseID.Equals(warehouse.ID) &&
+                    !line.PurchaseTransaction.Supplier.Name.Equals("-") &&
+                    !line.PurchaseTransactionID.Substring(0, 2).Equals("SA"))
                 .ToList();
 
             var purchaseReturnLines = context.PurchaseReturnTransactionLines
                 .Include("PurchaseReturnTransaction")
                 .Include("PurchaseReturnTransaction.PurchaseTransaction.Supplier")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
-                e.PurchaseReturnTransaction.Date.Month == _period && e.PurchaseReturnTransaction.Date.Year == _periodYear)
+                .Where(line =>
+                    line.PurchaseReturnTransaction.Date.Month == _periodMonth &&
+                    line.PurchaseReturnTransaction.Date.Year == _periodYear &&
+                    line.ItemID.Equals(item.ItemID) && line.WarehouseID.Equals(warehouse.ID))
                 .ToList();
 
             var salesLines = context.SalesTransactionLines
                 .Include("SalesTransaction")
                 .Include("SalesTransaction.Customer")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
-                e.SalesTransaction.Date.Month == _period && e.SalesTransaction.Date.Year == _periodYear)
+                .Where(line =>
+                    line.SalesTransaction.Date.Month == _periodMonth && line.SalesTransaction.Date.Year == _periodYear &&
+                    line.ItemID.Equals(item.ItemID) && line.WarehouseID.Equals(warehouse.ID))
                 .ToList();
 
             var salesReturnLines = context.SalesReturnTransactionLines
                 .Include("SalesReturnTransaction")
                 .Include("SalesReturnTransaction.SalesTransaction.Customer")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
-                e.SalesReturnTransaction.Date.Month == _period && e.SalesReturnTransaction.Date.Year == _periodYear)
+                .Where(line =>
+                    line.SalesReturnTransaction.Date.Month == _periodMonth &&
+                    line.SalesReturnTransaction.Date.Year == _periodYear && line.ItemID.Equals(item.ItemID) &&
+                    line.WarehouseID.Equals(warehouse.ID))
                 .ToList();
 
             var stockAdjustmentLines = context.StockAdjustmentTransactionLines
                 .Include("StockAdjustmentTransaction")
-                .Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) &&
-                e.StockAdjustmentTransaction.Date.Month == _period && e.StockAdjustmentTransaction.Date.Year == _periodYear)
+                .Where(line =>
+                    line.StockAdjustmentTransaction.Date.Month == _periodMonth &&
+                    line.StockAdjustmentTransaction.Date.Year == _periodYear &&
+                    line.ItemID.Equals(item.ItemID) && line.WarehouseID.Equals(warehouse.ID))
                 .ToList();
 
             var moveStockTransactions = context.StockMovementTransactions
@@ -157,8 +180,9 @@
                 .Include("ToWarehouse")
                 .Include("StockMovementTransactionLines")
                 .Include("StockMovementTransactionLines.Item")
-                .Where(e => e.Date.Month == _period && e.Date.Year == _periodYear
-                && (e.FromWarehouse.ID.Equals(warehouse.ID) || e.ToWarehouse.ID.Equals(warehouse.ID)))
+                .Where(line =>
+                    line.Date.Month == _periodMonth && line.Date.Year == _periodYear &&
+                    (line.FromWarehouse.ID.Equals(warehouse.ID) || line.ToWarehouse.ID.Equals(warehouse.ID)))
                 .ToList();
 
             foreach (var line in purchaseLines)
@@ -180,18 +204,13 @@
             {
                 foreach (var line in transaction.StockMovementTransactionLines)
                 {
-                    if (line.ItemID.Equals(item.ItemID))
-                    {
-                        if (transaction.FromWarehouse.ID.Equals(warehouse.ID))
-                        {
-                            balance -= line.Quantity;
-                        }
+                    if (!line.ItemID.Equals(item.ItemID)) continue;
 
-                        else if (transaction.ToWarehouse.ID.Equals(warehouse.ID))
-                        {
-                            balance += line.Quantity;
-                        }
-                    }
+                    if (transaction.FromWarehouse.ID.Equals(warehouse.ID))
+                        balance -= line.Quantity;
+                    
+                    else if (transaction.ToWarehouse.ID.Equals(warehouse.ID))
+                        balance += line.Quantity;  
                 }
             }
             return balance;
@@ -199,8 +218,12 @@
 
         private void SetEndingBalance(ERPContext context, Warehouse warehouse, Item item, int endingBalance)
         {
-
-            var stockBalance = context.StockBalances.Where(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == _periodYear).FirstOrDefault();
+            var stockBalance =
+                context.StockBalances
+                    .SingleOrDefault(
+                        balance =>
+                            balance.Year == _periodYear && balance.ItemID.Equals(item.ItemID) &&
+                            balance.WarehouseID.Equals(warehouse.ID));
 
             var flag = true;
 
@@ -209,13 +232,13 @@
                 flag = false;
                 stockBalance = new StockBalance
                 {
-                    Item = context.Inventory.Where(e => e.ItemID.Equals(item.ItemID)).FirstOrDefault(),
-                    Warehouse = context.Warehouses.Where(e => e.ID.Equals(warehouse.ID)).FirstOrDefault(),
+                    Item = context.Inventory.SingleOrDefault(e => e.ItemID.Equals(item.ItemID)),
+                    Warehouse = context.Warehouses.SingleOrDefault(e => e.ID.Equals(warehouse.ID)),
                     Year = _periodYear
                 };
             }
 
-            switch (_period)
+            switch (_periodMonth)
             {
                 case 1:
                     stockBalance.Balance1 = endingBalance;
@@ -260,6 +283,7 @@
                 context.StockBalances.Add(stockBalance);
             }
         }
+
         #endregion
     }
 }

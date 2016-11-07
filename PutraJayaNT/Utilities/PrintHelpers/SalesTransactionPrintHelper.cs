@@ -102,13 +102,11 @@
 
         private static void LoadSalesDOLinesDataTable(SalesTransaction salesTransaction, Warehouse warehouse, DataTable salesTransactionLinesDataTable)
         {
-            var count = 1;
             foreach (
                 var line in
                     salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(warehouse.ID)).ToList())
             {
                 var salesTransactionLinesDataTableRow = salesTransactionLinesDataTable.NewRow();
-                salesTransactionLinesDataTableRow["LineNumber"] = count++;
                 salesTransactionLinesDataTableRow["ItemID"] = line.Item.ItemID;
                 salesTransactionLinesDataTableRow["ItemName"] = line.Item.Name;
                 salesTransactionLinesDataTableRow["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
@@ -152,7 +150,6 @@
 
         private static void SetupSalesDOLinesDataTable(DataTable salesTransactionLinesDataTable)
         {
-            salesTransactionLinesDataTable.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("ItemID", typeof(string)));
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("ItemName", typeof(string)));
             salesTransactionLinesDataTable.Columns.Add(new DataColumn("UnitName", typeof(string)));
@@ -245,7 +242,6 @@
 
         private static void SetupSalesInvoiceLinesDataTable(DataTable salesInvoiceLinesDataTable)
         {
-            salesInvoiceLinesDataTable.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             salesInvoiceLinesDataTable.Columns.Add(new DataColumn("ItemID", typeof(string)));
             salesInvoiceLinesDataTable.Columns.Add(new DataColumn("ItemName", typeof(string)));
             salesInvoiceLinesDataTable.Columns.Add(new DataColumn("UnitName", typeof(string)));
@@ -273,11 +269,9 @@
 
         private static void LoadSalesInvoiceLinesDataTable(DataTable salesInvoiceLinesDataTable, SalesTransaction salesTransaction)
         {
-            var count = 1;
             foreach (var line in salesTransaction.SalesTransactionLines)
             {
                 var row = salesInvoiceLinesDataTable.NewRow();
-                row["LineNumber"] = count++;
                 row["ItemID"] = line.Item.ItemID;
                 row["ItemName"] = line.Item.Name;
                 row["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);

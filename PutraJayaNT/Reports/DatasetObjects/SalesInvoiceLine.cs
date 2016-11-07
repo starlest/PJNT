@@ -2,8 +2,6 @@
 {
     public class SalesInvoiceLine
     {
-        public int LineNumber { get; set; }
-
         public string ItemID { get; set; }
 
         public string ItemName { get; set; }

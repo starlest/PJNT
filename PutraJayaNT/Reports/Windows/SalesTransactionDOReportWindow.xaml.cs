@@ -58,7 +58,6 @@
             DODataTable = new DataTable();
             DOLinesDataTable = new DataTable();
 
-            DODataTable.Columns.Add(new DataColumn("LineNumber", typeof(int)));
             DODataTable.Columns.Add(new DataColumn("ItemID", typeof(string)));
             DODataTable.Columns.Add(new DataColumn("ItemName", typeof(string)));
             DODataTable.Columns.Add(new DataColumn("UnitName", typeof(string)));
@@ -86,11 +85,9 @@
             DODataTable.Rows.Clear();
             DOLinesDataTable.Rows.Clear();
 
-            var count = 1;
             foreach (var line in _salesTransaction.SalesTransactionLines.Where(e => e.Warehouse.ID.Equals(warehouse.ID)).ToList())
             {
                 var dr1 = DODataTable.NewRow();
-                dr1["LineNumber"] = count++;
                 dr1["ItemID"] = line.Item.ItemID;
                 dr1["ItemName"] = line.Item.Name;
                 dr1["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
