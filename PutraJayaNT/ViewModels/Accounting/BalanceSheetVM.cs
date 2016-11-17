@@ -63,7 +63,7 @@
                     _cashAndCashEquivalents = 0;
 
                     var equivalents = context.Ledger_Accounts
-                        .Where(e => e.Name == "Cash" || e.Name.Equals("Bank BNI"))
+                        .Where(account => account.Name == "Cash" || account.Name.Equals("Bank BNI"))
                         .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .ToList();
@@ -253,32 +253,35 @@
         private decimal FindCurrentBalance(LedgerAccount account)
         {
             var period = _periodMonth;
-            var periodYearBalances = account.LedgerAccountBalances.Where(e => e.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year)).FirstOrDefault();
+            var periodYearBalances = account.LedgerAccountBalances.FirstOrDefault(e => e.PeriodYear.Equals(_periodYear));
 
-            if (period == 1)
-                return periodYearBalances.Balance1;
-            else if (period == 2)
-                return periodYearBalances.Balance2;
-            else if (period == 3)
-                return periodYearBalances.Balance3;
-            else if (period == 4)
-                return periodYearBalances.Balance4;
-            else if (period == 5)
-                return periodYearBalances.Balance5;
-            else if (period == 6)
-                return periodYearBalances.Balance6;
-            else if (period == 7)
-                return periodYearBalances.Balance7;
-            else if (period == 8)
-                return periodYearBalances.Balance8;
-            else if (period == 9)
-                return periodYearBalances.Balance9;
-            else if (period == 10)
-                return periodYearBalances.Balance10;
-            else if (period == 11)
-                return periodYearBalances.Balance11;
-            else
-                return periodYearBalances.Balance12;
+            switch (period)
+            {
+                case 1:
+                    return periodYearBalances.Balance1;
+                case 2:
+                    return periodYearBalances.Balance2;
+                case 3:
+                    return periodYearBalances.Balance3;
+                case 4:
+                    return periodYearBalances.Balance4;
+                case 5:
+                    return periodYearBalances.Balance5;
+                case 6:
+                    return periodYearBalances.Balance6;
+                case 7:
+                    return periodYearBalances.Balance7;
+                case 8:
+                    return periodYearBalances.Balance8;
+                case 9:
+                    return periodYearBalances.Balance9;
+                case 10:
+                    return periodYearBalances.Balance10;
+                case 11:
+                    return periodYearBalances.Balance11;
+                default:
+                    return periodYearBalances.Balance12;
+            }
         }
     }
 }

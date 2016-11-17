@@ -74,6 +74,8 @@
                         var beginningBalance = GetBeginningBalance(context, warehouse, item);
                         var endingBalance = GetEndingBalance(context, warehouse, item, beginningBalance);
                         SetEndingBalance(context, warehouse, item, endingBalance);
+                        if (_periodMonth == 12)
+                            CreateNextYearStockBalance(context, warehouse, item, endingBalance);
                     }
 
                     var status = index++ * (items.Count / 100) - 1;
@@ -284,6 +286,17 @@
             }
         }
 
+        private void CreateNextYearStockBalance(ERPContext context, Warehouse warehouse, Item item, int endingBalance)
+        {
+            var nextYearStockBalance = new StockBalance
+            {
+                Item = context.Inventory.SingleOrDefault(e => e.ItemID.Equals(item.ItemID)),
+                Warehouse = context.Warehouses.SingleOrDefault(e => e.ID.Equals(warehouse.ID)),
+                Year = _periodYear + 1,
+                BeginningBalance = endingBalance
+            };
+            context.StockBalances.Add(nextYearStockBalance);
+        }
         #endregion
     }
 }

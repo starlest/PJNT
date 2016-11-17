@@ -70,17 +70,7 @@
 
                 foreach (var account in accounts)
                 {
-                    if (UtilityMethods.GetCurrentDate().Month == 12)
-                    {
-                        var newBalance = new LedgerAccountBalance
-                        {
-                            LedgerAccount = account,
-                            PeriodYear = UtilityMethods.GetCurrentDate().Year + 1
-                        };
-                        context.Ledger_Account_Balances.Add(newBalance);
-                    }
-
-                    if (Period != 12) account.LedgerGeneral.Period++;
+                    if (_period != 12) account.LedgerGeneral.Period++;
                     else
                     {
                         account.LedgerGeneral.PeriodYear++;
@@ -93,6 +83,21 @@
                         CloseAssetOrExpenseAccount(account, context);
                     else
                         CloseLiabilityOrRevenueAccount(account, context);
+
+                    if (_period == 12)
+                    {
+                        var newBalance = new LedgerAccountBalance
+                        {
+                            LedgerAccount = account,
+                            PeriodYear = _periodYear + 1,
+                            BeginningBalance =
+                                account.LedgerAccountBalances.Single(
+                                    balance =>
+                                        balance.LedgerAccount.ID.Equals(account.ID) &&
+                                        balance.PeriodYear.Equals(_periodYear)).Balance12
+                        };
+                        context.Ledger_Account_Balances.Add(newBalance);
+                    }
 
                     worker.ReportProgress(index++ * (totalAccounts / 100));
                 }
@@ -152,8 +157,10 @@
         {
             var periodYearBalances =
                 account.LedgerAccountBalances.First(
-                    balance => balance.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year));
-            switch (Period)
+                    balance => balance.LedgerAccount.ID.Equals(account.ID) &&
+                               balance.PeriodYear.Equals(_periodYear));
+
+            switch (_period)
             {
                 case 1:
                     if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
@@ -259,8 +266,9 @@
         {
             var periodYearBalances =
                 account.LedgerAccountBalances.First(
-                    balance => balance.PeriodYear.Equals(UtilityMethods.GetCurrentDate().Year));
-            switch (Period)
+                    balance => balance.LedgerAccount.ID.Equals(account.ID) &&
+                               balance.PeriodYear.Equals(_periodYear));
+            switch (_period)
             {
                 case 1:
                     if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
