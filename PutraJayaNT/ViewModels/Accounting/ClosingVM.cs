@@ -157,8 +157,7 @@
         {
             var periodYearBalances =
                 account.LedgerAccountBalances.First(
-                    balance => balance.LedgerAccount.ID.Equals(account.ID) &&
-                               balance.PeriodYear.Equals(_periodYear));
+                    balance => balance.PeriodYear.Equals(_periodYear));
 
             switch (_period)
             {
@@ -266,8 +265,8 @@
         {
             var periodYearBalances =
                 account.LedgerAccountBalances.First(
-                    balance => balance.LedgerAccount.ID.Equals(account.ID) &&
-                               balance.PeriodYear.Equals(_periodYear));
+                    balance => balance.PeriodYear.Equals(_periodYear));
+
             switch (_period)
             {
                 case 1:

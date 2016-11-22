@@ -1,6 +1,7 @@
 ﻿namespace ECRP.Views
 {
     using System.Windows.Input;
+    using Utilities;
     using ViewModels;
 
     /// <summary>

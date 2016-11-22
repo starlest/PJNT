@@ -22,7 +22,7 @@
         private readonly User _user;
         private readonly string _selectedServerName;
         private bool _isServer;
-        private bool _isSendingNotifications;
+        private bool _performingTelegramBotActions;
 
         public MainWindow()
         {
@@ -101,7 +101,7 @@
             {
                 Dispatcher.Invoke(UpdateTitle);              
                 AttemptToSendNotifications();
-                CleanNotifications();
+                TelegramBot.CleanNotifications();
                 Thread.Sleep(5000);
             }
         }
@@ -115,14 +115,15 @@
         {
             try
             {
-                if (!_isServer || _isSendingNotifications) return;
-                _isSendingNotifications = true;
-                SendNotifications();
-                _isSendingNotifications = false;
+                if (!_isServer || _performingTelegramBotActions) return;
+                _performingTelegramBotActions = true;
+                TelegramBot.CheckUpdates();
+                TelegramBot.SendNotifications();
+                _performingTelegramBotActions = false;
             }
             catch (Exception)
             {
-                _isSendingNotifications = false;
+                _performingTelegramBotActions = false;
             }
 
         }
@@ -136,38 +137,6 @@
         private void SetTitle()
         {
             Title = _selectedServerName + " - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
-        }
-
-        private static void SendNotifications()
-        {
-            var Bot = new Api("229513906:AAH5-4dU6h_BnI20CpY_X0XAm4xB9xrnvdw");
-
-            using (var context = UtilityMethods.createContext())
-            {
-                var unsentNotifications =
-                    context.TelegramBotNotifications.Where(notification => !notification.Sent).ToList();
-                if (unsentNotifications.Count == 0) return;
-
-                foreach (var notification in unsentNotifications)
-                {
-                    // ReSharper disable once UnusedVariable
-                    var result = Bot.SendTextMessage(-104676249,
-                        $"{notification.When} - {notification.Message}").Result;
-                    notification.Sent = true;
-                    context.SaveChanges();
-                }
-            }
-        }
-
-        private static void CleanNotifications()
-        {
-            using (var context = UtilityMethods.createContext())
-            {
-                var sentNotifications =
-                    context.TelegramBotNotifications.Where(notification => notification.Sent);
-                context.TelegramBotNotifications.RemoveRange(sentNotifications);
-                context.SaveChanges();
-            }
         }
         #endregion
     }
