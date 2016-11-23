@@ -1,8 +1,10 @@
 ﻿namespace ECRP.Utilities
 {
     using System;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
+    using System.Windows;
     using Models;
     using Telegram.Bot;
     using Telegram.Bot.Types;
@@ -24,13 +26,16 @@
             var Bot = new Api("229513906:AAH5-4dU6h_BnI20CpY_X0XAm4xB9xrnvdw");
             var offset = 0;
             var updates = Bot.GetUpdates(offset).Result;
+            var selectedServer = Application.Current.Resources[Constants.SELECTEDSERVER].ToString().ToLower();
             foreach (var update in updates)
             {
                 if (update.Message.Type == MessageType.TextMessage)
                 {
-                    if (update.Message.Text.StartsWith("/customer"))
+                    var messageText = update.Message.Text.ToLower();
+                    if (messageText.StartsWith("/customer") && messageText.EndsWith(selectedServer))
                     {
-                        var customerName = update.Message.Text.Substring(10);
+                        var customerName = messageText.Substring(10);
+                        customerName = customerName.Substring(0, customerName.Length - selectedServer.Length);
                         SendCustomerReceivables(customerName);
                     }
                 }
@@ -53,11 +58,12 @@
                             transaction =>
                                 transaction.Customer.ID.Equals(customer.ID) &&
                                 transaction.Paid < transaction.NetTotal);
-                    message.Append($"\n{customer.Name}\n");
+                    var serverName = Application.Current.Resources[Constants.SELECTEDSERVER] as string;
+                    message.Append($"\n{serverName} --- {customer.Name}\n");
                     foreach (var receivable in customerReceivables)
                     {
                         var remainingAmount = receivable.NetTotal - receivable.Paid;
-                        message.Append($"Due Date: {receivable.DueDate:dd/MM/yyyy}, Remaining: {remainingAmount:0#,##.00}\n");
+                        message.Append($"Date: {receivable.Date:dd/MM/yyyy}, Remaining: {remainingAmount:0#,##.00}\n");
                     }
                 }
                 AddTelegramNotification(DateTime.Now, message.ToString());

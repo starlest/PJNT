@@ -39,7 +39,7 @@
                 if (user != null)
                     transaction.User = context.Users.FirstOrDefault(e => e.Username.Equals(user.Username));
             }
-            else transaction.User = context.Users.FirstOrDefault(e => e.Username.Equals("EMPTY"));
+            else transaction.User = context.Users.FirstOrDefault(user => user.Username.Equals("EMPTY"));
 
             context.Ledger_Transactions.Add(transaction);
             return true;

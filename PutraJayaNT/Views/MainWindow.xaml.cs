@@ -2,7 +2,6 @@
 {
     using System;
     using System.ComponentModel;
-    using System.Linq;
     using System.Net;
     using System.Threading;
     using System.Windows;
@@ -10,7 +9,6 @@
     using FirstFloor.ModernUI;
     using FirstFloor.ModernUI.Presentation;
     using Models;
-    using Telegram.Bot;
     using Utilities;
 
     /// <summary>
