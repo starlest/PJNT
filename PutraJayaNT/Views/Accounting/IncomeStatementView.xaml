@@ -45,7 +45,7 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="Income Statement for PUJA Supermarket" />
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" ><Run Text="Income Statement"/><LineBreak/><Run/></TextBlock>
             <TextBlock Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="{Binding ForTheDate}" />
         </Grid>
         <Grid Grid.Column="0" Grid.Row="2">

@@ -13,14 +13,14 @@
 
     class TestVM : ViewModelBase
     {
-        ICommand _checkSalesTransactionsCommand;
-        ICommand _checkPurchaseTransactionsCommand;
-        ICommand _checkInventoryCommand;
-        ICommand _checkStockCommand;
-        ICommand _checkSoldOrReturnedCommand;
-        ICommand _checkLedgerTransactionsCommand;
-        ICommand _checkLedgerGeneralCommand;
-        ICommand _checkPastCommand;
+        private ICommand _checkSalesTransactionsCommand;
+        private ICommand _checkPurchaseTransactionsCommand;
+        private ICommand _checkInventoryCommand;
+        private ICommand _checkStockCommand;
+        private ICommand _checkSoldOrReturnedCommand;
+        private ICommand _checkLedgerTransactionsCommand;
+        private ICommand _checkLedgerGeneralCommand;
+        private ICommand _checkPastCommand;
         private ICommand _testIssueCommand;
 
         public ICommand CheckSalesTransactionsCommand
@@ -170,10 +170,10 @@
                 var context = UtilityMethods.createContext();
 
                 var actualCOGS =
-                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance10 +
+                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance11 +
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Debit -
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Credit;
-                // change beginningbalaance
+                // change beginningbalance
 
                 decimal calculatedCOGS = 0;
 
@@ -482,7 +482,7 @@
                         {
                             decimal totalDebit = 0;
                             decimal totalCredit = 0;
-                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 10))
+                            foreach (var line in a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 12))
                             {
                                 count++;
                                 if (line.Amount < 0) MessageBox.Show($"Check {line.LedgerTransactionID} - {line.Seq}", "Error", MessageBoxButton.OK);
@@ -549,7 +549,7 @@
                         foreach (var t in transactions)
                         {
                  
-                                MessageBox.Show(string.Format("{0}", t.SalesTransactionID), "Error", MessageBoxButton.OK);
+                                MessageBox.Show($"{t.SalesTransactionID}", "Error", MessageBoxButton.OK);
                             
                         }
 
@@ -585,9 +585,11 @@
         {
             using (var context = UtilityMethods.createContext())
             {
-                var actualCOGS = context.Ledger_Account_Balances.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Balance3 +
-                context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Debit -
-                context.Ledger_General.Where(e => e.LedgerAccount.Name.Equals("Inventory")).FirstOrDefault().Credit; // changge beginningbalaance
+                var actualCOGS = context.Ledger_Account_Balances.Single(account => account.LedgerAccount.Name.Equals("Inventory")).Balance3 +
+                context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Debit -
+                context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Credit; 
+                
+                // change beginningbalaance
 
                 decimal calculatedCOGS = 0;
 
@@ -605,16 +607,15 @@
                     calculatedCOGS += (availableQuantity * purchaseLineNetTotal) - fractionOfTransactionDiscount + fractionOfTransactionTax;
                 }
 
-                if (actualCOGS != calculatedCOGS)
-                {
-                    MessageBox.Show(string.Format("Actual {0}, calculated {1} difference {2}", actualCOGS, calculatedCOGS, actualCOGS - calculatedCOGS));
-                    return false;
-                }
-                return true;
+                if (actualCOGS == calculatedCOGS) return true;
+
+                MessageBox.Show(
+                    $"Actual {actualCOGS}, calculated {calculatedCOGS} difference {actualCOGS - calculatedCOGS}");
+                return false;
             }
         }
 
-        private int GetPeriodBeginningBalance(Item item, Warehouse warehouse, int year, int month)
+        private static int GetPeriodBeginningBalance(Item item, Warehouse warehouse, int year, int month)
         {
             var beginningBalance = 0;
             using (var context = UtilityMethods.createContext())
@@ -672,7 +673,7 @@
             return beginningBalance;
         }
 
-        private int GetBeginningBalance(Item item, Warehouse warehouse, DateTime fromDate)
+        private static int GetBeginningBalance(Item item, Warehouse warehouse, DateTime fromDate)
         {
             var monthDate = fromDate.AddDays(-fromDate.Date.Day + 1);
             var balance = GetPeriodBeginningBalance(item, warehouse, fromDate.Year, fromDate.Month);

@@ -84,13 +84,13 @@
                 {
                     _inventory = 0;
 
-                    var Inventory = context.Ledger_Accounts
-                        .Where(e => e.Name == "Inventory")
+                    var inventoryFromDatabase = context.Ledger_Accounts
+                        .Where(account => account.Name == "Inventory")
                         .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
-                        .FirstOrDefault();
+                        .SingleOrDefault();
 
-                    _inventory = FindCurrentBalance(Inventory);
+                    _inventory = FindCurrentBalance(inventoryFromDatabase);
 
                     return _inventory;
                 }
@@ -225,12 +225,8 @@
         {
             get
             {
-                using (var context = UtilityMethods.createContext())
-                {
-                    _totalCurrentLiabilities = _accountsPayable;
-
-                    return _totalCurrentLiabilities;
-                }
+                _totalCurrentLiabilities = _accountsPayable;
+                return _totalCurrentLiabilities;
             }
         }
 
@@ -253,7 +249,7 @@
         private decimal FindCurrentBalance(LedgerAccount account)
         {
             var period = _periodMonth;
-            var periodYearBalances = account.LedgerAccountBalances.FirstOrDefault(e => e.PeriodYear.Equals(_periodYear));
+            var periodYearBalances = account.LedgerAccountBalances.Single(e => e.PeriodYear.Equals(_periodYear));
 
             switch (period)
             {

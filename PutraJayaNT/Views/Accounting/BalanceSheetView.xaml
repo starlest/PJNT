@@ -49,7 +49,7 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="Balance Sheet for PUJA Supermarket" />
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" ><Run Text="Balance Sheet"/><LineBreak/><Run/></TextBlock>
             <TextBlock Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="Blue" Text="{Binding AsOfDate}" />
         </Grid>
         <Grid Grid.Row="2">

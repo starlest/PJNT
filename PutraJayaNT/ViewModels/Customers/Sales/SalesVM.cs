@@ -808,7 +808,7 @@
                                 stock =>
                                     stock.ItemID.Equals(line.Item.ItemID) && stock.WarehouseID.Equals(line.Warehouse.ID));
                     var unitsLeft = lineStock?.Pieces / line.Item.PiecesPerUnit ?? 0;
-                    if (lineStock == null || lineStock.Pieces / lineStock.Item.PiecesPerUnit <= 20)
+                    if (lineStock == null || lineStock.Pieces / lineStock.Item.PiecesPerUnit <= 10)
                         TelegramBot.AddTelegramNotification(DateTime.Now,
                             $"{line.Warehouse.Name} / {line.Item.Name} : {unitsLeft}");
                 }

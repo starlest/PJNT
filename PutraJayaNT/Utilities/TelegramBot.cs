@@ -1,7 +1,6 @@
 ﻿namespace ECRP.Utilities
 {
     using System;
-    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Windows;
@@ -35,7 +34,7 @@
                     if (messageText.StartsWith("/customer") && messageText.EndsWith(selectedServer))
                     {
                         var customerName = messageText.Substring(10);
-                        customerName = customerName.Substring(0, customerName.Length - selectedServer.Length);
+                        customerName = customerName.Substring(0, customerName.Length - selectedServer.Length - 1);
                         SendCustomerReceivables(customerName);
                     }
                 }

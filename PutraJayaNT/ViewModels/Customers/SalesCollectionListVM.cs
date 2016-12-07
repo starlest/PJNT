@@ -486,7 +486,7 @@
                 return
                     salesTransaction =>
                         salesTransaction.Customer.ID.Equals(_selectedCustomer.ID) &&
-                        salesTransaction.Paid < salesTransaction.NetTotal;
+                        salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
 
             return salesTransaction => salesTransaction.Customer.ID.Equals(_selectedCustomer.ID) &&
                                        salesTransaction.Paid >= salesTransaction.NetTotal &&
