@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Linq;
     using System.Net;
     using System.Threading;
     using System.Windows;
@@ -9,6 +10,7 @@
     using FirstFloor.ModernUI;
     using FirstFloor.ModernUI.Presentation;
     using Models;
+    using Services;
     using Utilities;
 
     /// <summary>
@@ -39,6 +41,7 @@
                 IsEnabled = true;
                 _connectionString = UtilityMethods.GetIpAddress();
                 CheckIfIsServer();
+                SetSystemParamaters();
                 SetColorTheme();
 
                 if (_user.Username.Equals("edwin92"))
@@ -81,9 +84,20 @@
             }
         }
 
-        private void SetColorTheme()
+        private static void SetSystemParamaters()
         {
-            AppearanceManager.Current.AccentColor = _selectedServerName.Equals(Constants.MIX) ? Colors.Blue : Colors.Yellow;
+            using (var context = UtilityMethods.createContext())
+            {
+                var parameters = context.SystemParameters.ToList();
+                foreach (var paramater in parameters)
+                    Application.Current.Resources.Add(paramater.Key, paramater.Value);
+            }
+        }
+
+        private static void SetColorTheme()
+        {
+            var themeColor = UtilityMethods.GetThemeColor();
+            AppearanceManager.Current.AccentColor = themeColor == "Blue" ? Colors.Blue : Colors.Yellow;
         }
 
         private void SetUpBackgroundWorker()
@@ -99,7 +113,7 @@
             {
                 Dispatcher.Invoke(UpdateTitle);              
                 AttemptToSendNotifications();
-                TelegramBot.CleanNotifications();
+                TelegramService.CleanNotifications();
                 Thread.Sleep(5000);
             }
         }
@@ -115,8 +129,8 @@
             {
                 if (!_isServer || _performingTelegramBotActions) return;
                 _performingTelegramBotActions = true;
-                TelegramBot.CheckUpdates();
-                TelegramBot.SendNotifications();
+                TelegramService.CheckUpdates();
+                TelegramService.SendNotifications();
                 _performingTelegramBotActions = false;
             }
             catch (Exception)
@@ -128,13 +142,13 @@
 
         private bool HasTitledChanged()
         {
-            var newTitle = _selectedServerName + " - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
+            var newTitle = UtilityMethods.GetServerName() + " - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
             return !newTitle.Equals(Title);
         }
 
         private void SetTitle()
         {
-            Title = _selectedServerName + " - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
+            Title = UtilityMethods.GetServerName() + " - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
         }
         #endregion
     }

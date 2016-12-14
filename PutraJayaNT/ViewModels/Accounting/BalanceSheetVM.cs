@@ -106,7 +106,7 @@
                     _accountsReceivable = 0;
 
                     var accountsReceivable = context.Ledger_Accounts
-                        .Where(e => e.Name.Contains("Accounts Receivable") || e.Notes.Contains("Accounts Receivable"))
+                        .Where(account => account.LedgerAccountGroup.Name.Equals("Accounts Receivable"))
                         .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .ToList();
@@ -208,7 +208,7 @@
                     _accountsPayable = 0;
 
                     var accountsPayable = context.Ledger_Accounts
-                        .Where(e => e.Name.Contains("Accounts Payable") || e.Notes.Contains("Accounts Payable"))
+                        .Where(account => account.LedgerAccountGroup.Name.Equals("Accounts Payable"))
                         .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .ToList();

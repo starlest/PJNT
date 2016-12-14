@@ -10,6 +10,9 @@
         public const string IPADDRESS = "ipAddress";
         public const string NESTLE = "Nestle";
         public const string MIX = "Mix";
+        public const string TELEGRAMKEY = "TelegramKey";
+        public const string SERVERNAME = "ServerName";
+        public const string THEMECOLOR = "ThemeColor";
 
         #region Accounting
         public const string DEBIT = "Debit";
@@ -31,6 +34,7 @@
         public const string BANK = "Bank";
         public const string CAPITAL = "Capital";
         public const string RETAINED_EARNINGS = "Retained Earnings";
+        public const string INCOME = "Income";
         public const string INVENTORY = "Inventory";
         public const string COST_OF_GOODS_SOLD = "Cost of Goods Sold";
 

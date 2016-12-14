@@ -12,6 +12,7 @@
     using Models.Inventory;
     using Models.Sales;
     using MVVMFramework;
+    using Services;
     using Utilities;
     using Utilities.ModelHelpers;
     using Utilities.PrintHelpers;
@@ -809,7 +810,7 @@
                                     stock.ItemID.Equals(line.Item.ItemID) && stock.WarehouseID.Equals(line.Warehouse.ID));
                     var unitsLeft = lineStock?.Pieces / line.Item.PiecesPerUnit ?? 0;
                     if (lineStock == null || lineStock.Pieces / lineStock.Item.PiecesPerUnit <= 10)
-                        TelegramBot.AddTelegramNotification(DateTime.Now,
+                        TelegramService.AddTelegramNotification(DateTime.Now,
                             $"{line.Warehouse.Name} / {line.Item.Name} : {unitsLeft}");
                 }
                 context.SaveChanges();

@@ -51,8 +51,14 @@
             return "pjnestle";
         }
 
+        public static ERPContext createContext() => new ERPContext(GetDBName(), GetIpAddress());
+
         public static string GetIpAddress() => Application.Current.FindResource(Constants.IPADDRESS) as string;
 
-        public static ERPContext createContext() => new ERPContext(GetDBName(), GetIpAddress());
+        public static string GetServerName() => Application.Current.FindResource(Constants.SERVERNAME) as string;
+
+        public static string GetTelegramKey() => Application.Current.FindResource(Constants.TELEGRAMKEY) as string;
+
+        public static string GetThemeColor() => Application.Current.FindResource(Constants.THEMECOLOR) as string;
     }
 }

@@ -79,6 +79,8 @@ namespace ECRP.Utilities
 
         public virtual DbSet<TelegramBotNotification> TelegramBotNotifications { get; set; }
 
+        public virtual DbSet<SystemParameter> SystemParameters { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<DecimalPropertyConvention>();

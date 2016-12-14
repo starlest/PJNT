@@ -157,7 +157,7 @@
                 using (var context = UtilityMethods.createContext())
                 {
                     var operatingExpenseAccounts = context.Ledger_Accounts
-                        .Where(account => account.Notes.Contains(Constants.OPERATING_EXPENSE))
+                        .Where(account => account.LedgerAccountGroup.Name.Equals(Constants.OPERATING_EXPENSE))
                         .Include("LedgerGeneral")
                         .Include("LedgerAccountBalances");
 

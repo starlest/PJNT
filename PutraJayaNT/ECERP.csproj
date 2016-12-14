@@ -118,12 +118,21 @@
     <Compile Include="Migrations\201610030514439_AddInvoiceDateToPurchaseTransaction3.Designer.cs">
       <DependentUpon>201610030514439_AddInvoiceDateToPurchaseTransaction3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612140344323_Update11.cs" />
+    <Compile Include="Migrations\201612140344323_Update11.Designer.cs">
+      <DependentUpon>201612140344323_Update11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612140352493_Update21.cs" />
+    <Compile Include="Migrations\201612140352493_Update21.Designer.cs">
+      <DependentUpon>201612140352493_Update21.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Update1.cs" />
     <Compile Include="Migrations\Update1.Designer.cs">
       <DependentUpon>Update1.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Accounting\LedgerAccountClass.cs" />
     <Compile Include="Models\Accounting\LedgerAccountGroup.cs" />
+    <Compile Include="Models\SystemParameter.cs" />
     <Compile Include="Models\TelegramBotNotification.cs" />
     <Compile Include="Reports\DatasetObjects\GeneralLedgerReport.cs" />
     <Compile Include="Reports\DatasetObjects\DetailedSalesTransactionLine.cs" />
@@ -155,7 +164,7 @@
     <Compile Include="Utilities\ModelHelpers\SupplierHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\SalesTransactionHelper.cs" />
     <Compile Include="Utilities\PrintHelpers\SalesTransactionPrintHelper.cs" />
-    <Compile Include="Utilities\TelegramBot.cs" />
+    <Compile Include="Services\TelegramService.cs" />
     <Compile Include="ViewModels\Accounting\CashBankTransactionNewEntryVM.cs" />
     <Compile Include="ViewModels\Analysis\SalesAnalysisMonthlyLineVM.cs" />
     <Compile Include="ViewModels\Analysis\SalesAnalysisMonthlyVM.cs" />
@@ -761,6 +770,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610030514439_AddInvoiceDateToPurchaseTransaction3.resx">
       <DependentUpon>201610030514439_AddInvoiceDateToPurchaseTransaction3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612140344323_Update11.resx">
+      <DependentUpon>201612140344323_Update11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612140352493_Update21.resx">
+      <DependentUpon>201612140352493_Update21.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\Update1.resx">
       <DependentUpon>Update1.cs</DependentUpon>

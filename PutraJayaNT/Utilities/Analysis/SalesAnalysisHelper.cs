@@ -7,11 +7,23 @@
     {
         public static int GetSalesForecastInMonth(ERPContext context, ItemVM item, int year, int month)
         {
-            if (month == 1) year--;
+            if (month == 1)
+            {
+                year--;
+                month = 13;
+            }
             var previousMonthTotalSales = GetItemTotalSalesInMonth(context, item, year, month - 1);
-            if (month == 2) year--;
+            if (month == 2)
+            {
+                year--;
+                month = 13;
+            }
             var secondPreviousMonthTotalSales = GetItemTotalSalesInMonth(context, item, year, month - 2);
-            if (month == 3) year--;
+            if (month == 3)
+            {
+                year--;
+                month = 13;
+            }
             var thirdPreviousMonthTotalSales = GetItemTotalSalesInMonth(context, item, year, month - 3);
 
             if (previousMonthTotalSales == 0) return 0;

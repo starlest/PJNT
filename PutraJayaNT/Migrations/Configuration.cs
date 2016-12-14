@@ -1,6 +1,7 @@
 namespace ECRP.Migrations
 {
     using System.Data.Entity.Migrations;
+    using Models;
     using Models.Accounting;
     using Utilities;
 
@@ -13,6 +14,15 @@ namespace ECRP.Migrations
 
         protected override void Seed(ERPContext context)
         {
+            // Add "-" supplier manually
+
+            context.SystemParameters.AddOrUpdate(
+                parameter => parameter.Key,
+                new SystemParameter { Key = "ServerName" },
+                new SystemParameter { Key = "TelegramKey" },
+                new SystemParameter { Key = "ThemeColor", Value = "Blue" }
+                );
+
             context.Ledger_Account_Classes.AddOrUpdate(
                 accountClass => accountClass.Name,
                 new LedgerAccountClass { Name = Constants.LedgerAccountClasses.ASSET },
@@ -29,7 +39,8 @@ namespace ECRP.Migrations
                 new LedgerAccountGroup { Name = Constants.ACCOUNTS_PAYABLE },
                 new LedgerAccountGroup { Name = Constants.ACCOUNTS_RECEIVABLE },
                 new LedgerAccountGroup { Name = Constants.COST_OF_GOODS_SOLD },
-                new LedgerAccountGroup { Name = Constants.RETAINED_EARNINGS }
+                new LedgerAccountGroup { Name = Constants.INCOME },
+                new LedgerAccountGroup { Name = Constants.INVENTORY }
                 );
         }
     }

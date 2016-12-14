@@ -1,6 +1,5 @@
 ﻿namespace ECRP.Utilities.ModelHelpers
 {
-    using System.Data.Entity;
     using System.Linq;
     using System.Transactions;
     using System.Windows;
