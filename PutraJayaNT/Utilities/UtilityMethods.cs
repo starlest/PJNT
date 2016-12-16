@@ -30,24 +30,25 @@
 
         public static int GetRemainingStock(Item item, Warehouse warehouse)
         {
-            using (var context = new ERPContext(GetDBName(), GetIpAddress()))
+            using (var context = createContext())
             {
-                var stock = context.Stocks.SingleOrDefault(e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID));
+                var stock =
+                    context.Stocks.SingleOrDefault(
+                        e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID));
                 return stock?.Pieces ?? 0;
             }
         }
 
         public static DateTime GetCurrentDate()
         {
-            using (var context = new ERPContext(GetDBName(), GetIpAddress()))
-                return context.Dates.First(e => e.Name.Equals("Current")).DateTime;          
+            using (var context = createContext())
+                return context.Dates.First(e => e.Name.Equals("Current")).DateTime;
         }
 
         public static string GetDBName()
         {
-           var selectedServerName = Application.Current.FindResource(Constants.SELECTEDSERVER) as string;
-            if (selectedServerName != null && selectedServerName.Equals(Constants.MIX))
-                return "putrajayant";
+            var selectedServerName = Application.Current.FindResource(Constants.SELECTEDSERVER) as string;
+            if (selectedServerName != null && selectedServerName.Equals(Constants.MIX)) return "putrajayant";
             return "pjnestle";
         }
 
@@ -55,7 +56,7 @@
 
         public static string GetIpAddress() => Application.Current.FindResource(Constants.IPADDRESS) as string;
 
-        public static string GetServerName() => Application.Current.FindResource(Constants.SERVERNAME) as string;
+        public static string GetServerName() => Application.Current.TryFindResource(Constants.SERVERNAME) as string;
 
         public static string GetTelegramKey() => Application.Current.FindResource(Constants.TELEGRAMKEY) as string;
 

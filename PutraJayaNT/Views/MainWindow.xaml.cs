@@ -20,7 +20,6 @@
     {
         private readonly string _connectionString;
         private readonly User _user;
-        private readonly string _selectedServerName;
         private bool _isServer;
         private bool _performingTelegramBotActions;
 
@@ -37,7 +36,6 @@
 
             else
             {
-                _selectedServerName = Application.Current.FindResource(Constants.SELECTEDSERVER) as string;
                 IsEnabled = true;
                 _connectionString = UtilityMethods.GetIpAddress();
                 CheckIfIsServer();

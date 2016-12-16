@@ -2,7 +2,6 @@
 {
     using System.Data.Entity;
     using System.Transactions;
-    using System.Windows;
     using Models.Accounting;
     using Models.Sales;
     using Utilities;

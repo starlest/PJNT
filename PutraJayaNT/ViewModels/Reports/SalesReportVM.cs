@@ -8,6 +8,7 @@
     using System.Windows;
     using System.Windows.Input;
     using Customer;
+    using ECRP.Reports.Windows.Reports.SalesReport;
     using Models.Customer;
     using Models.Inventory;
     using Models.Sales;
@@ -34,9 +35,11 @@
 
         private ICommand _displayCommand;
         private ICommand _printCommand;
+        private ICommand _printPerCustomerCommand;
 
         private const string GLOBAL = "Global";
-
+        private const string DETAILED = "Detailed";
+         
         public SalesReportVM()
         {
             Categories = new ObservableCollection<Category>();
@@ -45,7 +48,7 @@
             DetailedDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
             GlobalDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
 
-            Modes = new ObservableCollection<string> {"Global", "Detailed"};
+            Modes = new ObservableCollection<string> {GLOBAL, DETAILED};
             SelectedMode = Modes.First();
 
             _fromDate = UtilityMethods.GetCurrentDate().Date.AddDays(-UtilityMethods.GetCurrentDate().Day + 1);
@@ -187,6 +190,18 @@
                 {
                     if (GlobalDisplayLines.Count == 0 && DetailedDisplayLines.Count == 0) return;
                     ShowPrintWindow();
+                }));
+            }
+        }
+
+        public ICommand PrintPerCustomerCommand
+        {
+            get
+            {
+                return _printPerCustomerCommand ?? (_printPerCustomerCommand = new RelayCommand(() =>
+                {
+                    if (GlobalDisplayLines.Count == 0 && DetailedDisplayLines.Count == 0) return;
+                    ShowPrintPerCustomerWindow();
                 }));
             }
         }
@@ -416,6 +431,15 @@
             }
         }
 
+        private void ShowPrintPerCustomerWindow()
+        {
+            var salesPerCustomerReportWindow = new SalesPerCustomerReportWindow(DetailedDisplayLines)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            salesPerCustomerReportWindow.Show();
+        }
         #endregion
     }
 }

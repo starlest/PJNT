@@ -10,6 +10,10 @@
             <Setter Property="FontSize" Value="18" />
         </Style>
     </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="F1" Command="{Binding PrintCommand}" />
+        <KeyBinding Key="F2" Command="{Binding PrintPerCustomerCommand}" />
+    </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.125*" />
@@ -20,8 +24,10 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.20*" />
+                <ColumnDefinition Width="0.20*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Row="0" Grid.Column="1" Content="(F1) Print" Command="{Binding PrintCommand}" />
+            <Button Grid.Row="0" Grid.Column="2" Content="(F2) Print per Customer" Command="{Binding PrintPerCustomerCommand}" />
         </Grid>
         <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
             <Grid>
@@ -79,8 +85,9 @@
                     <DataGridTextColumn Header="SUnits" Width="1*" Binding="{Binding SecondaryUnits}" />
                     <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
                     <DataGridTextColumn Header="Price" Width="1*" Binding="{Binding SalesPrice, StringFormat=N2}" />
-                    <DataGridTextColumn Header="Discount" Width="1*" Binding="{Binding NetDiscount, StringFormat=N2}" />
-                    <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding NetTotal, StringFormat=N2}" />
+                    <DataGridTextColumn Header="Discount" Width="1*" Binding="{Binding Discount, StringFormat=N2}" />
+                    <DataGridTextColumn Header="Total" Width="1*" Binding="{Binding Total, StringFormat=N2}" />
+                    <DataGridTextColumn Header="Net Total" Width="1*" Binding="{Binding NetTotal, StringFormat=N2}" />
                 </DataGrid.Columns>
             </DataGrid>
             <Grid Grid.Row="1">

@@ -14,7 +14,7 @@
         private string _userName;
         private string _password;
         private string _selectedServer;
-        private string _ipAddress = "192.168.1.113";
+        private string _ipAddress = "192.168.1.139";
         private ICommand _loginCommand;
 
         public LoginVM()

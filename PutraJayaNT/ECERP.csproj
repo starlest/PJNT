@@ -126,6 +126,10 @@
     <Compile Include="Migrations\201612140352493_Update21.Designer.cs">
       <DependentUpon>201612140352493_Update21.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612140425308_Update31.cs" />
+    <Compile Include="Migrations\201612140425308_Update31.Designer.cs">
+      <DependentUpon>201612140425308_Update31.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Update1.cs" />
     <Compile Include="Migrations\Update1.Designer.cs">
       <DependentUpon>Update1.cs</DependentUpon>
@@ -140,6 +144,9 @@
     <Compile Include="Reports\DatasetObjects\GlobalSalesTransactionLine.cs" />
     <Compile Include="Reports\Windows\GeneralLedgerReportWindow.xaml.cs">
       <DependentUpon>GeneralLedgerReportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Windows\Reports\SalesReport\SalesPerCustomerReportWindow.xaml.cs">
+      <DependentUpon>SalesPerCustomerReportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\Windows\Reports\SalesReport\DetailedSalesReportWindow.xaml.cs">
       <DependentUpon>DetailedSalesReportWindow.xaml</DependentUpon>
@@ -482,6 +489,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Reports\Windows\Reports\SalesReport\SalesPerCustomerReportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Reports\Windows\Reports\SalesReport\DetailedSalesReportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -777,10 +788,16 @@
     <EmbeddedResource Include="Migrations\201612140352493_Update21.resx">
       <DependentUpon>201612140352493_Update21.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612140425308_Update31.resx">
+      <DependentUpon>201612140425308_Update31.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\Update1.resx">
       <DependentUpon>Update1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\GeneralLedgerReport.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\RDLC\Reports\SalesReport\SalesPerCustomerReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\Reports\SalesReport\DetailedSalesReport.rdlc">

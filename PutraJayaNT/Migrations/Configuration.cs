@@ -1,5 +1,6 @@
 namespace ECRP.Migrations
 {
+    using System;
     using System.Data.Entity.Migrations;
     using Models;
     using Models.Accounting;
@@ -20,7 +21,8 @@ namespace ECRP.Migrations
                 parameter => parameter.Key,
                 new SystemParameter { Key = "ServerName" },
                 new SystemParameter { Key = "TelegramKey" },
-                new SystemParameter { Key = "ThemeColor", Value = "Blue" }
+                new SystemParameter { Key = "ThemeColor", Value = "Blue" },
+                new SystemParameter { Key = "CurrentDate", Value = DateTime.Now.Date.ToShortDateString() }
                 );
 
             context.Ledger_Account_Classes.AddOrUpdate(

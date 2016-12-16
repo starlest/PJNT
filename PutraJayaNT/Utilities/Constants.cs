@@ -10,9 +10,14 @@
         public const string IPADDRESS = "ipAddress";
         public const string NESTLE = "Nestle";
         public const string MIX = "Mix";
+
+        #region System Parameters
         public const string TELEGRAMKEY = "TelegramKey";
         public const string SERVERNAME = "ServerName";
         public const string THEMECOLOR = "ThemeColor";
+        public const string CURRENTDATE = "CurrentDate";
+        #endregion
+
 
         #region Accounting
         public const string DEBIT = "Debit";

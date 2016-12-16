@@ -100,7 +100,7 @@
             get { return Model.Discount * Model.Item.PiecesPerUnit; }
             set
             {
-                Model.Discount = (value <= 0 ? 0 : (value/ Model.Item.PiecesPerUnit) );
+                Model.Discount = value <= 0 ? 0 : value/ Model.Item.PiecesPerUnit;
                 Total = (Model.SalesPrice - Model.Discount) * Model.Quantity;
                 OnPropertyChanged("Discount");
             }
@@ -124,6 +124,7 @@
             if (line == null) return false;
             return Item.ItemID.Equals(line.Item.ItemID) &&
                    Warehouse.ID.Equals(line.Warehouse.ID) &&
+                   SalesPrice.Equals(line.SalesPrice) &&
                    SalesPrice.Equals(line.SalesPrice) &&
                    Discount.Equals(line.Discount);
         }
