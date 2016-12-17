@@ -5,7 +5,6 @@
     using System.Data;
     using System.Windows;
     using Microsoft.Reporting.WinForms;
-    using Utilities.ModelHelpers;
     using ViewModels.Sales;
 
     /// <summary>
