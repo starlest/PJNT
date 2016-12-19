@@ -108,10 +108,8 @@
                 SelectedPurchaseLines.Clear();
                 SetProperty(ref _selectedSupplier, value, () => SelectedSupplier);
                 if (_selectedSupplier == null) return;
+                UpdatePropertiesAccordingToSelectedSupplier();
                 UpdateSuppliers();
-                ResetPaymentAndPurchaseTransactionProperties();
-                UpdateSupplierUnpaidPurchases();
-                PurchaseReturnCredits = value.PurchaseReturnCredits;
             }
         }
 
@@ -266,22 +264,17 @@
             Remaining = _selectedPurchaseTransaction.Total - _selectedPurchaseTransaction.Paid;
         }
 
-        private bool IsPaymentModeSelected()
+        private void UpdatePropertiesAccordingToSelectedSupplier()
         {
-            if (_selectedPaymentMode != null) return true;
-            MessageBox.Show("Please select a payment mode.", "Invalid Selection", MessageBoxButton.OK);
-            return false;
-        }
-
-        private static bool IsPaymentConfirmationYes()
-        {
-            return MessageBox.Show("Confirm Payment?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+            ResetPaymentAndPurchaseTransactionProperties();
+            PurchaseReturnCredits = _selectedSupplier.PurchaseReturnCredits;
+            UpdateSupplierUnpaidPurchases();
+            SelectedPurchaseLines.Clear();
         }
 
         private void ResetPaymentAndPurchaseTransactionProperties()
         {
             SelectedPaymentMode = null;
-            PurchaseReturnCredits = 0;
             PurchaseTransactionGrossTotal = 0;
             PurchaseTransactionTotal = 0;
             Remaining = 0;
@@ -293,11 +286,24 @@
         {
             SelectedPurchaseTransaction = null;
             SelectedSupplier = null;
+            PurchaseReturnCredits = 0;
             ResetPaymentAndPurchaseTransactionProperties();
             UpdateSuppliers();
             UpdatePaymentMethods();
             SelectedPurchaseLines.Clear();
             SupplierUnpaidPurchases.Clear();
+        }
+
+        private bool IsPaymentModeSelected()
+        {
+            if (_selectedPaymentMode != null) return true;
+            MessageBox.Show("Please select a payment mode.", "Invalid Selection", MessageBoxButton.OK);
+            return false;
+        }
+
+        private static bool IsPaymentConfirmationYes()
+        {
+            return MessageBox.Show("Confirm Payment?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
         }
 
         private void TriggerPaymentButtonStyle()

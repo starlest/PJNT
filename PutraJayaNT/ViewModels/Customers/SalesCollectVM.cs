@@ -312,6 +312,8 @@
             ResetSalesTransactionAndCollectionProperties();
             SelectedSalesTransactionLines.Clear();
             CustomerUnpaidSalesTransactions.Clear();
+            UpdateCustomers();
+            UpdatePaymentModes();
         }
 
         private void UpdateRemaining()
