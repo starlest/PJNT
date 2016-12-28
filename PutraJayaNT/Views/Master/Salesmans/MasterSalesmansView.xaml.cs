@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Master.Salesmans
+﻿namespace ECERP.Views.Master.Salesmans
 {
     using ViewModels.Master.Salesmans;
 

@@ -5,8 +5,8 @@
     using System.Windows.Input;
     using System.Windows;
     using System.Windows.Forms;
-    using ECRP.Utilities;
-    using ECRP.Utilities.ModelHelpers;
+    using ECERP.Utilities;
+    using ECERP.Utilities.ModelHelpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]

@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Master.Customers
+﻿namespace ECERP.Views.Master.Customers
 {
     using System.Windows;
     using System.Windows.Media;

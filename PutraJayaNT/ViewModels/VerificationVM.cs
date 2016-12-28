@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels
+﻿namespace ECERP.ViewModels
 {
     using System.Linq;
     using System.Windows;

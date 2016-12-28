@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Item
+﻿namespace ECERP.ViewModels.Item
 {
     using Models.Inventory;
     using MVVMFramework;

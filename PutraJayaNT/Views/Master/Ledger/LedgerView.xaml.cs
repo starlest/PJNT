@@ -1,6 +1,5 @@
-﻿namespace ECRP.Views.Master.Ledger
+﻿namespace ECERP.Views.Master.Ledger
 {
-    using ViewModels.Master;
     using ViewModels.Master.Ledger;
 
     /// <summary>

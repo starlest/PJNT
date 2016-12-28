@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Reports
+﻿namespace ECERP.ViewModels.Reports
 {
     using System;
     using System.Collections.Generic;
@@ -8,15 +8,15 @@
     using System.Windows;
     using System.Windows.Input;
     using Customer;
-    using ECRP.Reports.Windows.Reports.SalesReport;
+    using ECERP.Reports.Windows.Reports.SalesReport;
     using Models.Customer;
     using Models.Inventory;
     using Models.Sales;
     using MVVMFramework;
     using Sales;
     using Utilities;
-    using DetailedSalesReportWindow = ECRP.Reports.Windows.Reports.SalesReport.DetailedSalesReportWindow;
-    using GlobalSalesReportWindow = ECRP.Reports.Windows.Reports.SalesReport.GlobalSalesReportWindow;
+    using DetailedSalesReportWindow = ECERP.Reports.Windows.Reports.SalesReport.DetailedSalesReportWindow;
+    using GlobalSalesReportWindow = ECERP.Reports.Windows.Reports.SalesReport.GlobalSalesReportWindow;
 
     internal class SalesReportVM : ViewModelBase
     {

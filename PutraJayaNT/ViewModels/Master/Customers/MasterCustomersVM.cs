@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Master.Customers
+﻿namespace ECERP.ViewModels.Master.Customers
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

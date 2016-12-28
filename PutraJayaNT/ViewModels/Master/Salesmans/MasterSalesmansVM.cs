@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Master.Salesmans 
+﻿namespace ECERP.ViewModels.Master.Salesmans 
 {
     using System.Collections.ObjectModel;
     using System.Linq;

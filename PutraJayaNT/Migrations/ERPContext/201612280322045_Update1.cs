@@ -1,9 +1,8 @@
-namespace ECRP.Migrations
+namespace ECERP.Migrations.ERPContext
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
-    public partial class Update2 : DbMigration
+
+    public partial class Update1 : DbMigration
     {
         public override void Up()
         {

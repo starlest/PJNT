@@ -1,4 +1,4 @@
-namespace ECRP.Models
+namespace ECERP.Models
 {
     using System.ComponentModel.DataAnnotations;
 

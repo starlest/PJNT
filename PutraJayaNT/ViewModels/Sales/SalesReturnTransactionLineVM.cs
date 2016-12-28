@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Sales
+﻿namespace ECERP.ViewModels.Sales
 {
     using Models.Inventory;
     using Models.Sales;

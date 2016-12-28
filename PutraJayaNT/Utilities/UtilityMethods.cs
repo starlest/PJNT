@@ -1,6 +1,7 @@
-﻿namespace ECRP.Utilities
+﻿namespace ECERP.Utilities
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Windows;
     using Models.Inventory;
@@ -42,7 +43,23 @@
         public static DateTime GetCurrentDate()
         {
             using (var context = createContext())
-                return context.Dates.First(e => e.Name.Equals("Current")).DateTime;
+            {
+                var dateTimeString = context.SystemParameters.Single(param => param.Key.Equals(Constants.CURRENTDATE)).Value;
+                var date = DateTime.Parse(dateTimeString, CultureInfo.InvariantCulture);
+                return date;
+            }
+        }
+
+        public static void advanceSystemDate(int numOfDays)
+        {
+            using (var context = createContext())
+            {
+                var dateParameter = context.SystemParameters.Single(param => param.Key.Equals(Constants.CURRENTDATE));
+                var date = DateTime.Parse(dateParameter.Value, CultureInfo.InvariantCulture);
+                date = date.AddDays(numOfDays);
+                dateParameter.Value = date.ToString(CultureInfo.InvariantCulture);
+                context.SaveChanges();
+            }
         }
 
         public static string GetDBName()

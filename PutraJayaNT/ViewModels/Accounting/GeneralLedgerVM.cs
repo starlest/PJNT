@@ -1,11 +1,11 @@
-﻿namespace ECRP.ViewModels.Accounting
+﻿namespace ECERP.ViewModels.Accounting
 {
     using System.Collections.ObjectModel;
     using System.Data.Entity;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using ECRP.Reports.Windows;
+    using ECERP.Reports.Windows;
     using Ledger;
     using MVVMFramework;
     using Utilities;

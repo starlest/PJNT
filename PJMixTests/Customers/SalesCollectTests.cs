@@ -3,11 +3,10 @@
     using System.Data.Entity;
     using System.Linq;
     using System.Transactions;
-    using ECRP.Models.Accounting;
-    using ECRP.Models.Sales;
-    using ECRP.Services;
-    using ECRP.Utilities;
-    using ECRP.Utilities.ModelHelpers;
+    using ECERP.Models.Accounting;
+    using ECERP.Models.Sales;
+    using ECERP.Services;
+    using ECERP.Utilities;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]

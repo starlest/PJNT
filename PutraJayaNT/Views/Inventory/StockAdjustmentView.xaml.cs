@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Inventory
+﻿namespace ECERP.Views.Inventory
 {
     using System.Windows.Controls;
     using System.Windows.Input;

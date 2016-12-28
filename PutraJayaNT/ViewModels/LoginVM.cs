@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels
+﻿namespace ECERP.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
@@ -14,7 +14,7 @@
         private string _userName;
         private string _password;
         private string _selectedServer;
-        private string _ipAddress = "192.168.1.139";
+        private string _ipAddress = "192.168.1.117";
         private ICommand _loginCommand;
 
         public LoginVM()

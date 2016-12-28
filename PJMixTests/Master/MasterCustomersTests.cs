@@ -4,10 +4,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace PJMixTests.Master
 {
     using Database.Customer;
-    using ECRP.Models.Customer;
-    using ECRP.Utilities;
-    using ECRP.Utilities.ModelHelpers;
-    using ECRP.ViewModels.Master.Customers;
+    using ECERP.Models.Customer;
+    using ECERP.Utilities;
+    using ECERP.Utilities.ModelHelpers;
+    using ECERP.ViewModels.Master.Customers;
 
     [TestClass]
     public class MasterCustomersTests

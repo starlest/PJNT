@@ -1,9 +1,9 @@
 ﻿namespace PJMixTests.Master
 {
     using System.Linq;
-    using ECRP.Models.Salesman;
-    using ECRP.Utilities;
-    using ECRP.Utilities.ModelHelpers;
+    using ECERP.Models.Salesman;
+    using ECERP.Utilities;
+    using ECERP.Utilities.ModelHelpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]

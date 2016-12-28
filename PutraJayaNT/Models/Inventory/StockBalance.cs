@@ -1,4 +1,4 @@
-﻿namespace ECRP.Models.Inventory
+﻿namespace ECERP.Models.Inventory
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;

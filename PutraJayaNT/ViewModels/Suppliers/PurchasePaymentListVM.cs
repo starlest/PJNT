@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Suppliers
+﻿namespace ECERP.ViewModels.Suppliers
 {
     using System;
     using System.Collections.ObjectModel;

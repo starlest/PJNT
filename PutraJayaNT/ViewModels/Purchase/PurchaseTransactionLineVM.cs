@@ -1,10 +1,8 @@
-﻿namespace ECRP.ViewModels.Purchase
+﻿namespace ECERP.ViewModels.Purchase
 {
-    using System.Linq;
     using Models.Inventory;
     using Models.Purchase;
     using MVVMFramework;
-    using Utilities;
     using Utilities.ModelHelpers;
 
     public class PurchaseTransactionLineVM : ViewModelBase<PurchaseTransactionLine>

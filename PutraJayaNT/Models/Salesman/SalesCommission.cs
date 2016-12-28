@@ -1,4 +1,4 @@
-﻿namespace ECRP.Models.Salesman
+﻿namespace ECERP.Models.Salesman
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;

@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Master.Inventory
+﻿namespace ECERP.ViewModels.Master.Inventory
 {
     using System.Collections.ObjectModel;
     using System.Linq;

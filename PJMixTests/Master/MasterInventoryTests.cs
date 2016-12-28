@@ -4,10 +4,10 @@
     using System.Linq;
     using Database.Item;
     using Database.Supplier;
-    using ECRP.Models.Inventory;
-    using ECRP.Models.Supplier;
-    using ECRP.Utilities;
-    using ECRP.Utilities.ModelHelpers;
+    using ECERP.Models.Inventory;
+    using ECERP.Models.Supplier;
+    using ECERP.Utilities;
+    using ECERP.Utilities.ModelHelpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]

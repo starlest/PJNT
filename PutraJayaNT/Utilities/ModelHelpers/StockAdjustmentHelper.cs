@@ -1,4 +1,4 @@
-﻿namespace ECRP.Utilities.ModelHelpers
+﻿namespace ECERP.Utilities.ModelHelpers
 {
     using System.Collections.ObjectModel;
     using System.Linq;

@@ -1,4 +1,4 @@
-﻿namespace ECRP.Reports.DatasetObjects
+﻿namespace ECERP.Reports.DatasetObjects
 {
     internal class InventoryReportLine
     {

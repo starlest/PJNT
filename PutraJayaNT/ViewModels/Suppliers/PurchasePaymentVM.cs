@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Suppliers
+﻿namespace ECERP.ViewModels.Suppliers
 {
     using System.Collections.ObjectModel;
     using System.Data.Entity;
@@ -143,12 +143,10 @@
             get { return _useCredits; }
             set
             {
-                if (value > _purchaseReturnCredits)
-                {
-                    MessageBox.Show("There is not enough credits.", "Insufficient Credits", MessageBoxButton.OK);
-                    return;
-                }
+                if (!IsCreditsValueValid(value)) return;
                 SetProperty(ref _useCredits, value, () => UseCredits);
+                if (_useCredits <= 0) return;
+                UpdateRemaining();
             }
         }
 
@@ -310,6 +308,20 @@
         {
             IsPaymentButtonPressed = true;
             IsPaymentButtonPressed = false;
+        }
+
+        private bool IsCreditsValueValid(decimal value)
+        {
+            if (value >= 0 && value <= _purchaseReturnCredits) return true;
+            MessageBox.Show($"The available number of credits is {_purchaseReturnCredits}", "Invalid Value",
+                MessageBoxButton.OK);
+            return false;
+        }
+
+        private void UpdateRemaining()
+        {
+            Pay = 0;
+            Remaining = _purchaseTransactionTotal - _selectedPurchaseTransaction.Paid - _useCredits;
         }
 
         #endregion

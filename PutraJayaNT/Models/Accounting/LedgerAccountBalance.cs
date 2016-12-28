@@ -1,4 +1,4 @@
-﻿namespace ECRP.Models.Accounting
+﻿namespace ECERP.Models.Accounting
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;

@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Suppliers.PurchaseReturn
+﻿namespace ECERP.ViewModels.Suppliers.PurchaseReturn
 {
     using System.Collections.ObjectModel;
     using System.Linq;

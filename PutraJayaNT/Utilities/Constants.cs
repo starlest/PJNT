@@ -1,4 +1,4 @@
-﻿namespace ECRP.Utilities
+﻿namespace ECERP.Utilities
 {
     public static class Constants
     {

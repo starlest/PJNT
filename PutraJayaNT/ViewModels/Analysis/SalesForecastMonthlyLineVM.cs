@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Analysis
+﻿namespace ECERP.ViewModels.Analysis
 {
     using Item;
     using MVVMFramework;

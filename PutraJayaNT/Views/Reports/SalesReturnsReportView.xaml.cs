@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Reports
+﻿namespace ECERP.Views.Reports
 {
     using System.Windows.Controls;
 

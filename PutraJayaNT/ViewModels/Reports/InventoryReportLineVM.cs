@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Reports
+﻿namespace ECERP.ViewModels.Reports
 {
     using System.Linq;
     using Models.Inventory;

@@ -1,4 +1,4 @@
-﻿namespace ECRP.Reports.Windows.Reports.SalesReport
+﻿namespace ECERP.Reports.Windows.Reports.SalesReport
 {
     using System;
     using System.Collections.ObjectModel;

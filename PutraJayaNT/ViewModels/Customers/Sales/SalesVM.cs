@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Customers.Sales
+﻿namespace ECERP.ViewModels.Customers.Sales
 {
     using System;
     using System.Collections.ObjectModel;
@@ -7,7 +7,7 @@
     using System.Windows;
     using System.Windows.Input;
     using Customer;
-    using ECRP.Reports.Windows;
+    using ECERP.Reports.Windows;
     using Models;
     using Models.Inventory;
     using Models.Sales;

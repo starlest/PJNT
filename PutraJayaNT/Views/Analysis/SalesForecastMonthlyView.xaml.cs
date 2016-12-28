@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Analysis
+﻿namespace ECERP.Views.Analysis
 {
     using System.Windows.Controls;
     using ViewModels.Analysis;

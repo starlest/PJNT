@@ -1,4 +1,4 @@
-﻿namespace ECRP.Models.StockCorrection
+﻿namespace ECERP.Models.StockCorrection
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;

@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using ECRP.Models.Inventory;
-    using ECRP.Utilities;
+    using ECERP.Models.Inventory;
+    using ECERP.Utilities;
 
     public static class DatabaseItemAlternativeSalesPriceHelper
     {

@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Accounting
+﻿namespace ECERP.Views.Accounting
 {
     using System.Windows.Controls;
     using ViewModels.Accounting;

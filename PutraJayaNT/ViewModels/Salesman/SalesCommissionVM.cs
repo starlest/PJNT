@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Salesman
+﻿namespace ECERP.ViewModels.Salesman
 {
     using Models.Inventory;
     using Models.Salesman;

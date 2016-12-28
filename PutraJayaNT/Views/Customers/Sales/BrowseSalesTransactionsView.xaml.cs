@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Customers.Sales
+﻿namespace ECERP.Views.Customers.Sales
 {
     using FirstFloor.ModernUI.Windows.Controls;
     using ViewModels.Customers.Sales;

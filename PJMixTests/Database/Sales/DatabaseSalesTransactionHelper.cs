@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using ECRP.Models.Sales;
-    using ECRP.Utilities;
+    using ECERP.Models.Sales;
+    using ECERP.Utilities;
 
     public static class DatabaseSalesTransactionHelper
     {

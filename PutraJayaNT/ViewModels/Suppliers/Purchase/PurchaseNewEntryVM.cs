@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Suppliers.Purchase
+﻿namespace ECERP.ViewModels.Suppliers.Purchase
 {
     using System.Collections.ObjectModel;
     using System.Windows;

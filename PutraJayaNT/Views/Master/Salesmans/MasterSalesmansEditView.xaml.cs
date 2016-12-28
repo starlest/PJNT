@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Master.Salesmans
+﻿namespace ECERP.Views.Master.Salesmans
 {
     using FirstFloor.ModernUI.Windows.Controls;
     using ViewModels.Master.Salesmans;

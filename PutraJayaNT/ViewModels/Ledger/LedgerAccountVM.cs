@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Ledger
+﻿namespace ECERP.ViewModels.Ledger
 {
     using System.Collections.ObjectModel;
     using Models.Accounting;

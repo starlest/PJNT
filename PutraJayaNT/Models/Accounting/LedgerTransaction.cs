@@ -1,4 +1,4 @@
-﻿namespace ECRP.Models.Accounting
+﻿namespace ECERP.Models.Accounting
 {
     using System;
     using System.Collections.ObjectModel;

@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Master.Suppliers
+﻿namespace ECERP.Views.Master.Suppliers
 {
     using System.Windows;
     using ViewModels.Master.Suppliers;

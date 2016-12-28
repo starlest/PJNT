@@ -1,4 +1,4 @@
-﻿namespace ECRP.Reports.Windows.Reports.SalesReport
+﻿namespace ECERP.Reports.Windows.Reports.SalesReport
 {
     using System;
     using System.Collections.ObjectModel;
@@ -38,6 +38,7 @@
             dt.Columns.Add(new DataColumn("UnitName", typeof(string)));
             dt.Columns.Add(new DataColumn("QuantityPerUnit", typeof(string)));
             dt.Columns.Add(new DataColumn("Quantity", typeof(string)));
+            dt.Columns.Add(new DataColumn("NetTotal", typeof(decimal)));
 
             foreach (var line in _salesTransactionLines)
             {
@@ -50,6 +51,7 @@
                 dr["UnitName"] = InventoryHelper.GetItemUnitName(line.Item);
                 dr["QuantityPerUnit"] = InventoryHelper.GetItemQuantityPerUnit(line.Item);
                 dr["Quantity"] = InventoryHelper.ConvertItemQuantityTostring(line.Item, line.Quantity);
+                dr["NetTotal"] = line.NetTotal;
                 dt.Rows.Add(dr);
             }
 

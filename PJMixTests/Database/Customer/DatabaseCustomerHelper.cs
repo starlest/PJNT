@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using ECRP.Models.Customer;
-    using ECRP.Utilities;
+    using ECERP.Models.Customer;
+    using ECERP.Utilities;
 
     public static class DatabaseCustomerHelper
     {

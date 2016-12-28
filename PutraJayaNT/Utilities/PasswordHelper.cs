@@ -1,4 +1,4 @@
-﻿namespace ECRP.Utilities
+﻿namespace ECERP.Utilities
 {
     using System.Windows;
     using System.Windows.Controls;

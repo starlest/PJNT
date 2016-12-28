@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Inventory
+﻿namespace ECERP.ViewModels.Inventory
 {
     using System.Collections.ObjectModel;
     using System.Linq;

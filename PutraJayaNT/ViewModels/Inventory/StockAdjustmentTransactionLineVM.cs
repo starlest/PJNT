@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Inventory
+﻿namespace ECERP.ViewModels.Inventory
 {
     using Models.Inventory;
     using Models.StockCorrection;

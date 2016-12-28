@@ -1,4 +1,4 @@
-﻿namespace ECRP.Models.Customer
+﻿namespace ECERP.Models.Customer
 {
     using System.ComponentModel.DataAnnotations.Schema;
 

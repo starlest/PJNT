@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Customers.Sales
+﻿namespace ECERP.Views.Customers.Sales
 {
     using ViewModels.Customers.Sales;
 

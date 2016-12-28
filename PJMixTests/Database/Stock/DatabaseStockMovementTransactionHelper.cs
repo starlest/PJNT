@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using ECRP.Models.StockCorrection;
-    using ECRP.Utilities;
+    using ECERP.Models.StockCorrection;
+    using ECERP.Utilities;
 
     public static class DatabaseStockMovementTransactionHelper
     {

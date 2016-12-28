@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Accounting
+﻿namespace ECERP.ViewModels.Accounting
 {
     using System.Collections.Generic;
     using System.Data.Entity;

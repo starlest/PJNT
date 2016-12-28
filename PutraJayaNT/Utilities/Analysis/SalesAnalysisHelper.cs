@@ -1,4 +1,4 @@
-﻿namespace ECRP.Utilities.Analysis
+﻿namespace ECERP.Utilities.Analysis
 {
     using System.Linq;
     using ViewModels.Item;

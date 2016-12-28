@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Customers.SalesReturn
+﻿namespace ECERP.ViewModels.Customers.SalesReturn
 {
     using System;
     using System.Collections.ObjectModel;

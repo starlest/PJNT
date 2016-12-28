@@ -1,13 +1,13 @@
-﻿namespace ECRP.ViewModels.Reports
+﻿namespace ECERP.ViewModels.Reports
 {
     using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using System.Linq;
-    using System.Collections.ObjectModel;
+    using Inventory;
     using MVVMFramework;
     using Utilities;
-    using Inventory;
 
     class StockAdjustmentsReportVM : ViewModelBase
     {

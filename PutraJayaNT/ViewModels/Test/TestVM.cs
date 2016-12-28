@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Test
+﻿namespace ECERP.ViewModels.Test
 {
     using System;
     using System.Linq;

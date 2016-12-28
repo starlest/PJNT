@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Ledger
+﻿namespace ECERP.ViewModels.Ledger
 {
     using System;
     using System.Collections.Generic;

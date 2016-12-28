@@ -1,11 +1,11 @@
-﻿namespace ECRP.Models.Supplier
+﻿namespace ECERP.Models.Supplier
 {
     using System.Collections.ObjectModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using Inventory;
 
-    #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class Supplier
     {
         public Supplier()

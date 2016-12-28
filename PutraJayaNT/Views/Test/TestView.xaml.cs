@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Test
+﻿namespace ECERP.Views.Test
 {
     using System.Windows.Controls;
     using ViewModels.Test;

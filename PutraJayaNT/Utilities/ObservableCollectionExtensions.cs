@@ -1,4 +1,4 @@
-﻿namespace ECRP.Utilities
+﻿namespace ECERP.Utilities
 {
     using System;
     using System.Collections.ObjectModel;

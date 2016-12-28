@@ -1,11 +1,11 @@
-﻿namespace ECRP.ViewModels.Customers.Sales
+﻿namespace ECERP.ViewModels.Customers.Sales
 {
     using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using ECRP.Reports.Windows;
+    using ECERP.Reports.Windows;
     using Models.Sales;
     using MVVMFramework;
     using Utilities;

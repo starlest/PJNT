@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Master.Inventory
+﻿namespace ECERP.Views.Master.Inventory
 {
     using System.Windows.Controls;
     using ViewModels.Master.Inventory;

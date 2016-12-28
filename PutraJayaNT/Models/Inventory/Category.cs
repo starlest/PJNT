@@ -1,4 +1,4 @@
-﻿namespace ECRP.Models.Inventory
+﻿namespace ECERP.Models.Inventory
 {
     using System.Collections.Generic;
     using MVVMFramework;

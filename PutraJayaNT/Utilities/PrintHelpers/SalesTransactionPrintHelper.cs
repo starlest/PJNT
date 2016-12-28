@@ -1,4 +1,4 @@
-﻿namespace ECRP.Utilities.PrintHelpers
+﻿namespace ECERP.Utilities.PrintHelpers
 {
     using System;
     using System.Collections.Generic;

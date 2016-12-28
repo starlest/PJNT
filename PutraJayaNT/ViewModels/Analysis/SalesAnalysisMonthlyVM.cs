@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Analysis
+﻿namespace ECERP.ViewModels.Analysis
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

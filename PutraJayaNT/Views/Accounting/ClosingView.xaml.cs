@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Accounting
+﻿namespace ECERP.Views.Accounting
 {
     using System;
     using System.ComponentModel;

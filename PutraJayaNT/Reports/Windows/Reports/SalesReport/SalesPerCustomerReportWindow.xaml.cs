@@ -1,4 +1,4 @@
-﻿namespace ECRP.Reports.Windows.Reports.SalesReport
+﻿namespace ECERP.Reports.Windows.Reports.SalesReport
 {
     using System;
     using System.Collections.ObjectModel;
@@ -50,8 +50,8 @@
                 dr["ItemName"] = line.Item.Name;
                 dr["Quantity"] = line.Quantity.ToString();
                 var lineNetPrice = Math.Round(line.NetTotal / line.Item.PiecesPerUnit, 2);
-                dr["NetTotal"] = lineNetPrice * line.Quantity;
-                dr["Tax"] = lineNetPrice * line.Quantity * 0.1M;
+                dr["NetTotal"] = line.NetTotal;
+                dr["Tax"] = line.NetTotal * 0.1M;
                 dt.Rows.Add(dr);
             }
 

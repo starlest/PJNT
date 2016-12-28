@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Master.Ledger
+﻿namespace ECERP.ViewModels.Master.Ledger
 {
     using System;
     using System.Collections.ObjectModel;

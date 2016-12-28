@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Inventory
+﻿namespace ECERP.Views.Inventory
 {
     using System;
     using System.ComponentModel;

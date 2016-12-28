@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Reports
+﻿namespace ECERP.ViewModels.Reports
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
-    using ECRP.Reports.Windows;
+    using ECERP.Reports.Windows;
     using Models.Sales;
     using Models.Salesman;
     using MVVMFramework;

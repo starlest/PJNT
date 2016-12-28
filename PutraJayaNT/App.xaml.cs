@@ -1,4 +1,4 @@
-﻿namespace ECRP
+﻿namespace ECERP
 {
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;

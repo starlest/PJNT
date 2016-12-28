@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Customers
+﻿namespace ECERP.Views.Customers
 {
     using System.Windows.Controls;
     using System.Windows.Input;

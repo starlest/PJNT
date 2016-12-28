@@ -1,4 +1,4 @@
-﻿namespace ECRP.Models.Purchase
+﻿namespace ECERP.Models.Purchase
 {
     using System;
     using System.Collections.Generic;

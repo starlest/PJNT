@@ -8,7 +8,7 @@
     <ProjectGuid>{E59C0673-7A62-4081-A85B-5C7EB6B20967}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ECRP</RootNamespace>
+    <RootNamespace>ECERP</RootNamespace>
     <AssemblyName>ECERP</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -98,42 +98,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201609210223539_Update2.cs" />
-    <Compile Include="Migrations\201609210223539_Update2.Designer.cs">
-      <DependentUpon>201609210223539_Update2.cs</DependentUpon>
+    <Compile Include="Migrations\ERPContext\201612280322045_Update1.cs" />
+    <Compile Include="Migrations\ERPContext\201612280322045_Update1.Designer.cs">
+      <DependentUpon>201612280322045_Update1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201609210351542_Update3.cs" />
-    <Compile Include="Migrations\201609210351542_Update3.Designer.cs">
-      <DependentUpon>201609210351542_Update3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201610030427006_AddInvoiceDateToPurchaseTransaction.cs" />
-    <Compile Include="Migrations\201610030427006_AddInvoiceDateToPurchaseTransaction.Designer.cs">
-      <DependentUpon>201610030427006_AddInvoiceDateToPurchaseTransaction.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201610030435482_AddInvoiceDateToPurchaseTransaction2.cs" />
-    <Compile Include="Migrations\201610030435482_AddInvoiceDateToPurchaseTransaction2.Designer.cs">
-      <DependentUpon>201610030435482_AddInvoiceDateToPurchaseTransaction2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201610030514439_AddInvoiceDateToPurchaseTransaction3.cs" />
-    <Compile Include="Migrations\201610030514439_AddInvoiceDateToPurchaseTransaction3.Designer.cs">
-      <DependentUpon>201610030514439_AddInvoiceDateToPurchaseTransaction3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201612140344323_Update11.cs" />
-    <Compile Include="Migrations\201612140344323_Update11.Designer.cs">
-      <DependentUpon>201612140344323_Update11.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201612140352493_Update21.cs" />
-    <Compile Include="Migrations\201612140352493_Update21.Designer.cs">
-      <DependentUpon>201612140352493_Update21.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201612140425308_Update31.cs" />
-    <Compile Include="Migrations\201612140425308_Update31.Designer.cs">
-      <DependentUpon>201612140425308_Update31.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Update1.cs" />
-    <Compile Include="Migrations\Update1.Designer.cs">
-      <DependentUpon>Update1.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Migrations\ERPContext\Configuration.cs" />
+    <Compile Include="Migrations\ERPInitialContext\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccountClass.cs" />
     <Compile Include="Models\Accounting\LedgerAccountGroup.cs" />
     <Compile Include="Models\SystemParameter.cs" />
@@ -158,6 +128,7 @@
     <Compile Include="Services\SalesTransactionService.cs" />
     <Compile Include="Utilities\Analysis\SalesAnalysisHelper.cs" />
     <Compile Include="Utilities\Constants.cs" />
+    <Compile Include="Utilities\ERPInitialContext.cs" />
     <Compile Include="Utilities\FocusAdvancement.cs" />
     <Compile Include="Utilities\ModelHelpers\CustomerHelper.cs" />
     <Compile Include="Utilities\ModelHelpers\InventoryHelper.cs" />
@@ -194,7 +165,6 @@
     <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\Date.cs" />
     <Compile Include="Models\Inventory\StockBalance.cs" />
     <Compile Include="Models\Salesman\SalesCommission.cs" />
     <Compile Include="Models\Inventory\AlternativeSalesPrice.cs" />
@@ -215,7 +185,6 @@
     <Compile Include="Reports\DatasetObjects\SalesInvoice.cs" />
     <Compile Include="Reports\DatasetObjects\SalesReturnInvoiceLine.cs" />
     <Compile Include="Reports\DatasetObjects\SalesInvoiceLine.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccount.cs" />
     <Compile Include="Models\Accounting\LedgerAccountBalance.cs" />
     <Compile Include="Models\Accounting\LedgerGeneral.cs" />
@@ -767,32 +736,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201609210223539_Update2.resx">
-      <DependentUpon>201609210223539_Update2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201609210351542_Update3.resx">
-      <DependentUpon>201609210351542_Update3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201610030427006_AddInvoiceDateToPurchaseTransaction.resx">
-      <DependentUpon>201610030427006_AddInvoiceDateToPurchaseTransaction.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201610030435482_AddInvoiceDateToPurchaseTransaction2.resx">
-      <DependentUpon>201610030435482_AddInvoiceDateToPurchaseTransaction2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201610030514439_AddInvoiceDateToPurchaseTransaction3.resx">
-      <DependentUpon>201610030514439_AddInvoiceDateToPurchaseTransaction3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201612140344323_Update11.resx">
-      <DependentUpon>201612140344323_Update11.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201612140352493_Update21.resx">
-      <DependentUpon>201612140352493_Update21.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201612140425308_Update31.resx">
-      <DependentUpon>201612140425308_Update31.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\Update1.resx">
-      <DependentUpon>Update1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\ERPContext\201612280322045_Update1.resx">
+      <DependentUpon>201612280322045_Update1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\GeneralLedgerReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,4 +1,4 @@
-﻿namespace ECRP.Reports.Windows
+﻿namespace ECERP.Reports.Windows
 {
     using System;
     using System.Data;

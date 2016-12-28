@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Reports
+﻿namespace ECERP.ViewModels.Reports
 {
     using System;
     using System.Collections.ObjectModel;

@@ -1,4 +1,4 @@
-namespace ECRP.Models.Sales
+namespace ECERP.Models.Sales
 {
     using System;
     using System.Collections.Generic;

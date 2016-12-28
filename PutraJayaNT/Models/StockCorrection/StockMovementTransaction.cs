@@ -1,4 +1,4 @@
-﻿namespace ECRP.Models.StockCorrection
+﻿namespace ECERP.Models.StockCorrection
 {
     using System;
     using System.Collections.ObjectModel;

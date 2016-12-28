@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Menu
+﻿namespace ECERP.Views.Menu
 {
     using System;
     using System.Diagnostics;

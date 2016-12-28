@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Purchase
+﻿namespace ECERP.ViewModels.Purchase
 {
     using Models.Inventory;
     using Models.Purchase;

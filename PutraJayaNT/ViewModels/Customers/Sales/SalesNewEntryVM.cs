@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Customers.Sales
+﻿namespace ECERP.ViewModels.Customers.Sales
 {
     using System.Collections.ObjectModel;
     using System.Linq;

@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views
+﻿namespace ECERP.Views
 {
     using System;
     using System.ComponentModel;
@@ -44,7 +44,7 @@
 
                 if (_user.Username.Equals("edwin92"))
                 {
-                    var linkGroup = new LinkGroup {DisplayName = "Admin"};
+                    var linkGroup = new LinkGroup { DisplayName = "Admin" };
                     var link = new Link
                     {
                         DisplayName = "Test",
@@ -70,10 +70,11 @@
         }
 
         #region Helper Methods
+
         private void CheckIfIsServer()
         {
             var hostName = Dns.GetHostName(); // Retrive the Name of HOST
-            #pragma warning disable 618
+#pragma warning disable 618
             var host = Dns.GetHostByName(hostName);
             foreach (var ip in host.AddressList)
             {
@@ -109,7 +110,7 @@
         {
             while (true)
             {
-                Dispatcher.Invoke(UpdateTitle);              
+                Dispatcher.Invoke(UpdateTitle);
                 AttemptToSendNotifications();
                 TelegramService.CleanNotifications();
                 Thread.Sleep(5000);
@@ -135,19 +136,21 @@
             {
                 _performingTelegramBotActions = false;
             }
-
         }
 
         private bool HasTitledChanged()
         {
-            var newTitle = UtilityMethods.GetServerName() + " - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
+            var newTitle = UtilityMethods.GetServerName() + " - User: " + _user.Username + ", Server: " +
+                           _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
             return !newTitle.Equals(Title);
         }
 
         private void SetTitle()
         {
-            Title = UtilityMethods.GetServerName() + " - User: " + _user.Username + ", Server: " + _connectionString + ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
+            Title = UtilityMethods.GetServerName() + " - User: " + _user.Username + ", Server: " + _connectionString +
+                    ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
         }
+
         #endregion
     }
 }

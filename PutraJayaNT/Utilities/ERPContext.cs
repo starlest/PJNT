@@ -1,4 +1,4 @@
-namespace ECRP.Utilities
+namespace ECERP.Utilities
 {
     using System.Configuration;
     using System.Data.Entity;
@@ -31,19 +31,23 @@ namespace ECRP.Utilities
             return string.Format(connString, dbName, ipAddress);
         }
 
+        #region Inventory
         public virtual DbSet<Stock> Stocks { get; set; }
         public virtual DbSet<Item> Inventory { get; set; }
         public virtual DbSet<Category> ItemCategories { get; set; }
         public virtual DbSet<Warehouse> Warehouses { get; set; }
         public virtual DbSet<StockBalance> StockBalances { get; set; }
+        #endregion
 
         public virtual DbSet<Salesman> Salesmans { get; set; }
         public virtual DbSet<SalesCommission> SalesCommissions { get; set; }
 
+        #region Stock Changes
         public virtual DbSet<StockAdjustmentTransaction> StockAdjustmentTransactions {get; set; }
         public virtual DbSet<StockAdjustmentTransactionLine> StockAdjustmentTransactionLines { get; set; }
         public virtual DbSet<StockMovementTransaction> StockMovementTransactions { get; set; }
         public virtual DbSet<StockMovementTransactionLine> StockMovementTransactionLines { get; set; }
+        #endregion
 
         public virtual DbSet<SalesTransactionLine> SalesTransactionLines { get; set; }
         public virtual DbSet<SalesTransaction> SalesTransactions { get; set; }
@@ -74,8 +78,6 @@ namespace ECRP.Utilities
         public virtual DbSet<LedgerGeneral> Ledger_General { get; set; }
         public virtual DbSet<LedgerAccountBalance> Ledger_Account_Balances { get; set; }
         #endregion
-
-        public virtual DbSet<Date> Dates { get; set; }
 
         public virtual DbSet<TelegramBotNotification> TelegramBotNotifications { get; set; }
 

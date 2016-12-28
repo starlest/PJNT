@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Master.Suppliers
+﻿namespace ECERP.ViewModels.Master.Suppliers
 {
     using System;
     using System.Linq;

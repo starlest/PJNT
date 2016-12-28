@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Master.Suppliers
+﻿namespace ECERP.ViewModels.Master.Suppliers
 {
     using System.Windows;
     using System.Windows.Input;

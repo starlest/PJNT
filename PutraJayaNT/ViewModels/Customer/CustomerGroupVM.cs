@@ -1,4 +1,4 @@
-﻿namespace ECRP.ViewModels.Customer
+﻿namespace ECERP.ViewModels.Customer
 {
     using Models.Customer;
     using MVVMFramework;

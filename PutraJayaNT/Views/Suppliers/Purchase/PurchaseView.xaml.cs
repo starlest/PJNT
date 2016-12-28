@@ -1,4 +1,4 @@
-﻿namespace ECRP.Views.Suppliers.Purchase
+﻿namespace ECERP.Views.Suppliers.Purchase
 {
     using System.Windows;
     using System.Windows.Controls;
