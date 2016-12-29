@@ -6,6 +6,7 @@
 
         public const string CURRENTUSER = "CurrentUser";
         public const string ISVERIFIED = "IsVerified";
+        public const string SERVERS = "Servers";
         public const string SELECTEDSERVER = "SelectedServer";
         public const string IPADDRESS = "ipAddress";
         public const string NESTLE = "Nestle";

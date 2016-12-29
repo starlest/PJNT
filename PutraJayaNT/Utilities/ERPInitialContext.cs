@@ -20,5 +20,7 @@
                 ConfigurationManager.ConnectionStrings["ERPInitialContext"].ConnectionString;
             return string.Format(connString, ipAddress);
         }
+
+        public virtual DbSet<Models.Server> Servers { get; set; }
     }
 }

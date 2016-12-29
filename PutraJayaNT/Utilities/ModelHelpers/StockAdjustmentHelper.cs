@@ -16,48 +16,55 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                var stockAdjustmentPurchaseTransaction = MakeNewstockAdjustmentPurchaseTransaction(context, stockAdjustmentTransaction);
-
-                decimal totalCOGSAdjustment = 0;
-
-                var isThereDecreaseAdjustmentLine = false;
-                var isThereIncreaseAdjustmentLine = false;
-
-                foreach (var line in stockAdjustmentTransaction.AdjustStockTransactionLines)
+                using (var context = UtilityMethods.createContext())
                 {
-                    AttachLineToDatabaseContext(context, line);
+                    var stockAdjustmentPurchaseTransaction = MakeNewstockAdjustmentPurchaseTransaction(context,
+                        stockAdjustmentTransaction);
 
-                    if (line.Quantity < 0)
+                    decimal totalCOGSAdjustment = 0;
+
+                    var isThereDecreaseAdjustmentLine = false;
+                    var isThereIncreaseAdjustmentLine = false;
+
+                    foreach (var line in stockAdjustmentTransaction.AdjustStockTransactionLines)
                     {
-                        isThereDecreaseAdjustmentLine = true;
-                        DecreaseStock(context, line.Warehouse, line.Item, line.Quantity);
-                        totalCOGSAdjustment += CalculateCOGS(context, line.Item, -line.Quantity);
-                        IncreaseSoldOrReturned(context, line.Item, -line.Quantity);
+                        AttachLineToDatabaseContext(context, line);
+
+                        if (line.Quantity < 0)
+                        {
+                            isThereDecreaseAdjustmentLine = true;
+                            DecreaseStock(context, line.Warehouse, line.Item, line.Quantity);
+                            totalCOGSAdjustment += CalculateCOGS(context, line.Item, -line.Quantity);
+                            IncreaseSoldOrReturned(context, line.Item, -line.Quantity);
+                        }
+
+                        else
+                        {
+                            isThereIncreaseAdjustmentLine = true;
+                            IncreaseStock(context, line.Warehouse, line.Item, line.Quantity);
+                            AddLineToStockAdjustmentPurchaseTransaction(line, stockAdjustmentPurchaseTransaction);
+                        }
                     }
 
-                    else
-                    {
-                        isThereIncreaseAdjustmentLine = true;
-                        IncreaseStock(context, line.Warehouse, line.Item, line.Quantity);
-                        AddLineToStockAdjustmentPurchaseTransaction(line, stockAdjustmentPurchaseTransaction);
-                    }
+                    if (isThereDecreaseAdjustmentLine)
+                        AddStockAdjustmentDecrementLedgerTransactionToDatabase(context, stockAdjustmentTransaction,
+                            totalCOGSAdjustment);
+
+                    if (isThereIncreaseAdjustmentLine)
+                        context.PurchaseTransactions.Add(stockAdjustmentPurchaseTransaction);
+
+                    AddStockAdjustmentTransactionToDatabaseContext(context, stockAdjustmentTransaction);
+                    context.SaveChanges();
                 }
 
-                if (isThereDecreaseAdjustmentLine)
-                    AddStockAdjustmentDecrementLedgerTransactionToDatabase(context, stockAdjustmentTransaction, totalCOGSAdjustment);
-
-                if (isThereIncreaseAdjustmentLine)
-                    context.PurchaseTransactions.Add(stockAdjustmentPurchaseTransaction);
-
-                AddStockAdjustmentTransactionToDatabaseContext(context, stockAdjustmentTransaction);
-                context.SaveChanges();
                 ts.Complete();
             }
         }
 
         #region Helper Methods
-        private static PurchaseTransaction MakeNewstockAdjustmentPurchaseTransaction(ERPContext context, StockAdjustmentTransaction stockAdjustmentTransaction)
+
+        private static PurchaseTransaction MakeNewstockAdjustmentPurchaseTransaction(ERPContext context,
+            StockAdjustmentTransaction stockAdjustmentTransaction)
         {
             return new PurchaseTransaction
             {
@@ -90,14 +97,15 @@
         private static decimal CalculateCOGS(ERPContext context, Item item, int quantity)
         {
             var purchases = context.PurchaseTransactionLines
-            .Include("PurchaseTransaction")
-            .Where(e => e.ItemID.Equals(item.ItemID) && e.SoldOrReturned < e.Quantity)
-            .OrderBy(purchaseTransactionLine => purchaseTransactionLine.PurchaseTransactionID)
-            .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
-            .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.PurchasePrice)
-            .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Discount)
-            .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.WarehouseID)
-            .ToList();
+                .Include("PurchaseTransaction")
+                .Where(e => e.ItemID.Equals(item.ItemID) && e.SoldOrReturned < e.Quantity)
+                .OrderBy(purchaseTransactionLine => purchaseTransactionLine.PurchaseTransactionID)
+                .ThenByDescending(
+                    purchaseTransactionLine => purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
+                .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.PurchasePrice)
+                .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Discount)
+                .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.WarehouseID)
+                .ToList();
 
             var totalCOGS = 0m;
             var tracker = quantity;
@@ -110,9 +118,14 @@
                 if (tracker <= availableQuantity)
                 {
                     if (purchaseLineNetTotal == 0) break;
-                    var fractionOfTransactionDiscount = tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal * purchase.PurchaseTransaction.Discount;
-                    var fractionOfTransactionTax = tracker * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal * purchase.PurchaseTransaction.Tax;
-                    totalCOGS += tracker * purchaseLineNetTotal - fractionOfTransactionDiscount + fractionOfTransactionTax;
+                    var fractionOfTransactionDiscount = tracker * purchaseLineNetTotal /
+                                                        purchase.PurchaseTransaction.GrossTotal *
+                                                        purchase.PurchaseTransaction.Discount;
+                    var fractionOfTransactionTax = tracker * purchaseLineNetTotal /
+                                                   purchase.PurchaseTransaction.GrossTotal *
+                                                   purchase.PurchaseTransaction.Tax;
+                    totalCOGS += tracker * purchaseLineNetTotal - fractionOfTransactionDiscount +
+                                 fractionOfTransactionTax;
                     break;
                 }
 
@@ -120,9 +133,14 @@
                 {
                     tracker -= availableQuantity;
                     if (purchaseLineNetTotal == 0) continue;
-                    var fractionOfTransactionDiscount = availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal * purchase.PurchaseTransaction.Discount;
-                    var fractionOfTransactionTax = availableQuantity * purchaseLineNetTotal / purchase.PurchaseTransaction.GrossTotal * purchase.PurchaseTransaction.Tax;
-                    totalCOGS += availableQuantity * purchaseLineNetTotal - fractionOfTransactionDiscount + fractionOfTransactionTax;
+                    var fractionOfTransactionDiscount = availableQuantity * purchaseLineNetTotal /
+                                                        purchase.PurchaseTransaction.GrossTotal *
+                                                        purchase.PurchaseTransaction.Discount;
+                    var fractionOfTransactionTax = availableQuantity * purchaseLineNetTotal /
+                                                   purchase.PurchaseTransaction.GrossTotal *
+                                                   purchase.PurchaseTransaction.Tax;
+                    totalCOGS += availableQuantity * purchaseLineNetTotal - fractionOfTransactionDiscount +
+                                 fractionOfTransactionTax;
                 }
             }
 
@@ -132,14 +150,15 @@
         private static void IncreaseSoldOrReturned(ERPContext context, Item item, int quantity)
         {
             var purchases = context.PurchaseTransactionLines
-            .Include("PurchaseTransaction")
-            .Where(e => e.ItemID.Equals(item.ItemID) && e.SoldOrReturned < e.Quantity)
-            .OrderBy(purchaseTransactionLine => purchaseTransactionLine.PurchaseTransactionID)
-            .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
-            .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.PurchasePrice)
-            .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Discount)
-            .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.WarehouseID)
-            .ToList();
+                .Include("PurchaseTransaction")
+                .Where(e => e.ItemID.Equals(item.ItemID) && e.SoldOrReturned < e.Quantity)
+                .OrderBy(purchaseTransactionLine => purchaseTransactionLine.PurchaseTransactionID)
+                .ThenByDescending(
+                    purchaseTransactionLine => purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
+                .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.PurchasePrice)
+                .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Discount)
+                .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.WarehouseID)
+                .ToList();
 
             var tracker = quantity;
 
@@ -163,7 +182,9 @@
 
         private static void IncreaseStock(ERPContext context, Warehouse warehouse, Item item, int quantity)
         {
-            var stockFromDatabase = context.Stocks.SingleOrDefault(stock => stock.ItemID.Equals(item.ItemID) && stock.WarehouseID.Equals(warehouse.ID));
+            var stockFromDatabase =
+                context.Stocks.SingleOrDefault(
+                    stock => stock.ItemID.Equals(item.ItemID) && stock.WarehouseID.Equals(warehouse.ID));
             if (stockFromDatabase == null)
             {
                 var newStock = new Stock
@@ -177,24 +198,31 @@
             else stockFromDatabase.Pieces += quantity;
         }
 
-        private static void AddStockAdjustmentDecrementLedgerTransactionToDatabase(ERPContext context, StockAdjustmentTransaction stockAdjustmentTransaction, decimal totalCOGSAdjustment)
+        private static void AddStockAdjustmentDecrementLedgerTransactionToDatabase(ERPContext context,
+            StockAdjustmentTransaction stockAdjustmentTransaction, decimal totalCOGSAdjustment)
         {
             var ledgerTransaction = new LedgerTransaction();
-            if (!LedgerTransactionHelper.AddTransactionToDatabase(context, ledgerTransaction, UtilityMethods.GetCurrentDate().Date,
-                stockAdjustmentTransaction.StockAdjustmentTransactionID, "Stock Adjustment (Decrement)")) return;
+            if (
+                !LedgerTransactionHelper.AddTransactionToDatabase(context, ledgerTransaction,
+                    UtilityMethods.GetCurrentDate().Date,
+                    stockAdjustmentTransaction.StockAdjustmentTransactionID, "Stock Adjustment (Decrement)")) return;
             context.SaveChanges();
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction, Constants.COST_OF_GOODS_SOLD, Constants.DEBIT, totalCOGSAdjustment);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction, Constants.INVENTORY, Constants.CREDIT, totalCOGSAdjustment);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction,
+                Constants.COST_OF_GOODS_SOLD, Constants.DEBIT, totalCOGSAdjustment);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction, Constants.INVENTORY,
+                Constants.CREDIT, totalCOGSAdjustment);
         }
 
-        private static void AddStockAdjustmentTransactionToDatabaseContext(ERPContext context, StockAdjustmentTransaction stockAdjustmentTransaction)
+        private static void AddStockAdjustmentTransactionToDatabaseContext(ERPContext context,
+            StockAdjustmentTransaction stockAdjustmentTransaction)
         {
             var user = Application.Current.FindResource(Constants.CURRENTUSER) as User;
             stockAdjustmentTransaction.User = context.Users.Single(e => e.Username.Equals(user.Username));
             context.StockAdjustmentTransactions.Add(stockAdjustmentTransaction);
         }
 
-        private static void AddLineToStockAdjustmentPurchaseTransaction(StockAdjustmentTransactionLine line, PurchaseTransaction stockAdjustmentPurchaseTransaction)
+        private static void AddLineToStockAdjustmentPurchaseTransaction(StockAdjustmentTransactionLine line,
+            PurchaseTransaction stockAdjustmentPurchaseTransaction)
         {
             var stockAdjustmentPurchaseLine = new PurchaseTransactionLine
             {
@@ -209,6 +237,7 @@
             };
             stockAdjustmentPurchaseTransaction.PurchaseTransactionLines.Add(stockAdjustmentPurchaseLine);
         }
+
         #endregion
     }
 }

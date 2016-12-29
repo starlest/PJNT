@@ -45,6 +45,7 @@
         private static LedgerAccount CreateLedgerAccount(ERPContext context, string accountName, string accountGroup)
         {
             var ledgerAccountsClasses = context.Ledger_Account_Classes.ToList();
+            var ledgerAccountsGroups = context.Ledger_Account_Groups.ToList();
 
             if (accountGroup.Equals(Constants.BANK))
             {
@@ -53,7 +54,10 @@
                     Name = accountName,
                     Notes = Constants.CURRENT_ASSET,
                     LedgerAccountClass =
-                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET)),
+                        ledgerAccountsClasses.Single(
+                            accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET)),
+                    LedgerAccountGroup =
+                        ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
@@ -65,7 +69,10 @@
                     Name = accountName,
                     Notes = Constants.OPERATING_EXPENSE,
                     LedgerAccountClass =
-                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)),
+                        ledgerAccountsClasses.First(
+                            accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)),
+                    LedgerAccountGroup =
+                        ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
@@ -77,7 +84,10 @@
                     Name = accountName,
                     Notes = Constants.ACCOUNTS_RECEIVABLE,
                     LedgerAccountClass =
-                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET)),
+                        ledgerAccountsClasses.First(
+                            accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET)),
+                    LedgerAccountGroup =
+                        ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
@@ -89,7 +99,10 @@
                     Name = accountName,
                     Notes = Constants.ACCOUNTS_PAYABLE,
                     LedgerAccountClass =
-                        ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.LIABILITY)),
+                        ledgerAccountsClasses.First(
+                            accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.LIABILITY)),
+                    LedgerAccountGroup =
+                        ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
@@ -99,7 +112,10 @@
                 Name = accountName,
                 Notes = Constants.LedgerAccountClasses.EXPENSE,
                 LedgerAccountClass =
-                    ledgerAccountsClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)),
+                    ledgerAccountsClasses.First(
+                        accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)),
+                LedgerAccountGroup =
+                    ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                 LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
             };
         }

@@ -18,7 +18,6 @@ namespace ECERP.Migrations.ERPContext
 
             //            context.SystemParameters.AddOrUpdate(
             //                parameter => parameter.Key,
-            //                new SystemParameter { Key = "ServerName" },
             //                new SystemParameter { Key = "TelegramKey" },
             //                new SystemParameter { Key = "ThemeColor", Value = "Blue" },
             //                new SystemParameter { Key = "CurrentDate", Value = DateTime.Now.Date.ToShortDateString() }

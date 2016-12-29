@@ -4,6 +4,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Windows;
+    using Models;
     using Models.Inventory;
     using Views;
 
@@ -62,18 +63,15 @@
             }
         }
 
-        public static string GetDBName()
-        {
-            var selectedServerName = Application.Current.FindResource(Constants.SELECTEDSERVER) as string;
-            if (selectedServerName != null && selectedServerName.Equals(Constants.MIX)) return "putrajayant";
-            return "pjnestle";
-        }
+        public static string GetDBName() => ((Server) Application.Current.TryFindResource(Constants.SELECTEDSERVER)).DatabaseName;
+
+        public static ERPInitialContext createInitialContext() => new ERPInitialContext(GetIpAddress());
 
         public static ERPContext createContext() => new ERPContext(GetDBName(), GetIpAddress());
 
         public static string GetIpAddress() => Application.Current.FindResource(Constants.IPADDRESS) as string;
 
-        public static string GetServerName() => Application.Current.TryFindResource(Constants.SERVERNAME) as string;
+        public static string GetServerName() => ((Server) Application.Current.TryFindResource(Constants.SELECTEDSERVER)).ServerName;
 
         public static string GetTelegramKey() => Application.Current.FindResource(Constants.TELEGRAMKEY) as string;
 

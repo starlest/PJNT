@@ -15,7 +15,6 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Button Content="Check Sales Transactions" Command="{Binding CheckSalesTransactionsCommand}" />
         <Button Grid.Row="1" Content="Check Purchase Transactions" Command="{Binding CheckPurchaseTransactionsCommand}" />
@@ -24,7 +23,6 @@
         <Button Grid.Row="4" Content="Check SoldOrReturned" Command="{Binding CheckSoldOrReturnedCommand}" />
         <Button Grid.Row="5" Content="Check Ledger Transactions" Command="{Binding CheckLedgerTransactionsCommand}" />
         <Button Grid.Row="6" Content="Check Ledger General" Command="{Binding CheckLedgerGeneralCommand}" />
-        <Button Grid.Row="7" Content="Check Past" Command="{Binding CheckPastCommand}" />
-        <Button Grid.Row="8" Content="Test Issue" Command="{Binding TestIssueCommand}" />
+        <Button Grid.Row="7" Content="Check Issue Failed" Command="{Binding CheckIssueFailedCommand}" />
     </Grid>
 </UserControl>

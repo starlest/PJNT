@@ -74,7 +74,7 @@
 
         public string SelectedAccountClass
         {
-            get { return _selectedAccountClass;  }
+            get { return _selectedAccountClass; }
             set { SetProperty(ref _selectedAccountClass, value, () => SelectedAccountClass); }
         }
 
@@ -109,14 +109,14 @@
             get
             {
                 return _displayCommand ?? (_displayCommand = new RelayCommand(() =>
-                {
-                    ResetUI();
-                    if (_selectedAccount == null) return;
-                    SetSelectedAccountClass();
-                    RefreshDisplayLines();
-                    UpdateUI();
-                    UpdateAccounts();
-                }));
+                       {
+                           ResetUI();
+                           if (_selectedAccount == null) return;
+                           SetSelectedAccountClass();
+                           RefreshDisplayLines();
+                           UpdateUI();
+                           UpdateAccounts();
+                       }));
             }
         }
 
@@ -125,10 +125,10 @@
             get
             {
                 return _clearCommand ?? (_clearCommand = new RelayCommand(() =>
-                {
-                    ResetUI();
-                    UpdateAccounts();
-                }));
+                       {
+                           ResetUI();
+                           UpdateAccounts();
+                       }));
             }
         }
 
@@ -137,10 +137,10 @@
             get
             {
                 return _printCommand ?? (_printCommand = new RelayCommand(() =>
-                {
-                    if (DisplayedTransactionLines.Count == 0) return;
-                    ShowPrintWindow();
-                }));
+                       {
+                           if (DisplayedTransactionLines.Count == 0) return;
+                           ShowPrintWindow();
+                       }));
             }
         }
 
@@ -180,14 +180,17 @@
 
                 var transactionLines = context.Ledger_Transaction_Lines
                     .Where(
-                        e =>
-                            e.LedgerAccountID == _selectedAccount.ID && e.LedgerTransaction.Date.Month == _selectedMonth)
+                        line =>
+                            line.LedgerAccountID == _selectedAccount.ID &&
+                            line.LedgerTransaction.Date.Year == _selectedYear &&
+                            line.LedgerTransaction.Date.Month == _selectedMonth)
                     .Include("LedgerTransaction")
                     .Include("LedgerAccount")
-                    .OrderBy(e => e.LedgerTransaction.Date);
+                    .OrderBy(line => line.LedgerTransaction.Date);
 
                 if (_selectedAccount.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET) ||
-                    _selectedAccount.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)) _normalSeq = Constants.DEBIT;
+                    _selectedAccount.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    _normalSeq = Constants.DEBIT;
                 else _normalSeq = Constants.CREDIT;
 
                 foreach (var opposingLine in transactionLines.ToList().Select(
@@ -280,13 +283,14 @@
 
         private void ShowPrintWindow()
         {
-            var dailyCashFlowReportWindow = new GeneralLedgerReportWindow(this)
+            var generalLedgerReportWindow = new GeneralLedgerReportWindow(this)
             {
                 Owner = Application.Current.MainWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
-            dailyCashFlowReportWindow.Show();
+            generalLedgerReportWindow.Show();
         }
+
         #endregion
     }
 }

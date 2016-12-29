@@ -34,8 +34,8 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                SaveItemEditsToDatabaseContext(context, editingItem, editedItem);
+                using (var context = UtilityMethods.createContext())
+                    SaveItemEditsToDatabaseContext(context, editingItem, editedItem);
                 ts.Complete();
             }
         }

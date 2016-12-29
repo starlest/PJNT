@@ -37,10 +37,12 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                if (!IsSupplierNameChange(editingSupplier, editedSupplier))
-                    ChangeSupplierLedgerAccountNameInDatabaseContext(context, editingSupplier, editedSupplier);
-                SaveSupplierEditsToDatabaseContext(context, editingSupplier, editedSupplier);
+                using (var context = UtilityMethods.createContext())
+                {
+                    if (!IsSupplierNameChange(editingSupplier, editedSupplier))
+                        ChangeSupplierLedgerAccountNameInDatabaseContext(context, editingSupplier, editedSupplier);
+                    SaveSupplierEditsToDatabaseContext(context, editingSupplier, editedSupplier);
+                }
                 ts.Complete();
             }
         }

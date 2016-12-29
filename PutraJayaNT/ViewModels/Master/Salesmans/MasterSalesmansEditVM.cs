@@ -95,8 +95,8 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                SaveSalesCommissionEditsToDatabaseContext(context, editingSalesCommission, editedSalesCommission);
+                using (var context = UtilityMethods.createContext())
+                    SaveSalesCommissionEditsToDatabaseContext(context, editingSalesCommission, editedSalesCommission);
                 ts.Complete();
             }
         }

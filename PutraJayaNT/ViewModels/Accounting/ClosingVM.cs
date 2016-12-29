@@ -38,71 +38,73 @@
         {
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-
-                var accounts = context.Ledger_Accounts
-                    .Include("LedgerAccountClass")
-                    .Include("LedgerGeneral")
-                    .Include("LedgerAccountBalances")
-                    .ToList();
-
-                var revenueAndExpenseAccounts = context.Ledger_Accounts
-                    .Include("LedgerAccountClass")
-                    .Include("LedgerGeneral")
-                    .Include("LedgerAccountBalances")
-                    .Where(
-                        account =>
-                            account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE) ||
-                            account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
-                    .ToList();
-
-                var index = 1;
-                var totalAccounts = accounts.Count + revenueAndExpenseAccounts.Count;
-
-                // Close the Revenue and Expense Accounts to Retained Earnings
-                foreach (var account in revenueAndExpenseAccounts)
+                using (var context = UtilityMethods.createContext())
                 {
-                    if (account.LedgerGeneral.Debit != 0 || account.LedgerGeneral.Credit != 0)
-                        CloseRevenueOrExpenseAccountToRetainedEarnings(account, context);
+                    var accounts = context.Ledger_Accounts
+                        .Include("LedgerAccountClass")
+                        .Include("LedgerGeneral")
+                        .Include("LedgerAccountBalances")
+                        .ToList();
 
-                    worker.ReportProgress(index++ * (totalAccounts / 100));
-                }
+                    var revenueAndExpenseAccounts = context.Ledger_Accounts
+                        .Include("LedgerAccountClass")
+                        .Include("LedgerGeneral")
+                        .Include("LedgerAccountBalances")
+                        .Where(
+                            account =>
+                                account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE) ||
+                                account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                        .ToList();
 
-                foreach (var account in accounts)
-                {
-                    if (_period != 12) account.LedgerGeneral.Period++;
-                    else
+                    var index = 1;
+                    var totalAccounts = accounts.Count + revenueAndExpenseAccounts.Count;
+
+                    // Close the Revenue and Expense Accounts to Retained Earnings
+                    foreach (var account in revenueAndExpenseAccounts)
                     {
-                        account.LedgerGeneral.PeriodYear++;
-                        account.LedgerGeneral.Period = 1;
+                        if (account.LedgerGeneral.Debit != 0 || account.LedgerGeneral.Credit != 0)
+                            CloseRevenueOrExpenseAccountToRetainedEarnings(account, context);
+
+                        worker.ReportProgress(index++ * (totalAccounts / 100));
                     }
 
-                    // Close the balances
-                    if (account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET) ||
-                        account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
-                        CloseAssetOrExpenseAccount(account, context);
-                    else
-                        CloseLiabilityOrRevenueAccount(account, context);
-
-                    if (_period == 12)
+                    foreach (var account in accounts)
                     {
-                        var newBalance = new LedgerAccountBalance
+                        if (_period != 12) account.LedgerGeneral.Period++;
+                        else
                         {
-                            LedgerAccount = account,
-                            PeriodYear = _periodYear + 1,
-                            BeginningBalance =
-                                account.LedgerAccountBalances.Single(
-                                    balance =>
-                                        balance.LedgerAccount.ID.Equals(account.ID) &&
-                                        balance.PeriodYear.Equals(_periodYear)).Balance12
-                        };
-                        context.Ledger_Account_Balances.Add(newBalance);
+                            account.LedgerGeneral.PeriodYear++;
+                            account.LedgerGeneral.Period = 1;
+                        }
+
+                        // Close the balances
+                        if (account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET) ||
+                            account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                            CloseAssetOrExpenseAccount(account, context);
+                        else
+                            CloseLiabilityOrRevenueAccount(account, context);
+
+                        if (_period == 12)
+                        {
+                            var newBalance = new LedgerAccountBalance
+                            {
+                                LedgerAccount = account,
+                                PeriodYear = _periodYear + 1,
+                                BeginningBalance =
+                                    account.LedgerAccountBalances.Single(
+                                        balance =>
+                                            balance.LedgerAccount.ID.Equals(account.ID) &&
+                                            balance.PeriodYear.Equals(_periodYear)).Balance12
+                            };
+                            context.Ledger_Account_Balances.Add(newBalance);
+                        }
+
+                        worker.ReportProgress(index++ * (totalAccounts / 100));
                     }
 
-                    worker.ReportProgress(index++ * (totalAccounts / 100));
+                    context.SaveChanges();
                 }
 
-                context.SaveChanges();
                 ts.Complete();
             }
 

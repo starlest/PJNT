@@ -12,6 +12,21 @@
     <AssemblyName>ECERP</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -103,9 +118,26 @@
       <DependentUpon>201612280322045_Update1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\ERPContext\Configuration.cs" />
+    <Compile Include="Migrations\ERPInitialContext\201612280809295_Update1.cs" />
+    <Compile Include="Migrations\ERPInitialContext\201612280809295_Update1.Designer.cs">
+      <DependentUpon>201612280809295_Update1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\ERPInitialContext\201612280812092_Update2.cs" />
+    <Compile Include="Migrations\ERPInitialContext\201612280812092_Update2.Designer.cs">
+      <DependentUpon>201612280812092_Update2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\ERPInitialContext\201612290213443_Update 3.cs" />
+    <Compile Include="Migrations\ERPInitialContext\201612290213443_Update 3.Designer.cs">
+      <DependentUpon>201612290213443_Update 3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\ERPInitialContext\201612290416445_Update 4.cs" />
+    <Compile Include="Migrations\ERPInitialContext\201612290416445_Update 4.Designer.cs">
+      <DependentUpon>201612290416445_Update 4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ERPInitialContext\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccountClass.cs" />
     <Compile Include="Models\Accounting\LedgerAccountGroup.cs" />
+    <Compile Include="Models\Server.cs" />
     <Compile Include="Models\SystemParameter.cs" />
     <Compile Include="Models\TelegramBotNotification.cs" />
     <Compile Include="Reports\DatasetObjects\GeneralLedgerReport.cs" />
@@ -148,6 +180,7 @@
     <Compile Include="ViewModels\Analysis\SalesAnalysisMonthlyVM.cs" />
     <Compile Include="ViewModels\Analysis\SalesForecastMonthlyLineVM.cs" />
     <Compile Include="ViewModels\Analysis\SalesForecastMonthlyVM.cs" />
+    <Compile Include="ViewModels\ConnectIPVM.cs" />
     <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesEditVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
@@ -161,6 +194,9 @@
     </Compile>
     <Compile Include="Views\Analysis\SalesAnalysisMonthlyView.xaml.cs">
       <DependentUpon>SalesAnalysisMonthlyView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConnectIPWindow.xaml.cs">
+      <DependentUpon>ConnectIPWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
@@ -478,6 +514,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ConnectIPWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -739,6 +779,18 @@
     <EmbeddedResource Include="Migrations\ERPContext\201612280322045_Update1.resx">
       <DependentUpon>201612280322045_Update1.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\ERPInitialContext\201612280809295_Update1.resx">
+      <DependentUpon>201612280809295_Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\ERPInitialContext\201612280812092_Update2.resx">
+      <DependentUpon>201612280812092_Update2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\ERPInitialContext\201612290213443_Update 3.resx">
+      <DependentUpon>201612290213443_Update 3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\ERPInitialContext\201612290416445_Update 4.resx">
+      <DependentUpon>201612290416445_Update 4.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\RDLC\GeneralLedgerReport.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -797,7 +849,18 @@
       <Name>MVVMFramework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

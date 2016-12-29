@@ -507,9 +507,9 @@
         {
             var month = _transactionDate.Month;
             var year = _transactionDate.Year;
-            var selectedServer = Application.Current.FindResource(Constants.SELECTEDSERVER) as string;
-            var initialSelectedServer = selectedServer?.Substring(0, 1);
-            var leadingIDString = initialSelectedServer + (long)((year - 2000) * 100 + month) + "-";
+            var serverName = UtilityMethods.GetServerName();
+            var initialID = serverName.Equals("") ? "M" : serverName.Substring(0, 1);
+            var leadingIDString = initialID + (long)((year - 2000) * 100 + month) + "-";
             var endingIDString = 0.ToString().PadLeft(4, '0');
             _transactionID = leadingIDString + endingIDString;
 

@@ -19,17 +19,18 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-
-                foreach (var line in purchaseTransaction.PurchaseTransactionLines)
+                using (var context = UtilityMethods.createContext())
                 {
-                    AttachPurchaseTransactionLineToDatabaseContext(context, line);
-                    IncreaseLineItemStockInDatabaseContext(context, line);
-                    context.SaveChanges();
-                }
+                    foreach (var line in purchaseTransaction.PurchaseTransactionLines)
+                    {
+                        AttachPurchaseTransactionLineToDatabaseContext(context, line);
+                        IncreaseLineItemStockInDatabaseContext(context, line);
+                        context.SaveChanges();
+                    }
 
-                AttachPurchaseTransactionPropertiesToDatabaseContext(context, purchaseTransaction);
-                RecordPurchaseLedgerTransactionInDatabaseContext(context, purchaseTransaction);
+                    AttachPurchaseTransactionPropertiesToDatabaseContext(context, purchaseTransaction);
+                    RecordPurchaseLedgerTransactionInDatabaseContext(context, purchaseTransaction);
+                }
 
                 ts.Complete();
             }
@@ -43,10 +44,14 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                RecordEditedPurchaseTransactionLedgerTransactionsInDatabaseContext(context, editedPurchaseTransaction);
-                SetPurchaseTransactionInDatabaseContextToEditedPurchaseTransactionProperties(context,
-                    editedPurchaseTransaction);
+                using (var context = UtilityMethods.createContext())
+                {
+                    RecordEditedPurchaseTransactionLedgerTransactionsInDatabaseContext(context,
+                        editedPurchaseTransaction);
+                    SetPurchaseTransactionInDatabaseContextToEditedPurchaseTransactionProperties(context,
+                        editedPurchaseTransaction);
+                }
+
                 ts.Complete();
             }
 
@@ -59,28 +64,32 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                var purchaseTransactionInDatabase =
-                    context.PurchaseTransactions
-                        .Include("Supplier")
-                        .Include("PurchaseTransactionLines.Item")
-                        .Include("PurchaseTransactionLines.Warehouse")
-                        .Include("PurchaseTransactionLines")
-                        .SingleOrDefault(
-                            transaction => transaction.PurchaseID.Equals(purchaseTransaction.PurchaseID));
-                if (purchaseTransactionInDatabase == null) return; // Purchase transaction could not be found
-
-                var lines = purchaseTransactionInDatabase.PurchaseTransactionLines.ToList();
-                foreach (var line in lines)
+                using (var context = UtilityMethods.createContext())
                 {
-                    if (!IsThereEnoughLineItemStockInDatabaseContext(context, line)) return;
-                    DecreasePurchaseTransactionLineItemStockInDatabaseContext(context, line);
+                    var purchaseTransactionInDatabase =
+                        context.PurchaseTransactions
+                            .Include("Supplier")
+                            .Include("PurchaseTransactionLines.Item")
+                            .Include("PurchaseTransactionLines.Warehouse")
+                            .Include("PurchaseTransactionLines")
+                            .SingleOrDefault(
+                                transaction => transaction.PurchaseID.Equals(purchaseTransaction.PurchaseID));
+                    if (purchaseTransactionInDatabase == null) return; // Purchase transaction could not be found
+
+                    var lines = purchaseTransactionInDatabase.PurchaseTransactionLines.ToList();
+                    foreach (var line in lines)
+                    {
+                        if (!IsThereEnoughLineItemStockInDatabaseContext(context, line)) return;
+                        DecreasePurchaseTransactionLineItemStockInDatabaseContext(context, line);
+                        context.SaveChanges();
+                    }
+
+                    AddPurchaseTransactionDeletionLedgerTransactionToDatabaseContext(context,
+                        purchaseTransactionInDatabase);
+                    context.PurchaseTransactions.Remove(purchaseTransactionInDatabase);
                     context.SaveChanges();
                 }
 
-                AddPurchaseTransactionDeletionLedgerTransactionToDatabaseContext(context, purchaseTransactionInDatabase);
-                context.PurchaseTransactions.Remove(purchaseTransactionInDatabase);
-                context.SaveChanges();
                 ts.Complete();
             }
 
@@ -98,15 +107,17 @@
             }
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
+                using (var context = UtilityMethods.createContext())
+                {
+                    context.Entry(purchaseTransaction).State = EntityState.Modified;
+                    purchaseTransaction.Paid += paymentAmount + useCreditsAmount;
+                    purchaseTransaction.Supplier.PurchaseReturnCredits -= useCreditsAmount;
 
-                context.Entry(purchaseTransaction).State = EntityState.Modified;
-                purchaseTransaction.Paid += paymentAmount + useCreditsAmount;
-                purchaseTransaction.Supplier.PurchaseReturnCredits -= useCreditsAmount;
+                    RecordPaymentLedgerTransactionInDatabaseContext(context, purchaseTransaction, paymentAmount, paymentMode);
 
-                RecordPaymentLedgerTransactionInDatabaseContext(context, purchaseTransaction, paymentAmount, paymentMode);
+                    context.SaveChanges();
+                }
 
-                context.SaveChanges();
                 ts.Complete();
             }
         }
@@ -143,10 +154,10 @@
                 !LedgerTransactionHelper.AddTransactionToDatabase(context, purchaseLedgerTransaction,
                     UtilityMethods.GetCurrentDate(), purchaseTransaction.PurchaseID, "Purchase Transaction")) return;
             context.SaveChanges();
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, "Inventory",
-                "Debit", purchaseTransaction.Total);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, Constants.INVENTORY,
+                Constants.DEBIT, purchaseTransaction.Total);
             LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, accountsPayableName,
-                "Credit", purchaseTransaction.Total);
+                Constants.CREDIT, purchaseTransaction.Total);
             context.SaveChanges();
         }
 

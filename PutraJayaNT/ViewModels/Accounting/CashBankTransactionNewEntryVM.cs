@@ -87,12 +87,13 @@
             get
             {
                 return _newEntryConfirmCommand ?? (_newEntryConfirmCommand = new RelayCommand(() =>
-                {
-                    if (!IsBankSelected() || AreAccountsTheSame() || !AreAllFieldsFilled() || !IsConfirmationYes()) return;
-                    AddEntryToDatabase();
-                    ResetEntryFields();
-                    _parentVM.UpdateDisplayedLines();
-                }));
+                       {
+                           if (!IsBankSelected() || AreAccountsTheSame() || !AreAllFieldsFilled() ||
+                               !IsConfirmationYes()) return;
+                           AddEntryToDatabase();
+                           ResetEntryFields();
+                           _parentVM.UpdateDisplayedLines();
+                       }));
             }
         }
 
@@ -101,11 +102,11 @@
             get
             {
                 return _newEntryCancelCommand ?? (_newEntryCancelCommand = new RelayCommand(() =>
-                {
-                    ResetEntryFields();
-                    UpdateAccounts();
-                    _parentVM.UpdateBanks();
-                }));
+                       {
+                           ResetEntryFields();
+                           UpdateAccounts();
+                           _parentVM.UpdateBanks();
+                       }));
             }
         }
 
@@ -167,19 +168,23 @@
 
         private void AddEntryToDatabase()
         {
-            using (var ts = new TransactionScope(TransactionScopeOption.Required))
+            using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                var transaction = new LedgerTransaction();
-                if (
-                    !LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, _newEntryDate,
-                        _newEntryDescription, _newEntryDescription)) return;
-                context.SaveChanges();
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, _newEntryAccount.Name,
-                    _newEntrySequence, _newEntryAmount);
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, _parentVM.SelectedBank.Name,
-                    _newEntrySequence == "Debit" ? "Credit" : "Debit", _newEntryAmount);
-                context.SaveChanges();
+                using (var context = UtilityMethods.createContext())
+                {
+                    var transaction = new LedgerTransaction();
+                    if (
+                        !LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, _newEntryDate,
+                            _newEntryDescription, _newEntryDescription)) return;
+                    context.SaveChanges();
+                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, _newEntryAccount.Name,
+                        _newEntrySequence, _newEntryAmount);
+                    LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction,
+                        _parentVM.SelectedBank.Name,
+                        _newEntrySequence == Constants.DEBIT ? Constants.CREDIT : Constants.DEBIT, _newEntryAmount);
+                    context.SaveChanges();
+                }
+
                 ts.Complete();
             }
         }

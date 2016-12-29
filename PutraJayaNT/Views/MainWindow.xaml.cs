@@ -28,7 +28,7 @@
             ModernUIHelper.TrySetPerMonitorDpiAware();
             InitializeComponent();
             IsEnabled = false;
-            var window = new LoginWindow();
+            var window = new ConnectIPWindow();
             window.ShowDialog();
             _user = Application.Current.TryFindResource(Constants.CURRENTUSER) as User;
 

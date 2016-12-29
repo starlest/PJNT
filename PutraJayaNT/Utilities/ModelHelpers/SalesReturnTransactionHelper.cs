@@ -18,24 +18,26 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-
-                AttachSalesReturnTransactionPropertiesToDatabaseContext(context, ref salesReturnTransaction);
-                salesReturnTransaction.SalesTransaction.Customer.SalesReturnCredits += salesReturnTransaction.NetTotal;
-                context.SaveChanges();
-
-                var lines = salesReturnTransaction.SalesReturnTransactionLines.ToList();
-                salesReturnTransaction.SalesReturnTransactionLines.Clear();
-                foreach (var salesReturnTransactionLine in lines)
+                using (var context = UtilityMethods.createContext())
                 {
-                    salesReturnTransactionLine.SalesReturnTransaction = salesReturnTransaction;
-                    AddSalesReturnTransactionLineToDatabaseContext(context, salesReturnTransactionLine);
-                    DecreaseSalesReturnTransactionLineItemSoldOrReturnedInDatabaseContext(context, salesReturnTransactionLine);
-                    InceaseSalesReturnTransactionLineItemStockInDatabaseContext(context, salesReturnTransactionLine);
+                    AttachSalesReturnTransactionPropertiesToDatabaseContext(context, ref salesReturnTransaction);
+                    salesReturnTransaction.SalesTransaction.Customer.SalesReturnCredits += salesReturnTransaction.NetTotal;
                     context.SaveChanges();
+
+                    var lines = salesReturnTransaction.SalesReturnTransactionLines.ToList();
+                    salesReturnTransaction.SalesReturnTransactionLines.Clear();
+                    foreach (var salesReturnTransactionLine in lines)
+                    {
+                        salesReturnTransactionLine.SalesReturnTransaction = salesReturnTransaction;
+                        AddSalesReturnTransactionLineToDatabaseContext(context, salesReturnTransactionLine);
+                        DecreaseSalesReturnTransactionLineItemSoldOrReturnedInDatabaseContext(context, salesReturnTransactionLine);
+                        InceaseSalesReturnTransactionLineItemStockInDatabaseContext(context, salesReturnTransactionLine);
+                        context.SaveChanges();
+                    }
+
+                    AddSalesReturnTransactionLedgerTransactionsToDatabaseContext(context, salesReturnTransaction);
                 }
 
-                AddSalesReturnTransactionLedgerTransactionsToDatabaseContext(context, salesReturnTransaction);
                 ts.Complete();
             }
 

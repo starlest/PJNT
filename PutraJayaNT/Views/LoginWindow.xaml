@@ -19,7 +19,6 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -40,17 +39,13 @@
                      HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="30"
                      Margin="10, 0, 10, 0" utilities:PasswordHelper.Password="{Binding Password, Mode=TwoWay}" />
         <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right"
-                   VerticalAlignment="Center" Foreground="Red" FontSize="28" Text="IP Address: " />
-        <TextBox Name="IpAddressTextBox" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center"
-                 HorizontalAlignment="Stretch" Height="30"
-                 Text="{Binding IpAddress, Mode=TwoWay}" Margin="10" />
-        <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Right"
                    VerticalAlignment="Center" Foreground="Red" FontSize="28" Text="Server: " />
-        <ComboBox Grid.Row="5" Grid.Column="2" Height="30" Margin="10" Background="White"
+        <ComboBox Grid.Row="4" Grid.Column="2" Height="30" Margin="10" Background="White"
                   ItemsSource="{Binding Servers}"
                   SelectedItem="{Binding SelectedServer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  DisplayMemberPath="ServerName"
                   IsEditable="False" />
-        <Button Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Content="Login" Command="{Binding LoginCommand}"
+        <Button Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Content="Login" Command="{Binding LoginCommand}"
                 Margin="80, 0, 80, 0" />
     </Grid>
 </mui:ModernWindow>

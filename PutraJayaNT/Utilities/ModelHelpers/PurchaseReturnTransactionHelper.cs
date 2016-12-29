@@ -17,26 +17,29 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                AttachPurchaseReturnTransactionPropertiesToDatabaseContext(context, ref purchaseReturnTransaction);
-                purchaseReturnTransaction.PurchaseTransaction.Supplier.PurchaseReturnCredits +=
-                    purchaseReturnTransaction.NetTotal;
-
-                decimal totalCOGS = 0;
-                var lines = purchaseReturnTransaction.PurchaseReturnTransactionLines.ToList();
-                purchaseReturnTransaction.PurchaseReturnTransactionLines.Clear();
-                foreach (var purchaseReturnTransactionLine in lines)
+                using (var context = UtilityMethods.createContext())
                 {
-                    if (!IsThereEnoughLineItemStockInDatabaseContext(context, purchaseReturnTransactionLine)) return;
-                    purchaseReturnTransactionLine.PurchaseReturnTransaction = purchaseReturnTransaction;
-                    AddPurchaseReturnTransactionLineToDatabaseContext(context, purchaseReturnTransactionLine);
-                    DecreasePurchaseReturnTransactionLineItemStockInDatabaseContext(context, purchaseReturnTransactionLine);
-                    totalCOGS += CalculateLineCOGSFromDatabaseContext(context, purchaseReturnTransactionLine);
-                    IncreasePurchaseReturnTransactionLineItemSoldOrReturnedInDatabaseContext(context, purchaseReturnTransactionLine);
-                    context.SaveChanges();
+                    AttachPurchaseReturnTransactionPropertiesToDatabaseContext(context, ref purchaseReturnTransaction);
+                    purchaseReturnTransaction.PurchaseTransaction.Supplier.PurchaseReturnCredits +=
+                        purchaseReturnTransaction.NetTotal;
+
+                    decimal totalCOGS = 0;
+                    var lines = purchaseReturnTransaction.PurchaseReturnTransactionLines.ToList();
+                    purchaseReturnTransaction.PurchaseReturnTransactionLines.Clear();
+                    foreach (var purchaseReturnTransactionLine in lines)
+                    {
+                        if (!IsThereEnoughLineItemStockInDatabaseContext(context, purchaseReturnTransactionLine)) return;
+                        purchaseReturnTransactionLine.PurchaseReturnTransaction = purchaseReturnTransaction;
+                        AddPurchaseReturnTransactionLineToDatabaseContext(context, purchaseReturnTransactionLine);
+                        DecreasePurchaseReturnTransactionLineItemStockInDatabaseContext(context, purchaseReturnTransactionLine);
+                        totalCOGS += CalculateLineCOGSFromDatabaseContext(context, purchaseReturnTransactionLine);
+                        IncreasePurchaseReturnTransactionLineItemSoldOrReturnedInDatabaseContext(context, purchaseReturnTransactionLine);
+                        context.SaveChanges();
+                    }
+
+                    AddPurchaseReturnTransactionLedgerTransactionToDatabaseContext(context, purchaseReturnTransaction, totalCOGS);
                 }
 
-                AddPurchaseReturnTransactionLedgerTransactionToDatabaseContext(context, purchaseReturnTransaction, totalCOGS);
                 ts.Complete();
             }
 

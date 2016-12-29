@@ -38,15 +38,19 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context,
-                    editedSalesTransaction);
-                AssignEditedPropertiesToSalesTransactionFromDatabaseContext(editedSalesTransaction,
-                    salesTransactionFromDatabaseContext);
-                AttachSalesTransactionPropertiesToDatabaseContext(context, salesTransactionFromDatabaseContext);
-                AssignEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(context, editedSalesTransaction,
-                    salesTransactionFromDatabaseContext);
-                context.SaveChanges();
+                using (var context = UtilityMethods.createContext())
+                {
+                    var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context,
+                        editedSalesTransaction);
+                    AssignEditedPropertiesToSalesTransactionFromDatabaseContext(editedSalesTransaction,
+                        salesTransactionFromDatabaseContext);
+                    AttachSalesTransactionPropertiesToDatabaseContext(context, salesTransactionFromDatabaseContext);
+                    AssignEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(context,
+                        editedSalesTransaction,
+                        salesTransactionFromDatabaseContext);
+                    context.SaveChanges();
+                }
+
                 ts.Complete();
             }
 
@@ -59,20 +63,23 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
+                using (var context = UtilityMethods.createContext())
+                {
+                    var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context,
+                        editedSalesTransaction);
 
-                var salesTransactionFromDatabaseContext = GetDatabaseContextSalesTransaction(context,
-                    editedSalesTransaction);
+                    if (salesTransactionFromDatabaseContext.NetTotal != editedSalesTransaction.NetTotal)
+                        RecordSalesRevenueAdjustmentLedgerTransaction(context, editedSalesTransaction,
+                            salesTransactionFromDatabaseContext);
 
-                if (salesTransactionFromDatabaseContext.NetTotal != editedSalesTransaction.NetTotal)
-                    RecordSalesRevenueAdjustmentLedgerTransaction(context, editedSalesTransaction,
+                    AssignEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(context,
+                        editedSalesTransaction,
                         salesTransactionFromDatabaseContext);
+                    AssignEditedInvoiceIssuedSalesTransactionPropertiesToSalesTransactionFromDatabaseContext(
+                        editedSalesTransaction, salesTransactionFromDatabaseContext);
+                    context.SaveChanges();
+                }
 
-                AssignEditedSalesTransactionLinesToSalesTransactionFromDatabaseContext(context, editedSalesTransaction,
-                    salesTransactionFromDatabaseContext);
-                AssignEditedInvoiceIssuedSalesTransactionPropertiesToSalesTransactionFromDatabaseContext(
-                    editedSalesTransaction, salesTransactionFromDatabaseContext);
-                context.SaveChanges();
                 ts.Complete();
             }
 
@@ -85,20 +92,22 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
+                using (var context = UtilityMethods.createContext())
+                {
+                    var salesTransactionFromDatabase = context.SalesTransactions.Include("Customer").Single(
+                        transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
 
-                var salesTransactionFromDatabase = context.SalesTransactions.Include("Customer").Single(
-                    transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
+                    salesTransactionFromDatabase.InvoiceIssued = UtilityMethods.GetCurrentDate().Date;
+                    RecordSalesRevenueRecognitionLedgerTransactionInDatabaseContext(context,
+                        salesTransactionFromDatabase);
+                    RecordCostOfGoodsSoldLedgerTransactionInDatabaseContext(context, salesTransactionFromDatabase);
+                    //IncreaseSoldOrReturnedOfSalesTransactionItemsInDatabaseContext(context, salesTransactionFromDatabase);
 
-                salesTransactionFromDatabase.InvoiceIssued = UtilityMethods.GetCurrentDate().Date;
-                RecordSalesRevenueRecognitionLedgerTransactionInDatabaseContext(context, salesTransactionFromDatabase);
-                RecordCostOfGoodsSoldLedgerTransactionInDatabaseContext(context, salesTransactionFromDatabase);
-                //IncreaseSoldOrReturnedOfSalesTransactionItemsInDatabaseContext(context, salesTransactionFromDatabase);
+                    var user = Application.Current.FindResource("CurrentUser") as User;
+                    salesTransactionFromDatabase.User = context.Users.Single(e => e.Username.Equals(user.Username));
 
-                var user = Application.Current.FindResource("CurrentUser") as User;
-                salesTransactionFromDatabase.User = context.Users.Single(e => e.Username.Equals(user.Username));
-
-                context.SaveChanges();
+                    context.SaveChanges();
+                }
                 ts.Complete();
             }
 
@@ -319,7 +328,7 @@
                     .OrderBy(purchaseTransaction => purchaseTransaction.PurchaseTransactionID)
                     .ThenByDescending(
                         purchaseTransactionLine =>
-                            purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
+                                purchaseTransactionLine.Quantity - purchaseTransactionLine.SoldOrReturned)
                     .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.PurchasePrice)
                     .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.Discount)
                     .ThenByDescending(purchaseTransactionLine => purchaseTransactionLine.WarehouseID)

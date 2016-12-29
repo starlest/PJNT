@@ -19,12 +19,15 @@
 
             using (var ts = new TransactionScope())
             {
-                var context = UtilityMethods.createContext();
-                context.Entry(salesTransaction).State = EntityState.Modified;
-                salesTransaction.Paid += totalAmountCollected;
-                salesTransaction.Customer.SalesReturnCredits -= creditsUsed;
-                SaveCollectionLedgerTransactionInDatabase(context, salesTransaction, collectionAmount, paymentMode);
-                context.SaveChanges();
+                using (var context = UtilityMethods.createContext())
+                {
+                    context.Entry(salesTransaction).State = EntityState.Modified;
+                    salesTransaction.Paid += totalAmountCollected;
+                    salesTransaction.Customer.SalesReturnCredits -= creditsUsed;
+                    SaveCollectionLedgerTransactionInDatabase(context, salesTransaction, collectionAmount, paymentMode);
+                    context.SaveChanges();
+                }
+
                 ts.Complete();
             }
 
