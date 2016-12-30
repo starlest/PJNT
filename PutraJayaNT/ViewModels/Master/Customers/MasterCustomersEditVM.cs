@@ -18,7 +18,7 @@
 
         private int _editID;
         private string _editName;
-        private string _editCity;
+        private CityVM _editCity;
         private string _editAddress;
         private string _editTelephone;
         private string _editNPWP;
@@ -54,10 +54,10 @@
             set { SetProperty(ref _editName, value, "EditName"); }
         }
 
-        public string EditCity
+        public CityVM EditCity
         {
             get { return _editCity; }
-            set { SetProperty(ref _editCity, value, "EditCity"); }
+            set { SetProperty(ref _editCity, value, () => EditCity); }
         }
 
         public string EditAddress
@@ -69,13 +69,13 @@
         public string EditTelephone
         {
             get { return _editTelephone; }
-            set { SetProperty(ref _editTelephone, value, "EditTelephone"); }
+            set { SetProperty(ref _editTelephone, value, () => EditTelephone); }
         }
 
         public string EditNPWP
         {
             get { return _editNPWP; }
-            set { SetProperty(ref _editNPWP, value, "EditNPWP"); }
+            set { SetProperty(ref _editNPWP, value, () => EditNPWP); }
         }
 
         public int EditCreditTerms
@@ -118,7 +118,7 @@
         {
             EditID = _editingCustomer.ID;
             EditName = _editingCustomer.Name;
-            EditCity = _editingCustomer.City;
+            EditCity = new CityVM { Model= _editingCustomer.City };
             EditAddress = _editingCustomer.Address;
             EditTelephone = _editingCustomer.Telephone;
             EditNPWP = _editingCustomer.NPWP;
@@ -144,7 +144,7 @@
             {
                 ID = _editID,
                 Address = _editAddress,
-                City = _editCity,
+                City = _editCity.Model,
                 CreditTerms = _editCreditTerms,
                 Group = _editCustomerGroup.Model,
                 MaxInvoices = _editMaxInvoices,

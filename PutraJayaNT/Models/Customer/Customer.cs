@@ -21,7 +21,7 @@
 
         public virtual CustomerGroup Group { get; set; }
 
-        public string City { get; set; }
+        public virtual City City { get; set; }
 
         public string Address { get; set; }
 

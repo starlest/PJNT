@@ -25,22 +25,22 @@ namespace ECERP.Migrations.ERPContext
 
             context.Ledger_Account_Classes.AddOrUpdate(
                 accountClass => accountClass.Name,
-                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.ASSET },
-                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.LIABILITY },
-                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.EQUITY },
-                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.EXPENSE },
-                new LedgerAccountClass { Name = Constants.LedgerAccountClasses.REVENUE }
+                new LedgerAccountClass { Name = Constants.Accounting.ASSET },
+                new LedgerAccountClass { Name = Constants.Accounting.LIABILITY },
+                new LedgerAccountClass { Name = Constants.Accounting.EQUITY },
+                new LedgerAccountClass { Name = Constants.Accounting.EXPENSE },
+                new LedgerAccountClass { Name = Constants.Accounting.REVENUE }
                 );
 
             context.Ledger_Account_Groups.AddOrUpdate(
                 accountGroup => accountGroup.Name,
-                new LedgerAccountGroup { Name = Constants.CURRENT_ASSET },
-                new LedgerAccountGroup { Name = Constants.OPERATING_EXPENSE },
-                new LedgerAccountGroup { Name = Constants.ACCOUNTS_PAYABLE },
-                new LedgerAccountGroup { Name = Constants.ACCOUNTS_RECEIVABLE },
-                new LedgerAccountGroup { Name = Constants.COST_OF_GOODS_SOLD },
-                new LedgerAccountGroup { Name = Constants.INCOME },
-                new LedgerAccountGroup { Name = Constants.INVENTORY }
+                new LedgerAccountGroup { Name = Constants.Accounting.CURRENT_ASSET },
+                new LedgerAccountGroup { Name = Constants.Accounting.OPERATING_EXPENSE },
+                new LedgerAccountGroup { Name = Constants.Accounting.ACCOUNTS_PAYABLE },
+                new LedgerAccountGroup { Name = Constants.Accounting.ACCOUNTS_RECEIVABLE },
+                new LedgerAccountGroup { Name = Constants.Accounting.COST_OF_GOODS_SOLD },
+                new LedgerAccountGroup { Name = Constants.Accounting.INCOME },
+                new LedgerAccountGroup { Name = Constants.Accounting.INVENTORY }
                 );
         }
     }

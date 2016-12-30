@@ -41,7 +41,7 @@
         {
             if (collectionAmount <= 0) return;
 
-            var accountsReceivableName = salesTransaction.Customer.Name + " " + Constants.ACCOUNTS_RECEIVABLE;
+            var accountsReceivableName = salesTransaction.Customer.Name + " " + Constants.Accounting.ACCOUNTS_RECEIVABLE;
             var date = UtilityMethods.GetCurrentDate().Date;
             var transaction = new LedgerTransaction();
 
@@ -49,9 +49,9 @@
                 !LedgerTransactionHelper.AddTransactionToDatabase(context, transaction, date,
                     salesTransaction.SalesTransactionID, "Sales Transaction Receipt")) return;
             context.SaveChanges();
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, paymentMode, Constants.DEBIT,
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, paymentMode, Constants.Accounting.DEBIT,
                 collectionAmount);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, accountsReceivableName, Constants.CREDIT,
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, accountsReceivableName, Constants.Accounting.CREDIT,
                 collectionAmount);
             context.SaveChanges();
         }

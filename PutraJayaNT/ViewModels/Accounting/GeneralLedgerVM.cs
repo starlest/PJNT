@@ -188,20 +188,20 @@
                     .Include("LedgerAccount")
                     .OrderBy(line => line.LedgerTransaction.Date);
 
-                if (_selectedAccount.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET) ||
-                    _selectedAccount.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
-                    _normalSeq = Constants.DEBIT;
-                else _normalSeq = Constants.CREDIT;
+                if (_selectedAccount.LedgerAccountClass.Name.Equals(Constants.Accounting.ASSET) ||
+                    _selectedAccount.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
+                    _normalSeq = Constants.Accounting.DEBIT;
+                else _normalSeq = Constants.Accounting.CREDIT;
 
                 foreach (var opposingLine in transactionLines.ToList().Select(
                     line => new LedgerTransactionLineVM { Model = line }).SelectMany(lineVM => lineVM.OpposingLines))
                 {
-                    opposingLine.Seq = opposingLine.Seq.Equals(Constants.DEBIT) ? Constants.CREDIT : Constants.DEBIT;
+                    opposingLine.Seq = opposingLine.Seq.Equals(Constants.Accounting.DEBIT) ? Constants.Accounting.CREDIT : Constants.Accounting.DEBIT;
 
                     if (_normalSeq.Equals(opposingLine.Seq)) balanceTracker += opposingLine.Amount;
                     else balanceTracker -= opposingLine.Amount;
 
-                    if (opposingLine.Seq.Equals(Constants.DEBIT)) _totalDebit += opposingLine.Amount;
+                    if (opposingLine.Seq.Equals(Constants.Accounting.DEBIT)) _totalDebit += opposingLine.Amount;
                     else _totalCredit += opposingLine.Amount;
 
                     opposingLine.Balance = balanceTracker;

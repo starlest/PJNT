@@ -2,6 +2,7 @@ namespace ECERP.Utilities
 {
     using System.Configuration;
     using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
     using System.Data.Entity.ModelConfiguration.Conventions;
     using Models;
     using Models.Accounting;
@@ -22,6 +23,9 @@ namespace ECERP.Utilities
         public ERPContext(string dbName, string ipAddress)
             : base(GetConnectionString(dbName, ipAddress))
         {
+            var adapter = (IObjectContextAdapter)this;
+            var objectContext = adapter.ObjectContext;
+            objectContext.CommandTimeout = 3 * 60;
         }
 
         public static string GetConnectionString(string dbName, string ipAddress)
@@ -66,6 +70,9 @@ namespace ECERP.Utilities
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Supplier> Suppliers { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
+
+        public virtual DbSet<City> Cities { get; set; }
+
         public virtual DbSet<CustomerGroup> CustomerGroups { get; set; }
         #endregion
 

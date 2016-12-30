@@ -34,7 +34,7 @@
             _parentVM = parentVM;
             _newEntryDate = UtilityMethods.GetCurrentDate().Date;
             Accounts = new ObservableCollection<LedgerAccountVM>();
-            Sequences = new ObservableCollection<string> { Constants.DEBIT, Constants.CREDIT };
+            Sequences = new ObservableCollection<string> { Constants.Accounting.DEBIT, Constants.Accounting.CREDIT };
             UpdateAccounts();
         }
 
@@ -125,10 +125,10 @@
                     .Where(
                         account =>
                             !protectedAccounts.Contains(account.Name) &&
-                            !account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EQUITY) &&
-                            !account.Name.Contains(Constants.LedgerAccountClasses.REVENUE) &&
-                            !account.Name.Contains(Constants.ACCOUNTS_RECEIVABLE) &&
-                            !account.Name.Contains(Constants.ACCOUNTS_PAYABLE))
+                            !account.LedgerAccountClass.Name.Equals(Constants.Accounting.EQUITY) &&
+                            !account.Name.Contains(Constants.Accounting.REVENUE) &&
+                            !account.Name.Contains(Constants.Accounting.ACCOUNTS_RECEIVABLE) &&
+                            !account.Name.Contains(Constants.Accounting.ACCOUNTS_PAYABLE))
                     .OrderBy(account => account.Name)
                     .ToList();
                 foreach (var account in accounts.Where(
@@ -181,7 +181,7 @@
                         _newEntrySequence, _newEntryAmount);
                     LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction,
                         _parentVM.SelectedBank.Name,
-                        _newEntrySequence == Constants.DEBIT ? Constants.CREDIT : Constants.DEBIT, _newEntryAmount);
+                        _newEntrySequence == Constants.Accounting.DEBIT ? Constants.Accounting.CREDIT : Constants.Accounting.DEBIT, _newEntryAmount);
                     context.SaveChanges();
                 }
 

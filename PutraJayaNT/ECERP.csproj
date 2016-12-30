@@ -117,6 +117,18 @@
     <Compile Include="Migrations\ERPContext\201612280322045_Update1.Designer.cs">
       <DependentUpon>201612280322045_Update1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\ERPContext\201612290825069_Update 2.cs" />
+    <Compile Include="Migrations\ERPContext\201612290825069_Update 2.Designer.cs">
+      <DependentUpon>201612290825069_Update 2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\ERPContext\201612290913031_Update 3.cs" />
+    <Compile Include="Migrations\ERPContext\201612290913031_Update 3.Designer.cs">
+      <DependentUpon>201612290913031_Update 3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\ERPContext\201612290915047_Update 4.cs" />
+    <Compile Include="Migrations\ERPContext\201612290915047_Update 4.Designer.cs">
+      <DependentUpon>201612290915047_Update 4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ERPContext\Configuration.cs" />
     <Compile Include="Migrations\ERPInitialContext\201612280809295_Update1.cs" />
     <Compile Include="Migrations\ERPInitialContext\201612280809295_Update1.Designer.cs">
@@ -137,6 +149,7 @@
     <Compile Include="Migrations\ERPInitialContext\Configuration.cs" />
     <Compile Include="Models\Accounting\LedgerAccountClass.cs" />
     <Compile Include="Models\Accounting\LedgerAccountGroup.cs" />
+    <Compile Include="Models\Customer\City.cs" />
     <Compile Include="Models\Server.cs" />
     <Compile Include="Models\SystemParameter.cs" />
     <Compile Include="Models\TelegramBotNotification.cs" />
@@ -184,6 +197,7 @@
     <Compile Include="ViewModels\Customers\SalesReturn\SalesReturnNewEntryVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesEditVM.cs" />
     <Compile Include="ViewModels\Customers\Sales\SalesNewEntryVM.cs" />
+    <Compile Include="ViewModels\Customer\CityVM.cs" />
     <Compile Include="ViewModels\Inventory\StockAdjustmentNewEntryVM.cs" />
     <Compile Include="ViewModels\Reports\StockAdjustmentsReportVM.cs" />
     <Compile Include="ViewModels\Suppliers\PurchaseReturn\PurchaseReturnNewEntryVM.cs" />
@@ -778,6 +792,15 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\ERPContext\201612280322045_Update1.resx">
       <DependentUpon>201612280322045_Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\ERPContext\201612290825069_Update 2.resx">
+      <DependentUpon>201612290825069_Update 2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\ERPContext\201612290913031_Update 3.resx">
+      <DependentUpon>201612290913031_Update 3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\ERPContext\201612290915047_Update 4.resx">
+      <DependentUpon>201612290915047_Update 4.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\ERPInitialContext\201612280809295_Update1.resx">
       <DependentUpon>201612280809295_Update1.cs</DependentUpon>

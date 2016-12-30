@@ -400,7 +400,7 @@
         {
             var row = salesReturnInvoiceDataTable.NewRow();
             row["Customer"] = salesReturnTransaction.SalesTransaction.Customer.Name;
-            row["Address"] = salesReturnTransaction.SalesTransaction.Customer.City;
+            row["Address"] = salesReturnTransaction.SalesTransaction.Customer.City.Name;
             row["SalesInvoiceNumber"] = salesReturnTransaction.SalesTransaction.SalesTransactionID;
             row["SalesReturnInvoiceNumber"] = salesReturnTransaction.SalesReturnTransactionID;
             row["Date"] = salesReturnTransaction.Date.ToString("dd-MM-yyyy");

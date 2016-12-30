@@ -34,13 +34,14 @@
             {
                 return context.SalesTransactions
                     .Include("Customer")
+                    .Include("Customer.City")
                     .Include("CollectionSalesman")
                     .Include("SalesReturnTransactions")
                     .Include("SalesTransactionLines")
                     .Include("SalesTransactionLines.Salesman")
                     .Include("SalesTransactionLines.Item")
                     .Include("SalesTransactionLines.Warehouse")
-                    .SingleOrDefault(e => e.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
+                    .SingleOrDefault(transaction => transaction.SalesTransactionID.Equals(salesTransaction.SalesTransactionID));
             }
         }
 
@@ -124,7 +125,7 @@
             salesTranscationDataTableRow["InvoiceSalesExpense"] = salesTransaction.SalesExpense;
             salesTranscationDataTableRow["InvoiceNetTotal"] = salesTransaction.NetTotal;
             salesTranscationDataTableRow["Customer"] = salesTransaction.Customer.Name;
-            salesTranscationDataTableRow["Address"] = salesTransaction.Customer.City;
+            salesTranscationDataTableRow["Address"] = salesTransaction.Customer.City.Name;
             salesTranscationDataTableRow["InvoiceNumber"] = salesTransaction.SalesTransactionID;
             salesTranscationDataTableRow["Date"] = salesTransaction.Date.ToString("dd-MM-yyyy");
             salesTranscationDataTableRow["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");
@@ -230,7 +231,7 @@
             dr2["InvoiceSalesExpense"] = salesTransaction.SalesExpense;
             dr2["InvoiceNetTotal"] = salesTransaction.NetTotal;
             dr2["Customer"] = salesTransaction.Customer.Name;
-            dr2["Address"] = salesTransaction.Customer.City;
+            dr2["Address"] = salesTransaction.Customer.City.Name;
             dr2["InvoiceNumber"] = salesTransaction.SalesTransactionID;
             dr2["Date"] = salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = salesTransaction.DueDate.ToString("dd-MM-yyyy");

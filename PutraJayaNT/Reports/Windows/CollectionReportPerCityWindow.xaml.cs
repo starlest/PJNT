@@ -59,7 +59,7 @@
                 row["Date"] = salesTransaction.Date.ToShortDateString();
                 row["ID"] = salesTransaction.SalesTransactionID;
                 row["Customer"] = salesTransaction.Customer.Name;
-                row["City"] = salesTransaction.Customer.City;
+                row["City"] = salesTransaction.Customer.City.Name;
                 row["InvoiceNetTotal"] = salesTransaction.Total;
                 row["InvoicePaid"] = salesTransaction.Paid;
                 row["InvoiceRemaining"] = salesTransaction.Total - salesTransaction.Paid;

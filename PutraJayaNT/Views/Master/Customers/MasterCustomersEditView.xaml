@@ -35,7 +35,8 @@
         <TextBlock Grid.Row="0" Grid.Column="2" Text="Name:" />
         <TextBox Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2"  Text="{Binding EditName, Mode=TwoWay}" />
         <TextBlock Grid.Row="1" Grid.Column="0" Text="City:" />
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EditCity, Mode=TwoWay}" />
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Cities}" DisplayMemberPath="Name"
+                      SelectedItem="{Binding EditCity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <TextBlock Grid.Row="1" Grid.Column="2" Text="Address:" />
         <TextBox Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding EditAddress, Mode=TwoWay}" />
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Telephone:" />

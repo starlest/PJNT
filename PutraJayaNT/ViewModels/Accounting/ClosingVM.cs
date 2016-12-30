@@ -52,8 +52,8 @@
                         .Include("LedgerAccountBalances")
                         .Where(
                             account =>
-                                account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE) ||
-                                account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                                account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE) ||
+                                account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         .ToList();
 
                     var index = 1;
@@ -78,8 +78,8 @@
                         }
 
                         // Close the balances
-                        if (account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET) ||
-                            account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                        if (account.LedgerAccountClass.Name.Equals(Constants.Accounting.ASSET) ||
+                            account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                             CloseAssetOrExpenseAccount(account, context);
                         else
                             CloseLiabilityOrRevenueAccount(account, context);
@@ -120,7 +120,7 @@
                 .Include("LedgerTransactionLines")
                 .Single(e => e.Name.Equals("Retained Earnings"));
 
-            if (account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+            if (account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
             {
                 var amount = account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
                 var transaction = new LedgerTransaction();
@@ -129,15 +129,15 @@
                     UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name);
                 context.SaveChanges();
                 LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, account.Name,
-                    Constants.CREDIT,
+                    Constants.Accounting.CREDIT,
                     amount);
                 LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, retainedEarnings.Name,
-                    Constants.DEBIT, amount);
+                    Constants.Accounting.DEBIT, amount);
 
                 account.LedgerGeneral.Credit -= amount;
             }
 
-            else if (account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+            else if (account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
             {
                 var amount = account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
                 var transaction = new LedgerTransaction();
@@ -146,10 +146,10 @@
                     !LedgerTransactionHelper.AddTransactionToDatabase(context, transaction,
                         UtilityMethods.GetCurrentDate().Date, "Closing Entry", account.Name)) return;
                 context.SaveChanges();
-                LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, account.Name, Constants.DEBIT,
+                LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, account.Name, Constants.Accounting.DEBIT,
                     amount);
                 LedgerTransactionHelper.AddTransactionLineToDatabase(context, transaction, retainedEarnings.Name,
-                    Constants.CREDIT, amount);
+                    Constants.Accounting.CREDIT, amount);
 
                 account.LedgerGeneral.Debit -= amount;
             }
@@ -164,7 +164,7 @@
             switch (_period)
             {
                 case 1:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance1 += periodYearBalances.BeginningBalance;
 
                     periodYearBalances.Balance1 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -172,7 +172,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 2:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance2 += periodYearBalances.Balance1;
 
                     periodYearBalances.Balance2 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -180,7 +180,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 3:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance3 += periodYearBalances.Balance2;
 
                     periodYearBalances.Balance3 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -188,7 +188,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 4:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance4 += periodYearBalances.Balance3;
 
                     periodYearBalances.Balance4 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -196,7 +196,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 5:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance5 += periodYearBalances.Balance4;
 
                     periodYearBalances.Balance5 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -204,7 +204,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 6:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance6 += periodYearBalances.Balance5;
 
                     periodYearBalances.Balance6 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -212,7 +212,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 7:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance7 += periodYearBalances.Balance6;
 
                     periodYearBalances.Balance7 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -220,7 +220,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 8:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance8 += periodYearBalances.Balance7;
 
                     periodYearBalances.Balance8 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -228,7 +228,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 9:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance9 += periodYearBalances.Balance8;
 
                     periodYearBalances.Balance9 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -236,7 +236,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 10:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance10 += periodYearBalances.Balance9;
 
                     periodYearBalances.Balance10 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -244,7 +244,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 11:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance11 += periodYearBalances.Balance10;
 
                     periodYearBalances.Balance11 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -252,7 +252,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 12:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.EXPENSE))
                         periodYearBalances.Balance12 += periodYearBalances.Balance11;
 
                     periodYearBalances.Balance12 += account.LedgerGeneral.Debit - account.LedgerGeneral.Credit;
@@ -272,7 +272,7 @@
             switch (_period)
             {
                 case 1:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance1 += periodYearBalances.BeginningBalance;
 
                     periodYearBalances.Balance1 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -280,7 +280,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 2:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance2 += periodYearBalances.Balance1;
 
                     periodYearBalances.Balance2 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -288,7 +288,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 3:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance3 += periodYearBalances.Balance2;
 
                     periodYearBalances.Balance3 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -296,7 +296,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 4:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance4 += periodYearBalances.Balance3;
 
                     periodYearBalances.Balance4 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -304,7 +304,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 5:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance5 += periodYearBalances.Balance4;
 
                     periodYearBalances.Balance5 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -312,7 +312,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 6:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance6 += periodYearBalances.Balance5;
 
                     periodYearBalances.Balance6 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -320,7 +320,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 7:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance7 += periodYearBalances.Balance6;
 
                     periodYearBalances.Balance7 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -328,7 +328,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 8:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance8 += periodYearBalances.Balance7;
 
                     periodYearBalances.Balance8 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -336,7 +336,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 9:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance9 += periodYearBalances.Balance8;
 
                     periodYearBalances.Balance9 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -344,7 +344,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 10:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance10 += periodYearBalances.Balance9;
 
                     periodYearBalances.Balance10 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -352,7 +352,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 11:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance11 += periodYearBalances.Balance10;
 
                     periodYearBalances.Balance11 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;
@@ -360,7 +360,7 @@
                     account.LedgerGeneral.Credit = 0;
                     break;
                 case 12:
-                    if (!account.LedgerAccountClass.Name.Equals(Constants.LedgerAccountClasses.REVENUE))
+                    if (!account.LedgerAccountClass.Name.Equals(Constants.Accounting.REVENUE))
                         periodYearBalances.Balance12 += periodYearBalances.Balance11;
 
                     periodYearBalances.Balance12 += account.LedgerGeneral.Credit - account.LedgerGeneral.Debit;

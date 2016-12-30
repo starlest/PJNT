@@ -47,60 +47,60 @@
             var ledgerAccountsClasses = context.Ledger_Account_Classes.ToList();
             var ledgerAccountsGroups = context.Ledger_Account_Groups.ToList();
 
-            if (accountGroup.Equals(Constants.BANK))
+            if (accountGroup.Equals(Constants.Accounting.BANK))
             {
                 return new LedgerAccount
                 {
                     Name = accountName,
-                    Notes = Constants.CURRENT_ASSET,
+                    Notes = Constants.Accounting.CURRENT_ASSET,
                     LedgerAccountClass =
                         ledgerAccountsClasses.Single(
-                            accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET)),
+                            accountClass => accountClass.Name.Equals(Constants.Accounting.ASSET)),
                     LedgerAccountGroup =
                         ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
 
-            if (accountGroup.Equals(Constants.OPERATING_EXPENSE))
+            if (accountGroup.Equals(Constants.Accounting.OPERATING_EXPENSE))
             {
                 return new LedgerAccount
                 {
                     Name = accountName,
-                    Notes = Constants.OPERATING_EXPENSE,
+                    Notes = Constants.Accounting.OPERATING_EXPENSE,
                     LedgerAccountClass =
                         ledgerAccountsClasses.First(
-                            accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)),
+                            accountClass => accountClass.Name.Equals(Constants.Accounting.EXPENSE)),
                     LedgerAccountGroup =
                         ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
 
-            if (accountGroup.Equals(Constants.ACCOUNTS_RECEIVABLE))
+            if (accountGroup.Equals(Constants.Accounting.ACCOUNTS_RECEIVABLE))
             {
                 return new LedgerAccount
                 {
                     Name = accountName,
-                    Notes = Constants.ACCOUNTS_RECEIVABLE,
+                    Notes = Constants.Accounting.ACCOUNTS_RECEIVABLE,
                     LedgerAccountClass =
                         ledgerAccountsClasses.First(
-                            accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET)),
+                            accountClass => accountClass.Name.Equals(Constants.Accounting.ASSET)),
                     LedgerAccountGroup =
                         ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }
 
-            if (accountGroup.Equals(Constants.ACCOUNTS_PAYABLE))
+            if (accountGroup.Equals(Constants.Accounting.ACCOUNTS_PAYABLE))
             {
                 return new LedgerAccount
                 {
                     Name = accountName,
-                    Notes = Constants.ACCOUNTS_PAYABLE,
+                    Notes = Constants.Accounting.ACCOUNTS_PAYABLE,
                     LedgerAccountClass =
                         ledgerAccountsClasses.First(
-                            accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.LIABILITY)),
+                            accountClass => accountClass.Name.Equals(Constants.Accounting.LIABILITY)),
                     LedgerAccountGroup =
                         ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
@@ -110,10 +110,10 @@
             return new LedgerAccount
             {
                 Name = accountName,
-                Notes = Constants.LedgerAccountClasses.EXPENSE,
+                Notes = Constants.Accounting.EXPENSE,
                 LedgerAccountClass =
                     ledgerAccountsClasses.First(
-                        accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.EXPENSE)),
+                        accountClass => accountClass.Name.Equals(Constants.Accounting.EXPENSE)),
                 LedgerAccountGroup =
                     ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
                 LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()

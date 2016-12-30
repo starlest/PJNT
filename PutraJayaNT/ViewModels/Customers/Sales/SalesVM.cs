@@ -151,7 +151,7 @@
 
                 SetProperty(ref _transactionCustomer, value, () => TransactionCustomer);
                 if (_transactionCustomer == null) return;
-                TransactionCustomerCity = _transactionCustomer.City;
+                TransactionCustomerCity = _transactionCustomer.City.Name;
                 if (!_editMode)
                     TransactionDueDate = _transactionDate.AddDays(_transactionCustomer.CreditTerms);
             }
@@ -495,6 +495,7 @@
                 var customers = context.Customers
                     .Where(customer => customer.Active)
                     .OrderBy(customer => customer.Name)
+                    .Include("City")
                     .Include("Group")
                     .ToList();
 
@@ -642,6 +643,7 @@
             {
                 return context.SalesTransactions
                     .Include("Customer")
+                    .Include("Customer.City")
                     .Include("CollectionSalesman")
                     .Include("SalesReturnTransactions")
                     .Include("SalesTransactionLines")

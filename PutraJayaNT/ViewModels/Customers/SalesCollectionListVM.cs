@@ -20,7 +20,7 @@
     {
         #region Backing Fields
 
-        private string _selectedCity;
+        private CityVM _selectedCity;
         private SalesmanVM _selectedSalesman;
         private CustomerVM _selectedCustomer;
         private DateTime _toDate;
@@ -39,7 +39,7 @@
 
         public SalesCollectionListVM()
         {
-            Cities = new ObservableCollection<string>();
+            Cities = new ObservableCollection<CityVM>();
             Salesmans = new ObservableCollection<SalesmanVM>();
             Customers = new ObservableCollection<CustomerVM>();
             DisplayedSalesTransactions = new ObservableCollection<SalesTransactionVM>();
@@ -56,7 +56,7 @@
 
         #region Collections
 
-        public ObservableCollection<string> Cities { get; }
+        public ObservableCollection<CityVM> Cities { get; }
 
         public ObservableCollection<SalesmanVM> Salesmans { get; }
 
@@ -110,7 +110,7 @@
             set { SetProperty(ref _collectionDate, value, "CollectionDate"); }
         }
 
-        public string SelectedCity
+        public CityVM SelectedCity
         {
             get { return _selectedCity; }
             set
@@ -249,31 +249,21 @@
             var oldSelectedCity = _selectedCity;
 
             Cities.Clear();
+            Cities.Add(new CityVM { Model = new City { ID = -1, Name = Constants.ALL } });
             using (var context = UtilityMethods.createContext())
             {
-                var customersReturnedFromDatabase = context.Customers.ToList();
-                foreach (
-                    var customer in customersReturnedFromDatabase.Where(customer => !Cities.Contains(customer.City)))
-                    Cities.Add(customer.City);
+                var citiesReturnedFromDatabase = context.Cities.OrderBy(city => city.Name).ToList();
+                foreach (var city in citiesReturnedFromDatabase)
+                    Cities.Add(new CityVM { Model = city });
             }
 
-            ArrangeCitiesAlphabetically();
             UpdateSelectedCity(oldSelectedCity);
         }
 
-        private void ArrangeCitiesAlphabetically()
-        {
-            var arragedCities = Cities.OrderBy(city => city).ToList();
-            Cities.Clear();
-            Cities.Add("All");
-            foreach (var city in arragedCities)
-                Cities.Add(city);
-        }
-
-        private void UpdateSelectedCity(string oldSelectedCity)
+        private void UpdateSelectedCity(CityVM oldSelectedCity)
         {
             if (oldSelectedCity == null) return;
-            SelectedCity = Cities.FirstOrDefault(city => city.Equals(oldSelectedCity));
+            SelectedCity = Cities.FirstOrDefault(city => city.ID.Equals(oldSelectedCity.ID));
         }
 
         private void UpdateSalesmen()
@@ -359,6 +349,7 @@
                 var salesTransactionsFromDatabase =
                     context.SalesTransactions
                         .Include("Customer")
+                        .Include("Customer.City")
                         .Include("CollectionSalesman")
                         .Where(searchCondition)
                         .OrderBy(salesTransaction => salesTransaction.DueDate)
@@ -383,58 +374,58 @@
 
             if (!_isPaidChecked)
             {
-                if (_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
+                if (_selectedCity.Name.Equals("All") && _selectedSalesman.Name.Equals("All"))
                     searchCondition =
                         salesTransaction =>
                                 salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
 
-                else if (_selectedCity.Equals("All") && !_selectedSalesman.Name.Equals("All"))
+                else if (_selectedCity.Name.Equals("All") && !_selectedSalesman.Name.Equals("All"))
                     searchCondition =
                         salesTransaction =>
                             salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
                             && salesTransaction.Paid < salesTransaction.NetTotal &&
                             salesTransaction.DueDate <= _toDate;
 
-                else if (!_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
+                else if (!_selectedCity.Name.Equals("All") && _selectedSalesman.Name.Equals("All"))
                     searchCondition =
                         salesTransaction =>
-                            salesTransaction.Customer.City.Equals(_selectedCity) &&
+                            salesTransaction.Customer.City.ID.Equals(_selectedCity.ID) &&
                             salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
 
                 else
                     searchCondition =
                         salesTransaction =>
-                            salesTransaction.Customer.City.Equals(_selectedCity) &&
+                            salesTransaction.Customer.City.ID.Equals(_selectedCity.ID) &&
                             salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID)
                             && salesTransaction.Paid < salesTransaction.NetTotal && salesTransaction.DueDate <= _toDate;
             }
 
             else
             {
-                if (_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
+                if (_selectedCity.Name.Equals(Constants.ALL) && _selectedSalesman.Name.Equals(Constants.ALL))
                     searchCondition =
                         salesTransaction =>
                             salesTransaction.Paid >= salesTransaction.NetTotal &&
                             salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate <= _toDate;
 
-                else if (_selectedCity.Equals("All") && !_selectedSalesman.Name.Equals("All"))
+                else if (_selectedCity.Name.Equals(Constants.ALL) && !_selectedSalesman.Name.Equals(Constants.ALL))
                     searchCondition =
                         salesTransaction =>
                             salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID) &&
                             salesTransaction.Paid >= salesTransaction.NetTotal &&
                             salesTransaction.DueDate >= _fromDate && salesTransaction.DueDate <= _toDate;
 
-                else if (!_selectedCity.Equals("All") && _selectedSalesman.Name.Equals("All"))
+                else if (!_selectedCity.Name.Equals(Constants.ALL) && _selectedSalesman.Name.Equals(Constants.ALL))
                     searchCondition =
                         salesTransaction =>
-                            salesTransaction.Customer.City.Equals(_selectedCity) &&
+                            salesTransaction.Customer.City.ID.Equals(_selectedCity.ID) &&
                             salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate &&
                             salesTransaction.DueDate <= _toDate;
 
                 else
                     searchCondition =
                         salesTransaction =>
-                            salesTransaction.Customer.City.Equals(_selectedCity) &&
+                            salesTransaction.Customer.City.ID.Equals(_selectedCity.ID) &&
                             salesTransaction.CollectionSalesman.ID.Equals(_selectedSalesman.ID) &&
                             salesTransaction.Paid >= salesTransaction.NetTotal && salesTransaction.DueDate >= _fromDate &&
                             salesTransaction.DueDate <= _toDate;
@@ -452,6 +443,7 @@
                 var salesTransactionsFromDatabase =
                     context.SalesTransactions
                         .Include("Customer")
+                        .Include("Customer.City")
                         .Include("CollectionSalesman")
                         .Where(searchCondition)
                         .OrderBy(salesTransaction => salesTransaction.DueDate)
@@ -527,6 +519,7 @@
                 var salesTransactionFromDatabase = context.SalesTransactions
                     .Include("CollectionSalesman")
                     .Include("Customer")
+                    .Include("Customer.City")
                     .SingleOrDefault(
                         salesTransaction => salesTransaction.SalesTransactionID.Equals(ledgerTransaction.Documentation));
                 return new SalesTransactionVM { Model = salesTransactionFromDatabase };

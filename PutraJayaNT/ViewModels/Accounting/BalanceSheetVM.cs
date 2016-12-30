@@ -85,7 +85,7 @@
                     _inventory = 0;
 
                     var inventoryFromDatabase = context.Ledger_Accounts
-                        .Where(account => account.Name.Equals(Constants.INVENTORY))
+                        .Where(account => account.Name.Equals(Constants.Accounting.INVENTORY))
                         .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .SingleOrDefault();

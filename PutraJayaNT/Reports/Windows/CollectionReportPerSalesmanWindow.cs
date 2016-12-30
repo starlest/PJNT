@@ -63,7 +63,7 @@
                 dr["Date"] = salesTransaction.Date.ToShortDateString();
                 dr["ID"] = salesTransaction.SalesTransactionID;
                 dr["Customer"] = salesTransaction.Customer.Name;
-                dr["City"] = salesTransaction.Customer.City;
+                dr["City"] = salesTransaction.Customer.City.Name;
                 dr["InvoiceNetTotal"] = salesTransaction.Total;
                 dr["InvoicePaid"] = salesTransaction.Paid;
                 dr["PaidToday"] = GetSelectedDateSalesTransactionPaidAmount(salesTransaction);

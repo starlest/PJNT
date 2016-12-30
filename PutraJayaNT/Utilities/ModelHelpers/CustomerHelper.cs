@@ -61,14 +61,15 @@
         #region Add Customer Helper Methods
         private static void AddCustomerToDatabaseContext(ERPContext context, Customer customer)
         {
-            customer.Group = context.CustomerGroups.First(group => group.ID.Equals(customer.Group.ID));
+            customer.Group = context.CustomerGroups.Single(group => group.ID.Equals(customer.Group.ID));
+            customer.City = context.Cities.Single(city => city.ID.Equals(customer.City.ID));
             context.Customers.Add(customer);
         }
 
         private static void CreateAndAddCustomerLedgerToDatabaseContext(ERPContext context, Customer customer)
         {
             var accountName = customer.Name + " Accounts Receivable";
-            AccountingService.CreateNewAccount(context, accountName, Constants.ACCOUNTS_RECEIVABLE);
+            AccountingService.CreateNewAccount(context, accountName, Constants.Accounting.ACCOUNTS_RECEIVABLE);
         }
         #endregion
 

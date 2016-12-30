@@ -517,10 +517,10 @@
 
                                        switch (line.Seq)
                                        {
-                                           case Constants.DEBIT:
+                                           case Constants.Accounting.DEBIT:
                                                totalDebit += line.Amount;
                                                break;
-                                           case Constants.CREDIT:
+                                           case Constants.Accounting.CREDIT:
                                                totalCredit += line.Amount;
                                                break;
                                            default:

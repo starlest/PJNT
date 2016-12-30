@@ -1,9 +1,7 @@
 ﻿namespace ECERP.ViewModels.Reports
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Data.Entity;
     using System.Linq;
     using System.Windows;
     using System.Windows.Input;
@@ -15,6 +13,7 @@
     using MVVMFramework;
     using Sales;
     using Utilities;
+    using Utilities.ModelHelpers;
     using DetailedSalesReportWindow = ECERP.Reports.Windows.Reports.SalesReport.DetailedSalesReportWindow;
     using GlobalSalesReportWindow = ECERP.Reports.Windows.Reports.SalesReport.GlobalSalesReportWindow;
 
@@ -39,7 +38,7 @@
 
         private const string GLOBAL = "Global";
         private const string DETAILED = "Detailed";
-         
+
         public SalesReportVM()
         {
             Categories = new ObservableCollection<Category>();
@@ -48,7 +47,7 @@
             DetailedDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
             GlobalDisplayLines = new ObservableCollection<SalesTransactionLineVM>();
 
-            Modes = new ObservableCollection<string> {GLOBAL, DETAILED};
+            Modes = new ObservableCollection<string> { GLOBAL, DETAILED };
             SelectedMode = Modes.First();
 
             _fromDate = UtilityMethods.GetCurrentDate().Date.AddDays(-UtilityMethods.GetCurrentDate().Day + 1);
@@ -148,6 +147,7 @@
             get { return _selectedMode; }
             set
             {
+                if (value == null) return;
                 SetProperty(ref _selectedMode, value, () => SelectedMode);
                 SetDisplayMode();
             }
@@ -174,11 +174,13 @@
             get
             {
                 return _displayCommand ?? (_displayCommand = new RelayCommand(() =>
-                {
-                    if (_selectedItem != null && _selectedCustomer != null) RefreshDisplayLines();
-                    UpdateCategories();
-                    RefreshCustomers();
-                }));
+                       {
+                           if (_selectedItem == null || _selectedCustomer == null) return;
+                           RefreshDisplayLines();
+                           UpdateTotal();
+                           UpdateCategories();
+                           RefreshCustomers();
+                       }));
             }
         }
 
@@ -187,10 +189,10 @@
             get
             {
                 return _printCommand ?? (_printCommand = new RelayCommand(() =>
-                {
-                    if (GlobalDisplayLines.Count == 0 && DetailedDisplayLines.Count == 0) return;
-                    ShowPrintWindow();
-                }));
+                       {
+                           if (GlobalDisplayLines.Count == 0 && DetailedDisplayLines.Count == 0) return;
+                           ShowPrintWindow();
+                       }));
             }
         }
 
@@ -199,10 +201,10 @@
             get
             {
                 return _printPerCustomerCommand ?? (_printPerCustomerCommand = new RelayCommand(() =>
-                {
-                    if (GlobalDisplayLines.Count == 0 && DetailedDisplayLines.Count == 0) return;
-                    ShowPrintPerCustomerWindow();
-                }));
+                       {
+                           if (GlobalDisplayLines.Count == 0 && DetailedDisplayLines.Count == 0) return;
+                           ShowPrintPerCustomerWindow();
+                       }));
             }
         }
 
@@ -217,7 +219,7 @@
             Categories.Clear();
             using (var context = UtilityMethods.createContext())
             {
-                Categories.Add(new Category {ID = -1, Name = "All"});
+                Categories.Add(new Category { ID = -1, Name = Constants.ALL });
                 var categories = context.ItemCategories.OrderBy(category => category.Name);
                 foreach (var category in categories)
                     Categories.Add(category);
@@ -237,8 +239,8 @@
             var oldSelectedItem = _selectedItem;
 
             CategoryItems.Clear();
-            CategoryItems.Add(new Item {ItemID = "-1", Name = "All"});
-            if (_selectedCategory.Name == "All")
+            CategoryItems.Add(new Item { ItemID = "-1", Name = Constants.ALL });
+            if (_selectedCategory.Name.Equals(Constants.ALL))
             {
                 using (var context = UtilityMethods.createContext())
                 {
@@ -274,12 +276,12 @@
             var oldSelectedCustomer = _selectedCustomer;
 
             Customers.Clear();
-            Customers.Add(new CustomerVM {Model = new Customer {ID = -1, Name = "All"}});
+            Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
             using (var context = UtilityMethods.createContext())
             {
                 var customers = context.Customers.Include("Group").OrderBy(customer => customer.Name);
                 foreach (var customer in customers)
-                    Customers.Add(new CustomerVM {Model = customer});
+                    Customers.Add(new CustomerVM { Model = customer });
             }
 
             UpdateSelectedCustomer(oldSelectedCustomer);
@@ -291,78 +293,59 @@
             SelectedCustomer = Customers.SingleOrDefault(customer => customer.ID.Equals(oldSelectedCustomer.ID));
         }
 
+        private Func<SalesTransactionLine, bool> getSearchCondition()
+        {
+            if (_selectedCategory.Name.Equals(Constants.ALL) && _selectedItem.Name.Equals(Constants.ALL))
+                return line => line.SalesTransaction.Date >= _fromDate &&
+                               line.SalesTransaction.Date <= _toDate;
+
+            if (_selectedCategory.Name.Equals(Constants.ALL) && !_selectedItem.Name.Equals(Constants.ALL))
+                return line => line.SalesTransaction.Date >= _fromDate &&
+                               line.SalesTransaction.Date <= _toDate &&
+                               line.Item.Name.Equals(_selectedItem.Name);
+
+            if (_selectedCategory.Name.Equals(Constants.ALL) && _selectedItem.Name.Equals(Constants.ALL))
+                return line => line.SalesTransaction.Date >= _fromDate &&
+                               line.SalesTransaction.Date <= _toDate &&
+                               line.Item.Category.Name.Equals(_selectedCategory.Name);
+
+
+            return line => line.SalesTransaction.Date >= _fromDate &&
+                           line.SalesTransaction.Date <= _toDate &&
+                           line.Item.Category.Name.Equals(_selectedCategory.Name) &&
+                           line.Item.Name.Equals(_selectedItem.Name);
+        }
+
         private void RefreshDisplayLines()
         {
             DetailedDisplayLines.Clear();
             GlobalDisplayLines.Clear();
             if (_selectedItem == null) return;
+
             using (var context = UtilityMethods.createContext())
             {
-                List<SalesTransactionLine> transactionLines;
-                if (_selectedCategory.Name == "All" && _selectedItem.Name == "All")
-                {
-                    transactionLines = context.SalesTransactionLines
-                        .Include("Item")
-                        .Include("Warehouse")
-                        .Include("SalesTransaction")
-                        .Include("SalesTransaction.Customer")
-                        .Where(e => e.SalesTransaction.Date >= _fromDate && e.SalesTransaction.Date <= _toDate)
-                        .OrderBy(e => e.Item.Name)
-                        .ToList();
-                }
+                context.Database.CommandTimeout = 180;
 
-                else if (_selectedCategory.Name == "All" && _selectedItem.Name != "All")
-                {
-                    transactionLines = context.SalesTransactionLines
-                        .Include("Item")
-                        .Include("Warehouse")
-                        .Include("SalesTransaction")
-                        .Include("SalesTransaction.Customer")
-                        .Where(
-                            e =>
-                                e.Item.Name == _selectedItem.Name && e.SalesTransaction.Date >= _fromDate &&
-                                e.SalesTransaction.Date <= _toDate)
-                        .OrderBy(e => e.Item.Name)
-                        .ToList();
-                }
+                var searchCondition = getSearchCondition();
 
-                else if (_selectedCategory.Name != "All" && _selectedItem.Name == "All")
-                {
-                    transactionLines = context.SalesTransactionLines
-                        .Where(e => e.Item.Category.Name == _selectedCategory.Name
-                                    && e.SalesTransaction.Date >= _fromDate && e.SalesTransaction.Date <= _toDate)
-                        .OrderBy(e => e.Item.Name)
-                        .Include("Item")
-                        .Include("Warehouse")
-                        .Include("SalesTransaction")
-                        .Include("SalesTransaction.Customer")
-                        .ToList();
-                }
-
-                else
-                {
-                    transactionLines = context.SalesTransactionLines
-                        .Where(e => e.Item.Category.Name == _selectedCategory.Name
-                                    && e.Item.Name == _selectedItem.Name
-                                    && e.SalesTransaction.Date >= _fromDate
-                                    && e.SalesTransaction.Date <= _toDate)
-                        .OrderBy(e => e.Item.Name)
-                        .Include("Item")
-                        .Include("Warehouse")
-                        .Include("SalesTransaction")
-                        .Include("SalesTransaction.Customer")
-                        .ToList();
-                }
-
+                var transactionLines = context.SalesTransactionLines
+                    .Include("Item")
+                    .Include("Item.Category")
+                    .Include("Warehouse")
+                    .Include("SalesTransaction")
+                    .Include("SalesTransaction.Customer")
+                    .Where(searchCondition)
+                    .OrderBy(line => line.Item.Name)
+                    .ToList();
 
                 foreach (
                     var line in
-                        transactionLines.Where(
-                            line =>
+                    transactionLines.Where(
+                        line =>
                                 _selectedCustomer.ID == -1 || _selectedCustomer.ID == line.SalesTransaction.Customer.ID)
-                    )
+                )
                 {
-                    var vm = new SalesTransactionLineVM {Model = line};
+                    var vm = new SalesTransactionLineVM { Model = line };
                     DetailedDisplayLines.Add(vm);
 
                     var contains = false;
@@ -374,11 +357,10 @@
                     }
                     if (!contains) GlobalDisplayLines.Add(vm.Clone());
                 }
-                RefreshTotal();
             }
         }
 
-        private void RefreshTotal()
+        private void UpdateTotal()
         {
             _total = 0;
             var quantitySold = 0;
@@ -388,11 +370,29 @@
                 _total += line.NetTotal;
             }
 
-            if (_selectedItem.Name != "All")
-                QuantitySold = quantitySold/_selectedItem.PiecesPerUnit + "/" + quantitySold%_selectedItem.PiecesPerUnit;
-            else
-                QuantitySold = "";
+            QuantitySold = _selectedItem.Name.Equals(Constants.ALL)
+                ? GetTotalQuantitySoldString()
+                : InventoryHelper.ConvertItemQuantityTostring(_selectedItem, quantitySold);
             OnPropertyChanged("Total");
+        }
+
+        private string GetTotalQuantitySoldString()
+        {
+            var units = 0;
+            var sUnits = 0;
+            var pieces = 0;
+
+            foreach (var line in GlobalDisplayLines)
+            {
+                var hasSUnit = line.Item.PiecesPerSecondaryUnit != 0;
+                units += line.Quantity / line.Item.PiecesPerUnit;
+                sUnits += hasSUnit ? line.Quantity / line.Item.PiecesPerUnit / line.Item.PiecesPerSecondaryUnit : 0;
+                pieces += hasSUnit
+                    ? line.Quantity / line.Item.PiecesPerUnit % line.Item.PiecesPerSecondaryUnit
+                    : line.Quantity % line.Item.PiecesPerUnit;
+            }
+
+            return units + "/" + sUnits + "/" + pieces;
         }
 
         private void SetDisplayMode()
@@ -440,6 +440,7 @@
             };
             salesPerCustomerReportWindow.Show();
         }
+
         #endregion
     }
 }

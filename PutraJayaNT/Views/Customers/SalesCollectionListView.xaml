@@ -54,7 +54,7 @@
             <TextBlock Grid.Row="0" Grid.Column="4" Text="Due To:" />
             <DatePicker Grid.Row="0" Grid.Column="5" SelectedDateFormat="Long" SelectedDate="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Row="1" Grid.Column="0" Foreground="Red" Text="City:" />
-            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedCity, UpdateSourceTrigger=PropertyChanged}" />
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Cities}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedCity, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Row="1" Grid.Column="2" Foreground="Red" Text="Salesman:" />
             <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding Salesmans}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSalesman, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Row="1" Grid.Column="4" Text="Customer:" Foreground="Blue" />

@@ -88,7 +88,7 @@
                 {
                     ID = -1,
                     Name = "Sales Receipt",
-                    LedgerAccountClass = accountClasses.First(accountClass => accountClass.Name.Equals(Constants.LedgerAccountClasses.ASSET))
+                    LedgerAccountClass = accountClasses.First(accountClass => accountClass.Name.Equals(Constants.Accounting.ASSET))
                 };
                 var transaction = new LedgerTransaction
                 {
@@ -101,7 +101,7 @@
                 {
                     LedgerTransaction = transaction,
                     LedgerAccount = account,
-                    Seq = Constants.DEBIT
+                    Seq = Constants.Accounting.DEBIT
                 };
                 foreach (var line in lines)
                 {

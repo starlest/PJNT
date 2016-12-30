@@ -59,7 +59,7 @@
         private static void CreateAndAddSupplierLedgerToDatabaseContext(ERPContext context, Supplier suppplier)
         {
             var accountName = suppplier.Name + " Accounts Payable";
-            AccountingService.CreateNewAccount(context, accountName, Constants.ACCOUNTS_PAYABLE);
+            AccountingService.CreateNewAccount(context, accountName, Constants.Accounting.ACCOUNTS_PAYABLE);
         }
         #endregion
 

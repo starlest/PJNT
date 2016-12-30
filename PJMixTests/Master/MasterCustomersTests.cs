@@ -81,7 +81,7 @@ namespace PJMixTests.Master
                     Group = context.CustomerGroups.First(),
                     Active = true,
                     Address = "lala land",
-                    City = "lala",
+                    City = new City {Name = "lala"},
                     CreditTerms = 7,
                     MaxInvoices = 10,
                     Telephone = "4242",

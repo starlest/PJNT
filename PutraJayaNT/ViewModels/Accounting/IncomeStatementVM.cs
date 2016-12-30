@@ -127,7 +127,7 @@
                 using (var context = UtilityMethods.createContext())
                 {
                     var cogsAccount = context.Ledger_Accounts
-                        .Where(acount => acount.Name.Equals(Constants.COST_OF_GOODS_SOLD))
+                        .Where(acount => acount.Name.Equals(Constants.Accounting.COST_OF_GOODS_SOLD))
                         .Include("LedgerGeneral")
                         .Include("LedgerAccountBalances")
                         .SingleOrDefault();
@@ -157,7 +157,7 @@
                 using (var context = UtilityMethods.createContext())
                 {
                     var operatingExpenseAccounts = context.Ledger_Accounts
-                        .Where(account => account.LedgerAccountGroup.Name.Equals(Constants.OPERATING_EXPENSE))
+                        .Where(account => account.LedgerAccountGroup.Name.Equals(Constants.Accounting.OPERATING_EXPENSE))
                         .Include("LedgerGeneral")
                         .Include("LedgerAccountBalances");
 

@@ -41,7 +41,8 @@
                 <TextBlock Grid.Row="1" Grid.Column="0" Foreground="Blue" Text="Name:" />
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NewEntryName, Mode=TwoWay}" />
                 <TextBlock Grid.Row="1" Grid.Column="2" Foreground="Blue" Text="City:" />
-                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding NewEntryCity, Mode=TwoWay}" />
+                <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding Cities}" DisplayMemberPath="Name"
+                      SelectedItem="{Binding NewEntryCity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Grid.Row="1" Grid.Column="4" Foreground="Blue" Text="Address:" />
                 <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding NewEntryAddress, Mode=TwoWay}" />
                 <TextBlock Grid.Row="2" Grid.Column="0" Foreground="Blue" Text="Telephone:" />
@@ -49,7 +50,7 @@
                 <TextBlock Grid.Row="2" Grid.Column="2" Foreground="Blue" Text="NPWP:" />
                 <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding NewEntryNPWP, Mode=TwoWay}" />
                 <TextBlock Grid.Row="2" Grid.Column="4" Foreground="Blue" Text="Group:" />
-                <ComboBox Grid.Row="2" Grid.Column="5" ItemsSource="{Binding NewEntryGroups}" DisplayMemberPath="Name"
+                <ComboBox Grid.Row="2" Grid.Column="5" ItemsSource="{Binding Groups}" DisplayMemberPath="Name"
                           SelectedItem="{Binding NewEntryGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Button Content="Add" Grid.Row="1" Grid.Column="6" Command="{Binding NewEntryCommand}" Margin="10" />
                 <Button Content="Cancel" Grid.Row="2" Grid.Column="6" Command="{Binding CancelEntryCommand}"
@@ -80,7 +81,7 @@
             <ComboBox Grid.Column="5" ItemsSource="{Binding Customers}" DisplayMemberPath="Name"
                       SelectedItem="{Binding SelectedCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Grid.Column="6" Foreground="Red" Text="City:" />
-            <ComboBox Grid.Column="7" ItemsSource="{Binding Cities}"
+            <ComboBox Grid.Column="7" ItemsSource="{Binding Cities}" DisplayMemberPath="Name"
                       SelectedItem="{Binding SelectedCity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Column="8" Foreground="Black" Content="Search" Margin="10" Command="{Binding SearchCommand}"
                     MaxWidth="150" />
@@ -98,7 +99,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding ID}" />
                 <DataGridTextColumn Header="Name" Width="2*" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="City" Width="1*" Binding="{Binding City}" />
+                <DataGridTextColumn Header="City" Width="1*" Binding="{Binding City.Name}" />
                 <DataGridTextColumn Header="Address" Width="1*" Binding="{Binding Address}" />
                 <DataGridTextColumn Header="Telephone" Width="1*" Binding="{Binding Telephone}" />
                 <DataGridTextColumn Header="NPWP" Width="1*" Binding="{Binding NPWP}" />

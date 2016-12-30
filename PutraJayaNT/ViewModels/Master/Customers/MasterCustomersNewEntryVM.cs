@@ -14,7 +14,7 @@
     {
         #region Backing Fields
         private string _newEntryName;
-        private string _newEntryCity;
+        private CityVM _newEntryCity;
         private string _newEntryAddress;
         private string _newEntryTelephone;
         private string _newEntryNPWP;
@@ -28,48 +28,52 @@
         public MasterCustomersNewEntryVM(MasterCustomersVM parentVM)
         {
             _parentVM = parentVM;
-            NewEntryGroups = new ObservableCollection<CustomerGroupVM>();
-            UpdateNewEntryGroups();
+            Groups = new ObservableCollection<CustomerGroupVM>();
+            Cities= new ObservableCollection<CityVM>();
+            UpdateGroups();
+            UpdateCities();
         }
 
         #region Properties
         public string NewEntryName
         {
             get { return _newEntryName; }
-            set { SetProperty(ref _newEntryName, value, "NewEntryName"); }
+            set { SetProperty(ref _newEntryName, value, () => NewEntryName); }
         }
 
-        public string NewEntryCity
+        public CityVM NewEntryCity
         {
             get { return _newEntryCity; }
-            set { SetProperty(ref _newEntryCity, value, "NewEntryCity"); }
+            set { SetProperty(ref _newEntryCity, value, () => NewEntryCity); }
+        }
+
+        public CustomerGroupVM NewEntryGroup
+        {
+            get { return _newEntryGroup; }
+            set { SetProperty(ref _newEntryGroup, value, () => NewEntryGroup); }
         }
 
         public string NewEntryAddress
         {
             get { return _newEntryAddress; }
-            set { SetProperty(ref _newEntryAddress, value, "NewEntryAddress"); }
+            set { SetProperty(ref _newEntryAddress, value, () => NewEntryAddress); }
         }
 
         public string NewEntryTelephone
         {
             get { return _newEntryTelephone; }
-            set { SetProperty(ref _newEntryTelephone, value, "NewEntryTelephone"); }
+            set { SetProperty(ref _newEntryTelephone, value, () => NewEntryTelephone); }
         }
 
         public string NewEntryNPWP
         {
             get { return _newEntryNPWP; }
-            set { SetProperty(ref _newEntryNPWP, value, "NewEntryNPWP"); }
+            set { SetProperty(ref _newEntryNPWP, value, () => NewEntryNPWP); }
         }
 
-        public ObservableCollection<CustomerGroupVM> NewEntryGroups { get; }
+        public ObservableCollection<CustomerGroupVM> Groups { get; }
 
-        public CustomerGroupVM NewEntryGroup
-        {
-            get { return _newEntryGroup; }
-            set { SetProperty(ref _newEntryGroup, value, "NewEntryGroup"); }
-        }
+        public  ObservableCollection<CityVM> Cities { get; }
         #endregion
 
         #region Commands
@@ -93,14 +97,25 @@
         #endregion
 
         #region Helper Methods
-        private void UpdateNewEntryGroups()
+        private void UpdateGroups()
         {
-            NewEntryGroups.Clear();
+            Groups.Clear();
             using (var context = UtilityMethods.createContext())
             {
                 var groupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
                 foreach (var group in groupsReturnedFromDatabase)
-                    NewEntryGroups.Add(new CustomerGroupVM {Model = group});
+                    Groups.Add(new CustomerGroupVM {Model = group});
+            }
+        }
+
+        private void UpdateCities()
+        {
+            Cities.Clear();
+            using (var context = UtilityMethods.createContext())
+            {
+                var citiesReturnedFromDatabase = context.Cities.OrderBy(city => city.Name);
+                foreach (var city in citiesReturnedFromDatabase)
+                    Cities.Add(new CityVM { Model = city });
             }
         }
 
@@ -112,7 +127,7 @@
             NewEntryTelephone = null;
             NewEntryNPWP = null;
             NewEntryGroup = null;
-            UpdateNewEntryGroups();
+            UpdateGroups();
         }
 
         private bool AreAllNewEntryFieldsFilled()
@@ -137,7 +152,7 @@
             return new Customer
             {
                 Name = _newEntryName,
-                City = _newEntryCity ?? "",
+                City = _newEntryCity.Model,
                 Address = _newEntryAddress ?? "",
                 Telephone = _newEntryTelephone ?? "",
                 NPWP = _newEntryNPWP ?? "",

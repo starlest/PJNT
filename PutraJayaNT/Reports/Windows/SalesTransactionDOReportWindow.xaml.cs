@@ -102,7 +102,7 @@
             dr2["InvoiceSalesExpense"] = _salesTransaction.SalesExpense;
             dr2["InvoiceNetTotal"] = _salesTransaction.NetTotal;
             dr2["Customer"] = _salesTransaction.Customer.Name;
-            dr2["Address"] = _salesTransaction.Customer.City;
+            dr2["Address"] = _salesTransaction.Customer.City.Name;
             dr2["InvoiceNumber"] = _salesTransaction.SalesTransactionID;
             dr2["Date"] = _salesTransaction.Date.ToString("dd-MM-yyyy");
             dr2["DueDate"] = _salesTransaction.DueDate.ToString("dd-MM-yyyy");

@@ -208,9 +208,9 @@
                     stockAdjustmentTransaction.StockAdjustmentTransactionID, "Stock Adjustment (Decrement)")) return;
             context.SaveChanges();
             LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction,
-                Constants.COST_OF_GOODS_SOLD, Constants.DEBIT, totalCOGSAdjustment);
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction, Constants.INVENTORY,
-                Constants.CREDIT, totalCOGSAdjustment);
+                Constants.Accounting.COST_OF_GOODS_SOLD, Constants.Accounting.DEBIT, totalCOGSAdjustment);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, ledgerTransaction, Constants.Accounting.INVENTORY,
+                Constants.Accounting.CREDIT, totalCOGSAdjustment);
         }
 
         private static void AddStockAdjustmentTransactionToDatabaseContext(ERPContext context,

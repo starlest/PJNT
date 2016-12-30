@@ -26,19 +26,19 @@
             Classes = new ObservableCollection<string>
             {
                 Constants.ALL,
-                Constants.LedgerAccountClasses.ASSET,
-                Constants.LedgerAccountClasses.LIABILITY,
-                Constants.LedgerAccountClasses.EQUITY,
-                Constants.LedgerAccountClasses.EXPENSE,
-                Constants.LedgerAccountClasses.REVENUE
+                Constants.Accounting.ASSET,
+                Constants.Accounting.LIABILITY,
+                Constants.Accounting.EQUITY,
+                Constants.Accounting.EXPENSE,
+                Constants.Accounting.REVENUE
             };
 
             Groups = new ObservableCollection<string>
             {
-                Constants.BANK,
-                Constants.OPERATING_EXPENSE,
-                Constants.ACCOUNTS_RECEIVABLE,
-                Constants.ACCOUNTS_PAYABLE
+                Constants.Accounting.BANK,
+                Constants.Accounting.OPERATING_EXPENSE,
+                Constants.Accounting.ACCOUNTS_RECEIVABLE,
+                Constants.Accounting.ACCOUNTS_PAYABLE
             };
 
             SelectedClass = Classes.FirstOrDefault();

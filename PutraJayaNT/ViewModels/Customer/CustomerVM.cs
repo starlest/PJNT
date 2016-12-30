@@ -36,7 +36,7 @@
             }
         }
 
-        public string City
+        public City City
         {
             get { return Model.City; }
             set

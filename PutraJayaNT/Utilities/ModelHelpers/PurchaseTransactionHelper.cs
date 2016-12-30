@@ -154,10 +154,10 @@
                 !LedgerTransactionHelper.AddTransactionToDatabase(context, purchaseLedgerTransaction,
                     UtilityMethods.GetCurrentDate(), purchaseTransaction.PurchaseID, "Purchase Transaction")) return;
             context.SaveChanges();
-            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, Constants.INVENTORY,
-                Constants.DEBIT, purchaseTransaction.Total);
+            LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, Constants.Accounting.INVENTORY,
+                Constants.Accounting.DEBIT, purchaseTransaction.Total);
             LedgerTransactionHelper.AddTransactionLineToDatabase(context, purchaseLedgerTransaction, accountsPayableName,
-                Constants.CREDIT, purchaseTransaction.Total);
+                Constants.Accounting.CREDIT, purchaseTransaction.Total);
             context.SaveChanges();
         }
 
