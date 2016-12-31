@@ -7,12 +7,12 @@ namespace ECERP.Migrations.ERPContext
     {
         public override void Up()
         {
-            DropColumn("dbo.Customers", "City");
+
         }
         
         public override void Down()
         {
-            AddColumn("dbo.Customers", "City", c => c.String(unicode: false));
+
         }
     }
 }

@@ -1,6 +1,8 @@
 namespace ECERP.Migrations.ERPContext
 {
+    using System;
     using System.Data.Entity.Migrations;
+    using Models;
     using Models.Accounting;
     using Utilities;
 
@@ -16,12 +18,12 @@ namespace ECERP.Migrations.ERPContext
         {
             // Add "-" supplier manually
 
-            //            context.SystemParameters.AddOrUpdate(
-            //                parameter => parameter.Key,
-            //                new SystemParameter { Key = "TelegramKey" },
-            //                new SystemParameter { Key = "ThemeColor", Value = "Blue" },
-            //                new SystemParameter { Key = "CurrentDate", Value = DateTime.Now.Date.ToShortDateString() }
-            //                );
+//            context.SystemParameters.AddOrUpdate(
+//                parameter => parameter.Key,
+//                new SystemParameter { Key = "TelegramKey" },
+//                new SystemParameter { Key = "ThemeColor", Value = "Red" },
+//                new SystemParameter { Key = "CurrentDate", Value = DateTime.Now.Date.ToShortDateString() }
+//            );
 
             context.Ledger_Account_Classes.AddOrUpdate(
                 accountClass => accountClass.Name,
@@ -30,7 +32,7 @@ namespace ECERP.Migrations.ERPContext
                 new LedgerAccountClass { Name = Constants.Accounting.EQUITY },
                 new LedgerAccountClass { Name = Constants.Accounting.EXPENSE },
                 new LedgerAccountClass { Name = Constants.Accounting.REVENUE }
-                );
+            );
 
             context.Ledger_Account_Groups.AddOrUpdate(
                 accountGroup => accountGroup.Name,
@@ -41,7 +43,7 @@ namespace ECERP.Migrations.ERPContext
                 new LedgerAccountGroup { Name = Constants.Accounting.COST_OF_GOODS_SOLD },
                 new LedgerAccountGroup { Name = Constants.Accounting.INCOME },
                 new LedgerAccountGroup { Name = Constants.Accounting.INVENTORY }
-                );
+            );
         }
     }
 }

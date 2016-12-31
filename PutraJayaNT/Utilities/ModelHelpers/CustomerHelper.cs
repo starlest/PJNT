@@ -79,7 +79,8 @@
             return editingCustomer.Name == editedCustomer.Name;
         }
 
-        private static void ChangeCustomerLedgerAccountNameInDatabaseContext(ERPContext context, Customer editingCustomer, Customer editedCustomer)
+        private static void ChangeCustomerLedgerAccountNameInDatabaseContext(ERPContext context,
+            Customer editingCustomer, Customer editedCustomer)
         {
             var ledgerAccountFromDatabase = GetCustomerLedgerAccountFromDatabaseContext(context, editingCustomer);
             ledgerAccountFromDatabase.Name = $"{editedCustomer.Name} Accounts Receivable";
@@ -92,12 +93,17 @@
             return context.Ledger_Accounts.First(e => e.Name.Equals(searchName));
         }
 
-        private static void SaveCustomerEditsToDatabaseContext(ERPContext context, Customer editingCustomer, Customer editedCustomer)
+        private static void SaveCustomerEditsToDatabaseContext(ERPContext context, Customer editingCustomer,
+            Customer editedCustomer)
         {
-            editingCustomer = context.Customers.Include("Group").Single(customer => customer.ID.Equals(editingCustomer.ID));
+            editingCustomer =
+                context.Customers.Include("City")
+                    .Include("Group")
+                    .Single(customer => customer.ID.Equals(editingCustomer.ID));
             DeepCopyCustomerProperties(editedCustomer, ref editingCustomer);
 
-            editingCustomer.Group = context.CustomerGroups.First(group => group.ID.Equals(editingCustomer.Group.ID));
+            editingCustomer.Group = context.CustomerGroups.Single(group => group.ID.Equals(editingCustomer.Group.ID));
+            editingCustomer.City = context.Cities.Single(city => city.ID.Equals(editingCustomer.City.ID));
 
             context.SaveChanges();
         }

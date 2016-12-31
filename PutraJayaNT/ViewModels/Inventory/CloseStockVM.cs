@@ -21,7 +21,8 @@
         {
             using (var context = UtilityMethods.createContext())
             {
-                PeriodYears = new ObservableCollection<int> { DateTime.Now.Year - 1, DateTime.Now.Year, DateTime.Now.Year + 1 };
+                var currentDate = UtilityMethods.GetCurrentDate();
+                PeriodYears = new ObservableCollection<int> { currentDate.Year - 1, currentDate.Year, currentDate.Year + 1 };
 
                 var firstOrDefault = context.Ledger_General.FirstOrDefault();
                 if (firstOrDefault != null)
@@ -32,7 +33,6 @@
                 }
 
                 Periods = new ObservableCollection<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-                _periodMonth = UtilityMethods.GetCurrentDate().Month;
                 _warehouses = context.Warehouses.ToList();
             }
         }
@@ -78,13 +78,14 @@
                             CreateNextYearStockBalance(context, warehouse, item, endingBalance);
                     }
 
-                    var status = index++ * (items.Count / 100) - 1;
-                    if (status < 0) status = 0;
+                    var status = index++ * 80 / items.Count;
                     worker.ReportProgress(status);
                 }
 
                 context.SaveChanges();
             }
+
+            worker.ReportProgress(100);
 
             MessageBox.Show("Successfully closed stock!", "Success", MessageBoxButton.OK);
         }
@@ -94,7 +95,7 @@
         private int GetBeginningBalance(ERPContext context, Warehouse warehouse, Item item)
         {
             var periodYearBalances =
-                context.StockBalances.FirstOrDefault(
+                context.StockBalances.SingleOrDefault(
                     e => e.ItemID.Equals(item.ItemID) && e.WarehouseID.Equals(warehouse.ID) && e.Year == _periodYear);
 
             if (periodYearBalances == null) return 0;
@@ -281,21 +282,32 @@
             }
 
             if (!flag)
-            {
                 context.StockBalances.Add(stockBalance);
-            }
         }
 
         private void CreateNextYearStockBalance(ERPContext context, Warehouse warehouse, Item item, int endingBalance)
         {
-            var nextYearStockBalance = new StockBalance
+            // Check if the period has been closed before
+            var nextYearStockBalance = context.StockBalances.SingleOrDefault(
+                e =>
+                    e.Item.ItemID.Equals(item.ItemID) && e.Warehouse.ID.Equals(warehouse.ID) &&
+                    e.Year.Equals(_periodYear + 1));
+
+            if (nextYearStockBalance == null)
             {
-                Item = context.Inventory.SingleOrDefault(e => e.ItemID.Equals(item.ItemID)),
-                Warehouse = context.Warehouses.SingleOrDefault(e => e.ID.Equals(warehouse.ID)),
-                Year = _periodYear + 1,
-                BeginningBalance = endingBalance
-            };
-            context.StockBalances.Add(nextYearStockBalance);
+                nextYearStockBalance = new StockBalance
+                {
+                    Item = context.Inventory.SingleOrDefault(e => e.ItemID.Equals(item.ItemID)),
+                    Warehouse = context.Warehouses.SingleOrDefault(e => e.ID.Equals(warehouse.ID)),
+                    Year = _periodYear + 1,
+                    BeginningBalance = endingBalance
+                };
+
+                context.StockBalances.Add(nextYearStockBalance);
+            }
+
+            else
+                nextYearStockBalance.BeginningBalance = endingBalance;
         }
         #endregion
     }

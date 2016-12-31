@@ -128,6 +128,7 @@
             NewEntryNPWP = null;
             NewEntryGroup = null;
             UpdateGroups();
+            UpdateCities();
         }
 
         private bool AreAllNewEntryFieldsFilled()

@@ -103,7 +103,7 @@
                     RecordCostOfGoodsSoldLedgerTransactionInDatabaseContext(context, salesTransactionFromDatabase);
                     //IncreaseSoldOrReturnedOfSalesTransactionItemsInDatabaseContext(context, salesTransactionFromDatabase);
 
-                    var user = Application.Current.FindResource("CurrentUser") as User;
+                    var user = Application.Current.FindResource(Constants.CURRENTUSER) as User;
                     salesTransactionFromDatabase.User = context.Users.Single(e => e.Username.Equals(user.Username));
 
                     context.SaveChanges();

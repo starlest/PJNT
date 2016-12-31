@@ -70,11 +70,10 @@
         }
 
         #region Helper Methods
-
         private void CheckIfIsServer()
         {
             var hostName = Dns.GetHostName(); // Retrive the Name of HOST
-#pragma warning disable 618
+            #pragma warning disable 618
             var host = Dns.GetHostByName(hostName);
             foreach (var ip in host.AddressList)
             {
@@ -95,9 +94,22 @@
 
         private static void SetColorTheme()
         {
-            var themeColor = UtilityMethods.GetThemeColor();
-            AppearanceManager.Current.AccentColor = themeColor == "Blue" ? Colors.Blue : Colors.Yellow;
+            var themeColorString = UtilityMethods.GetThemeColor();
+            AppearanceManager.Current.AccentColor = ConvertStringToColor(themeColorString);
         }
+
+        private static Color ConvertStringToColor(string colorString)
+        {
+            switch (colorString)
+            {
+                case "Red":
+                    return Colors.Red;
+                case "Yellow":
+                    return Colors.Yellow;
+                default:
+                    return Colors.Blue;
+            }
+        } 
 
         private void SetUpBackgroundWorker()
         {
@@ -127,6 +139,7 @@
             try
             {
                 if (!_isServer || _performingTelegramBotActions) return;
+                if (UtilityMethods.GetTelegramKey().Equals("") || UtilityMethods.GetTelegramChatID().Equals("")) return;
                 _performingTelegramBotActions = true;
                 TelegramService.CheckUpdates();
                 TelegramService.SendNotifications();
@@ -150,7 +163,6 @@
             Title = UtilityMethods.GetServerName() + " - User: " + _user.Username + ", Server: " + _connectionString +
                     ", Date: " + UtilityMethods.GetCurrentDate().ToString("dd-MM-yyyy");
         }
-
         #endregion
     }
 }

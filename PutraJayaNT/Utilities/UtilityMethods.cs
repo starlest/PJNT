@@ -75,6 +75,8 @@
 
         public static string GetTelegramKey() => Application.Current.FindResource(Constants.TELEGRAMKEY) as string;
 
+        public static string GetTelegramChatID() => Application.Current.FindResource(Constants.TELEGRAMCHATID) as string;
+
         public static string GetThemeColor() => Application.Current.FindResource(Constants.THEMECOLOR) as string;
     }
 }

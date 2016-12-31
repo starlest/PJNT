@@ -15,7 +15,6 @@
     public class MasterCustomersVM : ViewModelBase
     {
         #region Backing Fields
-
         private bool _isActiveChecked;
         private CustomerGroupVM _selectedCustomerGroup;
         private CustomerVM _selectedCustomer;
@@ -25,7 +24,6 @@
         private ICommand _searchCommand;
         private ICommand _editCustomerCommand;
         private ICommand _activateCustomerCommand;
-
         #endregion
 
         public MasterCustomersVM()
@@ -49,7 +47,6 @@
         public MasterCustomersNewEntryVM NewEntryVM { get; }
 
         #region Collections
-
         public ObservableCollection<CustomerGroupVM> CustomerGroups { get; }
 
         public ObservableCollection<CustomerVM> Customers { get; }
@@ -57,11 +54,9 @@
         public ObservableCollection<CityVM> Cities { get; }
 
         public ObservableCollection<CustomerVM> DisplayedCustomers { get; }
-
         #endregion
 
         #region Properties
-
         public bool IsActiveChecked
         {
             get { return _isActiveChecked; }
@@ -73,7 +68,8 @@
             get { return _selectedCustomerGroup; }
             set
             {
-                SetProperty(ref _selectedCustomerGroup, value, () => SelectedCustomerGroup);
+                SetProperty(ref _selectedCustomerGroup, value,
+                    () => SelectedCustomerGroup);
 
                 if (_selectedCustomerGroup == null) return;
 
@@ -109,16 +105,15 @@
             get { return _selectedLine; }
             set { SetProperty(ref _selectedLine, value, () => SelectedLine); }
         }
-
         #endregion
 
         #region Commands
-
         public ICommand SearchCommand
         {
             get
             {
-                return _searchCommand ?? (_searchCommand = new RelayCommand(() =>
+                return _searchCommand ??
+                       (_searchCommand = new RelayCommand(() =>
                        {
                            UpdateDisplayedCustomers();
                            UpdateCities();
@@ -130,7 +125,8 @@
         {
             get
             {
-                return _editCustomerCommand ?? (_editCustomerCommand = new RelayCommand(() =>
+                return _editCustomerCommand ??
+                       (_editCustomerCommand = new RelayCommand(() =>
                        {
                            if (!IsThereLineSelected()) return;
                            ShowEditWindow();
@@ -143,40 +139,49 @@
         {
             get
             {
-                return _activateCustomerCommand ?? (_activateCustomerCommand = new RelayCommand(() =>
+                return _activateCustomerCommand ??
+                       (_activateCustomerCommand = new RelayCommand(() =>
                        {
-                           if (!IsThereLineSelected() || !IsConfirmationYes()) return;
-                           if (_selectedLine.Active) DeactivateCustomerInDatabase(_selectedLine.Model);
+                           if (!IsThereLineSelected() || !IsConfirmationYes())
+                               return;
+                           if (_selectedLine.Active)
+                               DeactivateCustomerInDatabase(_selectedLine.Model);
                            else ActivateCustomerInDatabase(_selectedLine.Model);
                            _selectedLine.Active = !_isActiveChecked;
                        }));
             }
         }
-
         #endregion
 
         #region Helper Methods 
-
         private void UpdateCustomerGroups()
         {
             var oldSelectedCustomerGroup = _selectedCustomerGroup;
 
             CustomerGroups.Clear();
-            CustomerGroups.Add(new CustomerGroupVM { Model = new CustomerGroup { ID = -1, Name = "All" } });
+            CustomerGroups.Add(new CustomerGroupVM
+            {
+                Model = new CustomerGroup { ID = -1, Name = "All" }
+            });
             using (var context = UtilityMethods.createContext())
             {
-                var groupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
+                var groupsReturnedFromDatabase =
+                    context.CustomerGroups
+                        .OrderBy(customerGroup => customerGroup.Name);
                 foreach (var group in groupsReturnedFromDatabase)
                     CustomerGroups.Add(new CustomerGroupVM { Model = group });
             }
             UpdateSelectedCustomerGroup(oldSelectedCustomerGroup);
         }
 
-        private void UpdateSelectedCustomerGroup(CustomerGroupVM oldSelectedCustomerGroup)
+        private void UpdateSelectedCustomerGroup(
+            CustomerGroupVM oldSelectedCustomerGroup)
         {
             if (oldSelectedCustomerGroup == null) return;
             SelectedCustomerGroup =
-                CustomerGroups.FirstOrDefault(customerGroup => customerGroup.ID.Equals(oldSelectedCustomerGroup.ID));
+                CustomerGroups.SingleOrDefault(
+                    customerGroup =>
+                            customerGroup.ID.Equals(oldSelectedCustomerGroup.ID));
         }
 
         public void UpdateListedCustomers()
@@ -184,16 +189,29 @@
             if (_selectedCity != null) return;
 
             var oldSelectedCustomer = _selectedCustomer;
+            Customers.Clear();
             using (var context = UtilityMethods.createContext())
             {
-                var customersReturnedFromDatabase = _selectedCustomerGroup.Name.Equals("All")
-                    ? context.Customers.Include("Group").Include("City").OrderBy(customer => customer.Name)
-                    : context.Customers.Include("Group").Include("City").Where(
-                            customer => customer.Group.ID.Equals(_selectedCustomerGroup.ID))
-                        .OrderBy(customer => customer.Name);
-                Customers.Clear();
-                Customers.Add(new CustomerVM { Model = new Customer { ID = -1, Name = "All" } });
-                foreach (var customer in customersReturnedFromDatabase.OrderBy(customer => customer.Name))
+                var customersReturnedFromDatabase =
+                    _selectedCustomerGroup.Name.Equals(Constants.ALL)
+                        ? context.Customers.Include("Group")
+                            .Include("City")
+                            .OrderBy(customer => customer.Name)
+                        : context.Customers.Include("Group")
+                            .Include("City")
+                            .Where(
+                                customer =>
+                                    customer.Group.ID.Equals(
+                                        _selectedCustomerGroup.ID))
+                            .OrderBy(customer => customer.Name);
+                Customers.Add(new CustomerVM
+                {
+                    Model = new Customer { ID = -1, Name = Constants.ALL }
+                });
+                foreach (
+                    var customer in
+                    customersReturnedFromDatabase.OrderBy(
+                        customer => customer.Name))
                     Customers.Add(new CustomerVM { Model = customer });
             }
             UpdateSelectedCustomer(oldSelectedCustomer);
@@ -202,7 +220,9 @@
         private void UpdateSelectedCustomer(CustomerVM oldSelectedCustomer)
         {
             if (oldSelectedCustomer == null) return;
-            SelectedCustomer = Customers.FirstOrDefault(customer => customer.ID.Equals(oldSelectedCustomer.ID));
+            SelectedCustomer =
+                Customers.FirstOrDefault(
+                    customer => customer.ID.Equals(oldSelectedCustomer.ID));
         }
 
         private void UpdateCities()
@@ -225,7 +245,9 @@
         private void UpdateSelectedCity(CityVM oldSelectedCity)
         {
             if (oldSelectedCity == null) return;
-            SelectedCity = Cities.SingleOrDefault(city => city.ID.Equals(oldSelectedCity.ID));
+            SelectedCity =
+                Cities.SingleOrDefault(
+                    city => city.ID.Equals(oldSelectedCity.ID));
         }
 
         public void UpdateDisplayedCustomers()
@@ -234,10 +256,13 @@
 
             using (var context = UtilityMethods.createContext())
             {
-                var customersReturnedFromDatabase = LoadCustomersFromDatabaseContextAccordingToSelections(context);
+                var customersReturnedFromDatabase =
+                    LoadCustomersFromDatabaseContextAccordingToSelections(
+                        context);
                 foreach (
                     var customer in
-                    customersReturnedFromDatabase.Where(customer => customer.Active.Equals(_isActiveChecked))
+                    customersReturnedFromDatabase.Where(
+                            customer => customer.Active.Equals(_isActiveChecked))
                         .OrderBy(customer => customer.Name))
                     DisplayedCustomers.Add(new CustomerVM { Model = customer });
             }
@@ -263,21 +288,33 @@
             }
         }
 
-        private IEnumerable<Customer> LoadCustomersFromDatabaseContextAccordingToSelections(ERPContext context)
+        private IEnumerable<Customer>
+            LoadCustomersFromDatabaseContextAccordingToSelections(
+                ERPContext context)
         {
             if (_selectedCity != null)
                 return
                     context.Customers.Include("Group").Include("City")
-                        .Where(customer => customer.City.ID.Equals(_selectedCity.ID))
+                        .Where(
+                            customer =>
+                                    customer.City.ID.Equals(_selectedCity.ID))
                         .OrderBy(customer => customer.Name);
 
-            if (_selectedCustomerGroup.Name.Equals(Constants.ALL) && _selectedCustomer.Name.Equals(Constants.ALL))
-                return context.Customers.Include("Group").Include("City").OrderBy(customer => customer.Name);
+            if (_selectedCustomerGroup.Name.Equals(Constants.ALL) &&
+                _selectedCustomer.Name.Equals(Constants.ALL))
+                return
+                    context.Customers.Include("Group")
+                        .Include("City")
+                        .OrderBy(customer => customer.Name);
 
-            if (!_selectedCustomerGroup.Name.Equals(Constants.ALL) && _selectedCustomer.Name.Equals(Constants.ALL))
+            if (!_selectedCustomerGroup.Name.Equals(Constants.ALL) &&
+                _selectedCustomer.Name.Equals(Constants.ALL))
                 return
                     context.Customers.Include("Group").Include("City")
-                        .Where(customer => customer.Group.ID.Equals(_selectedCustomerGroup.ID))
+                        .Where(
+                            customer =>
+                                customer.Group.ID.Equals(
+                                    _selectedCustomerGroup.ID))
                         .OrderBy(customer => customer.Name);
 
             return
@@ -300,16 +337,17 @@
         private bool IsThereLineSelected()
         {
             if (_selectedLine != null) return true;
-            MessageBox.Show("Please select a line.", "No Selection", MessageBoxButton.OK);
+            MessageBox.Show("Please select a line.", "No Selection",
+                MessageBoxButton.OK);
             return false;
         }
 
         private static bool IsConfirmationYes()
         {
-            return MessageBox.Show("Confirm activating/deactivating customer?", "Confirmation", MessageBoxButton.YesNo,
+            return MessageBox.Show("Confirm activating/deactivating customer?",
+                       "Confirmation", MessageBoxButton.YesNo,
                        MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
-
         #endregion
     }
 }

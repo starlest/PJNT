@@ -302,18 +302,18 @@
             if (_selectedCategory.Name.Equals(Constants.ALL) && !_selectedItem.Name.Equals(Constants.ALL))
                 return line => line.SalesTransaction.Date >= _fromDate &&
                                line.SalesTransaction.Date <= _toDate &&
-                               line.Item.Name.Equals(_selectedItem.Name);
+                               line.Item.ItemID.Equals(_selectedItem.ItemID);
 
-            if (_selectedCategory.Name.Equals(Constants.ALL) && _selectedItem.Name.Equals(Constants.ALL))
+            if (!_selectedCategory.Name.Equals(Constants.ALL) && _selectedItem.Name.Equals(Constants.ALL))
                 return line => line.SalesTransaction.Date >= _fromDate &&
                                line.SalesTransaction.Date <= _toDate &&
-                               line.Item.Category.Name.Equals(_selectedCategory.Name);
+                               line.Item.Category.ID.Equals(_selectedCategory.ID);
 
 
             return line => line.SalesTransaction.Date >= _fromDate &&
                            line.SalesTransaction.Date <= _toDate &&
-                           line.Item.Category.Name.Equals(_selectedCategory.Name) &&
-                           line.Item.Name.Equals(_selectedItem.Name);
+                           line.Item.Category.ID.Equals(_selectedCategory.ID) &&
+                           line.Item.ItemID.Equals(_selectedItem.ItemID);
         }
 
         private void RefreshDisplayLines()

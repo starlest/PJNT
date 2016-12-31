@@ -44,7 +44,7 @@
         <TextBlock Grid.Row="2" Grid.Column="2" Text="NPWP:" />
         <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding EditNPWP, Mode=TwoWay}" />
         <TextBlock Grid.Row="2" Grid.Column="4" Text="Group:" />
-        <ComboBox Grid.Row="2" Grid.Column="5" ItemsSource="{Binding EditGroups}" DisplayMemberPath="Name"
+        <ComboBox Grid.Row="2" Grid.Column="5" ItemsSource="{Binding Groups}" DisplayMemberPath="Name"
                   SelectedItem="{Binding EditCustomerGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Credit Terms:" />
         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EditCreditTerms, Mode=TwoWay}" />

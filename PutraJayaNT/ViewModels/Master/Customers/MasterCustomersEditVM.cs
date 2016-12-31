@@ -34,12 +34,16 @@
         public MasterCustomersEditVM(CustomerVM editingCustomer)
         {
             _editingCustomer = editingCustomer;
-            EditGroups = new ObservableCollection<CustomerGroupVM>();
-            UpdateEditGroups();
+            Groups = new ObservableCollection<CustomerGroupVM>();
+            Cities = new ObservableCollection<CityVM>();
+            UpdateGroups();
+            UpdateCities();
             SetDefaultEditProperties();
         }
 
-        public ObservableCollection<CustomerGroupVM> EditGroups { get; }
+        public ObservableCollection<CustomerGroupVM> Groups { get; }
+
+        public ObservableCollection<CityVM> Cities { get; }
          
         #region Properties
         public int EditID
@@ -118,23 +122,34 @@
         {
             EditID = _editingCustomer.ID;
             EditName = _editingCustomer.Name;
-            EditCity = new CityVM { Model= _editingCustomer.City };
+            EditCity = Cities.Single(city => city.ID.Equals(_editingCustomer.City.ID));
             EditAddress = _editingCustomer.Address;
             EditTelephone = _editingCustomer.Telephone;
             EditNPWP = _editingCustomer.NPWP;
             EditCreditTerms = _editingCustomer.CreditTerms;
             EditMaxInvoices = _editingCustomer.MaxInvoices;
-            EditCustomerGroup = EditGroups.FirstOrDefault();
+            EditCustomerGroup = Groups.Single(group => group.ID.Equals(_editingCustomer.Group.ID));
         }
 
-        private void UpdateEditGroups()
+        private void UpdateGroups()
         {
-            EditGroups.Clear();
+            Groups.Clear();
             using (var context = UtilityMethods.createContext())
             {
                 var customerGroupsReturnedFromDatabase = context.CustomerGroups.OrderBy(customerGroup => customerGroup.Name);
                 foreach (var customerGroup in customerGroupsReturnedFromDatabase)
-                    EditGroups.Add(new CustomerGroupVM {Model = customerGroup});
+                    Groups.Add(new CustomerGroupVM {Model = customerGroup});
+            }
+        }
+
+        private void UpdateCities()
+        {
+            Cities.Clear();
+            using (var context = UtilityMethods.createContext())
+            {
+                var citiesReturnedFromDatabase = context.Cities.OrderBy(city => city.Name);
+                foreach (var city in citiesReturnedFromDatabase)
+                    Cities.Add(new CityVM { Model = city });
             }
         }
 

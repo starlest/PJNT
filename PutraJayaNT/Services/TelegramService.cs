@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using System.Text;
-    using System.Windows;
     using Models;
     using Telegram.Bot;
     using Telegram.Bot.Types;
@@ -23,19 +22,17 @@
 
         public static void CheckUpdates()
         {
-            var Bot = new Api("229513906:AAH5-4dU6h_BnI20CpY_X0XAm4xB9xrnvdw");
+            var Bot = new Api(UtilityMethods.GetTelegramKey());
             var offset = 0;
             var updates = Bot.GetUpdates(offset).Result;
-            var selectedServer = Application.Current.Resources[Constants.SELECTEDSERVER].ToString().ToLower();
             foreach (var update in updates)
             {
                 if (update.Message.Type == MessageType.TextMessage)
                 {
                     var messageText = update.Message.Text.ToLower();
-                    if (messageText.StartsWith("/customer") && messageText.EndsWith(selectedServer))
+                    if (messageText.StartsWith("/customer"))
                     {
                         var customerName = messageText.Substring(10);
-                        customerName = customerName.Substring(0, customerName.Length - selectedServer.Length - 1);
                         SendCustomerReceivables(customerName);
                     }
                 }
@@ -58,8 +55,7 @@
                             transaction =>
                                 transaction.Customer.ID.Equals(customer.ID) &&
                                 transaction.Paid < transaction.NetTotal);
-                    var serverName = Application.Current.Resources[Constants.SELECTEDSERVER] as string;
-                    message.Append($"\n{serverName} --- {customer.Name}\n");
+                    message.Append($"{customer.Name}\n");
                     foreach (var receivable in customerReceivables)
                     {
                         var remainingAmount = receivable.NetTotal - receivable.Paid;
@@ -72,7 +68,7 @@
 
         public static void SendNotifications()
         {
-            var Bot = new Api("229513906:AAH5-4dU6h_BnI20CpY_X0XAm4xB9xrnvdw");
+            var Bot = new Api(UtilityMethods.GetTelegramKey());
 
             using (var context = UtilityMethods.createContext())
             {
@@ -83,7 +79,7 @@
                 foreach (var notification in unsentNotifications)
                 {
                     // ReSharper disable once UnusedVariable
-                    var result = Bot.SendTextMessage(-104676249,
+                    var result = Bot.SendTextMessage(UtilityMethods.GetTelegramChatID(),
                         $"{notification.When} - {notification.Message}").Result;
                     notification.Sent = true;
                     context.SaveChanges();

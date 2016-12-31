@@ -14,6 +14,7 @@
 
         #region System Parameters
         public const string TELEGRAMKEY = "TelegramKey";
+        public const string TELEGRAMCHATID = "TelegramChatID";
         public const string SERVERNAME = "ServerName";
         public const string THEMECOLOR = "ThemeColor";
         public const string CURRENTDATE = "CurrentDate";

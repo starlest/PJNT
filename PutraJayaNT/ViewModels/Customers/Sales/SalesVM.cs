@@ -141,7 +141,9 @@
             get { return _transactionCustomer; }
             set
             {
-                if (value != null && ((_editCustomer == null && !value.Name.Equals("Kontan")) || (_editCustomer != null && !value.ID.Equals(_editCustomer.ID))))
+                if (value != null &&
+                    ((_editCustomer == null && !value.Name.Equals("Kontan")) ||
+                     (_editCustomer != null && !value.ID.Equals(_editCustomer.ID))))
                 {
                     if (DoesCustomerHasMaximumNumberOfInvoices(value) || DoesCustomerHasOverduedInvoices(value))
                     {
@@ -179,7 +181,8 @@
             {
                 if (value < _transactionDate)
                 {
-                    MessageBox.Show("Cannot set a date before the transaction date.", "Invalid Date", MessageBoxButton.OK);
+                    MessageBox.Show("Cannot set a date before the transaction date.", "Invalid Date",
+                        MessageBoxButton.OK);
                     return;
                 }
 
@@ -206,7 +209,8 @@
             {
                 if (value != null && (value < 0 || value > 100))
                 {
-                    MessageBox.Show("Please enter a value from the range of 0 - 100.", "Invalid Range", MessageBoxButton.OK);
+                    MessageBox.Show("Please enter a value from the range of 0 - 100.", "Invalid Range",
+                        MessageBoxButton.OK);
                     return;
                 }
 
@@ -214,7 +218,7 @@
 
                 if (_transactionDiscountPercent == null) return;
 
-                TransactionDiscount = (decimal)_transactionDiscountPercent / 100 * _transactionGrossTotal;
+                TransactionDiscount = (decimal) _transactionDiscountPercent / 100 * _transactionGrossTotal;
                 TransactionDiscountPercent = null;
             }
         }
@@ -226,7 +230,8 @@
             {
                 if (value < 0 || value > _transactionGrossTotal)
                 {
-                    MessageBox.Show($"a Please enter a value from the range of 0 - {_transactionGrossTotal}.", "Invalid Range", MessageBoxButton.OK);
+                    MessageBox.Show($"a Please enter a value from the range of 0 - {_transactionGrossTotal}.",
+                        "Invalid Range", MessageBoxButton.OK);
                     return;
                 }
 
@@ -252,7 +257,8 @@
             {
                 if (value < 0 || value > _transactionGrossTotal)
                 {
-                    MessageBox.Show($"Please enter a value from the range of 0 - {_transactionGrossTotal}.", "Invalid Range", MessageBoxButton.OK);
+                    MessageBox.Show($"Please enter a value from the range of 0 - {_transactionGrossTotal}.",
+                        "Invalid Range", MessageBoxButton.OK);
                     return;
                 }
                 SetProperty(ref _transactionTax, value, () => TransactionTax);
@@ -293,30 +299,35 @@
         {
             get
             {
-                _transactionNetTotal = Math.Round(_transactionGrossTotal + _transactionSalesExpense - _transactionDiscount + _transactionTax, 2);
+                _transactionNetTotal =
+                    Math.Round(
+                        _transactionGrossTotal + _transactionSalesExpense - _transactionDiscount + _transactionTax, 2);
                 return _transactionNetTotal;
             }
         }
         #endregion
 
         #region Transaction Commands
-        public ICommand NewTransactionCommand => _newTransactionCommand ?? (_newTransactionCommand = new RelayCommand(ResetTransaction));
+        public ICommand NewTransactionCommand
+            => _newTransactionCommand ?? (_newTransactionCommand = new RelayCommand(ResetTransaction));
 
         public ICommand DeleteTransactionCommand
         {
             get
             {
                 return _deleteTransactionCommand ?? (_deleteTransactionCommand = new RelayCommand(() =>
-                {
-                    if (!_editMode) return;
+                       {
+                           if (!_editMode) return;
 
-                    if (MessageBox.Show("Confirm deleting this transaction?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+                           if (
+                               MessageBox.Show("Confirm deleting this transaction?", "Confirmation",
+                                   MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
 
-                    if (!UtilityMethods.GetMasterAdminVerification()) return;
-                    DeleteInvoice();
-                    MessageBox.Show("Successfully deleted transaction!", "Success", MessageBoxButton.OK);
-                    ResetTransaction();
-                }));
+                           if (!UtilityMethods.GetMasterAdminVerification()) return;
+                           DeleteInvoice();
+                           MessageBox.Show("Successfully deleted transaction!", "Success", MessageBoxButton.OK);
+                           ResetTransaction();
+                       }));
             }
         }
 
@@ -325,17 +336,24 @@
             get
             {
                 return _saveTransactionCommand ?? (_saveTransactionCommand = new RelayCommand(() =>
-                {
-                    if (!IsConfirmationYes() || !IsTransactionCustomerSelected() || !AreThereEnoughStockForAllTransactionItems() || !_isSaveAllowed) return;
-                    if (_editMode)
-                        SaveEditedTransaction();
-                    else
-                        SaveNewTransaction();
-                    if (SalesTransactionHelper.IsLastSaveSuccessful) MessageBox.Show("Successfully saved transaction.", "Success", MessageBoxButton.OK);
-                    Model = GetSalesTransactionFromDatabase(_transactionID);
-                    SetEditMode();
-                    AddTelegramNotifications();
-                }));
+                       {
+                           if (!IsConfirmationYes() || !IsTransactionCustomerSelected() ||
+                               !AreThereEnoughStockForAllTransactionItems() || !_isSaveAllowed) return;
+
+                           if (_editMode) SaveEditedTransaction();
+                           else SaveNewTransaction();
+
+                           if (!SalesTransactionHelper.IsLastSaveSuccessful)
+                           {
+                               MessageBox.Show("Failed to save transaction. Please try again.", "Failure", MessageBoxButton.OK);
+                               return;
+                           }
+
+                           MessageBox.Show("Successfully saved transaction.", "Success", MessageBoxButton.OK);
+                           Model = GetSalesTransactionFromDatabase(_transactionID);
+                           SetEditMode();
+                           AddTelegramNotifications();
+                       }));
             }
         }
         #endregion
@@ -346,10 +364,10 @@
             get
             {
                 return _editLineCommand ?? (_editLineCommand = new RelayCommand(() =>
-                {
-                    if (!IsThereLineSelected()) return;
-                    ShowEditLineWindow();
-                }));
+                       {
+                           if (!IsThereLineSelected()) return;
+                           ShowEditLineWindow();
+                       }));
             }
         }
 
@@ -358,38 +376,40 @@
             get
             {
                 return _deleteLineCommand ?? (_deleteLineCommand = new RelayCommand(() =>
-                {
-                    if (_selectedLine != null &&
-                        MessageBox.Show("Confirm Deletion?", "Confirmation", MessageBoxButton.YesNo)
-                        == MessageBoxResult.No) return;
-                    DisplayedSalesTransactionLines.Remove(_selectedLine);
-                    UpdateTransactionTotal();
-                }));
+                       {
+                           if (_selectedLine != null &&
+                               MessageBox.Show("Confirm Deletion?", "Confirmation", MessageBoxButton.YesNo)
+                               == MessageBoxResult.No) return;
+                           DisplayedSalesTransactionLines.Remove(_selectedLine);
+                           UpdateTransactionTotal();
+                       }));
             }
         }
 
-        public ICommand BrowseCommand => _browseCommand ?? (_browseCommand = new RelayCommand(ShowBroseSalesTransactionsWindow));
+        public ICommand BrowseCommand
+            => _browseCommand ?? (_browseCommand = new RelayCommand(ShowBroseSalesTransactionsWindow));
 
-        public ICommand PrintListCommand => _printListCommand ?? (_printListCommand = new RelayCommand(ShowPrintListWindow));
+        public ICommand PrintListCommand
+            => _printListCommand ?? (_printListCommand = new RelayCommand(ShowPrintListWindow));
 
         public ICommand PreviewDOCommand
         {
             get
             {
                 return _previewDOCommand ?? (_previewDOCommand = new RelayCommand(() =>
-                {
-                    if (DisplayedSalesTransactionLines.Count == 0) return;
+                       {
+                           if (DisplayedSalesTransactionLines.Count == 0) return;
 
-                    var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
+                           var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
 
-                    if (salesTransactionFromDatabase == null)
-                    {
-                        MessageBox.Show("Transaction not found.", "Invalid Command", MessageBoxButton.OK);
-                        return;
-                    }
+                           if (salesTransactionFromDatabase == null)
+                           {
+                               MessageBox.Show("Transaction not found.", "Invalid Command", MessageBoxButton.OK);
+                               return;
+                           }
 
-                    ShowSalesTransactionDOReportWindow(salesTransactionFromDatabase);
-                }));
+                           ShowSalesTransactionDOReportWindow(salesTransactionFromDatabase);
+                       }));
             }
         }
 
@@ -398,19 +418,19 @@
             get
             {
                 return _previewInvoiceCommand ?? (_previewInvoiceCommand = new RelayCommand(() =>
-                {
-                    if (DisplayedSalesTransactionLines.Count == 0) return;
+                       {
+                           if (DisplayedSalesTransactionLines.Count == 0) return;
 
-                    var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
+                           var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
 
-                    if (salesTransactionFromDatabase == null)
-                    {
-                        MessageBox.Show("Transaction not found.", "Invalid Command", MessageBoxButton.OK);
-                        return;
-                    }
+                           if (salesTransactionFromDatabase == null)
+                           {
+                               MessageBox.Show("Transaction not found.", "Invalid Command", MessageBoxButton.OK);
+                               return;
+                           }
 
-                    ShowSalesInvoiceReportWindow(salesTransactionFromDatabase);
-                }));
+                           ShowSalesInvoiceReportWindow(salesTransactionFromDatabase);
+                       }));
             }
         }
 
@@ -419,19 +439,21 @@
             get
             {
                 return _printDOCommand ?? (_printDOCommand = new RelayCommand(() =>
-                {
-                    if (DisplayedSalesTransactionLines.Count == 0) return;
+                       {
+                           if (DisplayedSalesTransactionLines.Count == 0) return;
 
-                    if (MessageBox.Show("Confirm printing?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+                           if (
+                               MessageBox.Show("Confirm printing?", "Confirmation", MessageBoxButton.YesNo,
+                                   MessageBoxImage.Question) == MessageBoxResult.No) return;
 
-                    if (Model.DOPrinted)
-                    {
-                        if (!UtilityMethods.GetVerification()) return;
-                    }
+                           if (Model.DOPrinted)
+                           {
+                               if (!UtilityMethods.GetVerification()) return;
+                           }
 
-                    SalesTransactionPrintHelper.PrintSalesTransactionDOFromDatabase(Model);
-                    Model.DOPrinted = true;
-                }));
+                           SalesTransactionPrintHelper.PrintSalesTransactionDOFromDatabase(Model);
+                           Model.DOPrinted = true;
+                       }));
             }
         }
 
@@ -440,19 +462,21 @@
             get
             {
                 return _printInvoiceCommand ?? (_printInvoiceCommand = new RelayCommand(() =>
-                {
-                    if (DisplayedSalesTransactionLines.Count == 0) return;
+                       {
+                           if (DisplayedSalesTransactionLines.Count == 0) return;
 
-                    if (MessageBox.Show("Confirm printing?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+                           if (
+                               MessageBox.Show("Confirm printing?", "Confirmation", MessageBoxButton.YesNo,
+                                   MessageBoxImage.Question) == MessageBoxResult.No) return;
 
-                    if (Model.InvoicePrinted)
-                    {
-                        if (!UtilityMethods.GetVerification()) return;
-                    }
+                           if (Model.InvoicePrinted)
+                           {
+                               if (!UtilityMethods.GetVerification()) return;
+                           }
 
-                    SalesTransactionPrintHelper.PrintSalesTransactionFromDatabaseInvoice(Model);
-                    Model.InvoicePrinted = true;
-                }));
+                           SalesTransactionPrintHelper.PrintSalesTransactionFromDatabaseInvoice(Model);
+                           Model.InvoicePrinted = true;
+                       }));
             }
         }
 
@@ -461,26 +485,30 @@
             get
             {
                 return _issueInvoiceCommand ?? (_issueInvoiceCommand = new RelayCommand(() =>
-                {
-                    if (!_invoiceNotIssued) return;
+                       {
+                           if (!_invoiceNotIssued) return;
 
-                    if (_editMode == false)
-                    {
-                        MessageBox.Show("Please save the transaction first.", "Invalid Command", MessageBoxButton.OK);
-                        return;
-                    }
+                           if (_editMode == false)
+                           {
+                               MessageBox.Show("Please save the transaction first.", "Invalid Command",
+                                   MessageBoxButton.OK);
+                               return;
+                           }
 
-                    if (MessageBox.Show("Please save any changes before proceeding. \n \n Confirm issuing invoice?", "Confirmation", MessageBoxButton.YesNo) ==
-                        MessageBoxResult.No) return;
+                           if (
+                               MessageBox.Show(
+                                   "Please save any changes before proceeding. \n \n Confirm issuing invoice?",
+                                   "Confirmation", MessageBoxButton.YesNo) ==
+                               MessageBoxResult.No) return;
 
-                    SaveEditedTransaction();
-                    SalesTransactionHelper.IssueSalesTransactionInvoice(Model);
-                    Model.InvoiceIssued = UtilityMethods.GetCurrentDate().Date;
-                    InvoiceNotIssued = false;
-                    MessageBox.Show("Invoice has been successfully issued.", "Success", MessageBoxButton.OK);
-                    Model = GetSalesTransactionFromDatabase(_transactionID);
-                    SetEditMode();
-                }));
+                           SaveEditedTransaction();
+                           SalesTransactionHelper.IssueSalesTransactionInvoice(Model);
+                           Model.InvoiceIssued = UtilityMethods.GetCurrentDate().Date;
+                           InvoiceNotIssued = false;
+                           MessageBox.Show("Invoice has been successfully issued.", "Success", MessageBoxButton.OK);
+                           Model = GetSalesTransactionFromDatabase(_transactionID);
+                           SetEditMode();
+                       }));
             }
         }
         #endregion
@@ -510,7 +538,7 @@
             var year = _transactionDate.Year;
             var serverName = UtilityMethods.GetServerName();
             var initialID = serverName.Equals("") ? "M" : serverName.Substring(0, 1);
-            var leadingIDString = initialID + (long)((year - 2000) * 100 + month) + "-";
+            var leadingIDString = initialID + (long) ((year - 2000) * 100 + month) + "-";
             var endingIDString = 0.ToString().PadLeft(4, '0');
             _transactionID = leadingIDString + endingIDString;
 
@@ -518,10 +546,12 @@
             using (var context = UtilityMethods.createContext())
             {
                 var IDs = from SalesTransaction in context.SalesTransactions
-                          where SalesTransaction.SalesTransactionID.Substring(0, 6).Equals(leadingIDString)
-                          && string.Compare(SalesTransaction.SalesTransactionID, _transactionID, StringComparison.Ordinal) >= 0
-                          orderby SalesTransaction.SalesTransactionID descending
-                          select SalesTransaction.SalesTransactionID;
+                    where SalesTransaction.SalesTransactionID.Substring(0, 6).Equals(leadingIDString)
+                          &&
+                          string.Compare(SalesTransaction.SalesTransactionID, _transactionID, StringComparison.Ordinal) >=
+                          0
+                    orderby SalesTransaction.SalesTransactionID descending
+                    select SalesTransaction.SalesTransactionID;
                 if (IDs.Count() != 0) lastTransactionID = IDs.First();
             }
 
@@ -577,7 +607,9 @@
             TransactionNotes = Model.Notes;
 
             DisplayedSalesTransactionLines.Clear();
-            foreach (var salesTransactionLineVM in Model.SalesTransactionLines.Select(line => new SalesTransactionLineVM { Model = line }))
+            foreach (
+                var salesTransactionLineVM in
+                Model.SalesTransactionLines.Select(line => new SalesTransactionLineVM { Model = line }))
                 DisplayedSalesTransactionLines.Add(salesTransactionLineVM);
 
             OnPropertyChanged("TransactionGrossTotal");
@@ -594,7 +626,8 @@
         private void CalculateTransactionTax()
         {
             if (_isTransactionTaxCheckBoxSelected)
-                TransactionTax = (_transactionGrossTotal - _transactionDiscount) * 0.1m; // auto recalculates transaction net total
+                TransactionTax = (_transactionGrossTotal - _transactionDiscount) * 0.1m;
+            // auto recalculates transaction net total
             else TransactionTax = 0;
         }
 
@@ -617,13 +650,13 @@
             var salesTransactionFromDatabae = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
 
             availableQuantity = DisplayedSalesTransactionLines.Where(
-                line => line.Item.ItemID.Equals(item.ItemID) && line.Warehouse.ID.Equals(warehouse.ID))
+                    line => line.Item.ItemID.Equals(item.ItemID) && line.Warehouse.ID.Equals(warehouse.ID))
                 .Aggregate(availableQuantity, (current, line) => current - line.Quantity);
 
             if (salesTransactionFromDatabae != null)
             {
                 availableQuantity += salesTransactionFromDatabae.SalesTransactionLines.ToList().Where(
-                    line => line.Item.ItemID.Equals(item.ItemID) && line.Warehouse.ID.Equals(warehouse.ID))
+                        line => line.Item.ItemID.Equals(item.ItemID) && line.Warehouse.ID.Equals(warehouse.ID))
                     .Sum(line => line.Quantity);
             }
 
@@ -691,14 +724,16 @@
             using (var context = UtilityMethods.createContext())
             {
                 var transaction = context.SalesTransactions
-                .Include("SalesTransactionLines")
-                .Include("SalesTransactionLines.Item")
-                .Include("SalesTransactionLines.Warehouse").Single(e => e.SalesTransactionID.Equals(_transactionID));
+                    .Include("SalesTransactionLines")
+                    .Include("SalesTransactionLines.Item")
+                    .Include("SalesTransactionLines.Warehouse").Single(e => e.SalesTransactionID.Equals(_transactionID));
 
                 // Increase the stock for each line's item
                 foreach (var line in transaction.SalesTransactionLines.ToList())
                 {
-                    var stock = context.Stocks.SingleOrDefault(e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID));
+                    var stock =
+                        context.Stocks.SingleOrDefault(
+                            e => e.ItemID.Equals(line.Item.ItemID) && e.WarehouseID.Equals(line.Warehouse.ID));
 
                     if (stock != null)
                         stock.Pieces += line.Quantity;
@@ -743,7 +778,8 @@
                 var availableQuantity = GetAvailableQuantity(line.Item, line.Warehouse);
                 if (availableQuantity >= 0) continue;
                 MessageBox.Show(
-                    $"{line.Item.Name} has only {availableQuantity / line.Item.PiecesPerUnit + line.Units} units, {availableQuantity % line.Item.PiecesPerUnit + line.Pieces} pieces available.",
+                    $"{line.Item.Name} has only {availableQuantity / line.Item.PiecesPerUnit + line.Units} units," +
+                    $" {availableQuantity % line.Item.PiecesPerUnit + line.Pieces} pieces available.",
                     "Insufficient Stock", MessageBoxButton.OK);
                 return false;
             }
@@ -752,7 +788,7 @@
 
         private void SaveNewTransaction()
         {
-            SetTransactionID();     // To prevent concurrent users saving to the same ID
+            SetTransactionID(); // To prevent concurrent users saving to the same ID
             AssignSelectedPropertiesToModel();
             SalesTransactionHelper.AddTransactionToDatabase(Model);
         }
@@ -783,8 +819,10 @@
         {
             AssignSelectedPropertiesToModel();
             var salesTransactionFromDatabase = GetSalesTransactionFromDatabase(Model.SalesTransactionID);
-            if (!salesTransactionFromDatabase.InvoiceIssued.Equals(Model.InvoiceIssued) || !salesTransactionFromDatabase.Paid.Equals(Model.Paid)
-                || !salesTransactionFromDatabase.SalesReturnTransactions.Count.Equals(Model.SalesReturnTransactions.Count))
+            if (!salesTransactionFromDatabase.InvoiceIssued.Equals(Model.InvoiceIssued) ||
+                !salesTransactionFromDatabase.Paid.Equals(Model.Paid)
+                ||
+                !salesTransactionFromDatabase.SalesReturnTransactions.Count.Equals(Model.SalesReturnTransactions.Count))
             {
                 MessageBox.Show("The transaction has changed, please reload it before making any changes.",
                     "Invalid Command", MessageBoxButton.OK);
@@ -809,7 +847,8 @@
                             .Include("Item")
                             .SingleOrDefault(
                                 stock =>
-                                    stock.ItemID.Equals(line.Item.ItemID) && stock.WarehouseID.Equals(line.Warehouse.ID));
+                                    stock.ItemID.Equals(line.Item.ItemID) &&
+                                    stock.WarehouseID.Equals(line.Warehouse.ID));
                     var unitsLeft = lineStock?.Pieces / line.Item.PiecesPerUnit ?? 0;
                     if (lineStock == null || lineStock.Pieces / lineStock.Item.PiecesPerUnit <= 10)
                         TelegramService.AddTelegramNotification(DateTime.Now,
