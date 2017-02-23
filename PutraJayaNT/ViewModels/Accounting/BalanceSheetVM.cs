@@ -63,7 +63,7 @@
                     _cashAndCashEquivalents = 0;
 
                     var equivalents = context.Ledger_Accounts
-                        .Where(account => account.Name == "Cash" || account.Name.Equals("Bank BNI"))
+                        .Where(account => account.Name == "Cash" || account.Name.Equals("Bank BNI") || account.Name.Equals("Bank Danamon") || account.Name.Equals("Bank Danamon 2"))
                         .Include("LedgerAccountBalances")
                         .Include("LedgerGeneral")
                         .ToList();

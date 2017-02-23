@@ -4,6 +4,7 @@ namespace ECERP.Migrations.ERPContext
     using System.Data.Entity.Migrations;
     using Models;
     using Models.Accounting;
+    using Models.Salesman;
     using Utilities;
 
     internal sealed class Configuration : DbMigrationsConfiguration<ERPContext>
@@ -43,6 +44,11 @@ namespace ECERP.Migrations.ERPContext
                 new LedgerAccountGroup { Name = Constants.Accounting.COST_OF_GOODS_SOLD },
                 new LedgerAccountGroup { Name = Constants.Accounting.INCOME },
                 new LedgerAccountGroup { Name = Constants.Accounting.INVENTORY }
+            );
+
+            context.Salesmans.AddOrUpdate(
+                salesman => salesman.Name,
+                new Salesman { Name = " " }
             );
         }
     }

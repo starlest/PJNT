@@ -329,7 +329,7 @@
                     AssignVMPropertiesToModel();
 
                     if (_notEditMode)
-                        PurchaseTransactionHelper.AddNewTransactionToDatabase(Model);
+                        SaveNewTransaction();
                     else
                         PurchaseTransactionHelper.EditTransactionInDatabase(Model);
 
@@ -510,6 +510,12 @@
             return
                 MessageBox.Show("Confirm saving transaction?", "Confirmation", MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes;
+        }
+
+        private void SaveNewTransaction()
+        {
+            SetTransactionID(); // To prevent concurrent users saving to the same ID
+            PurchaseTransactionHelper.AddNewTransactionToDatabase(Model);
         }
 
         private void AssignVMPropertiesToModel()

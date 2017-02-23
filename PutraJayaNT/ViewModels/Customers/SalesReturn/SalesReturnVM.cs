@@ -263,8 +263,8 @@
         {
             var year = _salesReturnTransactionDate.Year;
             var month = _salesReturnTransactionDate.Month;
-            var selectedServer = Application.Current.FindResource(Constants.SELECTEDSERVER) as string;
-            var initialSelectedServer = selectedServer?.Substring(0, 1);
+            var serverName = UtilityMethods.GetServerName();
+            var initialSelectedServer = serverName.Equals("") ? "M" : serverName.Substring(0, 1);
             var leadingIDString = initialSelectedServer + "R" + (long)((year - 2000) * 100 + month) + "-";
             var endingIDString = 0.ToString().PadLeft(4, '0');
             _salesReturnTransactionID = leadingIDString + endingIDString;

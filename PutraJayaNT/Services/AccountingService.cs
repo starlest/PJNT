@@ -57,7 +57,7 @@
                         ledgerAccountsClasses.Single(
                             accountClass => accountClass.Name.Equals(Constants.Accounting.ASSET)),
                     LedgerAccountGroup =
-                        ledgerAccountsGroups.Single(group => group.Name.Equals(accountGroup)),
+                        ledgerAccountsGroups.Single(group => group.Name.Equals(Constants.Accounting.CURRENT_ASSET)),
                     LedgerAccountBalances = new ObservableCollection<LedgerAccountBalance>()
                 };
             }

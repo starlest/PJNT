@@ -16,7 +16,7 @@
 
         public ConnectIPVM()
         {
-            _iPAddress = "192.168.1.117";
+            _iPAddress = "192.168.100.18";
         }
 
         public string IPAddress

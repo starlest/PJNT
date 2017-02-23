@@ -170,7 +170,7 @@
                 var context = UtilityMethods.createContext();
 
                 var actualCOGS =
-                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Balance11 +
+                    context.Ledger_Account_Balances.Single(e => e.LedgerAccount.Name.Equals("Inventory") && e.PeriodYear == 2017).Balance1 +
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Debit -
                     context.Ledger_General.Single(e => e.LedgerAccount.Name.Equals("Inventory")).Credit;
                 // change beginningbalance
@@ -508,7 +508,7 @@
                                    decimal totalCredit = 0;
                                    foreach (
                                        var line in
-                                       a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Month == 12))
+                                       a.LedgerTransactionLines.Where(e => e.LedgerTransaction.Date.Year == 2017 && e.LedgerTransaction.Date.Month == 1))
                                    {
                                        count++;
                                        if (line.Amount < 0)

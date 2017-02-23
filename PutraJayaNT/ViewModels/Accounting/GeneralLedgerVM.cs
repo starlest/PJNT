@@ -214,8 +214,14 @@
         private void SetBeginningBalanceFromDatabaseContext(ERPContext context)
         {
             var periodYearBalances =
-                context.Ledger_Account_Balances.Single(
+                context.Ledger_Account_Balances.SingleOrDefault(
                     balance => balance.ID.Equals(_selectedAccount.ID) && balance.PeriodYear.Equals(_selectedYear));
+
+            if (periodYearBalances == null)
+            {
+                _selectedBeginningBalance = 0;
+                return;
+            }
 
             switch (_selectedMonth)
             {

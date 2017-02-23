@@ -19,7 +19,7 @@
             _editSuppliers = editSuppliers;
             SuppliersAvailableForAddition = new ObservableCollection<SupplierVM>();
             LoadSuppliersAvailableForAddition();
-            _selectedSupplierForAddition = SuppliersAvailableForAddition.First();
+            _selectedSupplierForAddition = SuppliersAvailableForAddition.FirstOrDefault();
         }
 
         public ObservableCollection<SupplierVM> SuppliersAvailableForAddition { get; }
